@@ -23,6 +23,7 @@ nnoremap ; :
 nnoremap : ;
 
 if has('nvim')
+  set sh=zsh
   tnoremap <silent> <ESC> <C-\><C-n>
 endif
 
