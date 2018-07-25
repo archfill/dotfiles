@@ -125,3 +125,39 @@ repo = 'pangloss/vim-javascript'
 [[plugins]]
 repo = 'moll/vim-node'
 
+#basyura/TweetVim
+[[plugins]]
+repo = 'basyura/TweetVim'
+
+#mattn/webapi-vim
+[[plugins]]
+repo = 'mattn/webapi-vim'
+
+#basyura/twibill.vim
+[[plugins]]
+repo = 'basyura/twibill.vim'
+
+#tyru/open-browser.vim
+[[plugins]]
+repo = 'tyru/open-browser.vim'
+
+#h1mesuke/unite-outline
+[[plugins]]
+repo = 'h1mesuke/unite-outline'
+
+#basyura/bitly.vim
+[[plugins]]
+repo = 'basyura/bitly.vim'
+
+#terryma/vim-multiple-cursors
+[[plugins]]
+repo = 'terryma/vim-multiple-cursors'
+
+#Chiel92/vim-autoformat
+[[plugins]]
+repo = 'Chiel92/vim-autoformat'
+# プラグイン読み込み時のコールバック
+hook_add         = 'call hook#add#vim_autoformat#load()'
+# プラグインアップデート時のコールバック
+hook_post_update = 'call hook#post_update#vim_autoformat#load()'
+
