@@ -104,12 +104,11 @@ repo = 'scrooloose/nerdtree'
 [[plugins]]
 repo = 'autozimu/LanguageClient-neovim'
 rev = 'next'
-build = 'bash install.sh'
-
+#build = 'bash install.sh'
 # プラグインのアップデート時に呼び出されるコールバック
-#hook_post_update = 'call hook#post_update#language_client_neovim#load()'
+hook_post_update = 'call hook#post_update#language_client_neovim#load()'
 # プラグインが読み込まれる際に呼び出されるコールバック
-#hook_add         = 'call hook#add#language_client_neovim#load()'
+hook_add         = 'call hook#add#language_client_neovim#load()'
 
 [[plugins]]
 repo = 'Shougo/neosnippet.vim'
