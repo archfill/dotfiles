@@ -8,6 +8,9 @@ let $CACHE = empty($XDG_CACHE_HOME) ? expand('$HOME/.cache') : $XDG_CACHE_HOME
 let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME
 let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME
 
+let g:outher_package_path = expand('$CONFIG/package')
+let g:google_java_formatter = expand(g:outher_package_path) . "/google-java-format-1.5-all-deps.jar"
+
 " Load rc file
 function! s:load(file) abort
     let s:path = expand('$CONFIG/nvim/rc/' . a:file . '.vim')
@@ -26,6 +29,15 @@ if has('nvim')
   set sh=zsh
   tnoremap <silent> <ESC> <C-\><C-n>
 endif
+
+syntax enable
+set background=dark
+colorscheme solarized
+
+" font
+set guifont=Cica:h16
+set printfont=Cica:h12
+set ambiwidth=single
 
 " setting
 "文字コードをUFT-8に設定
@@ -94,7 +106,6 @@ nmap <Esc><Esc> :nohlsearch<CR><Esc>
 " Required for operations modifying multiple buffers like rename.
 set hidden
 
-
 autocmd vimenter * NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nnoremap <C-t> :NERDTreeToggle<CR>
@@ -118,6 +129,20 @@ call NERDTreeHighlightFile('js',     'Red',     'none', '#ffa500', '#151515')
 call NERDTreeHighlightFile('php',    'Magenta', 'none', '#ff00ff', '#151515')
 call NERDTreeHighlightFile('vue',    'Green',   'none', '#4fc08d', '#4fc08d')
 
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+
 if !has('gui_running')
   map "in Insert mode, type Ctrl+v Alt+n here" <A-n>
 endif
+
+" neosnippet.vim
+imap <C-k> <Plug>(neosnippet_expand_or_jump)
+smap <C-k> <Plug>(neosnippet_expand_or_jump)
+xmap <C-k> <Plug>(neosnippet_expand_target)
+let g:neosnippet#enable_snipmate_compatibility = 1
+let g:neosnippet#enable_completed_snippet = 1
+let g:neosnippet#expand_word_boundary = 1
+
+" devicon
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1

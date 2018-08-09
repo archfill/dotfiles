@@ -1,5 +1,5 @@
 function! hook#post_update#language_client_neovim#load() abort
-  !./install.sh
+  " !./install.sh
   " g:outher_package_pathは、`eclipse.jdt.ls`などの外部ツールのインストール先ディレクトリ。
   " 省略しているが、`init.vim`で設定している。
   let l:jdt_lsp_path = expand(g:outher_package_path) . "/jdt-lsp"

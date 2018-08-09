@@ -4,6 +4,10 @@ function! hook#add#language_client_neovim#load() abort
 
   let g:LanguageClient_serverCommands = {
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+      \ 'vue': ['vls'],
+      \ 'html': [],
+      \ 'css': [],
+      \ 'typescript': ['javascript-typescript-stdio'],
       \ 'javascript': ['javascript-typescript-stdio'],
       \ }
 

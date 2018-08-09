@@ -104,17 +104,20 @@ repo = 'scrooloose/nerdtree'
 [[plugins]]
 repo = 'autozimu/LanguageClient-neovim'
 rev = 'next'
-#build = 'bash install.sh'
-# プラグインのアップデート時に呼び出されるコールバック
-hook_post_update = 'call hook#post_update#language_client_neovim#load()'
+build = 'bash install.sh'
 # プラグインが読み込まれる際に呼び出されるコールバック
 hook_add         = 'call hook#add#language_client_neovim#load()'
+# プラグインのアップデート時に呼び出されるコールバック
+hook_post_update = 'call hook#post_update#language_client_neovim#load()'
 
 [[plugins]]
 repo = 'Shougo/neosnippet.vim'
 depends = ['context_filetype.vim']
 on_event = 'InsertCharPre'
 on_ft = 'snippet'
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
 
 # pangloss/vim-javascript
 [[plugins]]
@@ -160,3 +163,18 @@ hook_add         = 'call hook#add#vim_autoformat#load()'
 # プラグインアップデート時のコールバック
 hook_post_update = 'call hook#post_update#vim_autoformat#load()'
 
+[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
+repo = 'osyo-manga/vim-precious'
+depends = ['context_filetype.vim']
+
+[[plugins]] # カーソル位置のコンテキストのftを判定するライブラリ
+repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'ryanoasis/vim-devicons'
+
+[[plugins]]
+repo = 'ctrlpvim/ctrlp.vim'
+
+[[plugins]]
+repo = 'altercation/vim-colors-solarized'
