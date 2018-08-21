@@ -18,9 +18,8 @@ ln -s ~/dotfiles/gvimrc ~/.gvimrc
 rm -f ~/.tmux.conf
 ln -s ~/dotfiles/.tmux/.tmux.conf ~/.tmux.conf
 
+#git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
 # zsh
 # ln -s ~/dotfiles/zshrc ~/.zshrc
-
-#curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
-
-#git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
