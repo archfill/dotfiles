@@ -15,11 +15,23 @@ rm -f ~/.gvimrc
 ln -s ~/dotfiles/gvimrc ~/.gvimrc
 
 #tmux
-rm -f ~/.tmux.conf
-ln -s ~/dotfiles/.tmux/.tmux.conf ~/.tmux.conf
+rm -rf ~/.tmux
+ln -sf ~/dotfiles/.tmux/ ~/.tmux
 
-#git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+rm -f ~/.tmux.conf
+ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
+rm -f ~/.tmux-powerlinerc
+ln -s ~/dotfiles/.tmux-powerlinerc ~/.tmux-powerlinerc
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # zsh
-# ln -s ~/dotfiles/zshrc ~/.zshrc
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+cd ~
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+cd ~/dotfiles
+ln -s ~/dotfiles/zshrc ~/.zshrc
+
+sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
+sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
+echo 'alias vi="nvim"' >> test.txt
+echo 'alias vim="nvim"' >> test.txt
