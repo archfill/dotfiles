@@ -1,12 +1,12 @@
 #!/bin/sh
 
-if [ "$(uname)" == 'Darwin' ]; then
+if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
   echo $OS
-elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
+elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
   OS='Linux'
   echo $OS
-elif [ "$(expr substr $(uname -s) 1 10)" == 'MINGW32_NT' ]; then
+elif [ "$(expr substr $(uname -s) 1 10)" = 'MINGW32_NT' ]; then
   OS='Cygwin'
   echo $OS
 else
