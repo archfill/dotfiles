@@ -22,13 +22,17 @@ rm -f ~/.tmux.conf
 ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
 rm -f ~/.tmux-powerlinerc
 ln -s ~/dotfiles/.tmux-powerlinerc ~/.tmux-powerlinerc
-
+## submodule
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # zsh
 cd ~
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+## submodule
+git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
+
 cd ~/dotfiles
+rm -f ~/.zshrc
 ln -s ~/dotfiles/.zshrc ~/.zshrc
 
 # sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
