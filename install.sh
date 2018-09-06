@@ -9,10 +9,10 @@ rm -rf ~/.vim
 ln -sf ~/dotfiles/.vim ~/.vim
 
 rm -f ~/.vimrc
-ln -s ~/dotfiles/vimrc ~/.vimrc
+ln -s ~/dotfiles/.vimrc ~/.vimrc
 
 rm -f ~/.gvimrc
-ln -s ~/dotfiles/gvimrc ~/.gvimrc
+ln -s ~/dotfiles/.gvimrc ~/.gvimrc
 
 #tmux
 rm -rf ~/.tmux
@@ -29,9 +29,9 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 cd ~
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 cd ~/dotfiles
-ln -s ~/dotfiles/zshrc ~/.zshrc
+ln -s ~/dotfiles/.zshrc ~/.zshrc
 
-sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
-sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
-echo 'alias vi="nvim"' >> test.txt
-echo 'alias vim="nvim"' >> test.txt
+# sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
+# sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
+# echo 'alias vi="nvim"' >> test.txt
+# echo 'alias vim="nvim"' >> test.txt
