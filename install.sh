@@ -38,10 +38,6 @@ rm -f ~/.tmux-powerlinerc
 ln -s ~/dotfiles/.tmux-powerlinerc ~/.tmux-powerlinerc
 
 # zsh
-cd ~
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
-
 cd ~/dotfiles
 rm -f ~/.zshrc
 ln -s ~/dotfiles/.zshrc ~/.zshrc
