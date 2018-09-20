@@ -2,3 +2,11 @@
 [[plugins]]
 repo = 'haya14busa/dein-command.vim'
 on_cmd = 'Dein'
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+depends = 'context_filetype.vim'
+on_i = 1
+hook_source = '''
+source ~/.config/nvim/rc/deoplete.vim
+'''

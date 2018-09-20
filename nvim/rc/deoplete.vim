@@ -1,9 +1,3 @@
-# python
-[[plugins]]
-repo = 'Shougo/deoplete.nvim'
-depends = 'context_filetype.vim'
-on_i = 1
-hook_source = '''
 let g:deoplete#enable_at_startup = 1
 " <TAB>: completion.
 inoremap <silent><expr> <TAB>
@@ -26,4 +20,3 @@ inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort
   return deoplete#cancel_popup() . "\<CR>"
 endfunction
-'''
