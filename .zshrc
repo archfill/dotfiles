@@ -65,8 +65,12 @@ ZSH_THEME="agnoster"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git
+  git,
+  zsh-completions,
+  docker
 )
+
+autoload -U compinit && compinit
 
 source $ZSH/oh-my-zsh.sh
 
@@ -100,9 +104,16 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias vi="nvim"
 alias vim="nvim"
+alias tmux="tmux -u"
 
 # The next line updates PATH for the Google Cloud SDK.
 source "$HOME/google-cloud-sdk/path.zsh.inc"
 
 # The next line enables bash completion for gcloud.
 source "$HOME/google-cloud-sdk/completion.zsh.inc"
+
+if [ -d "$HOME/.nodebrew/current/bin" ] 
+then
+  echo "Directory /path/to/dir exists." 
+  export PATH=$HOME/.nodebrew/current/bin:$PATH
+fi
