@@ -178,3 +178,7 @@ repo = 'ctrlpvim/ctrlp.vim'
 
 [[plugins]]
 repo = 'altercation/vim-colors-solarized'
+
+[[plugins]]
+repo = 'joshdick/onedark.vim'
+

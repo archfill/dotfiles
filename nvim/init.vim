@@ -32,7 +32,8 @@ endif
 
 syntax enable
 set background=dark
-colorscheme solarized
+" colorscheme solarized
+colorscheme onedark
 
 " font
 set guifont=Cica:h16
