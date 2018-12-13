@@ -106,14 +106,14 @@ alias vi="nvim"
 alias vim="nvim"
 alias tmux="tmux -u"
 
-if [ -d "$HOME/google-cloud-sdk" ] then
+if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
   source "$HOME/google-cloud-sdk/path.zsh.inc"
   # The next line enables bash completion for gcloud.
   source "$HOME/google-cloud-sdk/completion.zsh.inc"
 fi
 
-if [ -d "$HOME/.nodebrew/current/bin" ] then
+if [ -d "$HOME/.nodebrew/current/bin" ] ; then
   echo "Directory .nodebrew/current/bin exists."
   export PATH=$HOME/.nodebrew/current/bin:$PATH
 fi
