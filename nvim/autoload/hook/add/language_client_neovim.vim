@@ -9,6 +9,7 @@ function! hook#add#language_client_neovim#load() abort
       \ 'css': [],
       \ 'typescript': ['javascript-typescript-stdio'],
       \ 'javascript': ['javascript-typescript-stdio'],
+      \ 'python': ['pyls'],
       \ }
 
   " `eclipse.jdt.ls`で利用する、データ保存先ディレクトリの存在確認
