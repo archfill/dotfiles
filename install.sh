@@ -18,6 +18,10 @@ fi
 rm -rf ~/.config/nvim
 ln -sf ~/dotfiles/nvim ~/.config/nvim
 
+# alacritty
+rm -rf ~/.config/alacritty
+ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
+
 # vim
 rm -rf ~/.vim
 ln -sf ~/dotfiles/.vim ~/.vim
