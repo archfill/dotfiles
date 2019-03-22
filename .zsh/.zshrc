@@ -131,3 +131,6 @@ if [ -f '/home/chillda/google-cloud-sdk/path.zsh.inc' ]; then . '/home/chillda/g
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/chillda/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/chillda/google-cloud-sdk/completion.zsh.inc'; fi
+eval "$(anyenv init -)"
+
+[ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`

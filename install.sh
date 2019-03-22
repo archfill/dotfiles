@@ -42,9 +42,9 @@ rm -f ~/.tmux-powerlinerc
 ln -s ~/dotfiles/.tmux-powerlinerc ~/.tmux-powerlinerc
 
 # zsh
-cd ~/dotfiles
 rm -f ~/.zshrc
-ln -s ~/dotfiles/.zshrc ~/.zshrc
+ln -sf ~/dotfiles/.zsh ~/.zsh
+ln -s ~/dotfiles/.zshenv ~/.zshenv
 
 # sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
 # sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
