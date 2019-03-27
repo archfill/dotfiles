@@ -43,5 +43,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+.zsh/.zcompdump
+.zsh/.zcompdump*
+
 
 # End of https://www.gitignore.io/api/macos,linux
