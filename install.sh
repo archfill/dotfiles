@@ -52,7 +52,10 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
 rm -rf ~/.anyenv
 ln -sf ~/dotfiles/.anyenv ~/.anyenv
 
-git submodule foreach git pull origin master
+git submodule init
+git submodule update
+# git submodule update --init --recursive
+# git submodule foreach git pull origin master
 
 # sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
 # sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
