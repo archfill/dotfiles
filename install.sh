@@ -52,7 +52,10 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
 rm -rf ~/.anyenv
 ln -sf ~/dotfiles/.anyenv ~/.anyenv
 
-git submodule foreach git pull origin master
+git submodule init
+git submodule update
+# git submodule update --init --recursive
+# git submodule foreach git pull origin master
 
 anyenv install --init
 
