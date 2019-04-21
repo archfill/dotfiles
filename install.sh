@@ -54,6 +54,8 @@ ln -sf ~/dotfiles/.anyenv ~/.anyenv
 
 git submodule foreach git pull origin master
 
+anyenv install --init
+
 # sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
 # sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
 # echo 'alias vi="nvim"' >> test.txt
