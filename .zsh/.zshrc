@@ -134,6 +134,6 @@ if [ -f '/home/chillda/google-cloud-sdk/path.zsh.inc' ]; then . '/home/chillda/g
 if [ -f '/home/chillda/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/chillda/google-cloud-sdk/completion.zsh.inc'; fi
 export PATH="$HOME/.anyenv/bin:$PATH"
 export ANYENV_ROOT="$HOME/.anyenv"
-eval "$(anyenv init -)"
+eval "$(anyenv init - zsh)"
 
 [ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`

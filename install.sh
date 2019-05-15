@@ -57,6 +57,8 @@ git submodule update
 # git submodule update --init --recursive
 # git submodule foreach git pull origin master
 
+zsh
+~/.anyenv/bin/anyenv init
 anyenv install --init
 
 # sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
