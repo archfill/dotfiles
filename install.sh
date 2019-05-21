@@ -1,24 +1,25 @@
 #!/bin/sh
 
+echo "setup start"
+
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
-  echo $OS
 elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
   OS='Linux'
-  echo $OS
 elif [ "$(expr substr $(uname -s) 1 10)" = 'MINGW32_NT' ]; then
   OS='Cygwin'
-  echo $OS
 else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
 fi
 
 # neovim
+echo "neovim"
 rm -rf ~/.config/nvim
 ln -sf ~/dotfiles/nvim ~/.config/nvim
 
 # alacritty
+echo "alactritty"
 rm -rf ~/.config/alacritty
 ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
 
@@ -65,3 +66,17 @@ anyenv install --init
 # sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
 # echo 'alias vi="nvim"' >> test.txt
 # echo 'alias vim="nvim"' >> test.txt
+
+echo "check os..."
+if [ "$OS" = 'Mac' ]; then
+  sh ./install_mac.sh
+elif [ "$OS" = 'Linux' ]; then
+  sh ./install_linux.sh
+elif [ "$OS" = 'Cygwin' ]; then
+  sh ./install_cygwin.sh
+else
+  echo "Your platform ($(uname -a)) is not supported."
+  exit 1
+fi
+
+exit 0
