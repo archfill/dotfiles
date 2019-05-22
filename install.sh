@@ -58,7 +58,6 @@ git submodule update
 # git submodule update --init --recursive
 # git submodule foreach git pull origin master
 
-zsh
 ~/.anyenv/bin/anyenv init
 anyenv install --init
 
