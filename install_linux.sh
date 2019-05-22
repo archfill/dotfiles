@@ -31,7 +31,7 @@ esac
 
 # terminator
 rm -rf ~/.config/terminator
-ln -sf ~/dotfiles/terminator ~/.config/terminator
+ln -sf ~/dotfiles/.config/terminator ~/.config/terminator
 ## terminator-themes
 rm -rf ~/.config/terminator/plugins
 mkdir -p ~/.config/terminator/plugins
