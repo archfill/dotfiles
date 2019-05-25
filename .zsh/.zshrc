@@ -108,6 +108,7 @@ alias tmux="tmux -u"
 alias dc-mysql57-up-d="sudo docker-compose -f ~/docker/mysql57/docker-compose.yml up -d"
 alias dc-mysql57-down="sudo docker-compose -f ~/docker/mysql57/docker-compose.yml down"
 alias dcompose="sudo docker-compose"
+alias xdisplay="Xephyr -resizeable"
 
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
