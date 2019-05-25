@@ -66,7 +66,6 @@ ZSH_THEME="agnoster"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  zsh-completions
   docker
 )
 
@@ -109,6 +108,8 @@ alias dc-mysql57-up-d="sudo docker-compose -f ~/docker/mysql57/docker-compose.ym
 alias dc-mysql57-down="sudo docker-compose -f ~/docker/mysql57/docker-compose.yml down"
 alias dcompose="sudo docker-compose"
 alias xdisplay="Xephyr -resizeable"
+## git
+alias gacp='(){git add . && git commit -m "$1" && git push origin $(git_current_branch)}'
 
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
