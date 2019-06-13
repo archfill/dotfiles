@@ -25,7 +25,8 @@ arch)
     wget \
 
   yay -S neovim \
-    neomutt
+    neomutt \
+    w3m
 
   pip2 install requests
   ;;

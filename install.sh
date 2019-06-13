@@ -26,6 +26,8 @@ ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
 # neomutt
 rm -f ~/.muttrc
 ln -s ~/dotfiles/.muttrc ~/.muttrc
+rm -rf ~/.mutt
+ln -sf ~/dotfiles/.mutt ~/.mutt
 
 # vim
 rm -rf ~/.vim
