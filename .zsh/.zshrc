@@ -116,6 +116,8 @@ alias mutt="neomutt"
 ## feh
 alias sbg-home="sh ~/bin/wallpaper-home.sh"
 alias sbg-work="sh ~/bin/wallpaper-work.sh"
+## google-drive-ocamlfuse 
+alias gdmount='google-drive-ocamlfuse ~/gdchillda'
 
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
