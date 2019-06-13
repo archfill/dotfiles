@@ -108,8 +108,14 @@ alias dc-mysql57-up-d="sudo docker-compose -f ~/docker/mysql57/docker-compose.ym
 alias dc-mysql57-down="sudo docker-compose -f ~/docker/mysql57/docker-compose.yml down"
 alias dcompose="sudo docker-compose"
 alias xdisplay="Xephyr -resizeable"
+alias wolhome="wol d0:50:99:8c:84:1d"
 ## git
 alias gacp='(){git add . && git commit -m "$1" && git push origin $(git_current_branch)}'
+## mutt
+alias mutt="neomutt"
+## feh
+alias sbg-home="sh ~/bin/wallpaper-home.sh"
+alias sbg-work="sh ~/bin/wallpaper-work.sh"
 
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
@@ -139,3 +145,8 @@ export ANYENV_ROOT="$HOME/.anyenv"
 eval "$(anyenv init - zsh)"
 
 [ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`
+
+# opam configuration
+test -r /home/chillda/.opam/opam-init/init.zsh && . /home/chillda/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+eval $(opam env)
+

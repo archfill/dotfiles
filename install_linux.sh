@@ -20,7 +20,12 @@ ubuntu)
 arch)
   echo "arch"
   sudo pacman -Sy
-  sudo pacman -S python2 python2-pip wget
+  sudo pacman -S python2 \
+    python2-pip \
+    wget \
+
+  yay -S neovim \
+    neomutt
 
   pip2 install requests
   ;;

@@ -23,6 +23,10 @@ echo "alactritty"
 rm -rf ~/.config/alacritty
 ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
 
+# neomutt
+rm -f ~/.muttrc
+ln -s ~/dotfiles/.muttrc ~/.muttrc
+
 # vim
 rm -rf ~/.vim
 ln -sf ~/dotfiles/.vim ~/.vim
