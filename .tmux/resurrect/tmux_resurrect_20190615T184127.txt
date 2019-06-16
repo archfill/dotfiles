@@ -1,0 +1,7 @@
+pane	home	1	:neomutt	1	:*	1	:/home/chillda/work/ps/rits/mount	0	zsh	:
+pane	home	1	:neomutt	1	:*	2	:/home/chillda	1	zsh	:
+pane	home	1	:neomutt	1	:*	3	:/home/chillda	0	zsh	:
+pane	work	1	:zsh	1	:*	1	:/home/chillda/git/rits	1	zsh	:
+window	home	1	1	:*	e880,238x55,0,0{119x55,0,0[119x27,0,0,1,119x27,0,28,2],118x55,120,0,3}
+window	work	1	1	:*	c562,238x55,0,0,5
+state	home	work

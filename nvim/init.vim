@@ -54,6 +54,9 @@ set hidden
 " 入力中のコマンドをステータスに表示する
 set showcmd
 
+set fileencodings=utf-8,sjis,iso-2022-jp,euc-jp
+set fileformats=unix,dos,mac
+
 
 " 見た目系
 " 行番号を表示
@@ -104,9 +107,6 @@ set hlsearch
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
 
-" Required for operations modifying multiple buffers like rename.
-set hidden
-
 autocmd vimenter * NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nnoremap <C-t> :NERDTreeToggle<CR>
@@ -147,3 +147,8 @@ let g:neosnippet#expand_word_boundary = 1
 
 " devicon
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
+
+" auto-ctags
+let g:auto_ctags = 1
+let g:auto_ctags_directory_list = ['.git', '.svn']
+

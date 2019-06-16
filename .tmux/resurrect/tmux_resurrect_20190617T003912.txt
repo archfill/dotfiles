@@ -1,0 +1,6 @@
+pane	home	1	:neomutt	1	:*	1	:/home/chillda/git/rits/POS/SOURCECODE	1	nvim	:nvim
+pane	home	1	:neomutt	1	:*	2	:/home/chillda/.git_tmp/hooks	0	zsh	:
+pane	work	1	:zsh	1	:*	1	:/home/chillda/git/rits	1	zsh	:
+window	home	1	1	:*	437a,238x55,0,0{119x55,0,0,2,118x55,120,0,4}
+window	work	1	1	:*	b262,80x24,0,0,5
+state	home	

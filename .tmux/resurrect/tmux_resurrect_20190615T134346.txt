@@ -1,0 +1,6 @@
+pane	home	1	:neomutt	1	:*	1	:/home/chillda/work/ps/rits/resources/tmp	0	zsh	:
+pane	home	1	:neomutt	1	:*	2	:/home/chillda	1	neomutt	:neomutt
+pane	work	1	:zsh	1	:*	1	:/home/chillda	1	zsh	:
+window	home	1	1	:*	4378,238x55,0,0{119x55,0,0,0,118x55,120,0,4}
+window	work	1	1	:*	c560,238x55,0,0,3
+state	home	work

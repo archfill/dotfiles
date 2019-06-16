@@ -2,6 +2,12 @@
 repo = 'Shougo/dein.vim'
 
 [[plugins]]
+repo = 'Shougo/neomru.vim'
+
+[[plugins]]
+repo = 'mattn/benchvimrc-vim'
+
+[[plugins]]
 repo = 'itchyny/lightline.vim'
 hook_add = '''
 source ~/.config/nvim/rc/lightline.vim
@@ -32,20 +38,6 @@ nnoremap <silent> ,rl :TREPLSendLine<cr>
 vnoremap <silent> ,rl :TREPLSendSelection<cr>
 nnoremap <silent> vt :Ttoggle<cr>
 nnoremap <silent> vs :terminal<cr>
-'''
-
-# Vimfiler
-[[plugins]]
-repo = 'Shougo/unite.vim'
-hook_add = '''
-nnoremap <silent> fb :<C-u>Unite buffer<CR>
-'''
-
-[[plugins]]
-repo = 'Shougo/vimfiler.vim'
-depends = 'unite.vim'
-hook_add = '''
-source ~/.config/nvim/rc/vimfiler.vim
 '''
 
 # 関数内検索
@@ -143,10 +135,6 @@ repo = 'basyura/twibill.vim'
 [[plugins]]
 repo = 'tyru/open-browser.vim'
 
-#h1mesuke/unite-outline
-[[plugins]]
-repo = 'h1mesuke/unite-outline'
-
 #basyura/bitly.vim
 [[plugins]]
 repo = 'basyura/bitly.vim'
@@ -182,3 +170,5 @@ repo = 'altercation/vim-colors-solarized'
 [[plugins]]
 repo = 'joshdick/onedark.vim'
 
+[[plugins]]
+repo = 'soramugi/auto-ctags.vim'
