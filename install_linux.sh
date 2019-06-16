@@ -9,7 +9,11 @@ ubuntu)
   echo "ubuntu"
     
   sudo apt update
-  sudo apt install -y python python-pip wget
+  sudo apt install -y python \
+    python-pip \
+    wget \
+    w3m \
+    neomutt
 
   pip install requests
 
