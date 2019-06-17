@@ -1,5 +1,0 @@
-pane	home	1	:zsh	1	:*	1	:/home/chillda	1	zsh	:
-pane	work	1	:zsh	1	:*	1	:/home/chillda	1	zsh	:
-window	home	1	1	:*	c55d,238x55,0,0,0
-window	work	1	1	:*	c560,238x55,0,0,3
-state	home	work
