@@ -107,6 +107,10 @@ set hlsearch
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
 
+nnoremap [window] <Nop>
+nmap s [window]
+nmap <Space> [space]
+
 autocmd vimenter * NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nnoremap <C-t> :NERDTreeToggle<CR>

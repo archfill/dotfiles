@@ -2,6 +2,7 @@
   always_split_with_profile = True
   enabled_plugins = TerminatorThemes, LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
   title_transmit_bg_color = "#4e9a06"
+  title_use_system_font = False
 [keybindings]
 [layouts]
   [[default]]
@@ -21,7 +22,7 @@
   [[OneHalfDark]]
     background_color = "#282c34"
     cursor_color = "#a3b3cc"
-    font = Cica 12
+    font = Cica 10
     foreground_color = "#dcdfe4"
     palette = "#282c34:#e06c75:#98c379:#e5c07b:#61afef:#c678dd:#56b6c2:#dcdfe4:#282c34:#e06c75:#98c379:#e5c07b:#61afef:#c678dd:#56b6c2:#dcdfe4"
     use_system_font = False
