@@ -111,8 +111,8 @@ nnoremap [window] <Nop>
 nmap s [window]
 nmap <Space> [space]
 
-autocmd vimenter * NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" autocmd vimenter * NERDTree
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-s> :NERDTreeFocus<CR>
 " NERDTress File highlighting
@@ -155,4 +155,21 @@ let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 " auto-ctags
 let g:auto_ctags = 1
 let g:auto_ctags_directory_list = ['.git', '.svn']
+
+" Define mappings
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
 
