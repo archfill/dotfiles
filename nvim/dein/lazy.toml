@@ -15,5 +15,5 @@ source ~/.config/nvim/rc/deoplete.vim
 repo = 'Shougo/denite.nvim'
 # on_event = 'BufRead'
 hook_add = 'call hook#add#denite#load()'
-hook_post_source = 'call hook#post_source#denite#load()'
+hook_source = 'call hook#source#denite#load()'
 

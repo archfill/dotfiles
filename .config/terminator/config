@@ -1,6 +1,7 @@
 [global_config]
   always_split_with_profile = True
   enabled_plugins = TerminatorThemes, LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+  title_font = Sans 10
   title_transmit_bg_color = "#4e9a06"
   title_use_system_font = False
 [keybindings]
