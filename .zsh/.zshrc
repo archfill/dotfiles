@@ -120,7 +120,7 @@ alias sbg-work="sh ~/bin/wallpaper-work.sh"
 alias gdmount='google-drive-ocamlfuse ~/gdchillda'
 
 ## mount
-alias smbmount='(){sudo mount.cifs //$1 $2 -o user=$3 dom=MSHOME}'
+alias smbmount='(){sudo mount -t cifs -o username=$1,password=$2,domain=$3 $4 $5}'
 
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
