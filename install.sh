@@ -72,12 +72,6 @@ anyenv install --init
 # echo 'alias vi="nvim"' >> test.txt
 # echo 'alias vim="nvim"' >> test.txt
 
-rm -rf ~/.git_tmp
-ln -sf ~/dotfiles/.git_tmp ~/.git_tmp
-
-cd
-git config --global init.templatedir '.git_tmp' 
-
 echo "check os..."
 if [ "$OS" = 'Mac' ]; then
   sh ./install_mac.sh
@@ -89,5 +83,11 @@ else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
 fi
+
+rm -rf ~/.git_tmp
+ln -sf ~/dotfiles/.git_tmp ~/.git_tmp
+
+cd
+git config --global init.templatedir '.git_tmp' 
 
 exit 0
