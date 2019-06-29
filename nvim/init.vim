@@ -39,6 +39,8 @@ colorscheme onedark
 set guifont=Cica:h16
 set printfont=Cica:h12
 set ambiwidth=single
+" set ambiwidth=double
+
 
 " setting
 "文字コードをUFT-8に設定

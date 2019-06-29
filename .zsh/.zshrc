@@ -122,6 +122,9 @@ alias gdmount='google-drive-ocamlfuse ~/gdchillda'
 ## mount
 alias smbmount='(){sudo mount -t cifs -o username=$1,password=$2,domain=$3 $4 $5}'
 
+## tmux
+alias tmux-start='tmux -u attach -t main'
+
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
   source "$HOME/google-cloud-sdk/path.zsh.inc"
