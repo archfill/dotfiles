@@ -158,3 +158,4 @@ eval "$(anyenv init - zsh)"
 test -r /home/chillda/.opam/opam-init/init.zsh && . /home/chillda/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 eval $(opam env)
 
+export LANG=ja_JP.UTF-8

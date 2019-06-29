@@ -84,4 +84,10 @@ else
   exit 1
 fi
 
+rm -rf ~/.git_tmp
+ln -sf ~/dotfiles/.git_tmp ~/.git_tmp
+
+cd
+git config --global init.templatedir '.git_tmp' 
+
 exit 0

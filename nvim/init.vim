@@ -175,3 +175,5 @@ function! s:denite_my_settings() abort
   \ denite#do_map('toggle_select').'j'
 endfunction
 
+set tags+=.git/tags
+

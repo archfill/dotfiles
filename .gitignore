@@ -47,6 +47,7 @@ Temporary Items
 .zsh/.zcompdump*
 
 .tmux/resurrect/*
+.tmux/plugins/tmux-*
 
 .mutt/account/*
 
