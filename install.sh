@@ -55,6 +55,16 @@ ln -sf ~/dotfiles/.zsh ~/.zsh
 rm -f ~/.zshenv
 ln -s ~/dotfiles/.zshenv ~/.zshenv
 
+: "install zplug" && {
+  ZPLUG_DIR=$HOME/.zplug
+  if [ ! -e $ZPLUG_DIR ]; then
+    info "installing zplug..."
+    curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+  else
+    warn "zplug is already installed"
+  fi
+}
+
 # anyenv
 rm -rf ~/.anyenv
 ln -sf ~/dotfiles/.anyenv ~/.anyenv
