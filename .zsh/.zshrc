@@ -159,3 +159,9 @@ test -r /home/chillda/.opam/opam-init/init.zsh && . /home/chillda/.opam/opam-ini
 eval $(opam env)
 
 export LANG=ja_JP.UTF-8
+
+function precmd() {
+  if [ ! -z $TMUX ]; then
+    tmux refresh-client -S
+  fi
+}
