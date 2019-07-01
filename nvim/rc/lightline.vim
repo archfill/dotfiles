@@ -12,8 +12,8 @@ let g:lightline = {
 \   'filetype': 'LightLineFiletype',
 \   'fileformat': 'LightLineFileformat',
 \ },
-\ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-\ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+\ 'separator': { 'left': "\ue0b0 ", 'right': "\ue0b2 " },
+\ 'subseparator': { 'left': "\ue0b1 ", 'right': "\ue0b3 " }
 \ }
 
 function! LightLineModified()
@@ -32,7 +32,7 @@ function! LightLineReadonly()
     if &filetype == "help"
         return ""
     elseif &readonly
-        return ""
+        return " "
     else
         return ""
     endif
@@ -41,7 +41,7 @@ endfunction
 function! LightLineFugitive()
     if exists("*fugitive#head")
         let _ = fugitive#head()
-        return strlen(_) ? ''._ : ''
+        return strlen(_) ? ' '._ : ''
     endif
     return ''
 endfunction

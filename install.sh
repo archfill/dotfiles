@@ -2,6 +2,8 @@
 
 echo "setup start"
 
+FONT_CICA='v5.0.1'
+
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
 elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
@@ -12,7 +14,6 @@ else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
 fi
-
 # neovim
 echo "neovim"
 rm -rf ~/.config/nvim
@@ -30,8 +31,8 @@ rm -rf ~/.mutt
 ln -sf ~/dotfiles/.mutt ~/.mutt
 
 # vim
-rm -rf ~/.vim
-ln -sf ~/dotfiles/.vim ~/.vim
+#rm -rf ~/.vim
+#ln -sf ~/dotfiles/.vim ~/.vim
 
 rm -f ~/.vimrc
 ln -s ~/dotfiles/.vimrc ~/.vimrc
@@ -40,8 +41,17 @@ rm -f ~/.gvimrc
 ln -s ~/dotfiles/.gvimrc ~/.gvimrc
 
 #tmux
-rm -rf ~/.tmux
-ln -sf ~/dotfiles/.tmux/ ~/.tmux
+TMUX_DIR=~/.tmux
+TMUX_PLUGINS_DIR=${TMUX_DIR}/plugins
+if [ ! -e $TMUX_PLUGINS_DIR ]; then
+  mkdir -p $TMUX_PLUGINS_DIR
+fi
+rm -rf ${TMUX_DIR}/bin
+ln -sf ~/dotfiles/.tmux/bin/ ${TMUX_DIR}/bin
+rm -rf ${TMUX_PLUGINS_DIR}/tpm
+ln -sf ~/dotfiles/.tmux/plugins/tpm/ ${TMUX_PLUGINS_DIR}/tpm
+rm -rf ~/git/tmux-powerline
+ln -sf ~/dotfiles/.tmux/git/tmux-powerline/ ~/git/tmux-powerline
 
 rm -f ~/.tmux.conf
 ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
@@ -54,6 +64,29 @@ rm -rf ~/.zsh
 ln -sf ~/dotfiles/.zsh ~/.zsh
 rm -f ~/.zshenv
 ln -s ~/dotfiles/.zshenv ~/.zshenv
+
+: "install zplug" && {
+  ZPLUG_DIR=$HOME/.zplug
+  if [ ! -e $ZPLUG_DIR ]; then
+    info "installing zplug..."
+    curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+  else
+    warn "zplug is already installed"
+  fi
+}
+
+# opam
+: "install opam" && {
+  OPAM_DIR=$HOME/.opam
+  if [ ! -e $OPAM_DIR ]; then
+    info "installing opam..."
+    curl -sL --proto-redir -all,https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh | sh
+    $SHELL
+    opam init
+  else
+    warn "opam is already installed"
+  fi
+}
 
 # anyenv
 rm -rf ~/.anyenv
@@ -71,6 +104,26 @@ anyenv install --init
 # sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
 # echo 'alias vi="nvim"' >> test.txt
 # echo 'alias vim="nvim"' >> test.txt
+
+# font cica
+sudo pacman -Suy unzip
+FONT_CICA_TERGET=Cica_${FONT_CICA}_with_emoji.zip
+FONT_CICA_TEMP_DIR=./font_tmp
+if [ ! -e $FONT_CICA_TEMP_DIR ]; then
+  mkdir $FONT_CICA_TEMP_DIR
+fi
+cd $FONT_CICA_TEMP_DIR
+curl -OL https://github.com/miiton/Cica/releases/download/${FONT_CICA}/${FONT_CICA_TERGET}
+unzip $FONT_CICA_TERGET
+
+FONTS_DIR=~/.fonts
+if [ ! -e $FONTS_DIR ]; then
+  mkdir $FONTS_DIR
+fi
+mv ./Cica*.ttf ~/.fonts/
+fc-cache -fv
+cd ~/dotfiles
+rm -rf $FONT_CICA_TEMP_DIR
 
 echo "check os..."
 if [ "$OS" = 'Mac' ]; then
