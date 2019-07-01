@@ -49,7 +49,7 @@ fi
 rm -rf ${TMUX_DIR}/bin
 ln -sf ~/dotfiles/.tmux/bin/ ${TMUX_DIR}/bin
 rm -rf ${TMUX_PLUGINS_DIR}/tpm
-ln -sf ~/dotfiles/.tmux/plugins/tpm/ ${TMUX_PLUGINS_DIR}/tmp
+ln -sf ~/dotfiles/.tmux/plugins/tpm/ ${TMUX_PLUGINS_DIR}/tpm
 rm -rf ~/git/tmux-powerline
 ln -sf ~/dotfiles/.tmux/git/tmux-powerline/ ~/git/tmux-powerline
 
