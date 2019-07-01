@@ -39,6 +39,8 @@ colorscheme onedark
 set guifont=Cica:h16
 set printfont=Cica:h12
 set ambiwidth=single
+" set ambiwidth=double
+
 
 " setting
 "文字コードをUFT-8に設定
@@ -172,4 +174,6 @@ function! s:denite_my_settings() abort
   nnoremap <silent><buffer><expr> <Space>
   \ denite#do_map('toggle_select').'j'
 endfunction
+
+set tags+=.git/tags
 
