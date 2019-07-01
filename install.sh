@@ -2,6 +2,8 @@
 
 echo "setup start"
 
+FONT_CICA='v5.0.1'
+
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
 elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
@@ -39,8 +41,17 @@ rm -f ~/.gvimrc
 ln -s ~/dotfiles/.gvimrc ~/.gvimrc
 
 #tmux
-rm -rf ~/.tmux
-ln -sf ~/dotfiles/.tmux/ ~/.tmux
+TMUX_DIR=~/.tmux
+TMUX_PLUGINS_DIR=${TMUX_DIR}/plugins
+if [ ! -e $TMUX_PLUGINS_DIR ]; then
+  mkdir -p $TMUX_PLUGINS_DIR
+fi
+rm -rf ${TMUX_DIR}/bin
+ln -sf ~/dotfiles/.tmux/bin/ ${TMUX_DIR}/bin
+rm -rf ${TMUX_PLUGINS_DIR}/tpm
+ln -sf ~/dotfiles/.tmux/plugins/tpm/ ${TMUX_PLUGINS_DIR}/tmp
+rm -rf ~/git/tmux-powerline
+ln -sf ~/dotfiles/.tmux/git/tmux-powerline/ ~/git/tmux-powerline
 
 rm -f ~/.tmux.conf
 ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
@@ -69,7 +80,7 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
   OPAM_DIR=$HOME/.opam
   if [ ! -e $OPAM_DIR ]; then
     info "installing opam..."
-    sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh)
+    curl -sL --proto-redir -all,https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh | sh
     $SHELL
     opam init
   else
@@ -95,7 +106,24 @@ anyenv install --init
 # echo 'alias vim="nvim"' >> test.txt
 
 # font cica
-curl -oL https://github.com/miiton/Cica/releases/download/v5.0.1/Cica_v5.0.1_with_emoji.zip
+sudo pacman -Suy unzip
+FONT_CICA_TERGET=Cica_${FONT_CICA}_with_emoji.zip
+FONT_CICA_TEMP_DIR=./font_tmp
+if [ ! -e $FONT_CICA_TEMP_DIR ]; then
+  mkdir $FONT_CICA_TEMP_DIR
+fi
+cd $FONT_CICA_TEMP_DIR
+curl -OL https://github.com/miiton/Cica/releases/download/${FONT_CICA}/${FONT_CICA_TERGET}
+unzip $FONT_CICA_TERGET
+
+FONTS_DIR=~/.fonts
+if [ ! -e $FONTS_DIR ]; then
+  mkdir $FONTS_DIR
+fi
+mv ./Cica*.ttf ~/.fonts/
+fc-cache -fv
+cd ~/dotfiles
+rm -rf $FONT_CICA_TEMP_DIR
 
 echo "check os..."
 if [ "$OS" = 'Mac' ]; then
