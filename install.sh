@@ -31,8 +31,8 @@ rm -rf ~/.mutt
 ln -sf ~/dotfiles/.mutt ~/.mutt
 
 # vim
-rm -rf ~/.vim
-ln -sf ~/dotfiles/.vim ~/.vim
+#rm -rf ~/.vim
+#ln -sf ~/dotfiles/.vim ~/.vim
 
 rm -f ~/.vimrc
 ln -s ~/dotfiles/.vimrc ~/.vimrc
