@@ -30,9 +30,12 @@ arch)
 
   yay -S neovim \
     neomutt \
-    w3m
+    w3m \
+    mpv
 
-  pip2 install requests
+  sudo pip2 install requests
+
+  sudo pip3 install mps-youtube
   ;;
 *)
     echo "unsupported"
