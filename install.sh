@@ -12,7 +12,6 @@ else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
 fi
-
 # neovim
 echo "neovim"
 rm -rf ~/.config/nvim
@@ -65,6 +64,19 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
   fi
 }
 
+# opam
+: "install opam" && {
+  OPAM_DIR=$HOME/.opam
+  if [ ! -e $OPAM_DIR ]; then
+    info "installing opam..."
+    sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh)
+    $SHELL
+    opam init
+  else
+    warn "opam is already installed"
+  fi
+}
+
 # anyenv
 rm -rf ~/.anyenv
 ln -sf ~/dotfiles/.anyenv ~/.anyenv
@@ -81,6 +93,9 @@ anyenv install --init
 # sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
 # echo 'alias vi="nvim"' >> test.txt
 # echo 'alias vim="nvim"' >> test.txt
+
+# font cica
+curl -oL https://github.com/miiton/Cica/releases/download/v5.0.1/Cica_v5.0.1_with_emoji.zip
 
 echo "check os..."
 if [ "$OS" = 'Mac' ]; then

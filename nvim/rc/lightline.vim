@@ -32,7 +32,7 @@ function! LightLineReadonly()
     if &filetype == "help"
         return ""
     elseif &readonly
-        return ""
+        return " "
     else
         return ""
     endif
@@ -41,7 +41,7 @@ endfunction
 function! LightLineFugitive()
     if exists("*fugitive#head")
         let _ = fugitive#head()
-        return strlen(_) ? ''._ : ''
+        return strlen(_) ? 'branch '._ : ''
     endif
     return ''
 endfunction
