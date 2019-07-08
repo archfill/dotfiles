@@ -5,7 +5,7 @@ if git_status=$(cd $1 && git status 2>/dev/null ); then
   case $git_status in
     *Changes\ not\ staged* ) state="#[bg=colour013,fg=black] ± #[fg=default]" ;;
     *Changes\ to\ be\ committed* ) state="#[bg=blue,fg=black] + #[default]" ;; 
-    * ) state="#[bg=green,fg=black] ✔ #[default]" ;;
+    * ) state="#[bg=green,fg=black] ✔  #[default]" ;;
   esac
   if [[ $git_branch = "master" ]]; then
     git_info="#[underscore]#[bg=black,fg=blue]  ${git_branch} #[default]${state}"
