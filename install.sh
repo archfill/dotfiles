@@ -80,8 +80,10 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
   OPAM_DIR=$HOME/.opam
   if [ ! -e $OPAM_DIR ]; then
     info "installing opam..."
-    curl -sL --proto-redir -all,https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh | sh
-    $SHELL
+    mkdir opam-work && cd opam-work
+    curl -OL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh
+    chmod +x ./install.sh
+    sh ./install.sh
     opam init
   else
     warn "opam is already installed"
