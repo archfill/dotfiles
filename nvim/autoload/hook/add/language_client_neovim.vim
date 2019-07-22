@@ -32,9 +32,9 @@ function! hook#add#language_client_neovim#load() abort
         \ '-noverify',
         \ '-Xmx1G',
         \ '-jar',
-        \ expand(g:outher_package_path) . '/jdt-lsp/plugins/org.eclipse.equinox.launcher_1.5.0.v20180207-1446.jar',
+        \ expand(g:outher_package_path) . '/jdt-lsp/plugins/' . expand(g:ldt_lsp_jar_name) . '.jar',
         \ '-configuration',
-        \ expand(g:outher_package_path) . '/jdt-lsp/config_mac',
+        \ expand(g:outher_package_path) . '/jdt-lsp/' . expand(g:ldt_lsp_config),
         \ '-data',
         \ l:jdt_lsp_data_dir]
 

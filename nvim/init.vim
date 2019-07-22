@@ -8,8 +8,19 @@ let $CACHE = empty($XDG_CACHE_HOME) ? expand('$HOME/.cache') : $XDG_CACHE_HOME
 let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME
 let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME
 
+let g:google_java_formatter_jar_name = expand('google-java-format-1.7')
 let g:outher_package_path = expand('$CONFIG/package')
-let g:google_java_formatter = expand(g:outher_package_path) . "/google-java-format-1.5-all-deps.jar"
+let g:google_java_formatter = expand(g:outher_package_path) . "/" . expand(g:google_java_formatter_jar_name) . "-all-deps.jar"
+let g:ldt_lsp_jar_name = expand('org.eclipse.equinox.launcher_1.5.500.v20190715-1310')
+
+" windows mac linux env
+if has('unix')
+  let g:ldt_lsp_config = expand('config_linux')
+elseif has('mac')
+  let g:ldt_lsp_config = expand('config_mac')
+elseif has('win64') || has('win32')
+  let g:ldt_lsp_config = expand('config_win')
+endif
 
 " Load rc file
 function! s:load(file) abort
