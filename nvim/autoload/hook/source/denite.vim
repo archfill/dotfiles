@@ -12,13 +12,13 @@ function! hook#source#denite#load() abort
   
   " Change denite default options
   " neovim v0.4.0以降有効にする
-  " call denite#custom#option('default', {
-  "   \ 'split': 'floating',
-  "   \ 'winwidth': float2nr(&columns * s:denite_win_width_percent),
-  "   \ 'wincol': float2nr((&columns - (&columns * s:denite_win_width_percent)) / 2),
-  "   \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
-  "   \ 'winrow': float2nr((&lines - (&lines * s:denite_win_height_percent)) / 2),
-  "   \ })
+  call denite#custom#option('default', {
+    \ 'split': 'floating',
+    \ 'winwidth': float2nr(&columns * s:denite_win_width_percent),
+    \ 'wincol': float2nr((&columns - (&columns * s:denite_win_width_percent)) / 2),
+    \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
+    \ 'winrow': float2nr((&lines - (&lines * s:denite_win_height_percent)) / 2),
+    \ })
 
   if executable('rg')
     call denite#custom#var('file/rec', 'command',
