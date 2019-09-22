@@ -129,11 +129,11 @@ rm -rf $FONT_CICA_TEMP_DIR
 
 echo "check os..."
 if [ "$OS" = 'Mac' ]; then
-  sh ./install_mac.sh
+  bash ./install_mac.sh
 elif [ "$OS" = 'Linux' ]; then
-  sh ./install_linux.sh
+  bash ./install_linux.sh
 elif [ "$OS" = 'Cygwin' ]; then
-  sh ./install_cygwin.sh
+  bash ./install_cygwin.sh
 else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1

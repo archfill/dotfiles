@@ -13,7 +13,8 @@ ubuntu)
     python-pip \
     wget \
     w3m \
-    neomutt
+    neomutt \
+    silversearcher-ag
 
   pip install requests
 
