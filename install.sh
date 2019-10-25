@@ -16,36 +16,52 @@ else
 fi
 # neovim
 echo "neovim"
-rm -rf ~/.config/nvim
-ln -sf ~/dotfiles/nvim ~/.config/nvim
+NEOVIM_DIR=~/.config/nvim
+unlink $NEOVIM_DIR
+rm -rf $NEOVIM_DIR
+ln -sf ~/dotfiles/nvim $NEOVIM_DIR
 
 # alacritty
 echo "alactritty"
-rm -rf ~/.config/alacritty
-ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
+ALACTRITTY_DIR=~/.config/alacritty
+unlink $ALACTRITTY_DIR
+rm -rf $ALACTRITTY_DIR
+ln -sf ~/dotfiles/.config/alacritty $ALACTRITTY_DIR
 
 # neomutt
-rm -f ~/.muttrc
-ln -s ~/dotfiles/.muttrc ~/.muttrc
-rm -rf ~/.mutt
-ln -sf ~/dotfiles/.mutt ~/.mutt
+MUTTRC_FILE=~/.muttrc
+unlink $MUTTRC_FILE
+rm -f $MUTTRC_FILE
+ln -s ~/dotfiles/.muttrc $MUTTRC_FILE
+MUTT_DIR=~/.mutt
+unlink $MUTT_DIR
+rm -rf $MUTT_DIR
+ln -sf ~/dotfiles/.mutt $MUTT_DIR
 
 # vim
 #rm -rf ~/.vim
 #ln -sf ~/dotfiles/.vim ~/.vim
 
-rm -f ~/.vimrc
-ln -s ~/dotfiles/.vimrc ~/.vimrc
+VIMRC_FILE=~/.vimrc
+unlink $VIMRC_FILE
+rm -f $VIMRC_FILE
+ln -s ~/dotfiles/.vimrc $VIMRC_FILE
 
-rm -f ~/.gvimrc
-ln -s ~/dotfiles/.gvimrc ~/.gvimrc
+GVIMRC_FILE=~/.gvimrc
+unlink $GVIMRC_FILE
+rm -f $GVIMRC_FILE
+ln -s ~/dotfiles/.gvimrc $GVIMRC_FILE
 
 #tmux
 TMUX_DIR=~/.tmux
 TMUX_PLUGINS_DIR=${TMUX_DIR}/plugins
+unlink ${TMUX_DIR}
+
 if [ ! -e $TMUX_PLUGINS_DIR ]; then
   mkdir -p $TMUX_PLUGINS_DIR
 fi
+
+unlink ${TMUX_DIR}/bin
 rm -rf ${TMUX_DIR}/bin
 ln -sf ~/dotfiles/.tmux/bin/ ${TMUX_DIR}/bin
 rm -rf ${TMUX_PLUGINS_DIR}/tpm

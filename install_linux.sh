@@ -5,8 +5,8 @@ echo "Linux config start"
 declare -a info=($(./get_os_info.sh))
 
 case ${info[0]} in
-ubuntu)
-  echo "ubuntu"
+"ubuntu" | "debian" )
+  echo "debian or ubuntu"
     
   sudo apt update
   sudo apt install -y python \
@@ -22,7 +22,7 @@ ubuntu)
       echo x86_64
   fi
   ;;
-arch)
+"arch" )
   echo "arch"
   sudo pacman -Sy
   sudo pacman -S python2 \
