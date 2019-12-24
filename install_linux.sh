@@ -5,8 +5,9 @@ echo "Linux config start"
 declare -a info=($(./get_os_info.sh))
 
 case ${info[0]} in
+debian)
 ubuntu)
-  echo "ubuntu"
+  echo "debian or ubuntu"
     
   sudo apt update
   sudo apt install -y python \
