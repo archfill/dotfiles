@@ -175,3 +175,6 @@ repo = 'joshdick/onedark.vim'
 
 [[plugins]]
 repo = 'soramugi/auto-ctags.vim'
+
+[[plugins]]
+repo = 'mattn/emmet-vim'
