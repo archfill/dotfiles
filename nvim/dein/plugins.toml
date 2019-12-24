@@ -95,15 +95,11 @@ repo = 'tpope/vim-fugitive'
 [[plugins]]
 repo = 'scrooloose/nerdtree'
 
-# autozimu/LanguageClinet-neovim
+# neoclide/coc.nvim
 [[plugins]]
-repo = 'autozimu/LanguageClient-neovim'
-rev = 'next'
-build = 'bash install.sh'
-# プラグインが読み込まれる際に呼び出されるコールバック
-hook_add         = 'call hook#add#language_client_neovim#load()'
-# プラグインのアップデート時に呼び出されるコールバック
-hook_post_update = 'call hook#post_update#language_client_neovim#load()'
+repo = 'neoclide/coc.nvim'
+rev = 'release'
+merged = '0'
 
 [[plugins]]
 repo = 'Shougo/neosnippet.vim'
@@ -178,3 +174,11 @@ repo = 'soramugi/auto-ctags.vim'
 
 [[plugins]]
 repo = 'mattn/emmet-vim'
+
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+depends = ['coc.nvim', 'lightline.vim']
+hook_add = '''
+  nmap <silent> <C-f><C-v> :<C-u>Vista coc<CR>
+  nmap <silent> <C-f><C-s> :<C-u>Vista finder coc<CR>
+'''

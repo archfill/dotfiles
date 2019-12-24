@@ -2,7 +2,9 @@ let g:lightline = {
 \ 'colorscheme': 'solarized',
 \ 'active': {
 \   'left': [ [ 'mode', 'paste' ],
-\             [ 'fugitive', 'filename' ] ]
+\             [ 'fugitive', 'filename' ],
+\             [ 'vista' ],
+\           ]
 \ },
 \ 'component_function': {
 \   'fugitive': 'LightLineFugitive',
@@ -11,6 +13,7 @@ let g:lightline = {
 \   'filename': 'LightLineFilename',
 \   'filetype': 'LightLineFiletype',
 \   'fileformat': 'LightLineFileformat',
+\   'vista': 'NearestMethodOrFunction',
 \ },
 \ 'separator': { 'left': "\ue0b0 ", 'right': "\ue0b2 " },
 \ 'subseparator': { 'left': "\ue0b1 ", 'right': "\ue0b3 " }
@@ -58,4 +61,8 @@ endfunction
 
 function! LightLineFileformat()
   return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+endfunction
+
+function! NearestMethodOrFunction() abort
+  return get(b:, 'vista_nearest_method_or_function', '')
 endfunction
