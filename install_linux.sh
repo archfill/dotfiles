@@ -23,7 +23,7 @@ ubuntu)
       echo x86_64
   fi
   ;;
-arch)
+"arch" )
   echo "arch"
   sudo pacman -Sy
   sudo pacman -S python2 \

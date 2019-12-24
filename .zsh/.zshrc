@@ -101,6 +101,8 @@ test -r /home/chillda/.opam/opam-init/init.zsh && . /home/chillda/.opam/opam-ini
 eval $(opam env)
 
 export LANG=ja_JP.UTF-8
+export ANDROID_HOME=$HOME/AndroidTools
+export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
 
 function precmd() {
   if [ ! -z $TMUX ]; then
