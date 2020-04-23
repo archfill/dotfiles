@@ -5,8 +5,7 @@ echo "Linux config start"
 declare -a info=($(./get_os_info.sh))
 
 case ${info[0]} in
-debian)
-ubuntu)
+debian | ubuntu)
   echo "debian or ubuntu"
     
   sudo apt update
