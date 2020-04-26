@@ -103,6 +103,8 @@ eval $(opam env)
 export LANG=ja_JP.UTF-8
 export ANDROID_HOME=$HOME/AndroidTools
 export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
+# golang
+export PATH=$PATH:/usr/local/go/bin
 
 function precmd() {
   if [ ! -z $TMUX ]; then
