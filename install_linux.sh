@@ -32,7 +32,8 @@ debian | ubuntu)
   yay -S neovim \
     neomutt \
     w3m \
-    mpv
+    mpv \
+    the_silver_searcher
 
   sudo pip2 install requests
 
