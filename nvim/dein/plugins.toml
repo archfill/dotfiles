@@ -145,10 +145,6 @@ repo = 'terryma/vim-multiple-cursors'
 #Chiel92/vim-autoformat
 [[plugins]]
 repo = 'Chiel92/vim-autoformat'
-# プラグイン読み込み時のコールバック
-hook_add         = 'call hook#add#vim_autoformat#load()'
-# プラグインアップデート時のコールバック
-hook_post_update = 'call hook#post_update#vim_autoformat#load()'
 
 [[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
 repo = 'osyo-manga/vim-precious'
@@ -176,9 +172,12 @@ repo = 'soramugi/auto-ctags.vim'
 repo = 'mattn/emmet-vim'
 
 [[plugins]]
+repo = 'junegunn/fzf.vim'
+
+[[plugins]]
 repo = 'liuchengxu/vista.vim'
 depends = ['coc.nvim', 'lightline.vim']
-hook_add = '''
-  nmap <silent> <C-f><C-v> :<C-u>Vista coc<CR>
-  nmap <silent> <C-f><C-s> :<C-u>Vista finder coc<CR>
-'''
+
+[[plugins]]
+repo = 'skanehira/vsession'
+
