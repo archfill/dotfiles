@@ -12,6 +12,8 @@ let g:google_java_formatter_jar_name = expand('google-java-format-1.7')
 let g:outher_package_path = expand('$CONFIG/package')
 let g:google_java_formatter = expand(g:outher_package_path) . "/" . expand(g:google_java_formatter_jar_name) . "-all-deps.jar"
 let g:ldt_lsp_jar_name = expand('org.eclipse.equinox.launcher_1.5.500.v20190715-1310')
+let g:python_host_prog = system('(type pyenv &>/dev/null && echo -n "$(pyenv root)/versions/$(pyenv global | grep python2)/bin/python") || echo -n $(which python2)')
+let g:python3_host_prog = system('(type pyenv &>/dev/null && echo -n "$(pyenv root)/versions/$(pyenv global | grep python3)/bin/python") || echo -n $(which python3)')
 
 " windows mac linux env
 if has('unix')
