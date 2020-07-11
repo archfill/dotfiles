@@ -1,0 +1,4 @@
+{
+  "java.jdt.ls.vmargs": "-javaagent:/Users/chillrf/bin/java/lombok.jar -Xbootclasspath/a:/Users/chillrf/bin/java/lombok.jar",
+  "eslint.filetypes": ["javascript", "vue"]
+}

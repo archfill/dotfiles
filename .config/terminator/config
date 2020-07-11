@@ -8,8 +8,12 @@
   hide_window = <Shift>F12
 [profiles]
   [[default]]
+    background_darkness = 0.8
+    background_type = transparent
     cursor_color = "#aaaaaa"
     font = Cica 12
+    palette = "#000000:#cc0000:#4e9a06:#c4a000:#3465a4:#75507b:#06989a:#d3d7cf:#555753:#ef2929:#8ae234:#fce94f:#729fcf:#ad7fa8:#34e2e2:#eeeeec"
+    login_shell = True
     use_system_font = False
   [[OneHalfDark]]
     background_color = "#282c34"
@@ -21,11 +25,32 @@
     palette = "#282c34:#e06c75:#98c379:#e5c07b:#61afef:#c678dd:#56b6c2:#dcdfe4:#282c34:#e06c75:#98c379:#e5c07b:#61afef:#c678dd:#56b6c2:#dcdfe4"
     login_shell = True
     use_system_font = False
+  [[MonokaiPro]]
+    background_color = "#403e41"
+    background_darkness = 0.8
+    background_type = transparent
+    cursor_color = "#fcfcfa"
+    cursor_color_fg = False
+    font = Cica 12
+    foreground_color = "#fcfcfa"
+    palette = "#403e41:#ff6188:#a9dc76:#ffd866:#fc9867:#ab9df2:#78dce8:#fcfcfa:#727072:#ff6188:#a9dc76:#ffd866:#fc9867:#ab9df2:#78dce8:#fcfcfa"
+    login_shell = True
+    use_system_font = False
+  [[theone]]
+    background_color = "#272b33"
+    background_darkness = 0.8
+    background_type = transparent
+    cursor_color = "#abb2c0"
+    font = Cica 12
+    foreground_color = "#abb2c0"
+    palette = "#272b33:#e06c75:#98c379:#d19a66:#61afef:#c678dd:#56b6c2:#abb2c0:#272b33:#e5c07b:#5c6370:#828997:#abb2bf:#c678dd:#abb2bf:#abb2c0"
+    login_shell = True
+    use_system_font = False
 [layouts]
   [[default]]
     [[[child1]]]
       parent = window0
-      profile = OneHalfDark
+      profile = theone
       type = Terminal
     [[[window0]]]
       parent = ""

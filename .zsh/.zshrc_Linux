@@ -1,0 +1,14 @@
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+fvim() {
+  files=$(git ls-files) &&
+  selected_files=$(echo "$files" | fzf -m --preview 'head -100 {}') &&
+  vim $selected_files
+}
+
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+        source /etc/profile.d/vte.sh
+fi
