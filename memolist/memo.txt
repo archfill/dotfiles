@@ -1,0 +1,11 @@
+
+Exception
+
+request.json
+{"company_code": "37439408", "employee_code": "80021", "office_code": "", "office_name": "", "place_code": "", "place_name": "", "all_search_flag": false}
+
+stacktrace
+Traceback (most recent call last):
+  File "/Users/chillrf/git/work/artemis/jp/co/linkpoint/artemis/api/restful_api_view_office_list.py", line 157, in post
+    "update_count": office.update_count
+AttributeError: 'result' object has no attribute 'update_count'
