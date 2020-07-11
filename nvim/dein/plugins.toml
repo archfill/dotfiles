@@ -16,12 +16,12 @@ hook_add = '''
 source ~/.config/nvim/rc/lightline.vim
 '''
 
-[[plugins]]
-repo = 'maximbaz/lightline-ale'
-depends = ['lightline.vim', 'ale']
-hook_add = '''
-source ~/.config/nvim/rc/lightline-ale.vim
-'''
+#[[plugins]]
+#repo = 'maximbaz/lightline-ale'
+#depends = ['lightline.vim', 'ale']
+#hook_add = '''
+#source ~/.config/nvim/rc/lightline-ale.vim
+#'''
 
 # Toml
 [[plugins]]
@@ -61,11 +61,11 @@ nmap <Space>/ <Plug>(operator-search)if
 '''
 
 # ale
-[[plugins]]
-repo = 'w0rp/ale'
-hook_add = '''
-source ~/.config/nvim/rc/ale.vim
-'''
+#[[plugins]]
+#repo = 'w0rp/ale'
+#hook_add = '''
+#source ~/.config/nvim/rc/ale.vim
+#'''
 
 # vim-table-mode
 [[plugins]]
@@ -146,9 +146,9 @@ repo = 'terryma/vim-multiple-cursors'
 [[plugins]]
 repo = 'Chiel92/vim-autoformat'
 
-[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
-repo = 'osyo-manga/vim-precious'
-depends = ['context_filetype.vim']
+#[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
+#repo = 'osyo-manga/vim-precious'
+#depends = ['context_filetype.vim']
 
 [[plugins]] # カーソル位置のコンテキストのftを判定するライブラリ
 repo = 'Shougo/context_filetype.vim'
@@ -180,4 +180,19 @@ depends = ['coc.nvim', 'lightline.vim']
 
 [[plugins]]
 repo = 'skanehira/vsession'
+
+[[plugins]]
+repo = 'wakatime/vim-wakatime'
+
+[[plugins]]
+repo = 'markonm/traces.vim'
+
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+
+[[plugins]]
+repo = 'andymass/vim-matchup'
+
+[[plugins]]
+repo = 'mhinz/vim-startify'
 

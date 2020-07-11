@@ -8,8 +8,11 @@ let $CACHE = empty($XDG_CACHE_HOME) ? expand('$HOME/.cache') : $XDG_CACHE_HOME
 let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME
 let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME
 
-let g:python_host_prog = system('(type pyenv &>/dev/null && echo -n "$(pyenv root)/versions/$(pyenv global | grep python2)/bin/python") || echo -n $(which python2)')
-let g:python3_host_prog = system('(type pyenv &>/dev/null && echo -n "$(pyenv root)/versions/$(pyenv global | grep python3)/bin/python") || echo -n $(which python3)')
+if has('mac')
+" Mac の共通設定
+  set rtp+=/usr/local/opt/fzf
+  let g:memolist_path = expand('$HOME/dotfiles/memolist')
+endif
 
 " Load rc file
 function! s:load(file) abort
@@ -27,6 +30,8 @@ nnoremap : ;
 
 nnoremap <F3> :noh<CR>
 
+" set clipboard=unnamed,autoselect
+
 if has('nvim')
   set sh=zsh
   au TermOpen * tnoremap <ESC> <C-\><C-n>
@@ -39,7 +44,7 @@ set background=dark
 colorscheme onedark
 
 " font
-set guifont=Cica:h16
+" set guifont=Cica:h16
 set printfont=Cica:h12
 set ambiwidth=single
 " set ambiwidth=double
@@ -75,7 +80,7 @@ set number
 " 現在の行を強調表示
 set cursorline
 " 現在の行を強調表示（縦）
-set cursorcolumn
+"set cursorcolumn
 " 行末の1文字先までカーソルを移動できるように
 set virtualedit=onemore
 " インデントはスマートインデント
@@ -148,6 +153,12 @@ call NERDTreeHighlightFile('vue',    'Green',   'none', '#4fc08d', '#4fc08d')
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['vue'] = ''
+" アイコン入力方法 : `[Ctrl+V]` > `[u]` > `e905`
+let g:NERDTreeExtensionHighlightColor = {}
+let g:NERDTreeExtensionHighlightColor['vue'] = '42B983'
+
 if !has('gui_running')
   map "in Insert mode, type Ctrl+v Alt+n here" <A-n>
 endif
@@ -185,8 +196,8 @@ function! s:denite_my_settings() abort
 endfunction
 
 "Vista config
-nnoremap <C-f><C-v> :<C-u>Vista coc<CR>
-nnoremap <C-f><C-s> :<C-u>Vista finder coc<CR>
+nnoremap fv :<C-u>Vista coc<CR>
+nnoremap fs :<C-u>Vista finder coc<CR>
 
 "coc config
 " Use <c-space> to trigger completion.
@@ -341,6 +352,45 @@ nnoremap <silent> ,b :Buffers<CR>
 nnoremap <silent> ,l :BLines<CR>
 nnoremap <silent> ,h :History<CR>
 nnoremap <silent> ,m :Mark<CR>
+
+" ghq config
+function! s:cd_repo(shell, repo) abort
+  exe 'lcd' trim(system('ghq root')) .. '/' .. a:repo
+  pwd
+endfunction
+
+function! s:repo(multi, cb) abort
+  if executable('ghq') && exists('*fzf#run()') && executable('fzf')
+    call fzf#run({
+          \ 'source': systemlist('ghq list'),
+          \ 'sink': a:cb,
+          \ 'options': a:multi,
+          \ 'down': '40%'},
+          \ )
+  else
+    echo "doesn't installed ghq or fzf.vim(require fzf)"
+  endif
+endfunction
+
+command! Repo call s:repo('+m', function('s:cd_repo', [&shell]))
+
+" vim-fugitive config
+nnoremap <leader>gs :tab sp<CR>:Gstatus<CR>:only<CR>
+nnoremap <leader>ga :Gwrite<CR>
+nnoremap <leader>gc :Gcommit<CR>
+nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>gl :Git log<CR>
+nnoremap <leader>gh :tab sp<CR>:0Glog<CR>
+" abbrev for `git history`: create new quickfix tab for history
+nnoremap <leader>gp :Gpush<CR>
+nnoremap <leader>gf :Gfetch<CR>
+nnoremap <leader>gd :Gvdiff<CR>
+nnoremap <leader>gr :Grebase -i<CR>
+nnoremap <leader>gg :Ggrep 
+nnoremap <leader>gm :Gmerge
+
+" autohighlight vue file
+autocmd FileType vue syntax sync fromstart
 
 set tags+=.git/tags
 

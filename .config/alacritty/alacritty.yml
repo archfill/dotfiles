@@ -61,13 +61,13 @@ scrolling:
   # to allow mouse scrolling for applications like `man`.
   #
   # Specifying `0` will disable faux scrolling.
-  faux_multiplier: 3
+  # faux_multiplier: 3
 
   # Scroll to the bottom when new text is written to the terminal.
-  auto_scroll: false
+  # auto_scroll: false
 
 # Display tabs using this many cells (changes require restart)
-tabspaces: 8
+# tabspaces: 8
 
 # Font configuration (changes require restart)
 font:
@@ -93,7 +93,7 @@ font:
     # style: Italic
 
   # Point size of the font
-  size: 16.0
+  size: 14.0
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.

@@ -17,3 +17,9 @@ repo = 'Shougo/denite.nvim'
 hook_add = 'call hook#add#denite#load()'
 hook_source = 'call hook#source#denite#load()'
 
+[[plugins]]
+repo = 'posva/vim-vue'
+hook_add = '''
+source ~/.config/nvim/rc/vim-vue.vim
+'''
+

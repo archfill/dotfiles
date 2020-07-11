@@ -111,3 +111,5 @@ function precmd() {
     tmux refresh-client -S
   fi
 }
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
