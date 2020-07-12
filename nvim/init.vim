@@ -14,6 +14,10 @@ if has('mac')
   let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
+if has('unix')
+  let g:memolist_path = expand('$HOME/dotfiles/memolist')
+endif
+
 " Load rc file
 function! s:load(file) abort
     let s:path = expand('$CONFIG/nvim/rc/' . a:file . '.vim')
