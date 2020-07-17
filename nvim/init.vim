@@ -18,6 +18,13 @@ if has('unix')
   let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
+if has('nvim')
+  set sh=zsh
+  au TermOpen * tnoremap <ESC> <C-\><C-n>
+  au FileType fzf tunmap <ESC>
+else
+endif
+
 " Load rc file
 function! s:load(file) abort
     let s:path = expand('$CONFIG/nvim/rc/' . a:file . '.vim')
@@ -35,12 +42,6 @@ nnoremap : ;
 nnoremap <F3> :noh<CR>
 
 " set clipboard=unnamed,autoselect
-
-if has('nvim')
-  set sh=zsh
-  au TermOpen * tnoremap <ESC> <C-\><C-n>
-  au FileType fzf tunmap <ESC>
-endif
 
 syntax enable
 set background=dark
@@ -97,6 +98,7 @@ set showmatch
 set laststatus=2
 " コマンドラインの補完
 set wildmode=list:longest
+set wildignore+=node_modules/**,.git/**
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap j gj
 nnoremap k gk

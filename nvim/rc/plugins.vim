@@ -20,6 +20,12 @@ endif
 
 call dein#begin(s:dein_dir, expand('<sfile>'))
 
+if !has('nvim')
+    call dein#add('roxma/nvim-yarp')
+    call dein#add('roxma/vim-hug-neovim-rpc')
+endif
+
+
 let s:toml_dir = expand('$CONFIG/nvim/dein')
 
 call dein#load_toml(s:toml_dir . '/plugins.toml', {'lazy': 0})
