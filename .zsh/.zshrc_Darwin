@@ -3,3 +3,5 @@ PATH=${JAVA_HOME}/bin:${PATH}
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+alias mvim=/Applications/MacVim.app/Contents/bin/mvim "$@"
