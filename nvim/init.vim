@@ -398,5 +398,27 @@ nnoremap <leader>gm :Gmerge
 " autohighlight vue file
 autocmd FileType vue syntax sync fromstart
 
+command! -nargs=0 Fq call fzf#run({
+\ 'source': 'ghq list --full-path',
+\ 'sink': 'cd'
+\ })
+
+set list
+set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
+
+"全角スペースをハイライト表示
+function! ZenkakuSpace()
+    highlight ZenkakuSpace cterm=reverse ctermfg=DarkMagenta gui=reverse guifg=DarkMagenta
+endfunction
+   
+if has('syntax')
+    augroup ZenkakuSpace
+        autocmd!
+        autocmd ColorScheme       * call ZenkakuSpace()
+        autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+    augroup END
+    call ZenkakuSpace()
+endif
+
 set tags+=.git/tags
 
