@@ -15,6 +15,7 @@ if has('mac')
 endif
 
 if has('unix')
+  set rtp+=~/.fzf
   let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
