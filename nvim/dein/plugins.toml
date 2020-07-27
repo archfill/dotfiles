@@ -196,3 +196,12 @@ repo = 'andymass/vim-matchup'
 [[plugins]]
 repo = 'mhinz/vim-startify'
 
+[[plugins]]
+repo = 'preservim/nerdcommenter'
+
+[[plugins]]
+repo = 'itchyny/calendar.vim'
+
+[[plugins]]
+repo = 'Xuyuanp/nerdtree-git-plugin'
+
