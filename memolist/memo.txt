@@ -15,3 +15,17 @@ coc-css       coc-docker    coc-emmet     coc-eslint    coc-git       coc-highli
 
 coc-css coc-docker coc-emmet coc-eslint coc-git coc-highlight coc-html coc-java coc-lists coc-pairs coc-prettier coc-python coc-sh coc-snippets coc-sql coc-tsserver coc-vetur coc-vimlsp coc-yank
 
+
+項目追加しました。
+
+/view/company
+
+"label_system_company_flg": "システム管理会社フラグ"
+"system_company_flg": 1
+
+/view/menu/list
+
+"label_system_screen_flg": "システム画面フラグ"
+"label_screen_type": "画面種別"
+"system_screen_flg": 2
+"screen_type": 1
