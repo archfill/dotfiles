@@ -5,10 +5,13 @@ augroup END
 
 " ENV
 let $CACHE = empty($XDG_CACHE_HOME) ? expand('$HOME/.cache') : $XDG_CACHE_HOME
-let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME 
+let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME
+let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME
+
 if has('mac')
 " Mac の共通設定
-  set rtp+=/usr/local/opt/fzf let g:memolist_path = expand('$HOME/dotfiles/memolist')
+  set rtp+=/usr/local/opt/fzf
+  let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
 if has('unix')
