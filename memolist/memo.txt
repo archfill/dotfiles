@@ -15,17 +15,23 @@ coc-css       coc-docker    coc-emmet     coc-eslint    coc-git       coc-highli
 
 coc-css coc-docker coc-emmet coc-eslint coc-git coc-highlight coc-html coc-java coc-lists coc-pairs coc-prettier coc-python coc-sh coc-snippets coc-sql coc-tsserver coc-vetur coc-vimlsp coc-yank
 
+coc-css coc-docker coc-emmet coc-eslint coc-git coc-highlight coc-html coc-java coc-lists coc-pairs coc-prettier
+coc-python coc-sh coc-snippets coc-sql coc-tsserver coc-vetur coc-vimlsp coc-yank
 
-項目追加しました。
 
-/view/company
 
-"label_system_company_flg": "システム管理会社フラグ"
-"system_company_flg": 1
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00022', 'TOYOTAHO', 'human_resources', current_timestamp, 'admin', current_timestamp, 'admin', 1);
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00022', 'TOYOTAHO', 'accounting', current_timestamp, 'admin', current_timestamp, 'admin', 1);
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00022', 'TOYOTAHO', 'project_management', current_timestamp, 'admin', current_timestamp, 'admin', 1);
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00022', 'TOYOTAHO', 'administration', current_timestamp, 'admin', current_timestamp, 'admin', 1);
 
-/view/menu/list
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00021', 'H1', 'human_resources', current_timestamp, 'admin', current_timestamp, 'admin', 1);
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00021', 'H1', 'accounting', current_timestamp, 'admin', current_timestamp, 'admin', 1);
+insert into m_employee_group_role (company_code ,employee_code ,group_code ,role_code ,create_date ,create_employee_code ,update_date ,update_employee_code ,update_count ) values('37439408', '00021', 'H1', 'administration', current_timestamp, 'admin', current_timestamp, 'admin', 1);
 
-"label_system_screen_flg": "システム画面フラグ"
-"label_screen_type": "画面種別"
-"system_screen_flg": 2
-"screen_type": 1
+
+call vimspector#LaunchWithSettings({'configuration': 'python_file'})
+call vimspector#LaunchWithSettings({'configuration': 'flask'})
+
+true color check
+curl -s https://gist.githubusercontent.com/lifepillar/09a44b8cf0f9397465614e622979107f/raw/24-bit-color.sh | bash
