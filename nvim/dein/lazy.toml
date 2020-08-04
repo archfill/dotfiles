@@ -23,3 +23,8 @@ hook_add = '''
 source ~/.config/nvim/rc/vim-vue.vim
 '''
 
+[[plugins]]
+repo = "puremourning/vimspector"
+on_ft = ["python", "javascript", "rust"]
+build = "./install_gadget.py --enable-python --force-enable-node --force-enable-rust"
+
