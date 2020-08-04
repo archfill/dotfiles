@@ -62,8 +62,8 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 " font
 " set guifont=Cica:h16
 set printfont=Cica:h12
-set ambiwidth=single
-" set ambiwidth=double
+"set ambiwidth=single
+set ambiwidth=double
 
 
 " setting
