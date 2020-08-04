@@ -5,24 +5,28 @@ augroup END
 
 " ENV
 let $CACHE = empty($XDG_CACHE_HOME) ? expand('$HOME/.cache') : $XDG_CACHE_HOME
-let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME
-let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME
-
+let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME 
 if has('mac')
 " Mac の共通設定
-  set rtp+=/usr/local/opt/fzf
-  let g:memolist_path = expand('$HOME/dotfiles/memolist')
+  set rtp+=/usr/local/opt/fzf let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
 if has('unix')
   set rtp+=~/.fzf
   let g:memolist_path = expand('$HOME/dotfiles/memolist')
+
+  "fcitx ime 制御
+  function! ImInActivate()
+    call system('fcitx-remote -c')
+  endfunction
+  inoremap <silent> <C-[> <ESC>:call ImInActivate()<CR>
 endif
 
 if has('nvim')
   set sh=zsh
   au TermOpen * tnoremap <ESC> <C-\><C-n>
   au FileType fzf tunmap <ESC>
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 else
 endif
 
@@ -46,8 +50,11 @@ nnoremap <F3> :noh<CR>
 
 syntax enable
 set background=dark
-" colorscheme solarized
-colorscheme onedark
+"set background=light
+colorscheme iceberg
+set termguicolors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " font
 " set guifont=Cica:h16
@@ -152,10 +159,10 @@ call NERDTreeHighlightFile('json',   'yellow',  'none', 'yellow',  '#151515')
 call NERDTreeHighlightFile('html',   'yellow',  'none', 'yellow',  '#151515')
 call NERDTreeHighlightFile('styl',   'cyan',    'none', 'cyan',    '#151515')
 call NERDTreeHighlightFile('css',    'cyan',    'none', 'cyan',    '#151515')
-call NERDTreeHighlightFile('rb',     'Red',     'none', 'red',     '#151515')
-call NERDTreeHighlightFile('js',     'Red',     'none', '#ffa500', '#151515')
-call NERDTreeHighlightFile('php',    'Magenta', 'none', '#ff00ff', '#151515')
-call NERDTreeHighlightFile('vue',    'Green',   'none', '#4fc08d', '#4fc08d')
+call NERDTreeHighlightFile('rb',     'red',     'none', 'red',     '#151515')
+call NERDTreeHighlightFile('js',     'red',     'none', '#ffa500', '#151515')
+call NERDTreeHighlightFile('php',    'magenta', 'none', '#ff00ff', '#151515')
+call NERDTreeHighlightFile('vue',    'green',   'none', '#4fc08d', '#4fc08d')
 
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
@@ -419,6 +426,8 @@ command! -nargs=0 Fq call fzf#run({
 
 set list
 set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
+hi NonText    ctermbg=None ctermfg=None guibg=NONE guifg=#8f8f8f
+hi SpecialKey ctermbg=None ctermfg=None guibg=NONE guifg=#8f8f8f
 
 "全角スペースをハイライト表示
 function! ZenkakuSpace()
@@ -433,6 +442,16 @@ if has('syntax')
     augroup END
     call ZenkakuSpace()
 endif
+
+"透明化
+"highlight Normal ctermbg=none
+"highlight NonText ctermbg=none
+"highlight LineNr ctermbg=none
+"highlight Folded ctermbg=none
+"highlight EndOfBuffer ctermbg=none
+
+"vim debug
+let g:vimspector_enable_mappings = 'HUMAN'
 
 set tags+=.git/tags
 

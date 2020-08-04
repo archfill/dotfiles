@@ -116,36 +116,65 @@ font:
 # When true, bold text is drawn using the bright variant of colors.
 draw_bold_text_with_bright_colors: true
 
-# Colors (One Dark)
+# Colors (Iceberg Dark)
 colors:
   # Default colors
   primary:
-    background: '0x282c34'
-    foreground: '0xabb2bf'
+    background: '#161821'
+    foreground: '#d2d4de'
 
   # Normal colors
   normal:
-    # NOTE: Use '0x131613' for the `black` color if you'd like to see
-    # black text on the background.
-    black:   '0x282c34'
-    red:     '0xe06c75'
-    green:   '0x98c379'
-    yellow:  '0xd19a66'
-    blue:    '0x61afef'
-    magenta: '0xc678dd'
-    cyan:    '0x56b6c2'
-    white:   '0xabb2bf'
+    black:   '#161821'
+    red:     '#e27878'
+    green:   '#b4be82'
+    yellow:  '#e2a478'
+    blue:    '#84a0c6'
+    magenta: '#a093c7'
+    cyan:    '#89b8c2'
+    white:   '#c6c8d1'
 
   # Bright colors
   bright:
-    black:   '0x5c6370'
-    red:     '0xe06c75'
-    green:   '0x98c379'
-    yellow:  '0xd19a66'
-    blue:    '0x61afef'
-    magenta: '0xc678dd'
-    cyan:    '0x56b6c2'
-    white:   '0xffffff'
+    black:   '#6b7089'
+    red:     '#e98989'
+    green:   '#c0ca8e'
+    yellow:  '#e9b189'
+    blue:    '#91acd1'
+    magenta: '#ada0d3'
+    cyan:    '#95c4ce'
+    white:   '#d2d4de'
+
+# Colors (One Dark)
+#colors:
+  # Default colors
+  #primary:
+    #background: '0x282c34'
+    #foreground: '0xabb2bf'
+
+  # Normal colors
+  #normal:
+    # NOTE: Use '0x131613' for the `black` color if you'd like to see
+    # black text on the background.
+    #black:   '0x282c34'
+    #red:     '0xe06c75'
+    #green:   '0x98c379'
+    #yellow:  '0xd19a66'
+    #blue:    '0x61afef'
+    #magenta: '0xc678dd'
+    #cyan:    '0x56b6c2'
+    #white:   '0xabb2bf'
+
+  # Bright colors
+  #bright:
+    #black:   '0x5c6370'
+    #red:     '0xe06c75'
+    #green:   '0x98c379'
+    #yellow:  '0xd19a66'
+    #blue:    '0x61afef'
+    #magenta: '0xc678dd'
+    #cyan:    '0x56b6c2'
+    #white:   '0xffffff'
 
     ## Colors (Solarized Dark)
     #colors:
@@ -333,7 +362,7 @@ live_config_reload: true
 # Entries in shell.args are passed unmodified as arguments to the shell.
 #
 shell:
-  program: /usr/local/bin/zsh
+  program: /bin/zsh
   args:
     - --login
 

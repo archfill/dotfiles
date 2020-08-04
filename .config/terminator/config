@@ -1,4 +1,5 @@
 [global_config]
+  window_state = maximise
   title_transmit_bg_color = "#4e9a06"
   enabled_plugins = TerminatorThemes, LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
   always_split_with_profile = True
@@ -43,14 +44,23 @@
     cursor_color = "#abb2c0"
     font = Cica 12
     foreground_color = "#abb2c0"
-    palette = "#272b33:#e06c75:#98c379:#d19a66:#61afef:#c678dd:#56b6c2:#abb2c0:#272b33:#e5c07b:#5c6370:#828997:#abb2bf:#c678dd:#abb2bf:#abb2c0"
+    palette = "#272b33:#e06c75:#98c379:#d19a66:#61afef:#c678dd:#56b6c2:#abb2c0:#888a85:#e5c07b:#5c6370:#828997:#abb2bf:#c678dd:#abb2bf:#abb2c0"
     login_shell = True
+    use_system_font = False
+  [[iceberg]]
+    background_color = "#161821"
+    background_darkness = 0.85
+    background_type = transparent
+    cursor_color = "#c6c8d1"
+    font = Cica 11
+    foreground_color = "#c6c8d1"
+    palette = "#2a3158:#e27878:#89b8c2:#e4aa80:#84a0c6:#d1a8ad:#adc1cb:#c6c8d1:#444b71:#e2a478:#b4be82:#d8e599:#3e445e:#673e43:#686f9a:#d4d5db"
     use_system_font = False
 [layouts]
   [[default]]
     [[[child1]]]
       parent = window0
-      profile = theone
+      profile = iceberg
       type = Terminal
     [[[window0]]]
       parent = ""

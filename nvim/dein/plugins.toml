@@ -166,6 +166,9 @@ repo = 'altercation/vim-colors-solarized'
 repo = 'joshdick/onedark.vim'
 
 [[plugins]]
+repo = 'cocopon/iceberg.vim'
+
+[[plugins]]
 repo = 'soramugi/auto-ctags.vim'
 
 [[plugins]]
