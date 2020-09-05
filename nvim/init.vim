@@ -176,7 +176,7 @@ let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['vue'] = ''
 let g:NERDTreeExtensionHighlightColor = {}
 let g:NERDTreeExtensionHighlightColor['vue'] = '42B983'
 
-let g:NERDTreeIndicatorMapCustom = {
+let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Modified"  : "~",
     \ "Staged"    : "✚",
     \ "Untracked" : "★",
