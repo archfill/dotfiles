@@ -165,7 +165,7 @@ call NERDTreeHighlightFile('css',    'cyan',    'none', 'cyan',    '#151515')
 call NERDTreeHighlightFile('rb',     'red',     'none', 'red',     '#151515')
 call NERDTreeHighlightFile('js',     'red',     'none', '#ffa500', '#151515')
 call NERDTreeHighlightFile('php',    'magenta', 'none', '#ff00ff', '#151515')
-call NERDTreeHighlightFile('vue',    'green',   'none', '#4fc08d', '#4fc08d')
+call NERDTreeHighlightFile('vue',    'green',   'none', '#4fc08d', '#151515')
 
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
