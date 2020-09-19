@@ -456,5 +456,9 @@ endif
 "vim debug
 let g:vimspector_enable_mappings = 'HUMAN'
 
+" NERDCommenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
 set tags+=.git/tags
 
