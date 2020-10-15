@@ -42,6 +42,9 @@ ln -sf ~/dotfiles/.mutt $MUTT_DIR
 #rm -rf ~/.vim
 #ln -sf ~/dotfiles/.vim ~/.vim
 
+# ideavim
+ln -s ~/dotfiles/.ideavimrc ~/.ideavimrc
+
 VIMRC_FILE=~/.vimrc
 unlink $VIMRC_FILE
 rm -f $VIMRC_FILE
