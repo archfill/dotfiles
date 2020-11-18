@@ -1,1 +1,2 @@
 noremap ; :
+inoremap <silent> jj <ESC>
