@@ -16,7 +16,7 @@ coc-css       coc-docker    coc-emmet     coc-eslint    coc-git       coc-highli
 coc-css coc-docker coc-emmet coc-eslint coc-git coc-highlight coc-html coc-java coc-lists coc-pairs coc-prettier coc-python coc-sh coc-snippets coc-sql coc-tsserver coc-vetur coc-vimlsp coc-yank
 
 coc-css coc-docker coc-emmet coc-eslint coc-git coc-highlight coc-html coc-java coc-lists coc-pairs coc-prettier
-coc-python coc-sh coc-snippets coc-sql coc-tsserver coc-vetur coc-vimlsp coc-yank
+coc-python coc-sh coc-snippets coc-sql coc-tsserver coc-vetur coc-vimlsp coc-yank coc-flutter
 
 
 
