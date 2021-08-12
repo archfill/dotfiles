@@ -35,12 +35,16 @@ repo = 'fatih/vim-go'
 [[plugins]]
 repo = 'kassio/neoterm'
 if = "has('nvim')"
+# let g:neoterm_default_mod = 'belowright'
+# let g:neoterm_default_mod = 'vertical belowright'
 hook_add = '''
+  let g:neoterm_default_mod = 'belowright'
+  let g:neoterm_autoinsert = 1
   nnoremap <silent> ,rc :TREPLSendFile<cr>
   nnoremap <silent> ,rl :TREPLSendLine<cr>
   vnoremap <silent> ,rl :TREPLSendSelection<cr>
-  nnoremap <silent> vs :terminal<cr>
-  nnoremap <silent> vt :Ttoggle<cr>
+  nnoremap <silent> <c-q> :Ttoggle<cr>
+  tnoremap <silent> <c-q> <C-\><C-n>:Ttoggle<CR>
 '''
 
 # 関数内検索
