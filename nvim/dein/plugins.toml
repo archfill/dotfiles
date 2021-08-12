@@ -36,11 +36,11 @@ repo = 'fatih/vim-go'
 repo = 'kassio/neoterm'
 if = "has('nvim')"
 hook_add = '''
-nnoremap <silent> ,rc :TREPLSendFile<cr>
-nnoremap <silent> ,rl :TREPLSendLine<cr>
-vnoremap <silent> ,rl :TREPLSendSelection<cr>
-nnoremap <silent> vt :Ttoggle<cr>
-nnoremap <silent> vs :terminal<cr>
+  nnoremap <silent> ,rc :TREPLSendFile<cr>
+  nnoremap <silent> ,rl :TREPLSendLine<cr>
+  vnoremap <silent> ,rl :TREPLSendSelection<cr>
+  nnoremap <silent> vs :terminal<cr>
+  nnoremap <silent> vt :Ttoggle<cr>
 '''
 
 # 関数内検索
@@ -207,4 +207,10 @@ repo = 'itchyny/calendar.vim'
 
 [[plugins]]
 repo = 'Xuyuanp/nerdtree-git-plugin'
+
+[[plugins]]
+repo = 'dart-lang/dart-vim-plugin'
+
+[[plugins]]
+repo = 'thosakwe/vim-flutter'
 

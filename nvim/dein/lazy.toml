@@ -12,6 +12,12 @@ on_cmd = 'Dein'
 #'''
 
 [[plugins]]
+repo = 'roxma/nvim-yarp'
+
+[[plugins]]
+repo = 'roxma/vim-hug-neovim-rpc'
+
+[[plugins]]
 repo = 'Shougo/denite.nvim'
 # on_event = 'BufRead'
 hook_add = 'call hook#add#denite#load()'

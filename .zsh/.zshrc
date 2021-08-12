@@ -1,30 +1,33 @@
-# zplug
-source ~/.zplug/init.zsh
-zplug 'zplug/zplug', hook-build:'zplug --self-manage'
-# theme (https://github.com/sindresorhus/pure#zplug)　好みのスキーマをいれてくだされ。
-zplug "mafredri/zsh-async"
-zplug "sindresorhus/pure"
+### Zinit
+source "$HOME/.zinit/bin/zinit.zsh"
+zinit self-update
 
-# ZSH_THEME="powerlevel9k/powerlevel9k"
-ZSH_THEME="agnoster"
-# 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
-zplug "zsh-users/zsh-syntax-highlighting"
-# history関係
-zplug "zsh-users/zsh-history-substring-search"
-# タイプ補完
-zplug "zsh-users/zsh-autosuggestions", lazy:true
-zplug "zsh-users/zsh-completions", lazy:true
-zplug "chrissicool/zsh-256color", lazy:true
-zplug "docker/cli", use:"contrib/completion/zsh/_docker", lazy:true
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  fi
-fi
-# Then, source plugins and add commands to $PATH
-zplug load
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zinit-zsh/z-a-rust \
+    zinit-zsh/z-a-as-monitor \
+    zinit-zsh/z-a-patch-dl \
+    zinit-zsh/z-a-bin-gem-node
+
+zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
+zinit light sindresorhus/pure
+
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-history-substring-search
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+zinit light chrissicool/zsh-256color
+
+zinit lucid has'docker' for \
+  as'completion' is-snippet \
+  'https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker' \
+  \
+  as'completion' is-snippet \
+  'https://github.com/docker/compose/blob/master/contrib/completion/zsh/_docker-compose' \
 
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=10000
@@ -86,11 +89,6 @@ if [ -d "$HOME/.nvm" ] ; then
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/chillda/google-cloud-sdk/path.zsh.inc' ]; then . '/home/chillda/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/chillda/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/chillda/google-cloud-sdk/completion.zsh.inc'; fi
 export PATH="$HOME/.anyenv/bin:$PATH"
 export ANYENV_ROOT="$HOME/.anyenv"
 eval "$(anyenv init - zsh)"
@@ -114,3 +112,4 @@ function precmd() {
 }
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+

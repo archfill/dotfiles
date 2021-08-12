@@ -436,7 +436,7 @@ hi SpecialKey ctermbg=None ctermfg=None guibg=NONE guifg=#8f8f8f
 function! ZenkakuSpace()
     highlight ZenkakuSpace cterm=reverse ctermfg=DarkMagenta gui=reverse guifg=DarkMagenta
 endfunction
-   
+
 if has('syntax')
     augroup ZenkakuSpace
         autocmd!

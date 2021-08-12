@@ -55,6 +55,16 @@ unlink $GVIMRC_FILE
 rm -f $GVIMRC_FILE
 ln -s ~/dotfiles/.gvimrc $GVIMRC_FILE
 
+YABAIRC_FILE=~/.yabairc
+unlink $YABAIRC_FILE
+rm -f $YABAIRC_FILE
+ln -s ~/dotfiles/.yabairc $YABAIRC_FILE
+
+SKHDRC_FILE=~/.skhdrc
+unlink $SKHDRC_FILE
+rm -f $SKHDRC_FILE
+ln -s ~/dotfiles/.skhdrc $SKHDRC_FILE
+
 #tmux
 TMUX_DIR=~/.tmux
 TMUX_PLUGINS_DIR=${TMUX_DIR}/plugins
@@ -84,13 +94,14 @@ ln -sf ~/dotfiles/.zsh ~/.zsh
 rm -f ~/.zshenv
 ln -s ~/dotfiles/.zshenv ~/.zshenv
 
-: "install zplug" && {
-  ZPLUG_DIR=$HOME/.zplug
-  if [ ! -e $ZPLUG_DIR ]; then
-    info "installing zplug..."
-    curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+: "install zinit" && {
+  ZINIT_DIR=$HOME/.zinit
+  if [ ! -e $ZINIT_DIR ]; then
+    echo "installing zinit..."
+    mkdir $ZINIT_DIR
+    git clone https://github.com/zdharma/zinit.git $ZINIT_DIR/bin
   else
-    warn "zplug is already installed"
+    echo "zinit is already installed"
   fi
 }
 
@@ -98,14 +109,14 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
 : "install opam" && {
   OPAM_DIR=$HOME/.opam
   if [ ! -e $OPAM_DIR ]; then
-    info "installing opam..."
+    echo "installing opam..."
     mkdir opam-work && cd opam-work
     curl -OL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh
     chmod +x ./install.sh
     sh ./install.sh
     opam init
   else
-    warn "opam is already installed"
+    echo "opam is already installed"
   fi
 }
 
