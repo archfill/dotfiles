@@ -8,9 +8,23 @@ let $CACHE = empty($XDG_CACHE_HOME) ? expand('$HOME/.cache') : $XDG_CACHE_HOME
 let $CONFIG = empty($XDG_CONFIG_HOME) ? expand('$HOME/.config') : $XDG_CONFIG_HOME
 let $DATA = empty($XDG_DATA_HOME) ? expand('$HOME/.local/share') : $XDG_DATA_HOME
 
+if has('nvim')
+  set sh=zsh
+  au TermOpen * tnoremap <ESC> <C-\><C-n>
+  au FileType fzf tunmap <ESC>
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+else
+endif
+
 if has('mac')
-" Mac の共通設定
-  set rtp+=/usr/local/opt/fzf
+  " Mac の共通設定
+  let fzfExists=getftype("/opt/homebrew/opt/fzf")
+  if fzfExists != ""
+    set rtp+=/opt/homebrew/opt/fzf
+  else
+    set rtp+=/usr/local/opt/fzf
+  endif
+
   let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
@@ -23,14 +37,6 @@ if has('unix')
     call system('fcitx-remote -c')
   endfunction
   inoremap <silent> <C-[> <ESC>:call ImInActivate()<CR>
-endif
-
-if has('nvim')
-  set sh=zsh
-  au TermOpen * tnoremap <ESC> <C-\><C-n>
-  au FileType fzf tunmap <ESC>
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-else
 endif
 
 " Load rc file
@@ -405,9 +411,9 @@ endfunction
 command! Repo call s:repo('+m', function('s:cd_repo', [&shell]))
 
 " vim-fugitive config
-nnoremap <leader>gs :tab sp<CR>:Gstatus<CR>:only<CR>
+nnoremap <leader>gs :tab sp<CR>:Git<CR>:only<CR>
 nnoremap <leader>ga :Gwrite<CR>
-nnoremap <leader>gc :Gcommit<CR>
+nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gb :Gblame<CR>
 nnoremap <leader>gl :Git log<CR>
 nnoremap <leader>gh :tab sp<CR>:0Glog<CR>

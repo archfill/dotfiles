@@ -100,8 +100,17 @@ test -r /home/chillda/.opam/opam-init/init.zsh && . /home/chillda/.opam/opam-ini
 eval $(opam env)
 
 export LANG=ja_JP.UTF-8
-export ANDROID_HOME=$HOME/AndroidTools
-export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
+
+if [ -d "$HOME/AndroidTools" ] ; then
+  export ANDROID_HOME=$HOME/AndroidTools
+  export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
+fi
+
+if [ -d "$HOME/Library/Android" ] ; then
+  export ANDROID_HOME=$HOME/Library/Android
+  export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
+fi
+
 # golang
 export PATH=$PATH:/usr/local/go/bin
 
