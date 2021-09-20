@@ -45,6 +45,7 @@ window:
   #   - SimpleFullscreen
   startup_mode: Maximized
   dynamic_title: true
+  opacity: 0.9
 
 scrolling:
   # Maximum number of lines in the scrollback buffer.
@@ -281,7 +282,7 @@ bell:
   color: '0xffffff'
 
 # Background opacity
-background_opacity: 0.9
+# background_opacity: 0.9
 
 # Mouse bindings
 #
