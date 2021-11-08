@@ -99,7 +99,7 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
   if [ ! -e $ZINIT_DIR ]; then
     echo "installing zinit..."
     mkdir $ZINIT_DIR
-    git clone https://github.com/zdharma/zinit.git $ZINIT_DIR/bin
+    git clone https://github.com/zdharma-continuum/zinit.git $ZINIT_DIR/bin
   else
     echo "zinit is already installed"
   fi

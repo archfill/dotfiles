@@ -13,4 +13,7 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   source /etc/profile.d/vte.sh
 fi
 
- source $HOME/.cargo/env
+source $HOME/.cargo/env
+
+alias wolmac="wakeonlan 14:98:77:6b:00:00"
+alias wol2mac="wol 14:98:77:6b:00:00"
