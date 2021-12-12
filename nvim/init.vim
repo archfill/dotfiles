@@ -68,7 +68,7 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 " font
 " set guifont=Cica:h16
 set printfont=Cica:h12
-set ambiwidth=single
+"set ambiwidth=single
 "set ambiwidth=double
 
 
@@ -211,7 +211,7 @@ let g:neosnippet#expand_word_boundary = 1
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 
 " auto-ctags
-let g:auto_ctags = 1
+let g:auto_ctags = 0
 let g:auto_ctags_directory_list = ['.git', '.svn']
 
 " Define mappings

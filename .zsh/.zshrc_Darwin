@@ -1,6 +1,13 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
-export JAVA_HOME=`/usr/libexec/java_home -v "1.8"`
+
+export JAVA_HOME=`/usr/libexec/java_home`
 PATH=${JAVA_HOME}/bin:${PATH}
+export JAVA_HOME=`/usr/libexec/java_home -v "11"`
+PATH=${JAVA_HOME}/bin:${PATH}
+
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
 eval "$(pyenv init --path)"
 eval "$(pyenv virtualenv-init -)"
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -8,6 +15,7 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 alias mvim=/Applications/MacVim.app/Contents/bin/mvim "$@"
 alias paraubuntu=10.211.55.12
 alias bau='brew update && brew upgrade && brew upgrade --cask --greedy'
+alias bwupgrade='brew update && brew upgrade'
 
 export PATH="$PATH:${HOME}/develop/flutter/bin"
 export FLUTTER_ROOT="${HOME}/develop/flutter"
