@@ -28,6 +28,13 @@ unlink $ALACTRITTY_DIR
 rm -rf $ALACTRITTY_DIR
 ln -sf ~/dotfiles/.config/alacritty $ALACTRITTY_DIR
 
+# kitty
+echo "kitty"
+KITTY_DIR=~/.config/kitty
+unlink $KITTY_DIR
+rm -rf $KITTY_DIR
+ln -sf ~/dotfiles/.config/kitty $KITTY_DIR
+
 # neomutt
 MUTTRC_FILE=~/.muttrc
 unlink $MUTTRC_FILE
