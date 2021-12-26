@@ -218,3 +218,18 @@ repo = 'dart-lang/dart-vim-plugin'
 [[plugins]]
 repo = 'thosakwe/vim-flutter'
 
+[[plugins]]
+repo = 'vim-denops/denops.vim'
+
+[[plugins]]
+repo = 'vim-skk/skkeleton'
+
+[[plugins]]
+repo='Shougo/ddc.vim'
+
+[[plugins]]
+repo='Shougo/ddc-matcher_head'
+
+[[plugins]]
+repo='Shougo/ddc-sorter_rank'
+

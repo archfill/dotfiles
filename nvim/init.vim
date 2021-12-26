@@ -468,3 +468,12 @@ let g:NERDSpaceDelims = 1
 
 set tags+=.git/tags
 
+" skkeleton
+imap <C-j> <Plug>(skkeleton-toggle)
+cmap <C-j> <Plug>(skkeleton-toggle)
+
+call skkeleton#config({
+  \ 'useSkkServer': v:true,
+  \ 'eggLikeNewline': v:true,
+  \ })
+
