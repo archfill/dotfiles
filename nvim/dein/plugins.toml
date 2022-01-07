@@ -229,15 +229,6 @@ repo = 'Shougo/ddc-converter_remove_overlap'
 repo = 'LumaKernel/ddc-file'
 
 [[plugins]]
-repo = 'mattn/vim-lsp-settings'
-
-[[plugins]]
-repo = 'prabirshrestha/vim-lsp'
-
-[[plugins]]
-repo = 'shun/ddc-vim-lsp'
-
-[[plugins]]
 repo = 'lambdalisue/fern.vim'
 
 [[plugins]]
@@ -247,10 +238,26 @@ repo = 'lambdalisue/fern-git-status.vim'
 repo = 'lambdalisue/fern-hijack.vim'
 
 [[plugins]]
-repo = 'yuki-yano/fern-preview.vim'
+repo = 'lambdalisue/nerdfont.vim'
 
 [[plugins]]
-repo = 'mhinz/vim-signify'
+repo = 'lambdalisue/fern-renderer-nerdfont.vim'
+hook_add = '''
+  let g:fern#renderer = 'nerdfont'
+'''
+
+[[plugins]]
+repo = 'lambdalisue/glyph-palette.vim'
+hook_add = '''
+  augroup my-glyph-palette
+    autocmd! *
+    autocmd FileType fern call glyph_palette#apply()
+    autocmd FileType nerdtree,startify call glyph_palette#apply()
+  augroup END
+'''
+
+[[plugins]]
+repo = 'yuki-yano/fern-preview.vim'
 
 [[plugins]]
 repo = 'glidenote/memolist.vim'
