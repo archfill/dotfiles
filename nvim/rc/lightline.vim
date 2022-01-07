@@ -3,8 +3,7 @@ let g:lightline = {
 \ 'active': {
 \   'left': [ [ 'mode', 'paste' ],
 \             [ 'fugitive', 'filename' ],
-\             [ 'vista' ],
-\             [ 'coc' ]
+\             [ 'coc' ],
 \           ],
 \ },
 \ 'component_function': {
@@ -14,7 +13,6 @@ let g:lightline = {
 \   'filename': 'LightLineFilename',
 \   'filetype': 'LightLineFiletype',
 \   'fileformat': 'LightLineFileformat',
-\   'vista': 'NearestMethodOrFunction',
 \   'coc': 'coc#status',
 \ },
 \ 'separator': { 'left': "\ue0b0 ", 'right': "\ue0b2 " },
@@ -65,6 +63,3 @@ function! LightLineFileformat()
   return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
 endfunction
 
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction

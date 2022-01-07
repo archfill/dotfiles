@@ -24,13 +24,10 @@ if has('mac')
   else
     set rtp+=/usr/local/opt/fzf
   endif
-
-  let g:memolist_path = expand('$HOME/dotfiles/memolist')
 endif
 
 if has('unix')
   set rtp+=~/.fzf
-  let g:memolist_path = expand('$HOME/dotfiles/memolist')
 
   "fcitx ime 制御
   function! ImInActivate()
@@ -41,11 +38,11 @@ endif
 
 " Load rc file
 function! s:load(file) abort
-    let s:path = expand('$CONFIG/nvim/rc/' . a:file . '.vim')
+  let s:path = expand('$CONFIG/nvim/rc/' . a:file . '.vim')
 
-    if filereadable(s:path)
-        execute 'source' fnameescape(s:path)
-    endif
+  if filereadable(s:path)
+    execute 'source' fnameescape(s:path)
+  endif
 endfunction
 
 call s:load('plugins')
@@ -54,6 +51,8 @@ nnoremap ; :
 nnoremap : ;
 
 nnoremap <F3> :noh<CR>
+
+let mapleader="\<Space>"
 
 " set clipboard=unnamed,autoselect
 
@@ -146,55 +145,6 @@ set hlsearch
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
 
-nnoremap [window] <Nop>
-nmap s [window]
-nmap <Space> [space]
-
-" autocmd vimenter * NERDTree
-" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-nnoremap <C-t> :NERDTreeToggle<CR>
-"nnoremap <C-s> :NERDTreeFocus<CR>
-" NERDTress File highlighting
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-  exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-  exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
-call NERDTreeHighlightFile('py',     'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('md',     'blue',    'none', '#3366FF', '#151515')
-call NERDTreeHighlightFile('yml',    'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('config', 'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('conf',   'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('json',   'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('html',   'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('styl',   'cyan',    'none', 'cyan',    '#151515')
-call NERDTreeHighlightFile('css',    'cyan',    'none', 'cyan',    '#151515')
-call NERDTreeHighlightFile('rb',     'red',     'none', 'red',     '#151515')
-call NERDTreeHighlightFile('js',     'red',     'none', '#ffa500', '#151515')
-call NERDTreeHighlightFile('php',    'magenta', 'none', '#ff00ff', '#151515')
-call NERDTreeHighlightFile('vue',    'green',   'none', '#4fc08d', '#151515')
-
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-
-let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
-let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['vue'] = ''
-" アイコン入力方法 : `[Ctrl+V]` > `[u]` > `e905`
-let g:NERDTreeExtensionHighlightColor = {}
-let g:NERDTreeExtensionHighlightColor['vue'] = '42B983'
-
-let g:NERDTreeGitStatusIndicatorMapCustom = {
-    \ "Modified"  : "~",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "★",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ "Ignored"   : "☒",
-    \ "Unknown"   : "?"
-    \ }
-
 if !has('gui_running')
   map "in Insert mode, type Ctrl+v Alt+n here" <A-n>
 endif
@@ -213,150 +163,6 @@ let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 " auto-ctags
 let g:auto_ctags = 0
 let g:auto_ctags_directory_list = ['.git', '.svn']
-
-" Define mappings
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
-  \ denite#do_map('toggle_select').'j'
-endfunction
-
-"Vista config
-nnoremap fv :<C-u>Vista coc<CR>
-nnoremap fs :<C-u>Vista finder coc<CR>
-
-"coc config
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
-
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-" Mappings for CoCList
-" Show all diagnostics.
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
-" Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-" Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document.
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
-" Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " vsession config
 " let g:vsession_use_fzf = 1
@@ -468,12 +274,84 @@ let g:NERDSpaceDelims = 1
 
 set tags+=.git/tags
 
+" fern setting
+" 隠しファイルを表示する
+let g:fern#default_hidden=1
+" Fern .をSpace+eキーに置き換え
+nnoremap <silent> <Leader>e :<C-u>Fern . -drawer<CR>
+
+" fern-preview setting
+function! s:fern_settings() abort
+  nmap <silent> <buffer> p     <Plug>(fern-action-preview:toggle)
+  nmap <silent> <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
+  nmap <silent> <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
+  nmap <silent> <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
+endfunction
+
+augroup fern-settings
+  autocmd!
+  autocmd FileType fern call s:fern_settings()
+augroup END
+
+" ddc setting
+call ddc#custom#patch_global('completionMenu', 'pum.vim')
+call ddc#custom#patch_global('sources', [
+ \ 'around',
+ \ 'vim-lsp',
+ \ 'file',
+ \ 'skkeleton',
+ \ ])
+call ddc#custom#patch_global('sourceOptions', {
+ \ '_': {
+ \   'matchers': ['matcher_head'],
+ \   'sorters': ['sorter_rank'],
+ \   'converters': ['converter_remove_overlap'],
+ \ },
+ \ 'around': {'mark': 'Around'},
+ \ 'vim-lsp': {
+ \   'mark': 'lsp', 
+ \   'matchers': ['matcher_head'],
+ \   'forceCompletionPattern': '\.|:|->|"\w+/*'
+ \ },
+ \ 'file': {
+ \   'mark': 'file',
+ \   'isVolatile': v:true, 
+ \   'forceCompletionPattern': '\S/\S*'
+ \ },
+ \ 'skkeleton': {
+ \   'mark': 'skkeleton',
+ \   'matchers': ['skkeleton'],
+ \   'sorters': []
+ \ },
+ \ })
+call ddc#enable()
+inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
+inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+
 " skkeleton
 imap <C-j> <Plug>(skkeleton-toggle)
 cmap <C-j> <Plug>(skkeleton-toggle)
 
 call skkeleton#config({
+  \ 'globalJisyo': '~/git/dict/SKK-JISYO.L',
   \ 'useSkkServer': v:true,
   \ 'eggLikeNewline': v:true,
   \ })
 
+" memolist setting
+let g:memolist_path = "$HOME/Nextcloud/Notes/my"
+nnoremap <Leader>mn  :MemoNew<CR>
+nnoremap <Leader>ml  :MemoList<CR>
+nnoremap <Leader>mg  :MemoGrep<CR>
+
+" nvim-treesitter setting
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    disable = {
+    }
+  },
+  ensure_installed = 'maintained',
+}
+EOF

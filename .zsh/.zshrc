@@ -1,7 +1,6 @@
 ### Zinit
 source "$HOME/.zinit/bin/zinit.zsh"
 zinit self-update
-
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
@@ -21,7 +20,6 @@ zinit light zsh-users/zsh-history-substring-search
 zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-completions
 zinit light chrissicool/zsh-256color
-
 zinit lucid has'docker' for \
   as'completion' is-snippet \
   'https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker' \
@@ -112,7 +110,12 @@ if [ -d "$HOME/Library/Android" ] ; then
 fi
 
 # golang
-export PATH=$PATH:/usr/local/go/bin
+if [ -d "$PATH:/usr/local/go/bin" ] ; then
+  export PATH=$PATH:/usr/local/go/bin
+else
+  export GOPATH=$HOME/go;
+  export PATH=$PATH:$GOPATH/bin;
+fi
 
 function precmd() {
   if [ ! -z $TMUX ]; then
