@@ -25,22 +25,6 @@ repo  = 'cespare/vim-toml'
 [[plugins]]
 repo = 'fatih/vim-go'
 
-# neoterm
-[[plugins]]
-repo = 'kassio/neoterm'
-if = "has('nvim')"
-# let g:neoterm_default_mod = 'belowright'
-# let g:neoterm_default_mod = 'vertical belowright'
-hook_add = '''
-  let g:neoterm_default_mod = 'belowright'
-  let g:neoterm_autoinsert = 1
-  nnoremap <silent> ,rc :TREPLSendFile<cr>
-  nnoremap <silent> ,rl :TREPLSendLine<cr>
-  vnoremap <silent> ,rl :TREPLSendSelection<cr>
-  nnoremap <silent> <c-q> :Ttoggle<cr>
-  tnoremap <silent> <c-q> <C-\><C-n>:Ttoggle<CR>
-'''
-
 # 関数内検索
 [[plugins]]
 repo = 'kana/vim-operator-user'
@@ -265,4 +249,7 @@ repo = 'glidenote/memolist.vim'
 [[plugins]]
 repo = 'nvim-treesitter/nvim-treesitter'
 merged = 0
+
+[[plugins]]
+repo = 'akinsho/toggleterm.nvim'
 
