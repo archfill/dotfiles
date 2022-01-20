@@ -63,16 +63,6 @@ unlink $GVIMRC_FILE
 rm -f $GVIMRC_FILE
 ln -s ~/dotfiles/.gvimrc $GVIMRC_FILE
 
-YABAIRC_FILE=~/.yabairc
-unlink $YABAIRC_FILE
-rm -f $YABAIRC_FILE
-ln -s ~/dotfiles/.yabairc $YABAIRC_FILE
-
-SKHDRC_FILE=~/.skhdrc
-unlink $SKHDRC_FILE
-rm -f $SKHDRC_FILE
-ln -s ~/dotfiles/.skhdrc $SKHDRC_FILE
-
 #tmux
 TMUX_DIR=~/.tmux
 TMUX_PLUGINS_DIR=${TMUX_DIR}/plugins
