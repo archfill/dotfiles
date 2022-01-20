@@ -3,6 +3,7 @@
 echo "setup start"
 
 FONT_CICA='v5.0.1'
+FONT_HACKGEN='v2.5.3'
 
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
@@ -163,6 +164,25 @@ mv ./Cica*.ttf ~/.fonts/
 fc-cache -fv
 cd ~/dotfiles
 rm -rf $FONT_CICA_TEMP_DIR
+
+# font hackgen
+FONT_HACKGEN_TERGET=HackGenNerd_${FONT_HACKGEN}.zip
+FONT_HACKGEN_TEMP_DIR=./font_tmp
+if [ ! -e $FONT_HACKGEN_TEMP_DIR ]; then
+  mkdir $FONT_HACKGEN_TEMP_DIR
+fi
+cd $FONT_HACKGEN_TEMP_DIR
+curl -OL https://github.com/yuru7/HackGen/releases/download/${FONT_HACKGEN}/${FONT_HACKGEN_TERGET}
+unzip $FONT_HACKGEN_TERGET
+
+FONTS_DIR=~/.fonts
+if [ ! -e $FONTS_DIR ]; then
+  mkdir $FONTS_DIR
+fi
+mv ./HackGen*.ttf ~/.fonts/
+fc-cache -fv
+cd ~/dotfiles
+rm -rf $FONT_HACKGEN_TEMP_DIR
 
 echo "check os..."
 if [ "$OS" = 'Mac' ]; then
