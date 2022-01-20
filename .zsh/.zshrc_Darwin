@@ -69,3 +69,4 @@ zle -N ghq-fzf
 bindkey '^]' ghq-fzf
 
 source $HOME/.cargo/env
+

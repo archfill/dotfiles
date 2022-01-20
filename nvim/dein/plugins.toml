@@ -253,3 +253,6 @@ merged = 0
 [[plugins]]
 repo = 'akinsho/toggleterm.nvim'
 
+[[plugins]]
+repo = 'embear/vim-localvimrc'
+
