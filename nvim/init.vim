@@ -351,6 +351,7 @@ cmap <C-j> <Plug>(skkeleton-toggle)
 call skkeleton#config({
   \ 'globalJisyo': '~/git/dict/SKK-JISYO.L',
   \ 'useSkkServer': v:true,
+  \ 'skkServerHost': '192.168.0.100',
   \ 'eggLikeNewline': v:true,
   \ })
 
