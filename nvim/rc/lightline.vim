@@ -4,6 +4,7 @@ let g:lightline = {
 \   'left': [ [ 'mode', 'paste' ],
 \             [ 'fugitive', 'filename' ],
 \             [ 'coc' ],
+\             [ 'readonly', 'filename', 'modified', 'method' ],
 \           ],
 \ },
 \ 'component_function': {
@@ -14,6 +15,7 @@ let g:lightline = {
 \   'filetype': 'LightLineFiletype',
 \   'fileformat': 'LightLineFileformat',
 \   'coc': 'coc#status',
+\   'method': 'NearestMethodOrFunction',
 \ },
 \ 'separator': { 'left': "\ue0b4", 'right': "\ue0b6" },
 \ 'subseparator': { 'left': "\ue0b5", 'right': "\ue0b7" },

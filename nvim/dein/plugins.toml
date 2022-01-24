@@ -256,3 +256,6 @@ repo = 'akinsho/toggleterm.nvim'
 [[plugins]]
 repo = 'embear/vim-localvimrc'
 
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+
