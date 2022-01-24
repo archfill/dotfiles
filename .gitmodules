@@ -6,4 +6,4 @@
 	url = https://github.com/anyenv/anyenv
 [submodule ".tmux/git/tmux-powerline"]
 	path = .tmux/git/tmux-powerline
-	url = https://github.com/chillda/tmux-powerline.git
+	url = https://github.com/chill-rf/tmux-powerline.git
