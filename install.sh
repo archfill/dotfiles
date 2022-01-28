@@ -156,7 +156,8 @@ cd ~/dotfiles
 rm -rf $FONT_CICA_TEMP_DIR
 
 # font hackgen
-FONT_HACKGEN_TERGET=HackGenNerd_${FONT_HACKGEN}.zip
+FONT_HACKGEN_FOLDER_NAME=HackGenNerd_${FONT_HACKGEN}
+FONT_HACKGEN_TERGET=${FONT_HACKGEN_FOLDER_NAME}.zip
 FONT_HACKGEN_TEMP_DIR=./font_tmp
 if [ ! -e $FONT_HACKGEN_TEMP_DIR ]; then
   mkdir $FONT_HACKGEN_TEMP_DIR
@@ -169,7 +170,7 @@ FONTS_DIR=~/.fonts
 if [ ! -e $FONTS_DIR ]; then
   mkdir $FONTS_DIR
 fi
-mv ./HackGen*.ttf ~/.fonts/
+mv ./$FONT_HACKGEN_FOLDER_NAME/HackGen*.ttf ~/.fonts/
 fc-cache -fv
 cd ~/dotfiles
 rm -rf $FONT_HACKGEN_TEMP_DIR

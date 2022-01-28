@@ -9,8 +9,8 @@ debian | ubuntu)
   echo "debian or ubuntu"
     
   sudo apt update
-  sudo apt install -y python \
-    python-pip \
+  sudo apt install -y python3 \
+    python3-pip \
     wget \
     w3m \
     neomutt \
