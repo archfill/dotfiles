@@ -12,6 +12,8 @@ set hidden
 " 入力中のコマンドをステータスに表示する
 set showcmd
 
+nnoremap ; :
+nnoremap : ;
 
 " 見た目系
 " 行番号を表示
@@ -61,3 +63,4 @@ set wrapscan
 set hlsearch
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
+
