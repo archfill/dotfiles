@@ -24,4 +24,15 @@ unlink $SKHDRC
 rm -rf $SKHDRC
 ln -sf ~/dotfiles/.config/skhd $SKHDRC
 
+# hammerspoon
+echo "hammerspoon"
+HAMMERSPOON_DIR=~/.hammerspoon
+HAMMERSPOON_INIT=$HAMMERSPOON_DIR/init.lua
+if [ ! -e $HAMMERSPOON_DIR ]; then
+  mkdir -p $HAMMERSPOON_DIR
+fi
+unlink $HAMMERSPOON_INIT
+rm -f $HAMMERSPOON_INIT
+ln -s ~/dotfiles/hammerspoon/init.lua $HAMMERSPOON_INIT
+
 git config --global ghq.root '~/git'
