@@ -29,6 +29,8 @@ endif
 let s:toml_dir = expand('$CONFIG/nvim/dein')
 
 if exists('g:vscode')
+  call dein#load_toml(s:toml_dir . '/plugins.toml', {'lazy': 0})
+  call dein#load_toml(s:toml_dir . '/lazy.toml', {'lazy': 1})
 else
   call dein#load_toml(s:toml_dir . '/plugins.toml', {'lazy': 0})
   call dein#load_toml(s:toml_dir . '/lazy.toml', {'lazy': 1})

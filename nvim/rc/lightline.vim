@@ -4,7 +4,7 @@ let g:lightline = {
 \   'left': [ [ 'mode', 'paste' ],
 \             [ 'fugitive', 'filename' ],
 \             [ 'coc' ],
-\             [ 'readonly', 'filename', 'modified', 'method' ],
+\             [ 'readonly', 'method' ],
 \           ],
 \ },
 \ 'component_function': {

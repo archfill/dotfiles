@@ -52,10 +52,6 @@ nnoremap : ;
 
 nnoremap <F3> :noh<CR>
 
-if !exists('g:vscode')
-" let mapleader="\<Space>"
-endif
-
 " set clipboard=unnamed,autoselect
 
 syntax enable
@@ -285,7 +281,7 @@ augroup TransparentBG
 augroup END
 
 "vim debug
-let g:vimspector_enable_mappings = 'HUMAN'
+"let g:vimspector_enable_mappings = 'HUMAN'
 
 " NERDCommenter
 " Add spaces after comment delimiters by default
@@ -295,77 +291,81 @@ set tags+=.git/tags
 
 if !exists('g:vscode')
 
-" fern setting
-" 隠しファイルを表示する
-let g:fern#default_hidden=1
-" Fern .をSpace+eキーに置き換え
-nnoremap <silent> <Leader>e :<C-u>Fern . -drawer<CR>
+  " fern setting
+  " 隠しファイルを表示する
+  let g:fern#default_hidden=1
+  " Fern .をSpace+eキーに置き換え
+  " project drawer config
+  " nnoremap <silent> <Leader>e :<C-u>Fern . -drawer<CR>
+  " split windows
+  nnoremap <silent> <Leader>e :<C-u>Fern .<CR>
 
-" fern-preview setting
-function! s:fern_settings() abort
-  nmap <silent> <buffer> p     <Plug>(fern-action-preview:toggle)
-  nmap <silent> <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
-  nmap <silent> <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
-  nmap <silent> <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
-endfunction
+  " fern-preview setting
+  function! s:fern_settings() abort
+    nmap <silent> <buffer> p     <Plug>(fern-action-preview:toggle)
+    nmap <silent> <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
+    nmap <silent> <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
+    nmap <silent> <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
+  endfunction
 
-augroup fern-settings
-  autocmd!
-  autocmd FileType fern call s:fern_settings()
-augroup END
+  augroup fern-settings
+    autocmd!
+    autocmd FileType fern call s:fern_settings()
+  augroup END
 
-" ddc setting
-call ddc#custom#patch_global('completionMenu', 'pum.vim')
-call ddc#custom#patch_global('sources', [
- \ 'skkeleton',
- \ ])
-call ddc#custom#patch_global('sourceOptions', {
- \ 'skkeleton': {
- \   'mark': 'skkeleton',
- \   'matchers': ['skkeleton'],
- \   'sorters': []
- \ },
- \ })
-call ddc#enable()
-inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
-inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+  " ddc setting
+  call ddc#custom#patch_global('completionMenu', 'pum.vim')
+  call ddc#custom#patch_global('sources', [
+   \ 'skkeleton',
+   \ ])
+  call ddc#custom#patch_global('sourceOptions', {
+   \ 'skkeleton': {
+   \   'mark': 'skkeleton',
+   \   'matchers': ['skkeleton'],
+   \   'sorters': []
+   \ },
+   \ })
+  call ddc#enable()
+  inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
+  inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
 
-function s:enable_ddc() abort
-  let b:coc_suggest_disable = v:true
-  call ddc#custom#patch_global('autoCompleteEvents',
-    \ ['TextChangedI', 'TextChangedP', 'CmdlineChanged'])
-endfunction
+  function s:enable_ddc() abort
+    let b:coc_suggest_disable = v:true
+    call ddc#custom#patch_global('autoCompleteEvents',
+      \ ['TextChangedI', 'TextChangedP', 'CmdlineChanged'])
+  endfunction
 
-function s:disable_ddc() abort
-  let b:coc_suggest_disable = v:false
-  call ddc#custom#patch_global('autoCompleteEvents', [])
-endfunction
+  function s:disable_ddc() abort
+    let b:coc_suggest_disable = v:false
+    call ddc#custom#patch_global('autoCompleteEvents', [])
+  endfunction
 
-" initialize
-call <sid>disable_ddc()
+  " initialize
+  call <sid>disable_ddc()
 
-" skkeleton
-imap <C-j> <Plug>(skkeleton-toggle)
-cmap <C-j> <Plug>(skkeleton-toggle)
+  " skkeleton
+  imap <C-j> <Plug>(skkeleton-toggle)
+  cmap <C-j> <Plug>(skkeleton-toggle)
 
-call skkeleton#config({
-  \ 'globalJisyo': '~/git/dict/SKK-JISYO.L',
-  \ 'useSkkServer': v:true,
-  \ 'skkServerHost': '192.168.0.100',
-  \ 'eggLikeNewline': v:true,
-  \ })
+  call skkeleton#config({
+    \ 'globalJisyo': '~/git/dict/SKK-JISYO.L',
+    \ 'useSkkServer': v:true,
+    \ 'skkServerHost': '192.168.0.100',
+    \ 'eggLikeNewline': v:true,
+    \ })
 
-augroup skkeleton
-  autocmd!
-  autocmd User skkeleton-enable-pre  call <sid>enable_ddc()
-  autocmd User skkeleton-disable-pre call <sid>disable_ddc()
-augroup END
+  augroup skkeleton
+    autocmd!
+    autocmd User skkeleton-enable-pre  call <sid>enable_ddc()
+    autocmd User skkeleton-disable-pre call <sid>disable_ddc()
+  augroup END
 
-" memolist setting
-let g:memolist_path = "$HOME/Nextcloud/Notes/my"
-nnoremap <Leader>mn  :MemoNew<CR>
-nnoremap <Leader>ml  :MemoList<CR>
-nnoremap <Leader>mg  :MemoGrep<CR>
+  " memolist setting
+  let g:memolist_memo_suffix = "md"
+  let g:memolist_path = "$HOME/Nextcloud/Notes/my"
+  nnoremap <Leader>mn  :MemoNew<CR>
+  nnoremap <Leader>ml  :MemoList<CR>
+  nnoremap <Leader>mg  :MemoGrep<CR>
 
 " nvim-treesitter setting
 lua <<EOF
@@ -411,16 +411,18 @@ end
 vim.api.nvim_set_keymap("n", "<leader>g", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
 EOF
 
-" vim-flutter setting
-" Some of these key choices were arbitrary;
-" it's just an example.
-nnoremap <leader>fa :FlutterRun<cr>
-nnoremap <leader>fq :FlutterQuit<cr>
-nnoremap <leader>fr :FlutterHotReload<cr>
-nnoremap <leader>fR :FlutterHotRestart<cr>
-nnoremap <leader>fD :FlutterVisualDebug<cr>
+  " vim-flutter setting
+  " Some of these key choices were arbitrary;
+  " it's just an example.
+  nnoremap <leader>fa :FlutterRun<cr>
+  nnoremap <leader>fq :FlutterQuit<cr>
+  nnoremap <leader>fr :FlutterHotReload<cr>
+  nnoremap <leader>fR :FlutterHotRestart<cr>
+  nnoremap <leader>fD :FlutterVisualDebug<cr>
 
 endif
+
+au FileType markdown vmap <Leader><Bslash> :EasyAlign*<Bar><Enter>
 
 " coc setting
 " Use tab for trigger completion with characters ahead and navigate.
