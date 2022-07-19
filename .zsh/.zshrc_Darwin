@@ -9,6 +9,7 @@ export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
 eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -16,6 +17,7 @@ alias mvim=/Applications/MacVim.app/Contents/bin/mvim "$@"
 alias paraubuntu=10.211.55.12
 alias bau='brew update && brew upgrade && brew upgrade --cask --greedy'
 alias bwupgrade='brew update && brew upgrade'
+alias intelzsh='arch -x86_64 zsh'
 
 export PATH="$PATH:${HOME}/develop/flutter/bin"
 export FLUTTER_ROOT="${HOME}/develop/flutter"
@@ -69,4 +71,10 @@ zle -N ghq-fzf
 bindkey '^]' ghq-fzf
 
 source $HOME/.cargo/env
+
+# skhd startup
+isskhd=(`ps aux | grep skhd | awk '{print $11}'`)
+if [[ "$isskhd" != *skhd* ]]; then
+  nohup skhd &
+fi
 

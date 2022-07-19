@@ -25,15 +25,40 @@ yabai -m config mouse_drop_action            swap
 
 # general space settings
 yabai -m config layout                       bsp
-yabai -m config top_padding                  12
-yabai -m config bottom_padding               12
-yabai -m config left_padding                 12
-yabai -m config right_padding                12
-yabai -m config window_gap                   06
+yabai -m config top_padding                  06
+yabai -m config bottom_padding               06
+yabai -m config left_padding                 06
+yabai -m config right_padding                06
+yabai -m config window_gap                   04
+# yabai -m config external_bar                 all:32:0
 
 # rule settings
 yabai -m rule --add app="System Preferences" manage=off
 yabai -m rule --add app="システム環境設定" manage=off
 yabai -m rule --add app="LadioCast" manage=off
+yabai -m rule --add app="アクティビティモニタ" manage=off
+yabai -m rule --add app="Microsoft Remote Desktop" manage=off
+yabai -m rule --add app="ターミナル" manage=off
+yabai -m rule --add app="Barrier" manage=off
+yabai -m rule --add app="mmhmm" manage=off
+yabai -m rule --add app="CleanMyMac X" manage=off
+yabai -m rule --add app="Logicool G HUB" manage=off
+yabai -m rule --add app="Logi Options+" manage=off
+yabai -m rule --add app="Logi Options" manage=off
+yabai -m rule --add app="Finder" manage=off
+yabai -m rule --add app="Alfred" manage=off
+yabai -m rule --add app="App Store" manage=off
+yabai -m rule --add app="Vampire Survivors" manage=off
+yabai -m rule --add app="Steam" manage=off
+yabai -m rule --add app="Karabiner-Elements" manage=off
+yabai -m rule --add app="Parallels Desktop" manage=off
+yabai -m rule --add app="coconutBattery" manage=off
+yabai -m rule --add app="Pop" manage=off
+yabai -m rule --add app="CrossOver" manage=off
+yabai -m rule --add app="Fork" manage=off
+yabai -m rule --add app="WineCX" manage=off
+yabai -m rule --add app="HoloCure" manage=off
+
+# skhd -c $HOME/.config/skhd/skhdrc
 
 echo "yabai configuration loaded.."
