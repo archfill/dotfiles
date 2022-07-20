@@ -10,32 +10,6 @@
 
 vim.o.sh = 'zsh'
 
----------------------------------------------------------------------------------------------------+
--- Commands \ Modes | Normal | Insert | Command | Visual | Select | Operator | Terminal | Lang-Arg |
--- ================================================================================================+
--- map  / noremap   |    @   |   -    |    -    |   @    |   @    |    @     |    -     |    -     |
--- nmap / nnoremap  |    @   |   -    |    -    |   -    |   -    |    -     |    -     |    -     |
--- map! / noremap!  |    -   |   @    |    @    |   -    |   -    |    -     |    -     |    -     |
--- imap / inoremap  |    -   |   @    |    -    |   -    |   -    |    -     |    -     |    -     |
--- cmap / cnoremap  |    -   |   -    |    @    |   -    |   -    |    -     |    -     |    -     |
--- vmap / vnoremap  |    -   |   -    |    -    |   @    |   @    |    -     |    -     |    -     |
--- xmap / xnoremap  |    -   |   -    |    -    |   @    |   -    |    -     |    -     |    -     |
--- smap / snoremap  |    -   |   -    |    -    |   -    |   @    |    -     |    -     |    -     |
--- omap / onoremap  |    -   |   -    |    -    |   -    |   -    |    @     |    -     |    -     |
--- tmap / tnoremap  |    -   |   -    |    -    |   -    |   -    |    -     |    @     |    -     |
--- lmap / lnoremap  |    -   |   @    |    @    |   -    |   -    |    -     |    -     |    @     |
----------------------------------------------------------------------------------------------------+
-
-vim.keymap.set('n', ';', ':', { noremap = true, silent = true })
-vim.keymap.set('n', ':', ';', { noremap = true, silent = true })
-vim.keymap.set('n', '<F3>', ':noh<CR>', { noremap = true, silent = true })
--- " 折り返し時に表示行単位での移動できるようにする
-vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
-vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
-vim.keymap.set('n', 'jj', '<ESC>', { noremap = true, silent = true })
--- " ESC連打でハイライト解除
-vim.keymap.set('n', '<Esc><Esc>', ':nohlsearch<CR><Esc>', { noremap = false, silent = true })
-
 vim.o.printfont = 'HackGenNerd:h12'
 
 -- setting
@@ -82,9 +56,9 @@ vim.o.listchars = 'tab:▸-'
 -- " Tab文字を半角スペースにする
 vim.o.expandtab = true
 -- " 行頭以外のTab文字の表示幅（スペースいくつ分）
-vim.o.tabstop=2
+vim.o.tabstop = 2
 -- " 行頭でのTab文字の表示幅
-vim.o.shiftwidth=2
+vim.o.shiftwidth = 2
 
 
 -- " 検索系
