@@ -1,11 +1,11 @@
 -- if vim.fn.has('mac') == 1 then
-  -- -- Mac の共通設定
-  -- local fzfExists = vim.fn.getftype('/opt/homebrew/opt/fzf')
-  -- if fzfExists ~= ''
-    -- vim.o.rtp = vim.o.rtp .. '/opt/homebrew/opt/fzf'
-  -- else
-    -- vim.o.rtp = vim.o.rtp .. '/usr/local/opt/fzf'
-  -- end
+-- -- Mac の共通設定
+-- local fzfExists = vim.fn.getftype('/opt/homebrew/opt/fzf')
+-- if fzfExists ~= ''
+-- vim.o.rtp = vim.o.rtp .. '/opt/homebrew/opt/fzf'
+-- else
+-- vim.o.rtp = vim.o.rtp .. '/usr/local/opt/fzf'
+-- end
 -- end
 
 vim.o.sh = 'zsh'
@@ -37,7 +37,7 @@ vim.o.number = true
 vim.o.cursorline = true
 -- " 行末の1文字先までカーソルを移動できるように
 vim.o.virtualedit = 'onemore'
- -- インデントはスマートインデント
+-- インデントはスマートインデント
 vim.o.smartindent = true
 -- " ビープ音を可視化
 vim.o.visualbell = true
@@ -50,7 +50,7 @@ vim.o.wildmode = 'list:longest'
 vim.o.wildignore = vim.o.wildignore .. 'node_modules/**,.git/**'
 
 -- " Tab系
- -- 不可視文字を可視化(タブが「▸-」と表示される)
+-- 不可視文字を可視化(タブが「▸-」と表示される)
 vim.o.list = true
 vim.o.listchars = 'tab:▸-'
 -- " Tab文字を半角スペースにする
@@ -72,4 +72,3 @@ vim.o.incsearch = true
 vim.o.wrapscan = true
 -- " 検索語をハイライト表示
 vim.o.hlsearch = true
-

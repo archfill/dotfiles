@@ -4,7 +4,7 @@ local on_attach = function(client, bufnr)
   end
 
   -- LSPサーバーのフォーマット機能を無効にする
-  -- client.resolved_capabilities.document_formatting = false
+  client.resolved_capabilities.document_formatting = false
 
   local opts = { noremap = true, silent = true }
   buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
@@ -26,18 +26,22 @@ local on_attach = function(client, bufnr)
   buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 end
 
-local lsp_installer = require "nvim-lsp-installer"
-local lspconfig = require "lspconfig"
+local lsp_installer = require("nvim-lsp-installer")
+local lspconfig = require("lspconfig")
+-- Setup lspconfig.
+local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
 lsp_installer.setup()
 for _, server in ipairs(lsp_installer.get_installed_servers()) do
-  lspconfig[server.name].setup {
+  lspconfig[server.name].setup({
+    capabilities = capabilities,
     on_attach = on_attach,
     settings = {
       Lua = {
         diagnostics = {
-          globals = {'vim'},
-        }
-      }
-    }
-  }
+          globals = { "vim" },
+        },
+      },
+    },
+  })
 end
