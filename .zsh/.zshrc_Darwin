@@ -73,8 +73,8 @@ bindkey '^]' ghq-fzf
 source $HOME/.cargo/env
 
 # skhd startup
-isskhd=(`ps aux | grep skhd | awk '{print $11}'`)
-if [[ "$isskhd" != *skhd* ]]; then
-  nohup skhd &
-fi
+# isskhd=(`ps aux | grep skhd | awk '{print $11}'`)
+# if [[ "$isskhd" != *skhd* ]]; then
+#   nohup skhd &
+# fi
 
