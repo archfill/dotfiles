@@ -2,8 +2,8 @@
 
 echo "setup start"
 
-FONT_CICA='v5.0.1'
-FONT_HACKGEN='v2.5.3'
+FONT_CICA='v5.0.3'
+FONT_HACKGEN='v2.6.3'
 
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
