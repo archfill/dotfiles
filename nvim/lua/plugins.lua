@@ -23,6 +23,12 @@ require("packer").startup(function(use)
     end,
   })
 
+  -- tabline
+  use {
+    'romgrk/barbar.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons' }
+  }
+
   --------------------------------------------------------------
   -- FuzzyFinders
   --------------------------------
@@ -98,6 +104,62 @@ require("packer").startup(function(use)
   -- use({ "ray-x/cmp-treesitter", after = "nvim-cmp" })
   -- use({ "lukas-reineke/cmp-rg", after = "nvim-cmp" })
   -- use({ "lukas-reineke/cmp-under-comparator", module = "cmp-under-comparator" })
+  use({ "vim-denops/denops.vim" })
+  use({
+    "vim-skk/skkeleton",
+    requires = { "vim-denops/denops.vim" },
+    config = function()
+      require("pluginconfig.skkeleton")
+    end,
+    setup = function()
+      vim.keymap.set({ "i", "c", "l" }, "<C-j>", "<Plug>(skkeleton-enable)")
+      vim.keymap.set("i", "<C-x><C-o>", function()
+        require("cmp").complete()
+      end)
+
+      local pre_config
+
+      local g1 = vim.api.nvim_create_augroup("skkeleton_callbacks", {})
+      vim.api.nvim_create_autocmd("User", {
+        group = g1,
+        pattern = "skkeleton-enable-pre",
+        callback = function()
+          pre_config = require("cmp.config").get()
+          require("cmp").setup.buffer({
+            sources = { { name = "skkeleton" } },
+            view = { entries = "native" },
+          })
+        end,
+      })
+      vim.api.nvim_create_autocmd("User", {
+        group = g1,
+        pattern = "skkeleton-disable-pre",
+        callback = function()
+          if pre_config then
+            require("cmp").setup.buffer(pre_config)
+            pre_config = nil
+          end
+        end,
+      })
+    end,
+  })
+  use({ "rinx/cmp-skkeleton", after = { "nvim-cmp", "skkeleton" }, event = { "InsertEnter" } })
+  use({
+    "delphinus/skkeleton_indicator.nvim",
+    config = function()
+      vim.api.nvim_exec(
+        [[
+      hi SkkeletonIndicatorEiji guifg=#88c0d0 guibg=#2e3440 gui=bold
+      hi SkkeletonIndicatorHira guifg=#2e3440 guibg=#a3be8c gui=bold
+      hi SkkeletonIndicatorKata guifg=#2e3440 guibg=#ebcb8b gui=bold
+      hi SkkeletonIndicatorHankata guifg=#2e3440 guibg=#b48ead gui=bold
+      hi SkkeletonIndicatorZenkaku guifg=#2e3440 guibg=#88c0d0 gui=bold
+    ]]   ,
+        false
+      )
+      require("skkeleton_indicator").setup({})
+    end,
+  })
 
   -- lsp
   use("neovim/nvim-lspconfig")
@@ -138,6 +200,31 @@ require("packer").startup(function(use)
     requires = { "nvim-lua/plenary.nvim" },
     config = function()
       require("pluginconfig/null-ls")
+    end,
+  })
+
+  -- bracket
+  use({
+    "windwp/nvim-autopairs",
+    event = "VimEnter",
+    config = function()
+      require("nvim-autopairs").setup({})
+    end,
+  })
+
+  -- git
+  use({
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("gitsigns").setup()
+    end,
+  })
+
+  -- highlight
+  use({
+    "norcalli/nvim-colorizer.lua",
+    config = function()
+      require("colorizer").setup()
     end,
   })
 
