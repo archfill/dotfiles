@@ -44,9 +44,13 @@ cmp.setup({
     { name = "luasnip" }, -- For luasnip users.
     -- { name = 'ultisnips' }, -- For ultisnips users.
     -- { name = 'snippy' }, -- For snippy users.
+    -- { name = "skkeleton" },
   }, {
     { name = "buffer" },
   }),
+  -- view = {
+  --   entries = "native",
+  -- },
 })
 
 -- Set configuration for specific filetype.
