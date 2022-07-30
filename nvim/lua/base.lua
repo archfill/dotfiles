@@ -60,7 +60,6 @@ vim.o.tabstop = 2
 -- " 行頭でのTab文字の表示幅
 vim.o.shiftwidth = 2
 
-
 -- " 検索系
 -- " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
 vim.o.shiftwidth = 2
