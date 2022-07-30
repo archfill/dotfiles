@@ -51,4 +51,6 @@ Temporary Items
 
 .mutt/account/*
 
+/nvim/plugin/**
+
 # End of https://www.gitignore.io/api/macos,linux
