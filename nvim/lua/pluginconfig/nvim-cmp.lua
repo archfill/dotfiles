@@ -4,6 +4,30 @@ vim.g.completeopt = "menu,menuone,noselect"
 local cmp = require("cmp")
 
 cmp.setup({
+  formatting = {
+    format = require("lspkind").cmp_format({
+      with_text = true,
+      menu = {
+        buffer = "[Buffer]",
+        nvim_lsp = "[LSP]",
+        cmp_tabnine = "[TabNine]",
+        copilot = "[Copilot]",
+        luasnip = "[LuaSnip]",
+        nvim_lua = "[NeovimLua]",
+        latex_symbols = "[LaTeX]",
+        path = "[Path]",
+        omni = "[Omni]",
+        spell = "[Spell]",
+        emoji = "[Emoji]",
+        calc = "[Calc]",
+        rg = "[Rg]",
+        treesitter = "[TS]",
+        dictionary = "[Dictionary]",
+        mocword = "[mocword]",
+        cmdline_history = "[History]",
+      },
+    }),
+  },
   snippet = {
     -- REQUIRED - you must specify a snippet engine
     expand = function(args)
@@ -39,14 +63,18 @@ cmp.setup({
     end,
   }),
   sources = cmp.config.sources({
-    { name = "nvim_lsp" },
-    -- { name = 'vsnip' }, -- For vsnip users.
-    { name = "luasnip" }, -- For luasnip users.
-    -- { name = 'ultisnips' }, -- For ultisnips users.
-    -- { name = 'snippy' }, -- For snippy users.
-    -- { name = "skkeleton" },
+    { name = "nvim_lsp", priority = 100 },
+    { name = "luasnip", priority = 20 }, -- For luasnip users.
+    { name = "path", priority = 100 },
+    { name = "emoji", insert = true, priority = 60 },
+    { name = "nvim_lua", priority = 50 },
+    { name = "nvim_lsp_signature_help", priority = 80 },
   }, {
-    { name = "buffer" },
+    { name = "buffer", priority = 50 },
+    { name = "omni", priority = 40 },
+    { name = "spell", priority = 40 },
+    { name = "calc", priority = 50 },
+    { name = "treesitter", priority = 30 },
   }),
   -- view = {
   --   entries = "native",
