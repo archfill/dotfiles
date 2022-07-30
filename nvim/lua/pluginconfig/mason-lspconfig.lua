@@ -1,4 +1,4 @@
-require('mason-lspconfig').setup()
+require("mason-lspconfig").setup()
 
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...)
@@ -26,23 +26,27 @@ local on_attach = function(client, bufnr)
   buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", opts)
   buf_set_keymap("n", "<space>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts)
   buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+
+  require("nvim-navic").attach(client, bufnr)
 end
 
 local lspconfig = require("lspconfig")
 -- Setup lspconfig.
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-local mason_lspconfig = require('mason-lspconfig')
-mason_lspconfig.setup_handlers({ function(server_name)
-  lspconfig[server_name].setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = {
-      Lua = {
-        diagnostics = {
-          globals = { "vim" },
+local mason_lspconfig = require("mason-lspconfig")
+mason_lspconfig.setup_handlers({
+  function(server_name)
+    lspconfig[server_name].setup({
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
         },
       },
-    },
-  })
-end })
+    })
+  end,
+})

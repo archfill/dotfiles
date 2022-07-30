@@ -26,6 +26,14 @@ require("packer").startup(function(use)
       require("pluginconfig.lualine")
     end,
   })
+  use({
+    "SmiteshP/nvim-navic",
+    requires = { "neovim/nvim-lspconfig" },
+    module = "nvim-navic",
+    setup = function()
+      require("pluginconfig.nvim-navic")
+    end,
+  })
 
   --------------------------------
   -- Bufferline
