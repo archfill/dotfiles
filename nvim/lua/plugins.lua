@@ -132,9 +132,17 @@ require("packer").startup(function(use)
   -- lsp
   use("neovim/nvim-lspconfig")
   use({
-    "williamboman/nvim-lsp-installer",
+    'williamboman/mason.nvim',
+    event = "VimEnter",
     config = function()
-      require("pluginconfig.nvim-lsp")
+      require('mason').mason.setup()
+    end,
+  })
+  use({
+    'williamboman/mason-lspconfig.nvim',
+    after = { 'mason.nvim', 'nvim-lspconfig', 'cmp-nvim-lsp', 'nlsp-settings.nvim' },
+    config = function()
+      require("pluginconfig.mason-lspconfig")
     end,
   })
   use({
