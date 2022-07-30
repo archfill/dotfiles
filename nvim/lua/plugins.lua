@@ -9,6 +9,10 @@ require("packer").startup(function(use)
   -- プラグインを書く
   use("wbthomason/packer.nvim")
 
+  --------------------------------
+  -- Notify
+  use({ "rcarriga/nvim-notify", module = "notify" })
+
   -- color scheme
   local colorscheme = "nightfox.nvim"
   use("EdenEast/nightfox.nvim")
@@ -23,11 +27,18 @@ require("packer").startup(function(use)
     end,
   })
 
-  -- tabline
-  use {
-    'romgrk/barbar.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons' }
-  }
+  --------------------------------
+  -- Bufferline
+  if not vim.g.vscode then
+    use({
+      "akinsho/bufferline.nvim",
+      requires = { 'kyazdani42/nvim-web-devicons' },
+      after = colorscheme,
+      config = function()
+        require("pluginconfig.bufferline")
+      end,
+    })
+  end
 
   --------------------------------------------------------------
   -- FuzzyFinders
@@ -42,7 +53,16 @@ require("packer").startup(function(use)
       require("pluginconfig.telescope")
     end,
   })
+  use({
+    "nvim-telescope/telescope-frecency.nvim",
+    requires = { "tami5/sqlite.lua" },
+    after = { "telescope.nvim" },
+    config = function()
+      require("telescope").load_extension("frecency")
+    end,
+  })
 
+  --------------------------------
   -- file finder
   use({
     "nvim-neo-tree/neo-tree.nvim",
@@ -57,6 +77,7 @@ require("packer").startup(function(use)
     end,
   })
 
+  --------------------------------
   -- Auto Completion
   use({
     "hrsh7th/nvim-cmp",
@@ -69,42 +90,26 @@ require("packer").startup(function(use)
       require("pluginconfig/nvim-cmp")
     end,
   })
-  -- use({
-  -- "onsails/lspkind-nvim",
-  -- module = "lspkind",
-  -- config = function()
-  -- require("rc/pluginconfig/lspkind-nvim")
-  -- end,
-  -- })
+  use({
+    "onsails/lspkind.nvim",
+    module = "lspkind",
+    config = function()
+      require("pluginconfig.lspkind")
+    end,
+  })
   use({ "hrsh7th/cmp-nvim-lsp", module = "cmp_nvim_lsp" })
-  -- use({ "hrsh7th/cmp-nvim-lsp-signature-help", after = "nvim-cmp" })
-  -- use({ "hrsh7th/cmp-nvim-lsp-document-symbol", after = "nvim-cmp" })
+  use({ "hrsh7th/cmp-nvim-lsp-signature-help", after = "nvim-cmp" })
+  use({ "hrsh7th/cmp-nvim-lsp-document-symbol", after = "nvim-cmp" })
   use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
   use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
   use({ "hrsh7th/cmp-cmdline", after = "nvim-cmp" })
-  -- use({ "hrsh7th/cmp-omni", after = "nvim-cmp" })
-  -- use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
-  -- use({ "hrsh7th/cmp-emoji", after = "nvim-cmp" })
-  -- use({ "hrsh7th/cmp-calc", after = "nvim-cmp" })
-  -- use({ "f3fora/cmp-spell", after = "nvim-cmp" })
-  -- use({ "yutkat/cmp-mocword", after = "nvim-cmp" })
-  -- use({
-  -- "uga-rosa/cmp-dictionary",
-  -- after = "nvim-cmp",
-  -- config = function()
-  -- require("rc/pluginconfig/cmp-dictionary")
-  -- end,
-  -- })
+  use({ "hrsh7th/cmp-omni", after = "nvim-cmp" })
+  use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
+  use({ "hrsh7th/cmp-emoji", after = "nvim-cmp" })
+  use({ "hrsh7th/cmp-calc", after = "nvim-cmp" })
+  use({ "f3fora/cmp-spell", after = "nvim-cmp" })
   use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
-  -- use({
-  -- "tzachar/cmp-tabnine",
-  -- run = "./install.sh",
-  -- after = "nvim-cmp",
-  -- })
-  -- use({ "ray-x/cmp-treesitter", after = "nvim-cmp" })
-  -- use({ "lukas-reineke/cmp-rg", after = "nvim-cmp" })
-  -- use({ "lukas-reineke/cmp-under-comparator", module = "cmp-under-comparator" })
-  use({ "vim-denops/denops.vim" })
+  use({ "ray-x/cmp-treesitter", after = "nvim-cmp" })
   use({
     "vim-skk/skkeleton",
     requires = { "vim-denops/denops.vim" },
@@ -112,61 +117,40 @@ require("packer").startup(function(use)
       require("pluginconfig.skkeleton")
     end,
     setup = function()
-      vim.keymap.set({ "i", "c", "l" }, "<C-j>", "<Plug>(skkeleton-enable)")
-      vim.keymap.set("i", "<C-x><C-o>", function()
-        require("cmp").complete()
-      end)
-
-      local pre_config
-
-      local g1 = vim.api.nvim_create_augroup("skkeleton_callbacks", {})
-      vim.api.nvim_create_autocmd("User", {
-        group = g1,
-        pattern = "skkeleton-enable-pre",
-        callback = function()
-          pre_config = require("cmp.config").get()
-          require("cmp").setup.buffer({
-            sources = { { name = "skkeleton" } },
-            view = { entries = "native" },
-          })
-        end,
-      })
-      vim.api.nvim_create_autocmd("User", {
-        group = g1,
-        pattern = "skkeleton-disable-pre",
-        callback = function()
-          if pre_config then
-            require("cmp").setup.buffer(pre_config)
-            pre_config = nil
-          end
-        end,
-      })
+      require("pluginstart.skkeleton")
     end,
   })
   use({ "rinx/cmp-skkeleton", after = { "nvim-cmp", "skkeleton" }, event = { "InsertEnter" } })
   use({
     "delphinus/skkeleton_indicator.nvim",
     config = function()
-      vim.api.nvim_exec(
-        [[
-      hi SkkeletonIndicatorEiji guifg=#88c0d0 guibg=#2e3440 gui=bold
-      hi SkkeletonIndicatorHira guifg=#2e3440 guibg=#a3be8c gui=bold
-      hi SkkeletonIndicatorKata guifg=#2e3440 guibg=#ebcb8b gui=bold
-      hi SkkeletonIndicatorHankata guifg=#2e3440 guibg=#b48ead gui=bold
-      hi SkkeletonIndicatorZenkaku guifg=#2e3440 guibg=#88c0d0 gui=bold
-    ]]   ,
-        false
-      )
-      require("skkeleton_indicator").setup({})
+      require("pluginconfig.skkeleton_indicator")
     end,
   })
 
+  --------------------------------
   -- lsp
   use("neovim/nvim-lspconfig")
   use({
     "williamboman/nvim-lsp-installer",
     config = function()
       require("pluginconfig.nvim-lsp")
+    end,
+  })
+  use({
+    "tamago324/nlsp-settings.nvim",
+    after = { "nvim-lspconfig" },
+    config = function()
+      require("pluginconfig.nlsp-settings")
+    end,
+  })
+
+  -- lsp ui
+  use({
+    "glepnir/lspsaga.nvim",
+    after = "mason.nvim",
+    config = function()
+      require("pluginconfig.lspsaga")
     end,
   })
   use({
