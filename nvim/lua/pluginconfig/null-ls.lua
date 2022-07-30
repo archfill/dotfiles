@@ -24,7 +24,7 @@ local sources = {
 local lsp_formatting = function(bufnr)
   vim.lsp.buf.format({
     filter = function(client)
-      return client.name ~= "null-ls"
+      return client.name ~= "tsserver"
     end,
     bufnr = bufnr,
   })
