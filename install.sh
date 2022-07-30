@@ -103,21 +103,6 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
   fi
 }
 
-# opam
-: "install opam" && {
-  OPAM_DIR=$HOME/.opam
-  if [ ! -e $OPAM_DIR ]; then
-    echo "installing opam..."
-    mkdir opam-work && cd opam-work
-    curl -OL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh
-    chmod +x ./install.sh
-    sh ./install.sh
-    opam init
-  else
-    echo "opam is already installed"
-  fi
-}
-
 # anyenv
 rm -rf ~/.anyenv
 ln -sf ~/dotfiles/.anyenv ~/.anyenv
@@ -192,5 +177,7 @@ ln -sf ~/dotfiles/.git_tmp ~/.git_tmp
 
 cd
 git config --global init.templatedir '.git_tmp' 
+git config --global user.name 'Yusaku Hieda' 
+git config --global user.name 'y.hieda@chill-rf.com' 
 
 exit 0
