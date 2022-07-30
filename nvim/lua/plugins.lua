@@ -32,7 +32,7 @@ require("packer").startup(function(use)
   if not vim.g.vscode then
     use({
       "akinsho/bufferline.nvim",
-      requires = { 'kyazdani42/nvim-web-devicons' },
+      requires = { "kyazdani42/nvim-web-devicons" },
       after = colorscheme,
       config = function()
         require("pluginconfig.bufferline")
@@ -132,15 +132,15 @@ require("packer").startup(function(use)
   -- lsp
   use("neovim/nvim-lspconfig")
   use({
-    'williamboman/mason.nvim',
+    "williamboman/mason.nvim",
     event = "VimEnter",
     config = function()
-      require('mason').mason.setup()
+      require("mason").setup({})
     end,
   })
   use({
-    'williamboman/mason-lspconfig.nvim',
-    after = { 'mason.nvim', 'nvim-lspconfig', 'cmp-nvim-lsp', 'nlsp-settings.nvim' },
+    "williamboman/mason-lspconfig.nvim",
+    after = { "mason.nvim", "nvim-lspconfig", "cmp-nvim-lsp", "nlsp-settings.nvim" },
     config = function()
       require("pluginconfig.mason-lspconfig")
     end,
@@ -159,6 +159,17 @@ require("packer").startup(function(use)
     after = "mason.nvim",
     config = function()
       require("pluginconfig.lspsaga")
+    end,
+  })
+  use({
+    "folke/lsp-colors.nvim",
+    module = "lsp-colors",
+  })
+  use({
+    "folke/trouble.nvim",
+    after = { "mason.nvim" },
+    config = function()
+      require("pluginconfig.trouble")
     end,
   })
   use({
