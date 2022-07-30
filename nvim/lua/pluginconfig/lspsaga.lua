@@ -1,51 +1,61 @@
 local lspsaga = require 'lspsaga'
-lspsaga.setup { -- defaults ...
-  debug = false,
-  use_saga_diagnostic_sign = true,
-  -- diagnostic sign
-  error_sign = "",
-  warn_sign = "",
-  hint_sign = "",
-  infor_sign = "",
-  diagnostic_header_icon = "   ",
-  -- code action title icon
+lspsaga.init_lsp_saga { -- defaults ...
+  border_style = "single",
+  saga_winblend = 0,
+  move_in_saga = { prev = "<C-p>", next = "<C-n>" },
+  diagnostic_header = { " ", " ", " ", "ﴞ" },
+  show_diagnostic_source = true,
+  diagnostic_source_bracket = {},
+  max_preview_lines = 10,
   code_action_icon = " ",
-  code_action_prompt = {
+  code_action_num_shortcut = true,
+  code_action_lightbulb = {
     enable = true,
     sign = true,
-    sign_priority = 40,
+    sign_priority = 20,
     virtual_text = true,
   },
-  finder_definition_icon = "  ",
-  finder_reference_icon = "  ",
-  max_preview_lines = 10,
+  finder_icons = {
+    def = "  ",
+    ref = "諭 ",
+    link = "  ",
+  },
   finder_action_keys = {
     open = "o",
     vsplit = "s",
     split = "i",
+    tabe = "t",
     quit = "q",
     scroll_down = "<C-f>",
-    scroll_up = "<C-b>",
+    scroll_up = "<C-b>", -- quit can be a table
   },
   code_action_keys = {
     quit = "q",
     exec = "<CR>",
   },
-  rename_action_keys = {
-    quit = "<C-c>",
-    exec = "<CR>",
-  },
+  rename_action_quit = "<C-c>",
   definition_preview_icon = "  ",
-  border_style = "single",
-  rename_prompt_prefix = "➤",
-  rename_output_qflist = {
+  symbol_in_winbar = {
+    in_custom = false,
     enable = false,
-    auto_open_qflist = false,
+    separator = ' ',
+    show_file = true,
+    click_support = false,
+  },
+  show_outline = {
+    win_position = 'right',
+    --set special filetype win that outline window split.like NvimTree neotree
+    -- defx, db_ui
+    win_with = '',
+    win_width = 30,
+    auto_enter = true,
+    auto_preview = true,
+    virt_text = '┃',
+    jump_key = 'o',
+    -- auto refresh when change buffer
+    auto_refresh = true,
   },
   server_filetype_map = {},
-  diagnostic_prefix_format = "%d. ",
-  diagnostic_message_format = "%m %c",
-  highlight_prefix = false,
 }
 
 --- In lsp attach function
