@@ -256,6 +256,141 @@ require("packer").startup(function(use)
       require("colorizer").setup()
     end,
   })
+  use({
+    "RRethy/vim-illuminate",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.vim-illuminate")
+    end,
+  })
+  use({
+    "norcalli/nvim-colorizer.lua",
+    event = "VimEnter",
+    config = function()
+      require("colorizer").setup()
+    end,
+  })
+  use({
+    "folke/todo-comments.nvim",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.todo-comments")
+    end,
+  })
+  use({
+    "mvllow/modes.nvim",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.modes")
+    end,
+  })
+
+  --------------------------------
+  -- Sidebar
+  -- conflict with clever-f (augroup sidebar_nvim_prevent_buffer_override)
+  use({
+    "GustavoKatel/sidebar.nvim",
+    cmd = { "SidebarNvimToggle" },
+    config = function()
+      require("pluginconfig.sidebar")
+    end,
+  })
+
+  --------------------------------
+  -- Scrollbar
+  use({
+    "petertriho/nvim-scrollbar",
+    requires = { { "kevinhwang91/nvim-hlslens", opt = true } },
+    after = { colorscheme, "nvim-hlslens" },
+    config = function()
+      require("pluginconfig.nvim-scrollbar")
+    end,
+  })
+
+  --------------------------------
+  -- Move
+  use({
+    "phaazon/hop.nvim",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.hop")
+    end,
+  })
+
+  --------------------------------
+  -- Window
+  use({
+    "kwkarlwang/bufresize.nvim",
+    event = "WinNew",
+    config = function()
+      require("pluginconfig.bufresize")
+    end,
+  })
+
+  --------------------------------
+  -- Terminal
+  use({
+    "akinsho/toggleterm.nvim",
+    -- after = { colorscheme },
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.toggleterm")
+    end,
+  })
+
+  --------------------------------
+  -- Reading assistant
+  use({
+    "lukas-reineke/indent-blankline.nvim",
+    -- after = { colorscheme },
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.indent-blankline")
+    end,
+  })
+
+  --------------------------------
+  -- Project
+  use({
+    "ahmedkhalf/project.nvim",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.project")
+    end,
+  })
+
+  --------------------------------
+  -- Git
+  use({
+    "TimUntersberger/neogit",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.neogit")
+    end,
+  })
+  use({
+    "akinsho/git-conflict.nvim",
+    event = "VimEnter",
+    config = function()
+      require("git-conflict").setup()
+    end,
+  })
+  use({ "yutkat/convert-git-url.nvim", cmd = { "ConvertGitUrl" } })
+  use({
+    "lewis6991/gitsigns.nvim",
+    requires = { "nvim-lua/plenary.nvim" },
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.gitsigns")
+    end,
+  })
+  use({
+    "sindrets/diffview.nvim",
+    event = "VimEnter",
+    config = function()
+      require("pluginconfig.diffview")
+    end,
+  })
 
   -- packer bootstrap
   if packer_bootstrap then

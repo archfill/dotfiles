@@ -12,9 +12,10 @@ require("telescope").setup({
       },
       i = {
         ["<C-t>"] = require("telescope.actions.layout").toggle_preview,
-        ['<C-j>'] = require("telescope.actions").move_selection_next,
-        ['<C-k>'] = require("telescope.actions").move_selection_previous,
-        ['<Tab>'] = require("telescope.actions").toggle_selection + require("telescope.actions").move_selection_next,
+        ["<C-j>"] = require("telescope.actions").move_selection_next,
+        ["<C-k>"] = require("telescope.actions").move_selection_previous,
+        ["<Tab>"] = require("telescope.actions").toggle_selection
+            + require("telescope.actions").move_selection_next,
       },
     },
   },
@@ -38,6 +39,26 @@ require("telescope").setup({
       ignore_patterns = { "*.git/*", "*/tmp/*", "*/node_modules/*" },
       db_safe_mode = false,
       auto_validate = true,
+    },
+    project = {
+      base_dirs = (function()
+        local dirs = {}
+        local function file_exists(fname)
+          local stat = vim.loop.fs_stat(vim.fn.expand(fname))
+          return (stat and stat.type) or false
+        end
+
+        if file_exists("~/.ghq") then
+          dirs[#dirs + 1] = { "~/.ghq", max_depth = 5 }
+        end
+        if file_exists("~/Workspace") then
+          dirs[#dirs + 1] = { "~/Workspace", max_depth = 3 }
+        end
+        if #dirs == 0 then
+          return nil
+        end
+        return dirs
+      end)(),
     },
   },
 })
