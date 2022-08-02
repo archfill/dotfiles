@@ -19,6 +19,7 @@ local sources = {
     end,
   }),
   null_ls.builtins.completion.spell,
+  null_ls.builtins.formatting.autopep8,
 }
 
 local lsp_formatting = function(bufnr)

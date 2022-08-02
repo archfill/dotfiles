@@ -392,6 +392,16 @@ require("packer").startup(function(use)
     end,
   })
 
+  --------------------------------
+  -- language
+  use({
+    "akinsho/flutter-tools.nvim",
+    requires = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("pluginconfig.flutter-tools")
+    end,
+  })
+
   -- packer bootstrap
   if packer_bootstrap then
     require("packer").sync()
