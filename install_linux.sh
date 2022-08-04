@@ -45,11 +45,11 @@ debian | ubuntu)
 esac
 
 # terminator
-rm -rf ~/.config/terminator
-ln -sf ~/dotfiles/.config/terminator ~/.config/terminator
+#rm -rf ~/.config/terminator
+#ln -sf ~/dotfiles/.config/terminator ~/.config/terminator
 ## terminator-themes
-rm -rf ~/.config/terminator/plugins
-mkdir -p ~/.config/terminator/plugins
-wget https://git.io/v5Zww -O $HOME"/.config/terminator/plugins/terminator-themes.py"
+#rm -rf ~/.config/terminator/plugins
+#mkdir -p ~/.config/terminator/plugins
+#wget https://git.io/v5Zww -O $HOME"/.config/terminator/plugins/terminator-themes.py"
 
 echo "Linux config end"
