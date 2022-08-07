@@ -214,7 +214,7 @@ require("packer").startup(function(use)
   use({ "yioneko/nvim-yati", after = "nvim-treesitter" })
   use("nvim-treesitter/nvim-treesitter-context")
   use({ "JoosepAlviste/nvim-ts-context-commentstring", after = { "nvim-treesitter" } })
-  use({ "haringsrob/nvim_context_vt", after = { "nvim-treesitter", colorscheme } })
+  -- use({ "haringsrob/nvim_context_vt", after = { "nvim-treesitter", colorscheme } })
   use({
     "m-demare/hlargs.nvim",
     after = { "nvim-treesitter" },
