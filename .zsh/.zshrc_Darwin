@@ -18,6 +18,7 @@ alias paraubuntu=10.211.55.12
 alias bau='brew update && brew upgrade && brew upgrade --cask --greedy'
 alias bwupgrade='brew update && brew upgrade'
 alias intelzsh='arch -x86_64 zsh'
+alias yabai-restart='brew services restart yabai'
 
 export PATH="$PATH:${HOME}/develop/flutter/bin"
 export FLUTTER_ROOT="${HOME}/develop/flutter"
