@@ -1,9 +1,13 @@
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+if [ -d "$HOME/.pyenv" ] ; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [ -d "/home/linuxbrew/.linuxbrew/bin" ] ; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 fvim() {
   files=$(git ls-files) &&
@@ -15,10 +19,14 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   source /etc/profile.d/vte.sh
 fi
 
-source $HOME/.cargo/env
+if [ -d "$HOME/.cargo" ] ; then
+  source $HOME/.cargo/env
+fi
 
 alias wolmac="wakeonlan 14:98:77:6b:00:00"
 alias wol2mac="wol 14:98:77:6b:00:00"
 
-export DENO_INSTALL="/home/hieda/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
+if [ -d "$HOME/.deno" ] ; then
+  export DENO_INSTALL="$HOME/.deno"
+  export PATH="$DENO_INSTALL/bin:$PATH"
+fi
