@@ -30,3 +30,7 @@ if [ -d "$HOME/.deno" ] ; then
   export DENO_INSTALL="$HOME/.deno"
   export PATH="$DENO_INSTALL/bin:$PATH"
 fi
+
+if [ -d "/snap/bin" ] ; then
+  export PATH="/snap/bin:$PATH"
+fi
