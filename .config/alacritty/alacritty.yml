@@ -76,7 +76,7 @@ font:
   # The normal (roman) font face to use.
   normal:
     # family: "Source Code Pro for Powerline"
-    family: "HackGenNerd Console"
+    family: "HackGen Console NF"
     #family: "Cica"
     # Style can be specified to pick a specific face.
     # style: Regular
@@ -84,7 +84,7 @@ font:
   # The bold font face
   bold:
     # family: "Source Code Pro for Powerline"
-    family: "HackGenNerd Console"
+    family: "HackGen Console NF"
     #family: "Cica"
     # Style can be specified to pick a specific face.
     # style: Bold
@@ -92,7 +92,7 @@ font:
   # The italic font face
   italic:
     # family: "Source Code Pro for Powerline"
-    family: "HackGenNerd Console"
+    family: "HackGen Console NF"
     #family: "Cica"
     # Style can be specified to pick a specific face.
     # style: Italic
