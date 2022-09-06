@@ -94,8 +94,10 @@ eval "$(anyenv init - zsh)"
 [ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`
 
 # opam configuration
-test -r /home/chillda/.opam/opam-init/init.zsh && . /home/chillda/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-eval $(opam env)
+if [ -d "${HOME}/.opam" ] ; then
+  test -r ${HOME}/.opam/opam-init/init.zsh && . ${HOME}/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+  eval $(opam env)
+fi
 
 export LANG=ja_JP.UTF-8
 
