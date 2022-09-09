@@ -129,3 +129,5 @@ if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 fi
 
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+[[ $commands[helm] ]] && source <(helm completion zsh)
