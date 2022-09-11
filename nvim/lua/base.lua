@@ -4,20 +4,19 @@
 -- if fzfExists ~= ''
 -- vim.o.rtp = vim.o.rtp .. '/opt/homebrew/opt/fzf'
 -- else
--- vim.o.rtp = vim.o.rtp .. '/usr/local/opt/fzf'
--- end
+-- vim.o.rtp = vim.o.rtp .. '/usr/local/opt/fzf' end
 -- end
 
-vim.o.sh = 'zsh'
+vim.o.sh = "zsh"
 
-vim.o.printfont = 'HackGenNerd:h12'
+vim.o.printfont = "HackGenNerd:h12"
 
 -- setting
 -- 文字コードをUFT-8に設定
-vim.o.fenc = 'utf-8'
-vim.o.encoding = 'utf-8'
-vim.o.fileencodings = 'utf-8,sjis,iso-2022-jp,euc-jp'
-vim.o.fileformats = 'unix,dos,mac'
+vim.o.fenc = "utf-8"
+vim.o.encoding = "utf-8"
+vim.o.fileencodings = "utf-8,sjis,iso-2022-jp,euc-jp"
+vim.o.fileformats = "unix,dos,mac"
 -- " バックアップファイルを作らない
 vim.o.backup = false
 vim.o.writebackup = false
@@ -36,7 +35,7 @@ vim.o.number = true
 -- " 現在の行を強調表示
 vim.o.cursorline = true
 -- " 行末の1文字先までカーソルを移動できるように
-vim.o.virtualedit = 'onemore'
+vim.o.virtualedit = "onemore"
 -- インデントはスマートインデント
 vim.o.smartindent = true
 -- " ビープ音を可視化
@@ -46,13 +45,13 @@ vim.o.showmatch = true
 -- " ステータスラインを常に表示
 vim.o.laststatus = 2
 -- " コマンドラインの補完
-vim.o.wildmode = 'list:longest'
-vim.o.wildignore = vim.o.wildignore .. 'node_modules/**,.git/**'
+vim.o.wildmode = "list:longest"
+vim.o.wildignore = vim.o.wildignore .. "node_modules/**,.git/**"
 
 -- " Tab系
 -- 不可視文字を可視化(タブが「▸-」と表示される)
 vim.o.list = true
-vim.o.listchars = 'tab:▸-'
+vim.o.listchars = "tab:▸-"
 -- " Tab文字を半角スペースにする
 vim.o.expandtab = true
 -- " 行頭以外のTab文字の表示幅（スペースいくつ分）
