@@ -35,4 +35,7 @@ unlink $HAMMERSPOON_INIT
 rm -f $HAMMERSPOON_INIT
 ln -s ~/dotfiles/hammerspoon/init.lua $HAMMERSPOON_INIT
 
+# stackline - yabai
+git clone https://github.com/AdamWagner/stackline.git ~/.hammerspoon/stackline
+
 git config --global ghq.root '~/git'
