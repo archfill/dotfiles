@@ -48,7 +48,7 @@ alt - e : yabai -m window --toggle split
 # alt - t : yabai -m window --toggle float && /tmp/yabai-restore/$(yabai -m query --windows --window | jq -re '.id').restore 2>/dev/null || true
 alt - t : yabai -m window --toggle float && yabai -m window --grid 4:4:1:1:2:2
 
-alt - return : open /Applications/Alacritty.app
+# alt - return : open /Applications/Alacritty.app
 
 .blacklist [
     "Microsoft Remote Desktop"
