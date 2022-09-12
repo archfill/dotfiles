@@ -3,7 +3,7 @@
 echo "setup start"
 
 FONT_CICA='v5.0.3'
-FONT_HACKGEN='v2.6.3'
+FONT_HACKGEN='v2.7.1'
 
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
@@ -141,7 +141,7 @@ cd ~/dotfiles
 rm -rf $FONT_CICA_TEMP_DIR
 
 # font hackgen
-FONT_HACKGEN_FOLDER_NAME=HackGenNerd_${FONT_HACKGEN}
+FONT_HACKGEN_FOLDER_NAME=HackGen_NF_${FONT_HACKGEN}
 FONT_HACKGEN_TERGET=${FONT_HACKGEN_FOLDER_NAME}.zip
 FONT_HACKGEN_TEMP_DIR=./font_tmp
 if [ ! -e $FONT_HACKGEN_TEMP_DIR ]; then
