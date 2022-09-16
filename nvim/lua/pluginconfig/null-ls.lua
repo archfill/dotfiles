@@ -1,13 +1,38 @@
 local null_ls = require("null-ls")
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
+local ignored_filetypes = {
+  "TelescopePrompt",
+  "diff",
+  "gitcommit",
+  "unite",
+  "qf",
+  "help",
+  "markdown",
+  "minimap",
+  "packer",
+  "dashboard",
+  "telescope",
+  "lsp-installer",
+  "lspinfo",
+  "NeogitCommitMessage",
+  "NeogitCommitView",
+  "NeogitGitCommandHistory",
+  "NeogitLogView",
+  "NeogitNotification",
+  "NeogitPopup",
+  "NeogitStatus",
+  "NeogitStatusNew",
+  "aerial",
+  "null-ls-info",
+}
+
 local sources = {
   null_ls.builtins.formatting.stylua.with({
     condition = function()
       return vim.fn.executable("stylua") > 0
     end,
   }),
-  null_ls.builtins.diagnostics.eslint,
   null_ls.builtins.formatting.prettier.with({
     condition = function()
       return vim.fn.executable("prettier") > 0
