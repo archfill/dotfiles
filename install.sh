@@ -36,6 +36,13 @@ unlink $KITTY_DIR
 rm -rf $KITTY_DIR
 ln -sf ~/dotfiles/.config/kitty $KITTY_DIR
 
+# wezterm
+echo "wezterm"
+WEZTERM_DIR=~/.config/wezterm
+unlink $WEZTERM_DIR
+rm -rf $WEZTERM_DIR
+ln -sf ~/dotfiles/.config/wezterm $WEZTERM
+
 # direnv
 echo "direnv"
 DIRENV_DIR=~/.config/direnv
