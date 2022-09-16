@@ -73,6 +73,8 @@ bindkey '^]' ghq-fzf
 
 source $HOME/.cargo/env
 
+eval "$(direnv hook zsh)"
+
 # skhd startup
 # isskhd=(`ps aux | grep skhd | awk '{print $11}'`)
 # if [[ "$isskhd" != *skhd* ]]; then

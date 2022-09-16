@@ -36,6 +36,13 @@ unlink $KITTY_DIR
 rm -rf $KITTY_DIR
 ln -sf ~/dotfiles/.config/kitty $KITTY_DIR
 
+# direnv
+echo "direnv"
+DIRENV_DIR=~/.config/direnv
+unlink $DIRENV_DIR
+rm -rf $DIRENV_DIR
+ln -sf ~/dotfiles/.config/direnv $DIRENV_DIR
+
 # neomutt
 MUTTRC_FILE=~/.muttrc
 unlink $MUTTRC_FILE
