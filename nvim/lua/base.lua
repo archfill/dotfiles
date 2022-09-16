@@ -9,7 +9,8 @@
 
 vim.o.sh = "zsh"
 
-vim.o.printfont = "HackGenNerd:h12"
+vim.o.printfont = "HackGen Console NF:h14"
+vim.o.guifont = "HackGen Console NF:h14"
 
 -- setting
 -- 文字コードをUFT-8に設定
