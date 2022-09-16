@@ -1,7 +1,7 @@
 #!/bin/sh
 brew install neovim deno ghq go coreutils
 brew tap homebrew/cask-fonts
-brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd
+brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd font-hack-nerd-font
 
 # karabiner
 echo "karabiner SKK"
