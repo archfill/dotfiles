@@ -10,6 +10,13 @@ require("packer").startup(function(use)
   use("wbthomason/packer.nvim")
 
   --------------------------------
+  -- Lua Library
+  use({ "nvim-lua/popup.nvim", module = "popup" })
+  use({ "nvim-lua/plenary.nvim" }) -- do not lazy load
+  -- use({ "kkharji/sqlite.lua", module = "sqlite" })
+  use({ "MunifTanjim/nui.nvim", module = "nui" })
+
+  --------------------------------
   -- Notify
   use({ "rcarriga/nvim-notify", module = "notify" })
 
@@ -227,6 +234,7 @@ require("packer").startup(function(use)
   use({
     "jose-elias-alvarez/null-ls.nvim",
     requires = { "nvim-lua/plenary.nvim" },
+    after = { "mason.nvim" },
     config = function()
       require("pluginconfig/null-ls")
     end,
@@ -238,14 +246,6 @@ require("packer").startup(function(use)
     event = "VimEnter",
     config = function()
       require("nvim-autopairs").setup({})
-    end,
-  })
-
-  -- git
-  use({
-    "lewis6991/gitsigns.nvim",
-    config = function()
-      require("gitsigns").setup()
     end,
   })
 
