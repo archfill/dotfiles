@@ -2,7 +2,7 @@ vim.cmd([[hi TabLineSel guibg=#ddc7a1]])
 
 require("bufferline").setup({
 	options = {
-		mode = "buffers",
+		-- mode = "buffers",
 		numbers = function(opts)
 			return string.format("%s.%s", opts.ordinal, opts.lower(opts.id))
 		end,
@@ -61,7 +61,7 @@ require("bufferline").setup({
 		-- [focused and unfocused]. eg: { '|', '|' }
 		separator_style = "slant",
 		enforce_regular_tabs = true,
-		always_show_bufferline = true,
+		-- always_show_bufferline = true,
 		sort_by = "insert_after_current",
 		-- sort_by = 'relative_directory'
 	},
