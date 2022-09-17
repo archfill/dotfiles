@@ -69,6 +69,18 @@ alias smbmount='(){sudo mount -t cifs -o username=$1,password=$2,domain=$3 $4 $5
 ## tmux
 alias tmux-start='tmux -u attach -t main'
 
+function nvimvenv {
+  if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
+    source "$VIRTUAL_ENV/bin/activate"
+    command nvim $@
+    deactivate
+  else
+    command nvim $@
+  fi
+}
+
+alias nvim=nvimvenv
+
 if [ -d "$HOME/google-cloud-sdk" ] ; then
   # The next line updates PATH for the Google Cloud SDK.
   source "$HOME/google-cloud-sdk/path.zsh.inc"
