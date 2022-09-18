@@ -41,7 +41,7 @@ echo "wezterm"
 WEZTERM_DIR=~/.config/wezterm
 unlink $WEZTERM_DIR
 rm -rf $WEZTERM_DIR
-ln -sf ~/dotfiles/.config/wezterm $WEZTERM
+ln -sf ~/dotfiles/.config/wezterm $WEZTERM_DIR
 
 # direnv
 echo "direnv"
