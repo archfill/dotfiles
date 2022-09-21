@@ -1,4 +1,6 @@
 local wezterm = require("wezterm")
+local act = wezterm.action
+
 return {
 	font = wezterm.font("HackGen Console NF", { weight = "Bold" }),
 	font_size = 16.0,
