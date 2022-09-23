@@ -27,10 +27,10 @@ debian | ubuntu)
   ;;
 "arch" )
   echo "arch"
-  sudo pacman -Sy
-  sudo pacman -S python2 \
+  sudo pacman -Suy python2 \
     python2-pip \
     wget \
+    unzip
 
   yay -S neovim \
     neomutt \

@@ -142,7 +142,6 @@ else
 fi
 
 # font cica
-sudo pacman -Suy unzip
 FONT_CICA_TERGET=Cica_${FONT_CICA}.zip
 FONT_CICA_TEMP_DIR=./font_tmp
 if [ ! -e $FONT_CICA_TEMP_DIR ]; then
