@@ -120,8 +120,8 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
 rm -rf ~/.anyenv
 ln -sf ~/dotfiles/.anyenv ~/.anyenv
 
-export PATH="$HOME/.anyenv/bin:$PATH"
-export ANYENV_ROOT="$HOME/.anyenv"
+source PATH="$HOME/.anyenv/bin:$PATH"
+source ANYENV_ROOT="$HOME/.anyenv"
 eval "$(anyenv init - zsh)"
 anyenv install --force-init
 
@@ -195,8 +195,8 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${VAR_NVM}/install.sh | ba
 
 # pyenv
 git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-export PYENV_ROOT=$HOME/.pyenv
-export PATH=$PYENV_ROOT/bin:$PATH
+source PYENV_ROOT=$HOME/.pyenv
+source PATH=$PYENV_ROOT/bin:$PATH
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
