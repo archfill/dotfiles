@@ -5,6 +5,8 @@ echo "setup start"
 FONT_CICA='v5.0.3'
 FONT_HACKGEN='v2.7.1'
 
+VAR_NVM='v0.39.1'
+
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
 elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
@@ -60,18 +62,15 @@ unlink $MUTT_DIR
 rm -rf $MUTT_DIR
 ln -sf ~/dotfiles/.mutt $MUTT_DIR
 
-# vim
-#rm -rf ~/.vim
-#ln -sf ~/dotfiles/.vim ~/.vim
-
 # ideavim
 ln -s ~/dotfiles/.ideavimrc ~/.ideavimrc
-
+# vim
 VIMRC_FILE=~/.vimrc
 unlink $VIMRC_FILE
 rm -f $VIMRC_FILE
 ln -s ~/dotfiles/.vimrc $VIMRC_FILE
 
+# vim gui
 GVIMRC_FILE=~/.gvimrc
 unlink $GVIMRC_FILE
 rm -f $GVIMRC_FILE
@@ -186,6 +185,24 @@ else
   exit 1
 fi
 
+# deno
+curl -fsSL https://deno.land/install.sh | sh
+
+# nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${VAR_NVM}/install.sh | bash
+
+# pyenv
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+export PYENV_ROOT=$HOME/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+# pyenv-virtualenv
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+
+# git config
 rm -rf ~/.git_tmp
 ln -sf ~/dotfiles/.git_tmp ~/.git_tmp
 
