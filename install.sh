@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "setup start"
 
@@ -88,10 +88,12 @@ fi
 unlink ${TMUX_DIR}/bin
 rm -rf ${TMUX_DIR}/bin
 ln -sf ~/dotfiles/.tmux/bin/ ${TMUX_DIR}/bin
+
 rm -rf ${TMUX_PLUGINS_DIR}/tpm
-ln -sf ~/dotfiles/.tmux/plugins/tpm/ ${TMUX_PLUGINS_DIR}/tpm
+git clone https://github.com/tmux-plugins/tpm ${TMUX_PLUGINS_DIR}/tpm
+
 rm -rf ~/git/tmux-powerline
-ln -sf ~/dotfiles/.tmux/git/tmux-powerline/ ~/git/tmux-powerline
+git clone https://github.com/chill-rf/tmux-powerline.git ${HOME}/git/tmux-powerline
 
 rm -f ~/.tmux.conf
 ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
@@ -118,22 +120,13 @@ ln -s ~/dotfiles/.zshenv ~/.zshenv
 
 # anyenv
 rm -rf ~/.anyenv
-ln -sf ~/dotfiles/.anyenv ~/.anyenv
+
+git clone https://github.com/anyenv/anyenv ~/.anyenv
 
 source PATH="$HOME/.anyenv/bin:$PATH"
 source ANYENV_ROOT="$HOME/.anyenv"
-eval "$(anyenv init - zsh)"
+$HOME/.anyenv/bin/anyenv init
 anyenv install --force-init
-
-git submodule init
-git submodule update
-# git submodule update --init --recursive
-# git submodule foreach git pull origin master
-
-# sed -i -e 's/export ZSH=.*/export ZSH="~\/.oh-my-zsh"/g' test.txt
-# sed -i -e 's/ZSH_THEME=.*/ZSH_THEME="powerlevel9k\/powerlevel9k"/' test.txt
-# echo 'alias vi="nvim"' >> test.txt
-# echo 'alias vim="nvim"' >> test.txt
 
 # font cica
 sudo pacman -Suy unzip
