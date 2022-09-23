@@ -69,6 +69,8 @@ alias smbmount='(){sudo mount -t cifs -o username=$1,password=$2,domain=$3 $4 $5
 ## tmux
 alias tmux-start='tmux -u attach -t main'
 
+export PATH=$HOME/.local/bin:$PATH
+
 function nvimvenv {
   if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
     source "$VIRTUAL_ENV/bin/activate"

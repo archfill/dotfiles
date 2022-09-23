@@ -123,10 +123,23 @@ rm -rf ~/.anyenv
 
 git clone https://github.com/anyenv/anyenv ~/.anyenv
 
-source PATH="$HOME/.anyenv/bin:$PATH"
-source ANYENV_ROOT="$HOME/.anyenv"
+echo 'export PATH="$HOME/.anyenv/bin:$PATH"' >> ${HOME}/.bash_profile
+echo 'export ANYENV_ROOT="$HOME/.anyenv"' >> ${HOME}/.bash_profile
+source ${HOME}/.bash_profile
 $HOME/.anyenv/bin/anyenv init
 anyenv install --force-init
+
+echo "check os..."
+if [ "$OS" = 'Mac' ]; then
+  bash ./install_mac.sh
+elif [ "$OS" = 'Linux' ]; then
+  bash ./install_linux.sh
+elif [ "$OS" = 'Cygwin' ]; then
+  bash ./install_cygwin.sh
+else
+  echo "Your platform ($(uname -a)) is not supported."
+  exit 1
+fi
 
 # font cica
 sudo pacman -Suy unzip
@@ -168,18 +181,6 @@ fc-cache -fv
 cd ~/dotfiles
 rm -rf $FONT_HACKGEN_TEMP_DIR
 
-echo "check os..."
-if [ "$OS" = 'Mac' ]; then
-  bash ./install_mac.sh
-elif [ "$OS" = 'Linux' ]; then
-  bash ./install_linux.sh
-elif [ "$OS" = 'Cygwin' ]; then
-  bash ./install_cygwin.sh
-else
-  echo "Your platform ($(uname -a)) is not supported."
-  exit 1
-fi
-
 # deno
 curl -fsSL https://deno.land/install.sh | sh
 
@@ -188,22 +189,12 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${VAR_NVM}/install.sh | ba
 
 # pyenv
 git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-source PYENV_ROOT=$HOME/.pyenv
-source PATH=$PYENV_ROOT/bin:$PATH
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
 
 # pyenv-virtualenv
 git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 
 # git config
-rm -rf ~/.git_tmp
-ln -sf ~/dotfiles/.git_tmp ~/.git_tmp
-
-cd
-git config --global init.templatedir '.git_tmp' 
 git config --global user.name 'Yusaku Hieda' 
-git config --global user.name 'y.hieda@chill-rf.com' 
+git config --global user.email 'y.hieda@chill-rf.com' 
 
 exit 0
