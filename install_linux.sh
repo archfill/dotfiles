@@ -14,6 +14,9 @@ debian | ubuntu)
     wget \
     w3m \
     neomutt \
+    zsh \
+    tmux \
+    vim \
     silversearcher-ag
 
   pip install requests
@@ -33,6 +36,9 @@ debian | ubuntu)
     neomutt \
     w3m \
     mpv \
+    vim \
+    zsh \
+    tmux \
     the_silver_searcher
 
   sudo pip2 install requests
@@ -43,6 +49,11 @@ debian | ubuntu)
     echo "unsupported"
     ;;
 esac
+
+# neovim
+echo 'install neovim.'
+bash ./install_neovim.sh
+echo 'finish neovim.'
 
 # terminator
 #rm -rf ~/.config/terminator
