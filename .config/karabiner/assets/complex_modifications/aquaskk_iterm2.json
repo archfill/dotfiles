@@ -60,6 +60,41 @@
           ]
         }
       ]
+    },
+    {
+      "description": "Ctrl-J to Kana on WezTerm",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "j",
+            "modifiers": {
+              "mandatory": [
+                "control"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "control"
+            },
+            {
+              "key_code": "alt"
+            },
+            {
+              "key_code": "]"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.github\\.wez\\.wezterm$"
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
