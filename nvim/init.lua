@@ -1,5 +1,5 @@
-require('base')
+require("base")
 
-require('plugins')
-require('colorscheme')
-require('mapping')
+require("plugins")
+require("colorscheme")
+require("mapping")

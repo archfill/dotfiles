@@ -26,7 +26,13 @@ require("packer").startup(function(use)
 	use("cocopon/pgmnt.vim")
 
 	-- font
-	use({ "kyazdani42/nvim-web-devicons", after = colorscheme })
+	use({
+		"kyazdani42/nvim-web-devicons",
+		after = colorscheme,
+		config = function()
+			require("pluginconfig.nvim-web-devicons")
+		end,
+	})
 
 	-- status line
 	use({
