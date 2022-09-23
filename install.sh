@@ -17,6 +17,9 @@ else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
 fi
+
+mkdir -p ~/.config
+
 # neovim
 echo "neovim"
 NEOVIM_DIR=~/.config/nvim
