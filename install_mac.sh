@@ -1,7 +1,7 @@
 #!/bin/sh
 brew install neovim deno ghq go coreutils
 brew tap homebrew/cask-fonts
-brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd
+brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd font-hack-nerd-font
 
 # karabiner
 echo "karabiner SKK"
@@ -34,5 +34,8 @@ fi
 unlink $HAMMERSPOON_INIT
 rm -f $HAMMERSPOON_INIT
 ln -s ~/dotfiles/hammerspoon/init.lua $HAMMERSPOON_INIT
+
+# stackline - yabai
+git clone https://github.com/AdamWagner/stackline.git ~/.hammerspoon/stackline
 
 git config --global ghq.root '~/git'

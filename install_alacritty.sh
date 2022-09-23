@@ -23,6 +23,7 @@ cargo build --release
 sudo cp -f target/release/alacritty /usr/local/bin
 sudo cp -f extra/logo/compat/alacritty-term.png /usr/share/pixmaps/Alacritty.png
 sudo desktop-file-install extra/linux/Alacritty.desktop
+# Exec=env WAYLAND_DISPLAY= alacritty
 sudo update-desktop-database
 
 cd ~/dotfiles

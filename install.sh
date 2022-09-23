@@ -3,7 +3,7 @@
 echo "setup start"
 
 FONT_CICA='v5.0.3'
-FONT_HACKGEN='v2.6.3'
+FONT_HACKGEN='v2.7.1'
 
 if [ "$(uname)" = 'Darwin' ]; then
   OS='Mac'
@@ -35,6 +35,20 @@ KITTY_DIR=~/.config/kitty
 unlink $KITTY_DIR
 rm -rf $KITTY_DIR
 ln -sf ~/dotfiles/.config/kitty $KITTY_DIR
+
+# wezterm
+echo "wezterm"
+WEZTERM_DIR=~/.config/wezterm
+unlink $WEZTERM_DIR
+rm -rf $WEZTERM_DIR
+ln -sf ~/dotfiles/.config/wezterm $WEZTERM_DIR
+
+# direnv
+echo "direnv"
+DIRENV_DIR=~/.config/direnv
+unlink $DIRENV_DIR
+rm -rf $DIRENV_DIR
+ln -sf ~/dotfiles/.config/direnv $DIRENV_DIR
 
 # neomutt
 MUTTRC_FILE=~/.muttrc
@@ -141,7 +155,7 @@ cd ~/dotfiles
 rm -rf $FONT_CICA_TEMP_DIR
 
 # font hackgen
-FONT_HACKGEN_FOLDER_NAME=HackGenNerd_${FONT_HACKGEN}
+FONT_HACKGEN_FOLDER_NAME=HackGen_NF_${FONT_HACKGEN}
 FONT_HACKGEN_TERGET=${FONT_HACKGEN_FOLDER_NAME}.zip
 FONT_HACKGEN_TEMP_DIR=./font_tmp
 if [ ! -e $FONT_HACKGEN_TEMP_DIR ]; then
