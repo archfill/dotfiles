@@ -48,28 +48,13 @@ alias ll="ls -lh"
 alias vi="nvim"
 alias vim="nvim"
 alias tmux="tmux -u"
-alias dc-mysql57-up-d="sudo docker-compose -f ~/docker/mysql57/docker-compose.yml up -d"
-alias dc-mysql57-down="sudo docker-compose -f ~/docker/mysql57/docker-compose.yml down"
-alias dcompose="sudo docker-compose"
 alias xdisplay="Xephyr -resizeable"
-alias wolhome="wol d0:50:99:8c:84:1d"
 ## git
 alias gacp='(){git add . && git commit -m "$1" && git push origin $(git_current_branch)}'
 ## mutt
 alias mutt="neomutt"
-## feh
-alias sbg-home="sh ~/bin/wallpaper-home.sh"
-alias sbg-work="sh ~/bin/wallpaper-work.sh"
-## google-drive-ocamlfuse 
-alias gdmount='google-drive-ocamlfuse ~/gdchillda'
-
-## mount
-alias smbmount='(){sudo mount -t cifs -o username=$1,password=$2,domain=$3 $4 $5}'
-
 ## tmux
 alias tmux-start='tmux -u attach -t main'
-
-export PATH=$HOME/.local/bin:$PATH
 
 function nvimvenv {
   if [[ -e "$VIRTUAL_ENV" && -f "$VIRTUAL_ENV/bin/activate" ]]; then
@@ -113,8 +98,6 @@ if [ -d "${HOME}/.opam" ] ; then
   eval $(opam env)
 fi
 
-export LANG=ja_JP.UTF-8
-
 if [ -d "$HOME/AndroidTools" ] ; then
   export ANDROID_HOME=$HOME/AndroidTools
   export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
@@ -145,5 +128,16 @@ if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 fi
 
-[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
-[[ $commands[helm] ]] && source <(helm completion zsh)
+# kubectl completion
+which kubectl > /dev/null 2>&1 && ERRCHK=$?
+if [ $ERRCHK -eq 0 ]; then
+  [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+fi
+
+# helm completion
+which helm > /dev/null 2>&1 && ERRCHK=$?
+if [ $ERRCHK -eq 0 ]; then
+  [[ $commands[helm] ]] && source <(helm completion zsh)
+fi
+
+echo '' > /dev/null 2>&1
