@@ -2,7 +2,7 @@
 
 set -ue
 
-case `arch` in
+case `uname -m` in
 'x86_64')
   function neovim_nightly() {
     mkdir -p ~/.local/

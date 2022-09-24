@@ -27,18 +27,19 @@ debian | ubuntu)
   ;;
 "arch" )
   echo "arch"
-  sudo pacman -Suy python2 \
-    python2-pip \
+  sudo pacman -Suy --noconfirm \
+    ripgrep \
     wget \
     unzip
 
-  yay -S neovim \
+  yay -Syu --noconfirm \
     neomutt \
     w3m \
     mpv \
     vim \
     zsh \
     tmux \
+    lazygit \
     the_silver_searcher
 
   sudo pip2 install requests

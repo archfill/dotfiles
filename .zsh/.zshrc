@@ -130,13 +130,13 @@ fi
 
 # kubectl completion
 which kubectl > /dev/null 2>&1 && ERRCHK=$?
-if [ $ERRCHK -eq 0 ]; then
+if [[ $ERRCHK -eq 0 ]]; then
   [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 fi
 
 # helm completion
 which helm > /dev/null 2>&1 && ERRCHK=$?
-if [ $ERRCHK -eq 0 ]; then
+if [[ $ERRCHK -eq 0 ]]; then
   [[ $commands[helm] ]] && source <(helm completion zsh)
 fi
 
