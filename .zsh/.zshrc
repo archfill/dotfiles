@@ -124,9 +124,9 @@ function precmd() {
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
-  yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
-fi
+# if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
+#   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
+# fi
 
 # kubectl completion
 which kubectl > /dev/null 2>&1 && ERRCHK=$?
