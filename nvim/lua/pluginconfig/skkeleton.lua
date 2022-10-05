@@ -4,3 +4,17 @@ vim.fn["skkeleton#config"]({
   skkServerHost = "192.168.0.100",
   eggLikeNewline = true,
 })
+
+vim.cmd [[
+call skkeleton#register_kanatable('rom', {
+  \ 'z-': ['〜'],
+  \ 'z.': ['…'],
+  \ 'z/': ['・'],
+  \ 'zh': ['←'],
+  \ 'zj': ['↓'],
+  \ 'zk': ['↑'],
+  \ 'zl': ['→'],
+  \ 'jj': 'escape',
+  \ "z\<Space>": ["\u3000", ''],
+  \ })
+]]
