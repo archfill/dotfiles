@@ -31,6 +31,10 @@ HISTFILE=$HOME/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
+# keyconfig
+## disable
+bindkey -r '^J'
+
 # 補完機能を有効にする
 autoload -Uz compinit && compinit -u
 bindkey "\e[Z" reverse-menu-complete
