@@ -9,9 +9,7 @@
           "from": {
             "key_code": "j",
             "modifiers": {
-              "mandatory": [
-                "control"
-              ]
+              "mandatory": ["control"]
             }
           },
           "to": [
@@ -39,9 +37,7 @@
           "from": {
             "key_code": "c",
             "modifiers": {
-              "mandatory": [
-                "control"
-              ]
+              "mandatory": ["control"]
             }
           },
           "to": [
@@ -69,28 +65,18 @@
           "from": {
             "key_code": "j",
             "modifiers": {
-              "mandatory": [
-                "control"
-              ]
+              "mandatory": ["control"]
             }
           },
           "to": [
             {
-              "key_code": "control"
-            },
-            {
-              "key_code": "alt"
-            },
-            {
-              "key_code": "]"
+              "key_code": "japanese_kana"
             }
           ],
           "conditions": [
             {
               "type": "frontmost_application_if",
-              "bundle_identifiers": [
-                "^com\\.github\\.wez\\.wezterm$"
-              ]
+              "bundle_identifiers": ["^com\\.github\\.wez\\.wezterm$"]
             }
           ]
         }
