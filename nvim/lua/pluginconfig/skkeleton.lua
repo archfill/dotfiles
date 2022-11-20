@@ -1,11 +1,14 @@
 vim.fn["skkeleton#config"]({
-  globalJisyo = "~/git/skk/SKK-JISYO.L",
-  useSkkServer = true,
-  skkServerHost = "192.168.0.100",
-  eggLikeNewline = true,
+	globalJisyo = "~/git/skk/SKK-JISYO.L",
+	useSkkServer = true,
+	skkServerHost = "192.168.0.100",
+	eggLikeNewline = true,
+	skkServerPort = 1178,
+	skkServerResEnc = "euc-jp",
+	skkServerReqEnc = "euc-jp",
 })
 
-vim.cmd [[
+vim.cmd([[
 call skkeleton#register_kanatable('rom', {
   \ 'z-': ['〜'],
   \ 'z.': ['…'],
@@ -17,4 +20,4 @@ call skkeleton#register_kanatable('rom', {
   \ 'jj': 'escape',
   \ "z\<Space>": ["\u3000", ''],
   \ })
-]]
+]])
