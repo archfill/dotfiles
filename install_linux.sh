@@ -17,7 +17,8 @@ debian | ubuntu)
     zsh \
     tmux \
     vim \
-    silversearcher-ag
+    silversearcher-ag \
+    fontconfig
 
   pip install requests
 
