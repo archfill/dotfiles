@@ -22,6 +22,7 @@ alias yabai-restart='brew services restart yabai'
 
 export PATH="$PATH:${HOME}/develop/flutter/bin"
 export FLUTTER_ROOT="${HOME}/develop/flutter"
+export PATH="$PATH":"$HOME/.pub-cache/bin"
 #export CLOUDSDK_PYTHON=python@3.8
 
 if [ -d "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" ] ; then
