@@ -71,3 +71,5 @@ vim.o.incsearch = true
 vim.o.wrapscan = true
 -- " 検索語をハイライト表示
 vim.o.hlsearch = true
+
+vim.opt.clipboard:append({ "unnamedplus" })
