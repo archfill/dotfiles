@@ -35,6 +35,7 @@ yabai -m config window_gap                   04
 # rule settings
 yabai -m rule --add app="System Preferences" manage=off
 yabai -m rule --add app="システム環境設定" manage=off
+yabai -m rule --add app="システム設定" manage=off
 yabai -m rule --add app="LadioCast" manage=off
 yabai -m rule --add app="アクティビティモニタ" manage=off
 yabai -m rule --add app="Microsoft Remote Desktop" manage=off
@@ -58,6 +59,7 @@ yabai -m rule --add app="CrossOver" manage=off
 yabai -m rule --add app="Fork" manage=off
 yabai -m rule --add app="WineCX" manage=off
 yabai -m rule --add app="HoloCure" manage=off
+yabai -m rule --add app="UTM" manage=off
 
 # skhd -c $HOME/.config/skhd/skhdrc
 
