@@ -135,7 +135,7 @@ require("packer").startup(function(use)
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-cmdline", after = "nvim-cmp" })
-	use({ "hrsh7th/cmp-omni", after = "nvim-cmp" })
+	-- use({ "hrsh7th/cmp-omni", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-emoji", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-calc", after = "nvim-cmp" })
@@ -152,7 +152,8 @@ require("packer").startup(function(use)
 			require("pluginstart.skkeleton")
 		end,
 	})
-	use({ "rinx/cmp-skkeleton", after = { "nvim-cmp", "skkeleton" }, event = { "InsertEnter" } })
+	-- use({ "rinx/cmp-skkeleton", after = { "nvim-cmp", "skkeleton" }, event = { "InsertEnter" } })
+	use({ "rinx/cmp-skkeleton", after = { "nvim-cmp", "skkeleton" } })
 	use({
 		"delphinus/skkeleton_indicator.nvim",
 		config = function()
@@ -404,6 +405,7 @@ require("packer").startup(function(use)
 
 	--------------------------------
 	-- language
+	--- flutter
 	use({
 		"akinsho/flutter-tools.nvim",
 		requires = { "nvim-lua/plenary.nvim" },

@@ -21,7 +21,7 @@ cmp.setup({
 				nvim_lua = "[NeovimLua]",
 				latex_symbols = "[LaTeX]",
 				path = "[Path]",
-				omni = "[Omni]",
+				-- omni = "[Omni]",
 				spell = "[Spell]",
 				emoji = "[Emoji]",
 				calc = "[Calc]",
@@ -45,6 +45,21 @@ cmp.setup({
 	mapping = {
 		["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
 		["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+
+		["<Up>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+			else
+				vim.api.nvim_feedkeys(t("<Up>"), "n", true)
+			end
+		end, { "i" }),
+		["<Down>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+			else
+				vim.api.nvim_feedkeys(t("<Down>"), "n", true)
+			end
+		end, { "i" }),
 
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
@@ -80,7 +95,7 @@ cmp.setup({
 		{ name = "nvim_lsp_signature_help", priority = 80 },
 	}, {
 		{ name = "buffer", priority = 50 },
-		{ name = "omni", priority = 40 },
+		-- { name = "omni", priority = 40 },
 		{ name = "spell", priority = 40 },
 		{ name = "calc", priority = 50 },
 		{ name = "treesitter", priority = 30 },

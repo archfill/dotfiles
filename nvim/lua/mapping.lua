@@ -14,12 +14,17 @@
 -- lmap / lnoremap  |    -   |   @    |    @    |   -    |   -    |    -     |    -     |    @     |
 ---------------------------------------------------------------------------------------------------+
 
-vim.keymap.set('n', ';', ':', { noremap = true, silent = false })
-vim.keymap.set('n', ':', ';', { noremap = true, silent = false })
+-- コマンドモード関連
+-- HHKB用
+-- vim.keymap.set('n', ';', ':', { noremap = true, silent = false })
+-- vim.keymap.set('n', ':', ';', { noremap = true, silent = false })
+-- cocot36plus(30% keyborad)
+vim.keymap.set("n", "-", ":", { noremap = true, silent = false })
+vim.keymap.set("n", ":", "-", { noremap = true, silent = false })
 -- vim.keymap.set('n', '<F3>', ':noh<CR>', { noremap = true, silent = true })
 -- " 折り返し時に表示行単位での移動できるようにする
-vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = false })
-vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = false })
-vim.keymap.set('i', 'jj', '<ESC>', { noremap = true, silent = false })
+vim.keymap.set("n", "j", "gj", { noremap = true, silent = false })
+vim.keymap.set("n", "k", "gk", { noremap = true, silent = false })
+vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = false })
 -- " ESC連打でハイライト解除
-vim.keymap.set('n', '<leader><Esc>', ':nohlsearch<CR><Esc>', { noremap = false, silent = true })
+vim.keymap.set("n", "<leader><Esc>", ":nohlsearch<CR><Esc>", { noremap = false, silent = true })
