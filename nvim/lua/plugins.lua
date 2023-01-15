@@ -42,14 +42,14 @@ require("packer").startup(function(use)
 			require("pluginconfig.lualine")
 		end,
 	})
-	use({
-		"SmiteshP/nvim-navic",
-		requires = { "neovim/nvim-lspconfig" },
-		module = "nvim-navic",
-		setup = function()
-			require("pluginconfig.nvim-navic")
-		end,
-	})
+	-- use({
+	-- 	"SmiteshP/nvim-navic",
+	-- 	requires = { "neovim/nvim-lspconfig" },
+	-- 	module = "nvim-navic",
+	-- 	setup = function()
+	-- 		require("pluginconfig.nvim-navic")
+	-- 	end,
+	-- })
 
 	--------------------------------
 	-- Bufferline
@@ -189,6 +189,7 @@ require("packer").startup(function(use)
 	-- lsp ui
 	use({
 		"glepnir/lspsaga.nvim",
+		event = "VimEnter",
 		after = "mason.nvim",
 		config = function()
 			require("pluginconfig.lspsaga")
@@ -402,6 +403,16 @@ require("packer").startup(function(use)
 			require("pluginconfig.diffview")
 		end,
 	})
+
+	--------------------------------
+	-- Translate
+	-- use({
+	-- 	"uga-rosa/translate.nvim",
+	-- 	event = "VimEnter",
+	-- 	config = function()
+	-- 		require("pluginconfig.translate")
+	-- 	end,
+	-- })
 
 	--------------------------------
 	-- language
