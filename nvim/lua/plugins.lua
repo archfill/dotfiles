@@ -406,13 +406,13 @@ require("packer").startup(function(use)
 
 	--------------------------------
 	-- Translate
-	-- use({
-	-- 	"uga-rosa/translate.nvim",
-	-- 	event = "VimEnter",
-	-- 	config = function()
-	-- 		require("pluginconfig.translate")
-	-- 	end,
-	-- })
+	use({
+		"uga-rosa/translate.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.translate")
+		end,
+	})
 
 	--------------------------------
 	-- language
