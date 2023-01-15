@@ -67,3 +67,16 @@ lspconfig.emmet_ls.setup({
 		},
 	},
 })
+
+-- lspconfig.dartls.setup({
+-- 	on_attach = on_attach,
+-- 	capabilities = capabilities,
+-- 	filetypes = { "dart" },
+-- 	init_options = {
+-- 		closingLabels = "true",
+-- 		fluttreOutline = "false",
+-- 		onlyAnalyzeProjectsWithOpenFiles = "false",
+-- 		outline = "true",
+-- 		suggestFromUnimportedLibraries = "true",
+-- 	},
+-- })

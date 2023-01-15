@@ -77,6 +77,7 @@ require("packer").startup(function(use)
 			"nvim-telescope/telescope-frecency.nvim",
 			"nvim-telescope/telescope-packer.nvim",
 			"delphinus/telescope-memo.nvim",
+			"benfowler/telescope-luasnip.nvim",
 		},
 		after = { colorscheme },
 		-- event = "VimEnter",
@@ -101,11 +102,20 @@ require("packer").startup(function(use)
 	})
 
 	--------------------------------
+	-- Snippet
+	use({
+		"L3MON4D3/LuaSnip",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.LuaSnip")
+		end,
+	})
+
+	--------------------------------
 	-- Auto Completion
 	use({
 		"hrsh7th/nvim-cmp",
 		requires = {
-			{ "L3MON4D3/LuaSnip", opt = true, event = "VimEnter" },
 			{ "windwp/nvim-autopairs", opt = true, event = "VimEnter" },
 		},
 		after = { "LuaSnip", "nvim-autopairs" },

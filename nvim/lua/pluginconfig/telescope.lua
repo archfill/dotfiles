@@ -2,6 +2,7 @@ require("telescope").load_extension("frecency")
 require("telescope").load_extension("packer")
 require("telescope").load_extension("flutter")
 require("telescope").load_extension("memo")
+require("telescope").load_extension("luasnip")
 
 require("telescope").setup({
 	defaults = {
@@ -70,9 +71,13 @@ require("telescope").setup({
 
 -- Telescope
 vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>fd", "<cmd>Telescope find_files hidden=true<cr>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { noremap = true, silent = false })
+
+-- frecency
+vim.keymap.set("n", "<leader>ft", "<cmd>Telescope frecency<cr>", { noremap = true, silent = false })
 
 -- Flutter
 vim.keymap.set("n", "<leader>fc", "<cmd>Telescope flutter commands<cr>", { noremap = true, silent = false })
@@ -81,3 +86,6 @@ vim.keymap.set("n", "<leader>fv", "<cmd>Telescope flutter fvm<cr>", { noremap = 
 -- memo
 vim.keymap.set("n", "<leader>ml", "<cmd>Telescope memo list<cr>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>mg", "<cmd>Telescope memo live_grep<cr>", { noremap = true, silent = false })
+
+-- luasnip
+vim.keymap.set("n", "<leader>fs", "<cmd>Telescope luasnip<cr>", { noremap = true, silent = false })
