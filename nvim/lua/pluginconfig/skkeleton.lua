@@ -20,4 +20,13 @@ call skkeleton#register_kanatable('rom', {
   \ 'jj': 'escape',
   \ "z\<Space>": ["\u3000", ''],
   \ })
+
+" 例: <C-l>で全角モードに入れるようにします
+" call add(g:skkeleton#mapped_keys, '<C-l>')
+" call skkeleton#register_keymap('input', '<C-l>', 'zenkaku')
+
+" cocot36plus(30% keyborad)用
+" HHKBだと無効化
+call skkeleton#register_keymap('input', '/', 'henkanPoint')
+call skkeleton#register_keymap('input', ';', 'abbrev')
 ]])
