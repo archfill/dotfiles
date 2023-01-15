@@ -72,25 +72,16 @@ require("packer").startup(function(use)
 	use({
 		"nvim-telescope/telescope.nvim",
 		-- requires = { { "nvim-lua/plenary.nvim", opt = true }, { "nvim-lua/popup.nvim", opt = true } },
+		requires = {
+			"tami5/sqlite.lua",
+			"nvim-telescope/telescope-frecency.nvim",
+			"nvim-telescope/telescope-packer.nvim",
+			"delphinus/telescope-memo.nvim",
+		},
 		after = { colorscheme },
 		-- event = "VimEnter",
 		config = function()
 			require("pluginconfig.telescope")
-		end,
-	})
-	use({
-		"nvim-telescope/telescope-frecency.nvim",
-		requires = { "tami5/sqlite.lua" },
-		after = { "telescope.nvim" },
-		config = function()
-			require("telescope").load_extension("frecency")
-		end,
-	})
-	use({
-		"nvim-telescope/telescope-packer.nvim",
-		after = { "telescope.nvim" },
-		config = function()
-			require("telescope").load_extension("packer")
 		end,
 	})
 
@@ -422,6 +413,16 @@ require("packer").startup(function(use)
 		requires = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("pluginconfig.flutter-tools")
+		end,
+	})
+
+	--------------------------------
+	-- tools
+	--- memo
+	use({
+		"glidenote/memolist.vim",
+		config = function()
+			require("pluginconfig.memolist")
 		end,
 	})
 
