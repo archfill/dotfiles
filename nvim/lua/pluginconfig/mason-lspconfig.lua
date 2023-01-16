@@ -68,6 +68,12 @@ lspconfig.emmet_ls.setup({
 	},
 })
 
+-- swift
+lspconfig.sourcekit.setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+})
+
 -- lspconfig.dartls.setup({
 -- 	on_attach = on_attach,
 -- 	capabilities = capabilities,
