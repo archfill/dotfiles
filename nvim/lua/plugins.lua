@@ -436,6 +436,17 @@ require("packer").startup(function(use)
 		end,
 	})
 
+	-- neorg
+	use({
+		"nvim-neorg/neorg",
+		requires = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp" },
+		after = { "nvim-treesitter" },
+		run = ":Neorg sync-parsers",
+		config = function()
+			require("pluginconfig.neorg")
+		end,
+	})
+
 	-- packer bootstrap
 	if packer_bootstrap then
 		require("packer").sync()
