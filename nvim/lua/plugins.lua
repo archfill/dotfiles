@@ -427,6 +427,16 @@ require("packer").startup(function(use)
 	})
 
 	--------------------------------
+	-- markdown
+	use({
+		"previm/previm",
+		requires = { "tyru/open-browser.vim" },
+		config = function()
+			require("pluginconfig.previm")
+		end,
+	})
+
+	--------------------------------
 	-- tools
 	--- memo
 	use({
@@ -440,8 +450,9 @@ require("packer").startup(function(use)
 	use({
 		"nvim-neorg/neorg",
 		requires = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp", "nvim-neorg/neorg-telescope" },
-		after = { "nvim-treesitter" },
+		after = { "nvim-treesitter", "nvim-cmp" },
 		run = ":Neorg sync-parsers",
+		ft = { "norg" },
 		config = function()
 			require("pluginconfig.neorg")
 		end,

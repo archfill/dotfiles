@@ -16,10 +16,10 @@ require("neorg").setup({
 				icon_preset = "diamond",
 			},
 		},
-		-- ["core.norg.completion"] = {
-		-- 	config = {
-		-- 		engine = "nvim-cmp",
-		-- 	},
-		-- },
+		["core.norg.completion"] = {
+			config = {
+				engine = "nvim-cmp",
+			},
+		},
 	},
 })
