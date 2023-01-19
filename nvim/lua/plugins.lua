@@ -457,7 +457,7 @@ local plugins = {
 	},
 
 	--------------------------------
-	-- markdown
+	--- markdown
 	{
 		"previm/previm",
 		event = "VimEnter",
@@ -465,6 +465,21 @@ local plugins = {
 			require("pluginconfig.previm")
 		end,
 		dependencies = { "tyru/open-browser.vim" },
+	},
+
+	--- Debugging
+	{
+		"rcarriga/nvim-dap-ui",
+		event = "VimEnter",
+		dependencies = {
+			"mfussenegger/nvim-dap",
+			config = function()
+				require("pluginconfig.nvim-dap")
+			end,
+		},
+		config = function()
+			require("pluginconfig.nvim-dap-ui")
+		end,
 	},
 
 	--------------------------------

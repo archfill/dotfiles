@@ -30,6 +30,14 @@ require("flutter-tools").setup({
 	widget_guides = {
 		enabled = true,
 	},
+	debugger = {
+		enabled = true,
+		run_via_dap = true,
+		register_configurations = function(_)
+			require("dap").configurations.dart = {}
+			require("dap.ext.vscode").load_launchjs()
+		end,
+	},
 	lsp = {
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
