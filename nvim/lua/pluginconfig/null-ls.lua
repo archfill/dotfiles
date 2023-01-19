@@ -1,5 +1,4 @@
 local null_ls = require("null-ls")
-local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 local ignored_filetypes = {
 	"TelescopePrompt",
@@ -11,6 +10,7 @@ local ignored_filetypes = {
 	"markdown",
 	"minimap",
 	"packer",
+	"lazy",
 	"dashboard",
 	"telescope",
 	"lsp-installer",
@@ -25,7 +25,32 @@ local ignored_filetypes = {
 	"NeogitStatusNew",
 	"aerial",
 	"null-ls-info",
+	"mason",
+	"noice",
+	"notify",
 }
+
+local ignored_buftype = {
+	"nofile",
+}
+
+local groupname = "vimrc_null_ls"
+vim.api.nvim_create_augroup(groupname, { clear = true })
+vim.api.nvim_create_autocmd({ "FileType" }, {
+	group = groupname,
+	pattern = "*",
+	callback = function()
+		if vim.tbl_contains(ignored_filetypes, vim.bo.filetype) then
+			return
+		end
+		if vim.tbl_contains(ignored_buftype, vim.bo.buftype) then
+			return
+		end
+
+		vim.fn.matchadd("DiffDelete", "\\v\\s+$")
+	end,
+	once = false,
+})
 
 local sources = {
 	null_ls.builtins.formatting.stylua.with({
@@ -57,7 +82,7 @@ local sources = {
 	-- null_ls.builtins.diagnostics.swiftlint,
 	-- null_ls.builtins.diagnostics.swiftlint.with({
 	-- 	condition = function()
-	-- 		return vim.fn.executable("swiftlint -h") > 0
+	-- 		return vim.fn.executable("swiftlint") > 0
 	-- 	end,
 	-- }),
 	-- null_ls.builtins.formatting.swiftlint.with({
@@ -76,6 +101,7 @@ local lsp_formatting = function(bufnr)
 	})
 end
 
+local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 local on_attach = function(client, bufnr)
 	if client.supports_method("textDocument/formatting") then
 		vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
