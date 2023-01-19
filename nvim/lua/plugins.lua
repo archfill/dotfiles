@@ -92,7 +92,6 @@ local plugins = {
 				config = function()
 					require("pluginconfig.skkeleton")
 				end,
-				after = { "denops.vim" },
 				dependencies = {
 					{ "rinx/cmp-skkeleton" },
 				},
@@ -125,7 +124,6 @@ local plugins = {
 	},
 	{
 		"tamago324/nlsp-settings.nvim",
-		after = { "nvim-lspconfig" },
 		config = function()
 			require("pluginconfig.nlsp-settings")
 		end,
@@ -199,7 +197,7 @@ local plugins = {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		event = { "VimEnter" },
-		run = ":TSUpdateSync",
+		cmd = "TSUpdateSync",
 		config = function()
 			require("pluginconfig/nvim-treesitter")
 		end,
@@ -268,13 +266,6 @@ local plugins = {
 		event = "VimEnter",
 		config = function()
 			require("pluginconfig.vim-illuminate")
-		end,
-	},
-	{
-		"norcalli/nvim-colorizer.lua",
-		event = "VimEnter",
-		config = function()
-			require("colorizer").setup()
 		end,
 	},
 	{
@@ -491,8 +482,7 @@ local plugins = {
 	{
 		"nvim-neorg/neorg",
 		event = "VimEnter",
-		after = { "nvim-treesitter", "nvim-cmp" },
-		run = ":Neorg sync-parsers",
+		cmd = "Neorg sync-parsers",
 		ft = { "norg" },
 		config = function()
 			require("pluginconfig.neorg")
