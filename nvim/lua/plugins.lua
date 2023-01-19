@@ -1,9 +1,22 @@
-local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
-if vim.fn.empty(vim.fn.glob(install_path)) == 1 then
-	vim.api.nvim_command("silent !git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+-- local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
+-- if vim.fn.empty(vim.fn.glob(install_path)) == 1 then
+-- 	vim.api.nvim_command("silent !git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+-- end
+--
+-- vim.cmd([[packadd packer.nvim]])
+
+local ensure_packer = function()
+	local fn = vim.fn
+	local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+	if fn.empty(fn.glob(install_path)) > 0 then
+		fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
+		vim.cmd([[packadd packer.nvim]])
+		return true
+	end
+	return false
 end
 
-vim.cmd([[packadd packer.nvim]])
+local packer_bootstrap = ensure_packer()
 
 require("packer").startup(function(use)
 	-- プラグインを書く
@@ -56,7 +69,6 @@ require("packer").startup(function(use)
 	if not vim.g.vscode then
 		use({
 			"akinsho/bufferline.nvim",
-			tag = "v2.*",
 			requires = { "kyazdani42/nvim-web-devicons" },
 			after = colorscheme,
 			config = function()
@@ -451,7 +463,7 @@ require("packer").startup(function(use)
 		"nvim-neorg/neorg",
 		requires = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp", "nvim-neorg/neorg-telescope" },
 		after = { "nvim-treesitter", "nvim-cmp" },
-		run = ":Neorg sync-parsers",
+		-- run = ":Neorg sync-parsers",
 		ft = { "norg" },
 		config = function()
 			require("pluginconfig.neorg")
