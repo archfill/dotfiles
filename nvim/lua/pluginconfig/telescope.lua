@@ -80,8 +80,8 @@ vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { noremap = tr
 vim.keymap.set("n", "<leader>ft", "<cmd>Telescope frecency<cr>", { noremap = true, silent = false })
 
 -- Flutter
-vim.keymap.set("n", "<leader>fc", "<cmd>Telescope flutter commands<cr>", { noremap = true, silent = false })
-vim.keymap.set("n", "<leader>fv", "<cmd>Telescope flutter fvm<cr>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>flc", "<cmd>Telescope flutter commands<cr>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>flv", "<cmd>Telescope flutter fvm<cr>", { noremap = true, silent = false })
 
 -- memo
 vim.keymap.set("n", "<leader>ml", "<cmd>Telescope memo list<cr>", { noremap = true, silent = false })
@@ -89,3 +89,6 @@ vim.keymap.set("n", "<leader>mg", "<cmd>Telescope memo live_grep<cr>", { noremap
 
 -- luasnip
 vim.keymap.set("n", "<leader>fs", "<cmd>Telescope luasnip<cr>", { noremap = true, silent = false })
+
+-- todo-comments
+vim.keymap.set("n", "<leader>tt", "<cmd>TodoTelescope<cr>", { noremap = true, silent = false })

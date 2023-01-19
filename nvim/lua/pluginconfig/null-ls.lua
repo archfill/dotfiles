@@ -54,6 +54,17 @@ local sources = {
 			return vim.fn.executable("dart") > 0
 		end,
 	}),
+	-- null_ls.builtins.diagnostics.swiftlint,
+	-- null_ls.builtins.diagnostics.swiftlint.with({
+	-- 	condition = function()
+	-- 		return vim.fn.executable("swiftlint -h") > 0
+	-- 	end,
+	-- }),
+	-- null_ls.builtins.formatting.swiftlint.with({
+	-- 	condition = function()
+	-- 		return vim.fn.executable("swiftlint") > 0
+	-- 	end,
+	-- }),
 }
 
 local lsp_formatting = function(bufnr)

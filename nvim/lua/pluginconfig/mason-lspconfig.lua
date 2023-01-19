@@ -72,6 +72,7 @@ lspconfig.emmet_ls.setup({
 lspconfig.sourcekit.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
+	filetypes = { "swift", "c", "cpp", "objective-c", "objective-cpp" },
 })
 
 -- lspconfig.dartls.setup({

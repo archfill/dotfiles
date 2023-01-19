@@ -90,9 +90,11 @@ if [ -d "$HOME/.nvm" ] ; then
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 
-export PATH="$HOME/.anyenv/bin:$PATH"
-export ANYENV_ROOT="$HOME/.anyenv"
-eval "$(anyenv init - zsh)"
+if [ -d "$HOME/.anyenv" ] ; then
+  export PATH="$HOME/.anyenv/bin:$PATH"
+  export ANYENV_ROOT="$HOME/.anyenv"
+  eval "$(anyenv init - zsh)"
+fi
 
 [ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`
 

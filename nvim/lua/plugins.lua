@@ -249,7 +249,7 @@ require("packer").startup(function(use)
 		requires = { "nvim-lua/plenary.nvim" },
 		after = { "mason.nvim" },
 		config = function()
-			require("pluginconfig/null-ls")
+			require("pluginconfig.null-ls")
 		end,
 	})
 
