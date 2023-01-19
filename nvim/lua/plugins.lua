@@ -439,7 +439,7 @@ require("packer").startup(function(use)
 	-- neorg
 	use({
 		"nvim-neorg/neorg",
-		requires = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp" },
+		requires = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp", "nvim-neorg/neorg-telescope" },
 		after = { "nvim-treesitter" },
 		run = ":Neorg sync-parsers",
 		config = function()
