@@ -3,6 +3,13 @@ brew install deno ghq go coreutils
 brew tap homebrew/cask-fonts
 brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd font-hack-nerd-font
 
+# lazygit
+echo "lazygit"
+LAZYGIT_CONFIG=~/Library/Application\ Support/lazygit/config.yml
+unlink $LAZYGIT_CONFIG
+rm -f $LAZYGIT_CONFIG
+ln -sf ~/dotfiles/.config/lazygit/config.yml $LAZYGIT_CONFIG
+
 # karabiner
 echo "karabiner SKK"
 KARABINER_SKK=~/.config/karabiner/assets/complex_modifications/aquaskk_iterm2.json
