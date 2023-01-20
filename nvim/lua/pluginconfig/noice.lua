@@ -1,7 +1,7 @@
 require("noice").setup({
-	-- popupmenu = {
-	-- 	backend = "cmp",
-	-- },
+	popupmenu = {
+		backend = "cmp",
+	},
 	-- lsp = {
 	-- 	progress = {
 	-- 		enabled = false,

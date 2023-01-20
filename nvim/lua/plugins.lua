@@ -364,13 +364,13 @@ local plugins = {
 
 	--------------------------------
 	-- Commandline
-	-- {
-	-- 	"folke/noice.nvim",
-	-- 	event = "VimEnter",
-	-- 	config = function()
-	-- 		require("pluginconfig.noice")
-	-- 	end,
-	-- },
+	{
+		"folke/noice.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.noice")
+		end,
+	},
 
 	--------------------------------
 	-- Terminal
