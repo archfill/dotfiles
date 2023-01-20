@@ -42,7 +42,7 @@ require("flutter-tools").setup({
 		enabled = false,
 	},
 	dev_tools = {
-		autostart = true,
+		autostart = false,
 		auto_open_browser = true,
 	},
 	lsp = {
