@@ -14,6 +14,37 @@ local function is_available_lspsaga()
 	return true
 end
 
+local function esc(x)
+	return (
+		x:gsub("%%", "%%%%")
+			:gsub("^%^", "%%^")
+			:gsub("%$$", "%%$")
+			:gsub("%(", "%%(")
+			:gsub("%)", "%%)")
+			:gsub("%.", "%%.")
+			:gsub("%[", "%%[")
+			:gsub("%]", "%%]")
+			:gsub("%*", "%%*")
+			:gsub("%+", "%%+")
+			:gsub("%-", "%%-")
+			:gsub("%?", "%%?")
+	)
+end
+
+local function get_cwd()
+	local cwd = vim.fn.getcwd()
+	local git_dir = require("lualine.components.branch.git_branch").find_git_dir(cwd)
+	local root = vim.fs.dirname(git_dir)
+	if cwd == root then
+		return ""
+	end
+	local d, n = string.gsub(cwd, esc(root) .. "/", "")
+	if n == 0 and d == nil then
+		return ""
+	end
+	return "(./" .. d .. ")"
+end
+
 require("lualine").setup({
 	options = {
 		icons_enabled = true,
@@ -22,13 +53,40 @@ require("lualine").setup({
 		section_separators = { left = "", right = "" },
 		disabled_filetypes = {},
 		always_divide_middle = true,
-		globalstatus = false,
+		globalstatus = true,
 	},
 	sections = {
 		lualine_a = { "mode" },
 		lualine_b = { "branch", "diff", "diagnostics" },
-		lualine_c = { "filename", { 'require("lspsaga.symbolwinbar"):get_winbar()', cond = is_available_lspsaga } },
-		lualine_x = { "encoding", "fileformat", "filetype" },
+		lualine_c = {
+			{ "filename", path = 1 },
+			{ get_cwd },
+			{ 'require("lspsaga.symbolwinbar"):get_winbar()', cond = is_available_lspsaga },
+		},
+		lualine_x = {
+			-- {
+			-- 	require("noice").api.status.message.get_hl,
+			-- 	cond = require("noice").api.status.message.has,
+			-- },
+			{
+				require("noice").api.status.command.get,
+				cond = require("noice").api.status.command.has,
+				color = { fg = "#ff9e64" },
+			},
+			{
+				require("noice").api.status.mode.get,
+				cond = require("noice").api.status.mode.has,
+				color = { fg = "#ff9e64" },
+			},
+			{
+				require("noice").api.status.search.get,
+				cond = require("noice").api.status.search.has,
+				color = { fg = "#ff9e64" },
+			},
+			"encoding",
+			"fileformat",
+			"filetype",
+		},
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
 	},
