@@ -25,7 +25,7 @@ vim.o.showcmd = true
 -- " 行番号を表示
 vim.o.number = true
 -- " 現在の行を強調表示
--- vim.o.cursorline = true
+vim.o.cursorline = false
 -- " 行末の1文字先までカーソルを移動できるように
 vim.o.virtualedit = "onemore"
 -- インデントはスマートインデント

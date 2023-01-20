@@ -212,7 +212,7 @@ local plugins = {
 
 	-- Treesitter UI customize
 	{ "mrjones2014/nvim-ts-rainbow", event = "VimEnter" },
-	{ "haringsrob/nvim_context_vt", event = "VimEnter" },
+	-- { "haringsrob/nvim_context_vt", event = "VimEnter" },
 	{
 		"m-demare/hlargs.nvim",
 		event = "VimEnter",
@@ -412,6 +412,16 @@ local plugins = {
 			require("pluginconfig.project")
 		end,
 	},
+
+	--------------------------------
+	-- cursorline
+	-- {
+	-- 	"delphinus/auto-cursorline.nvim",
+	-- 	event = "VimEnter",
+	-- 	config = function()
+	-- 		require("auto-cursorline").setup({})
+	-- 	end,
+	-- },
 
 	--------------------------------
 	-- Git

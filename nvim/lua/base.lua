@@ -33,8 +33,9 @@ vim.o.showcmd = true
 -- " 見た目系
 -- " 行番号を表示
 vim.o.number = true
+vim.o.relativenumber = true
 -- " 現在の行を強調表示
-vim.o.cursorline = true
+vim.o.cursorline = false
 -- " 行末の1文字先までカーソルを移動できるように
 vim.o.virtualedit = "onemore"
 -- インデントはスマートインデント
@@ -44,7 +45,7 @@ vim.o.visualbell = true
 -- " 括弧入力時の対応する括弧を表示
 vim.o.showmatch = true
 -- " ステータスラインを常に表示
-vim.o.laststatus = 2
+-- vim.o.laststatus = 2
 -- " コマンドラインの補完
 vim.o.wildmode = "list:longest"
 vim.o.wildignore = vim.o.wildignore .. "node_modules/**,.git/**"
