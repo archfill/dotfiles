@@ -38,6 +38,13 @@ require("flutter-tools").setup({
 			require("dap.ext.vscode").load_launchjs()
 		end,
 	},
+	dev_log = {
+		enabled = false,
+	},
+	dev_tools = {
+		autostart = true,
+		auto_open_browser = true,
+	},
 	lsp = {
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
