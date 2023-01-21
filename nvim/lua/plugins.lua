@@ -513,6 +513,18 @@ local plugins = {
 	},
 
 	--------------------------------
+	-- OpenAI
+	-- {
+	-- 	"jackMort/ChatGPT.nvim",
+	-- 	cmd = { "ChatGPT", "ChatGPTActAs" },
+	-- 	config = function()
+	-- 		require("chatgpt").setup({
+	-- 			-- optional configuration
+	-- 		})
+	-- 	end,
+	-- },
+
+	--------------------------------
 	-- tools
 	--- memo
 	{
