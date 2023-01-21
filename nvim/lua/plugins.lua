@@ -393,6 +393,16 @@ local plugins = {
 	},
 
 	--------------------------------
+	-- Buffer
+	{
+		"famiu/bufdelete.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.bufdelete")
+		end,
+	},
+
+	--------------------------------
 	-- file finder
 	{
 		"nvim-neo-tree/neo-tree.nvim",
