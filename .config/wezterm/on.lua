@@ -122,14 +122,107 @@ local function display_copy_mode(window, pane)
 	return { { Attribute = { Italic = false } }, { Text = name or "" } }
 end
 
+local function get_current_working_dir_status(pane)
+	local results = {}
+	local cwd_uri = pane:get_current_working_dir()
+	if cwd_uri then
+		cwd_uri = cwd_uri:sub(8)
+		local slash = cwd_uri:find("/")
+		local cwd = ""
+		local hostname = ""
+		if slash then
+			hostname = cwd_uri:sub(1, slash - 1)
+			-- Remove the domain name portion of the hostname
+			local dot = hostname:find("[.]")
+			if dot then
+				hostname = hostname:sub(1, dot - 1)
+			end
+			-- and extract the cwd from the uri
+			cwd = cwd_uri:sub(slash)
+
+			table.insert(results, cwd)
+			table.insert(results, hostname)
+		end
+	end
+	return results
+end
+
+local function get_datetime_status()
+	local results = {}
+	local date = wezterm.strftime("%Y-%m-%d %H:%M")
+	table.insert(results, date)
+	return results
+end
+
+local function get_battery_status()
+	local results = {}
+	for _, b in ipairs(wezterm.battery_info()) do
+		if not b.state == "Empty" then
+			table.insert(results, string.format("%.0f%%", b.state_of_charge * 100))
+		end
+	end
+	return results
+end
+
 wezterm.on("update-status", function(window, pane)
 	-- local tmux = update_tmux_style_tab(window, pane)
 	local ssh = update_ssh_status(window, pane)
 	local copy_mode = display_copy_mode(window, pane)
 	update_window_background(window, pane)
 	local status = utils.merge_lists(ssh, copy_mode)
-	wezterm.log_error(status)
-	window:set_right_status(wezterm.format(status))
+	-- wezterm.log_error(status)
+	-- window:set_right_status(wezterm.format(status))
+
+	-- Each element holds the text for a cell in a "powerline" style << fade
+	local cells = {}
+	cells = utils.merge_lists(cells, get_current_working_dir_status(pane))
+	cells = utils.merge_lists(cells, get_datetime_status())
+	cells = utils.merge_lists(cells, get_battery_status())
+
+	-- The powerline < symbol
+	local LEFT_ARROW = utf8.char(0xe0b3)
+	-- The filled in variant of the < symbol
+	local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
+	local SYMBOL = "|"
+
+	-- Color palette for the backgrounds of each cell
+	local colors = {
+		"#3c1361",
+		"#52307c",
+		"#663a82",
+		"#7c5295",
+		"#b491c8",
+	}
+
+	-- Foreground color for the text across the fade
+	local text_fg = "#c0c0c0"
+
+	-- The elements to be formatted
+	local elements = {}
+	-- How many cells have been formatted
+	local num_cells = 0
+
+	-- Translate a cell into elements
+	local function push(text, is_last)
+		-- local cell_no = num_cells + 1
+		table.insert(elements, { Foreground = { Color = text_fg } })
+		-- table.insert(elements, { Background = { Color = colors[cell_no] } })
+		table.insert(elements, { Text = " " .. text .. " " })
+		if not is_last then
+			-- 	table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
+			-- 	table.insert(elements, { Text = SOLID_LEFT_ARROW })
+			table.insert(elements, { Text = SYMBOL })
+		end
+		num_cells = num_cells + 1
+	end
+
+	while #cells > 0 do
+		local cell = table.remove(cells, 1)
+		push(cell, #cells == 0)
+	end
+
+	-- wezterm.log_error(elements)
+	window:set_right_status(wezterm.format(elements))
 end)
 
 -- wezterm.on("update-status", function(window, pane)
