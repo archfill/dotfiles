@@ -212,12 +212,17 @@ local plugins = {
 	},
 
 	-- Treesitter UI customize
-	{ "mrjones2014/nvim-ts-rainbow", event = "VimEnter" },
+	{
+		"mrjones2014/nvim-ts-rainbow",
+		event = "VimEnter",
+		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
+	},
 	-- ↓flutter-toolsのと競合する
 	-- { "haringsrob/nvim_context_vt", event = "VimEnter" },
 	{
 		"m-demare/hlargs.nvim",
 		event = "VimEnter",
+		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
 		config = function()
 			require("pluginconfig.hlargs")
 		end,
