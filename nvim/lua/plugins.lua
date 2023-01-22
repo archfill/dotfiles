@@ -197,6 +197,7 @@ local plugins = {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		event = { "VimEnter" },
+		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
 		cmd = "TSUpdateSync",
 		config = function()
 			require("pluginconfig/nvim-treesitter")
@@ -212,6 +213,7 @@ local plugins = {
 
 	-- Treesitter UI customize
 	{ "mrjones2014/nvim-ts-rainbow", event = "VimEnter" },
+	-- ↓flutter-toolsのと競合する
 	-- { "haringsrob/nvim_context_vt", event = "VimEnter" },
 	{
 		"m-demare/hlargs.nvim",
@@ -268,6 +270,13 @@ local plugins = {
 			require("pluginconfig.vim-illuminate")
 		end,
 	},
+	-- {
+	-- 	"xiyaowong/nvim-cursorword",
+	-- 	event = "VimEnter",
+	-- 	config = function()
+	-- 		require("pluginconfig.nvim-cursorword")
+	-- 	end,
+	-- },
 	{
 		"folke/todo-comments.nvim",
 		event = "VimEnter",
