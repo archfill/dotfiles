@@ -117,11 +117,12 @@ end
 local function display_copy_mode(window)
 	local results = {}
 	local name = window:active_key_table()
-	-- wezterm.log_error(name)
 	if name then
 		name = "Mode: " .. name
-		table.insert(results, name)
+	else
+		name = "Mode: default"
 	end
+	table.insert(results, name)
 	return results
 end
 
@@ -142,6 +143,10 @@ local function get_current_working_dir_status(pane)
 			end
 			-- and extract the cwd from the uri
 			cwd = cwd_uri:sub(slash)
+
+			if hostname then
+				hostname = wezterm.hostname()
+			end
 
 			table.insert(results, cwd)
 			table.insert(results, hostname)
@@ -176,8 +181,8 @@ wezterm.on("update-status", function(window, pane)
 
 	-- Each element holds the text for a cell in a "powerline" style << fade
 	local cells = {}
-	cells = utils.merge_lists(cells, get_current_working_dir_status(pane))
 	cells = utils.merge_lists(cells, display_copy_mode(window))
+	cells = utils.merge_lists(cells, get_current_working_dir_status(pane))
 	cells = utils.merge_lists(cells, get_datetime_status())
 	cells = utils.merge_lists(cells, get_battery_status())
 
