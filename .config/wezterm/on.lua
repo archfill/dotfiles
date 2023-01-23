@@ -114,12 +114,15 @@ local function display_ime_on_right_status(window, pane)
 	window:set_right_status(compose)
 end
 
-local function display_copy_mode(window, pane)
+local function display_copy_mode(window)
+	local results = {}
 	local name = window:active_key_table()
+	-- wezterm.log_error(name)
 	if name then
 		name = "Mode: " .. name
+		table.insert(results, name)
 	end
-	return { { Attribute = { Italic = false } }, { Text = name or "" } }
+	return results
 end
 
 local function get_current_working_dir_status(pane)
@@ -167,35 +170,63 @@ end
 wezterm.on("update-status", function(window, pane)
 	-- local tmux = update_tmux_style_tab(window, pane)
 	local ssh = update_ssh_status(window, pane)
-	local copy_mode = display_copy_mode(window, pane)
 	update_window_background(window, pane)
-	local status = utils.merge_lists(ssh, copy_mode)
 	-- wezterm.log_error(status)
 	-- window:set_right_status(wezterm.format(status))
 
 	-- Each element holds the text for a cell in a "powerline" style << fade
 	local cells = {}
 	cells = utils.merge_lists(cells, get_current_working_dir_status(pane))
+	cells = utils.merge_lists(cells, display_copy_mode(window))
 	cells = utils.merge_lists(cells, get_datetime_status())
 	cells = utils.merge_lists(cells, get_battery_status())
 
 	-- The powerline < symbol
-	local LEFT_ARROW = utf8.char(0xe0b3)
+	-- local LEFT_ARROW = utf8.char(0xe0b3)
 	-- The filled in variant of the < symbol
 	local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
-	local SYMBOL = "|"
+	-- local SYMBOL = "|"
 
 	-- Color palette for the backgrounds of each cell
+	--
+	-- nightfox
+	-- black   = Shade.new("#393b44", 0.15, -0.15),
+	-- red     = Shade.new("#c94f6d", 0.15, -0.15),
+	-- green   = Shade.new("#81b29a", 0.10, -0.15),
+	-- yellow  = Shade.new("#dbc074", 0.15, -0.15),
+	-- blue    = Shade.new("#719cd6", 0.15, -0.15),
+	-- magenta = Shade.new("#9d79d6", 0.30, -0.15),
+	-- cyan    = Shade.new("#63cdcf", 0.15, -0.15),
+	-- white   = Shade.new("#dfdfe0", 0.15, -0.15),
+	-- orange  = Shade.new("#f4a261", 0.15, -0.15),
+	-- pink    = Shade.new("#d67ad2", 0.15, -0.15),
+	--
+	-- comment = "#738091",
+	--
+	-- bg0     = "#131a24", -- Dark bg (status line and float)
+	-- bg1     = "#192330", -- Default bg
+	-- bg2     = "#212e3f", -- Lighter bg (colorcolm folds)
+	-- bg3     = "#29394f", -- Lighter bg (cursor line)
+	-- bg4     = "#39506d", -- Conceal, border fg
+	--
+	-- fg0     = "#d6d6d7", -- Lighter fg
+	-- fg1     = "#cdcecf", -- Default fg
+	-- fg2     = "#aeafb0", -- Darker fg (status line)
+	-- fg3     = "#71839b", -- Darker fg (line numbers, fold colums)
+	--
+	-- sel0    = "#2b3b51", -- Popup bg, visual selection bg
+	-- sel1    = "#3c5372", -- Popup sel bg, search bg
 	local colors = {
-		"#3c1361",
-		"#52307c",
-		"#663a82",
-		"#7c5295",
-		"#b491c8",
+		"#131a24",
+		"#192330",
+		"#212e3f",
+		"#29394f",
+		"#39506d",
 	}
 
 	-- Foreground color for the text across the fade
-	local text_fg = "#c0c0c0"
+	-- local text_fg = "#c0c0c0"
+	local text_fg = "#aeafb0"
 
 	-- The elements to be formatted
 	local elements = {}
@@ -204,14 +235,14 @@ wezterm.on("update-status", function(window, pane)
 
 	-- Translate a cell into elements
 	local function push(text, is_last)
-		-- local cell_no = num_cells + 1
+		local cell_no = num_cells + 1
 		table.insert(elements, { Foreground = { Color = text_fg } })
-		-- table.insert(elements, { Background = { Color = colors[cell_no] } })
+		table.insert(elements, { Background = { Color = colors[cell_no] } })
 		table.insert(elements, { Text = " " .. text .. " " })
 		if not is_last then
-			-- 	table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
-			-- 	table.insert(elements, { Text = SOLID_LEFT_ARROW })
-			table.insert(elements, { Text = SYMBOL })
+			table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
+			table.insert(elements, { Text = SOLID_LEFT_ARROW })
+			-- table.insert(elements, { Text = SYMBOL })
 		end
 		num_cells = num_cells + 1
 	end
@@ -225,17 +256,7 @@ wezterm.on("update-status", function(window, pane)
 	window:set_right_status(wezterm.format(elements))
 end)
 
--- wezterm.on("update-status", function(window, pane)
--- 	local date = wezterm.strftime("%Y-%m-%d %H:%M:%S")
---
--- 	-- Make it italic and underlined
--- 	window:set_right_status(wezterm.format({
--- 		{ Attribute = { Underline = "Single" } },
--- 		{ Attribute = { Italic = true } },
--- 		{ Text = "Hello " .. date },
--- 	}))
--- end)
-
+---@diagnostic disable-next-line: unused-local
 wezterm.on("toggle-tmux-keybinds", function(window, pane)
 	local overrides = window:get_config_overrides() or {}
 	if not overrides.window_background_opacity then
