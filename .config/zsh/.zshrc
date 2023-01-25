@@ -1,6 +1,6 @@
 ### Zinit
 source "$HOME/.zinit/bin/zinit.zsh"
-zinit self-update
+# zinit self-update
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
@@ -96,8 +96,6 @@ if [ -d "$HOME/.anyenv" ] ; then
   eval "$(anyenv init - zsh)"
 fi
 
-[ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`
-
 # opam configuration
 if [ -d "${HOME}/.opam" ] ; then
   test -r ${HOME}/.opam/opam-init/init.zsh && . ${HOME}/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
@@ -145,5 +143,7 @@ which helm > /dev/null 2>&1 && ERRCHK=$?
 if [[ $ERRCHK -eq 0 ]]; then
   [[ $commands[helm] ]] && source <(helm completion zsh)
 fi
+
+[ -f $ZDOTDIR/.zshrc_`uname` ] && . $ZDOTDIR/.zshrc_`uname`
 
 echo '' > /dev/null 2>&1
