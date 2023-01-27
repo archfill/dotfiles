@@ -105,8 +105,8 @@ ln -s ~/dotfiles/.tmux-powerlinerc ~/.tmux-powerlinerc
 
 # zsh
 rm -f ~/.zshrc
-rm -rf ~/.zsh
-ln -sf ~/dotfiles/.zsh ~/.zsh
+rm -rf ~/.config/zsh
+ln -sf ~/dotfiles/.config/zsh ~/.config/zsh
 rm -f ~/.zshenv
 ln -s ~/dotfiles/.zshenv ~/.zshenv
 
