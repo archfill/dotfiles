@@ -54,4 +54,4 @@ if [[ $ERRCHK -eq 0 ]]; then
   [[ $commands[helm] ]] && source <(helm completion zsh)
 fi
 
-[ -f $ZDOTDIR/zprofile/`uname`.zsh ] && . $ZDOTDIR/zprofile/`uname`.zsh
+[ -f $ZDOTDIR/zprofile/`uname`/init.zsh ] && . $ZDOTDIR/zprofile/`uname`/init.zsh
