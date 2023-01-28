@@ -1,5 +1,5 @@
 #!/bin/sh
-brew install deno ghq go coreutils
+brew install deno ghq go coreutils direnv
 brew tap homebrew/cask-fonts
 brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd font-hack-nerd-font
 
