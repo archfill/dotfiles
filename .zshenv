@@ -17,5 +17,5 @@ if [ -d "$HOME/Library/Android" ] ; then
   export ANDROID_SDK_ROOT=$ANDROID_HOME/sdk
 fi
 
-[ -f $ZDOTDIR/zshenv/`uname`/init.zsh ] && . $ZDOTDIR/zshenv/`uname`/init.zsh
-[ -f $HOME/zshenv_local.zsh ] && . $HOME/zshenv_local.zsh
+if [ -f "$ZDOTDIR/zshenv/`uname`/init.zsh" ]; then . "$ZDOTDIR/zshenv/`uname`/init.zsh"; fi
+if [ -f "$HOME/zshenv_local.zsh" ]; then . "$HOME/zshenv_local.zsh"; fi
