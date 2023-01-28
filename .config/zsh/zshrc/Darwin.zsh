@@ -6,10 +6,15 @@ if [ -d "/usr/local/bin" ] ; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-export JAVA_HOME=`/usr/libexec/java_home`
-PATH=${JAVA_HOME}/bin:${PATH}
-export JAVA_HOME=`/usr/libexec/java_home -v "11"`
-PATH=${JAVA_HOME}/bin:${PATH}
+# if [ `/usr/libexec/java_home` ] ; then
+# export JAVA_HOME=`/usr/libexec/java_home`
+# PATH=${JAVA_HOME}/bin:${PATH}
+# fi
+
+if [ `/usr/libexec/java_home -v "11"` ] ; then
+  export JAVA_HOME=`/usr/libexec/java_home -v "11"`
+  PATH=${JAVA_HOME}/bin:${PATH}
+fi
 
 if [ -d "$HOME/.jenv/bin" ] ; then
   export PATH="$HOME/.jenv/bin:$PATH"
