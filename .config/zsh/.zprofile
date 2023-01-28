@@ -1,5 +1,3 @@
-source-safe() { if [ -f "$1" ]; then source "$1"; fi }
-
 export PATH=${HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 export PATH=$HOME/.local/bin:$PATH
 

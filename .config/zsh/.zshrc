@@ -1,3 +1,5 @@
+source-safe() { if [ -f "$1" ]; then source "$1"; fi }
+
 source "$ZRCDIR/base.zsh"
 source "$ZRCDIR/options.zsh"
 source "$ZRCDIR/functions.zsh"

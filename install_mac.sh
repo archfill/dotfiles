@@ -3,6 +3,10 @@ brew install deno ghq go coreutils direnv
 brew tap homebrew/cask-fonts
 brew install font-fira-code font-powerline-symbols font-hackgen font-hackgen-nerd font-hack-nerd-font
 
+brew unlink neovim
+brew uninstall neovim
+brew install --HEAD neovim
+
 # lazygit
 echo "lazygit"
 LAZYGIT_CONFIG=~/Library/Application\ Support/lazygit/config.yml

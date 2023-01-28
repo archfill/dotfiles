@@ -23,9 +23,8 @@ mkdir -p ~/.config
 # neovim
 echo "neovim"
 NEOVIM_DIR=~/.config/nvim
-unlink $NEOVIM_DIR
 rm -rf $NEOVIM_DIR
-ln -sf ~/dotfiles/nvim $NEOVIM_DIR
+ln -snf ~/dotfiles/nvim $NEOVIM_DIR
 
 # alacritty
 echo "alactritty"
