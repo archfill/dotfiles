@@ -5,4 +5,5 @@ source "$ZRCDIR/alias.zsh"
 source "$ZRCDIR/bindkey.zsh"
 source "$ZRCDIR/plugins.zsh"
 
-[ -f $ZDOTDIR/zshrc/`uname`.zsh ] && . $ZDOTDIR/zshrc/`uname`.zsh
+[ -f $ZDOTDIR/zshrc/`uname`/init.zsh ] && . $ZDOTDIR/zshrc/`uname`/init.zsh
+[ -f $HOME/local.zshrc ] && . $HOME/local.zshrc
