@@ -16,7 +16,7 @@ fi
 # fi
 if [ `/usr/libexec/java_home -v "11"` ] ; then
   export JAVA_HOME=`/usr/libexec/java_home -v "11"`
-  PATH=${JAVA_HOME}/bin:${PATH}
+  export PATH=${JAVA_HOME}/bin:${PATH}
 fi
 
 if [ -d "$HOME/.jenv/bin" ] ; then
@@ -33,11 +33,6 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # flutter
 export PATH="$PATH:$FLUTTER_ROOT/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
-
-# rust cargo
-if [ -d "$HOME/.cargo" ] ; then
-  source $HOME/.cargo/env
-fi
 
 # direnv
 eval "$(direnv hook zsh)"

@@ -42,6 +42,11 @@ else
   export PATH=$PATH:$GOPATH/bin;
 fi
 
+# rust cargo
+if [ -d "$HOME/.cargo" ] ; then
+  source $HOME/.cargo/env
+fi
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # kubectl completion
