@@ -1,5 +1,8 @@
 all: init link brew
 
+install:
+	.install.sh
+
 init:
 	.bin/init.sh
 

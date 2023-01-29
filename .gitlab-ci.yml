@@ -13,6 +13,6 @@ test:
   tags:
     - docker
   script:
-    - echo "hello"
+    - make install
   only:
     - /^main.*$/
