@@ -1,4 +1,5 @@
-image: docker:dind
+# image: docker:dind
+image: archlinux:base-devel
 
 stages:
   - test
