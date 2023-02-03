@@ -451,7 +451,8 @@ local plugins = {
 	-- Git
 	{
 		"TimUntersberger/neogit",
-		event = "BufReadPre",
+		-- event = "BufReadPre",
+		event = "VimEnter",
 		config = function()
 			require("pluginconfig.neogit")
 		end,
