@@ -4,13 +4,13 @@ install:
 	./install.sh
 
 init:
-	.bin/init.sh
+	./bin/init.sh
 
 link:
-	.bin/link.sh
+	./bin/link.sh
 
 brew:
-	.bin/brew.sh
+	./bin/brew.sh
 
 neovim-install:
 	./bin/linux/neovim_install.sh
