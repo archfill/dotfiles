@@ -1,3 +1,9 @@
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
 gui:
   language: ja
+os:
+  editCommand: "nvim"
 quitOnTopLevelReturn: false
