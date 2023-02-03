@@ -40,8 +40,8 @@ link ".tmux.conf"
 link ".tmux-powerlinerc"
 
 # zsh
-if [ -f "~/.zshrc" ]; then rm -f ~/.zshrc; fi
-if [ -e "~/.zsh" ]; then rm -rf ~/.zsh; fi
+if [ -f "${HOME}/.zshrc" ]; then rm -f ${HOME}/.zshrc; fi
+if [ -e "${HOME}/.zsh" ]; then rm -rf ${HOME}/.zsh; fi
 link ".config/zsh"
 link ".zshenv"
 
