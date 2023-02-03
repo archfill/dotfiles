@@ -40,13 +40,8 @@ vim.fn["skkeleton#config"]({
 
 vim.cmd([[
 call skkeleton#register_kanatable('rom', {
-  \ 'z-': ['〜'],
-  \ 'z.': ['…'],
-  \ 'z/': ['・'],
-  \ 'zh': ['←'],
-  \ 'zj': ['↓'],
-  \ 'zk': ['↑'],
-  \ 'zl': ['→'],
+  \ '/': 'henkanPoint',
+  \ ';': 'abbrev',
   \ 'jj': 'escape',
   \ "z\<Space>": ["\u3000", ''],
   \ })
@@ -56,7 +51,7 @@ call skkeleton#register_kanatable('rom', {
 " call skkeleton#register_keymap('input', '<C-l>', 'zenkaku')
 
 " cocot36plus(30% keyborad)用
-" HHKBだと無効化
-call skkeleton#register_keymap('input', '/', 'henkanPoint')
-call skkeleton#register_keymap('input', ';', 'abbrev')
+" 30% keyborad以外は無効化する
+" call skkeleton#register_keymap('input', '/', 'henkanPoint')
+" call skkeleton#register_keymap('input', ';', 'abbrev')
 ]])
