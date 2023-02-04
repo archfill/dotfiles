@@ -31,8 +31,7 @@ link ".config/yabai"
 link ".config/skhd"
 
 # hammerspoon
-echo "hammerspoon"
-HAMMERSPOON_DIR=~/.hammerspoon
+HAMMERSPOON_DIR=${HOME}/.hammerspoon
 if [ ! -e $HAMMERSPOON_DIR ]; then
   mkdir -p $HAMMERSPOON_DIR
 fi

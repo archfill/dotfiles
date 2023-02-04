@@ -20,14 +20,15 @@ elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
   # linux
   echo "this is os linux."
   ## fonts setup
-  bash ${HOME}/dotfiles/bin/linux/fonts_setup.sh
-  bash ${HOME}/dotfiles/bin/linux/deno_install.sh
+  bash ${HOME}/dotfiles/bin/linux/apps/fonts_setup.sh
+  bash ${HOME}/dotfiles/bin/linux/apps/deno_install.sh
+  bash ${HOME}/dotfiles/bin/linux/apps/neovim_install.sh
 
-  bash ./install_linux.sh
+  bash ${HOME}/dotfiles/bin/linux/install_linux.sh
 elif [ "$(expr substr $(uname -s) 1 10)" = 'MINGW32_NT' ]; then
   # cygwin
   echo "this is os windows."
-  bash ./install_cygwin.sh
+  bash ${HOME}/dotfiles/bin/cygwin/install_cygwin.sh
 else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
