@@ -5,8 +5,8 @@ function rm-safe() {
 }
 
 # anyenv
-rm-safe "~/.anyenv"
-git clone https://github.com/anyenv/anyenv ~/.anyenv
+rm-safe "${HOME}/.anyenv"
+git clone https://github.com/anyenv/anyenv ${HOME}/.anyenv
 
 # echo 'export PATH="$HOME/.anyenv/bin:$PATH"' >> ${HOME}/.temp_profile
 # echo 'export ANYENV_ROOT="$HOME/.anyenv"' >> ${HOME}/.temp_profile

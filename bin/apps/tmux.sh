@@ -5,7 +5,7 @@ function rm-safe() {
 }
 
 #tmux
-TMUX_PLUGINS_DIR="~/.tmux/plugins"
+TMUX_PLUGINS_DIR="${HOME}/.tmux/plugins"
 if [ ! -e $TMUX_PLUGINS_DIR ]; then
   mkdir -p $TMUX_PLUGINS_DIR
 fi

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # pyenv
-git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+git clone https://github.com/pyenv/pyenv.git ${HOME}/.pyenv
 
 # echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ${HOME}/.temp_profile
 # echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ${HOME}/.temp_profile

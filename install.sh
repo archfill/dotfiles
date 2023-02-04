@@ -37,7 +37,7 @@ fi
 
 # apps setup
 echo "apps setup start."
-bash ${HOME}/dotfiles/bin/apps/setup.sh
+bash ${HOME}/dotfiles/bin/apps_setup.sh
 echo "apps setup finish."
 
 # git config
