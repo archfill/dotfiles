@@ -8,13 +8,12 @@ before_script:
   # - dockerd &
   # - sleep 5
   # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - ln -snf `pwd` ${HOME}/dotfiles
 
 test:
   stage: test
   tags:
     - docker
   script:
-    - make init
+    - cd && ln -snf `pwd` ${HOME}/dotfiles && make init
   only:
     - /^main.*$/
