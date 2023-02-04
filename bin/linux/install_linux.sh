@@ -32,6 +32,8 @@ debian | ubuntu)
     wget \
     unzip
 
+  pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+
   yay -Syu --noconfirm \
     neomutt \
     w3m \
