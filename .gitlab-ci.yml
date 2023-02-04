@@ -14,6 +14,10 @@ test:
   tags:
     - docker
   script:
-    - cd && ln -snf `pwd` ${HOME}/dotfiles && cd dotfiles && make init
+    - pwd
+    - cd
+    - ln -snf `pwd` ${HOME}/dotfiles
+    - cd dotfiles
+    - make init
   only:
     - /^main.*$/
