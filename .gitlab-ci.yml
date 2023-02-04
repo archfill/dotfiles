@@ -16,6 +16,7 @@ test:
   script:
     - pwd
     - cd
+    - pwd
     - ln -snf `pwd` ${HOME}/dotfiles
     - cd dotfiles
     - make init
