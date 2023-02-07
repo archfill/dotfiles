@@ -302,6 +302,7 @@ local plugins = {
 	-- conflict with clever-f (augroup sidebar_nvim_prevent_buffer_override)
 	{
 		"GustavoKatel/sidebar.nvim",
+		event = "VimEnter",
 		cmd = { "SidebarNvimToggle" },
 		config = function()
 			require("pluginconfig.sidebar")
