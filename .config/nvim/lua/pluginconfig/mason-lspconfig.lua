@@ -52,27 +52,30 @@ mason_lspconfig.setup_handlers({
 			},
 		})
 	end,
-})
-
-lspconfig.emmet_ls.setup({
-	-- on_attach = on_attach,
-	capabilities = capabilities,
-	filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less" },
-	init_options = {
-		html = {
-			options = {
-				-- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
-				["bem.enabled"] = true,
+	["emmet_ls"] = function()
+		-- emmet
+		lspconfig.emmet_ls.setup({
+			-- on_attach = on_attach,
+			capabilities = capabilities,
+			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less" },
+			init_options = {
+				html = {
+					options = {
+						-- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
+						["bem.enabled"] = true,
+					},
+				},
 			},
-		},
-	},
-})
-
--- swift
-lspconfig.sourcekit.setup({
-	on_attach = on_attach,
-	capabilities = capabilities,
-	filetypes = { "swift", "c", "cpp", "objective-c", "objective-cpp" },
+		})
+	end,
+	["sourcekit"] = function()
+		-- swift
+		lspconfig.sourcekit.setup({
+			on_attach = on_attach,
+			capabilities = capabilities,
+			filetypes = { "swift", "c", "cpp", "objective-c", "objective-cpp" },
+		})
+	end,
 })
 
 -- lspconfig.dartls.setup({
