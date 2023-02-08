@@ -190,6 +190,12 @@ local plugins = {
 				-- 	require("telescope").load_extension("luasnip")
 				-- end,
 			},
+			{
+				"nvim-telescope/telescope-ui-select.nvim",
+				-- config = function()
+				-- 	require("telescope").load_extension("ui-select")
+				-- end,
+			},
 		},
 	},
 
@@ -376,6 +382,23 @@ local plugins = {
 			require("pluginconfig.bufresize")
 		end,
 	},
+	{
+		"simeji/winresizer",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.winresizer")
+		end,
+	},
+
+	--------------------------------
+	-- Manual
+	{
+		"folke/which-key.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.which-key")
+		end,
+	},
 
 	--------------------------------
 	-- Commandline
@@ -541,6 +564,17 @@ local plugins = {
 	-- },
 
 	--------------------------------
+	-- Coding
+	--- Writing assistant
+	{
+		"rareitems/put_at_end.nvim",
+		event = { "BufNewFile", "BufReadPre" },
+		config = function()
+			require("pluginconfig.put_at_end")
+		end,
+	},
+
+	--------------------------------
 	-- tools
 	--- memo
 	{
@@ -561,6 +595,9 @@ local plugins = {
 			require("pluginconfig.neorg")
 		end,
 	},
+
+	--------------------------------
+	{ "folke/neodev.nvim" },
 }
 
 require("lazy").setup(vim.tbl_deep_extend("force", plugins, local_plugins), {

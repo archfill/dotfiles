@@ -3,6 +3,7 @@ require("telescope").load_extension("frecency")
 require("telescope").load_extension("flutter")
 require("telescope").load_extension("memo")
 require("telescope").load_extension("luasnip")
+require("telescope").load_extension("ui-select")
 
 require("telescope").setup({
 	defaults = {
