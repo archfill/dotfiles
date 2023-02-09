@@ -196,6 +196,7 @@ local plugins = {
 				-- 	require("telescope").load_extension("ui-select")
 				-- end,
 			},
+			{ "nvim-telescope/telescope-symbols.nvim" }, --- Used in telekasten.nvim
 		},
 	},
 
@@ -526,7 +527,7 @@ local plugins = {
 	},
 
 	--------------------------------
-	--- markdown
+	-- Markdown
 	{
 		"previm/previm",
 		event = "VimEnter",
@@ -535,6 +536,8 @@ local plugins = {
 		end,
 		dependencies = { "tyru/open-browser.vim" },
 	},
+	{ "iamcco/markdown-preview.nvim", ft = { "markdown" }, build = ":call mkdp#util#install()" }, --- Used in telekasten.nvim
+	{ "mzlogin/vim-markdown-toc" },
 
 	--- Debugging
 	{
@@ -575,6 +578,16 @@ local plugins = {
 	},
 
 	--------------------------------
+	-- Popup Info
+	{
+		"lewis6991/hover.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.hover")
+		end,
+	},
+
+	--------------------------------
 	-- tools
 	--- memo
 	{
@@ -583,6 +596,14 @@ local plugins = {
 		config = function()
 			require("pluginconfig.memolist")
 		end,
+	},
+	{
+		"renerocksai/telekasten.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.telekasten")
+		end,
+		dependencies = { "renerocksai/calendar-vim" },
 	},
 
 	-- neorg
