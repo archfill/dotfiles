@@ -141,3 +141,127 @@ require("telekasten").setup({
 	-- A customizable fallback handler for urls.
 	follow_url_fallback = nil,
 })
+
+vim.keymap.set("n", "<Leader>zf", "<Cmd>lua require('telekasten').find_notes()<CR>", { noremap = true, silent = true })
+vim.keymap.set(
+	"n",
+	"<Leader>zd",
+	"<Cmd>lua require('telekasten').find_daily_notes()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<Leader>zg",
+	"<Cmd>lua require('telekasten').search_notes()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set("n", "<Leader>zz", "<Cmd>lua require('telekasten').follow_link()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>zT", "<Cmd>lua require('telekasten').goto_today()<CR>", { noremap = true, silent = true })
+vim.keymap.set(
+	"n",
+	"<leader>zW",
+	"<Cmd>lua require('telekasten').goto_thisweek()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader>zw",
+	"<Cmd>lua require('telekasten').find_weekly_notes()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set("n", "<leader>zn", "<Cmd>lua require('telekasten').new_note()<CR>", { noremap = true, silent = true })
+vim.keymap.set(
+	"n",
+	"<leader>zN",
+	"<Cmd>lua require('telekasten').new_templated_note()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader>zy",
+	"<Cmd>lua require('telekasten').yank_notelink()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader>zc",
+	"<Cmd>lua require('telekasten').show_calendar()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set("n", "<leader>zC", "<Cmd>CalendarT<CR>", { noremap = true, silent = true })
+vim.keymap.set(
+	"n",
+	"<leader>zi",
+	"<Cmd>lua require('telekasten').paste_img_and_link()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set("n", "<leader>zt", "<Cmd>lua require('telekasten').toggle_todo()<CR>", { noremap = true, silent = true })
+vim.keymap.set(
+	"n",
+	"<leader>zb",
+	"<Cmd>lua require('telekasten').show_backlinks()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader>zF",
+	"<Cmd>lua require('telekasten').find_friends()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader>zI",
+	"<Cmd>lua require('telekasten').insert_img_link({ i=true })<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set("n", "<leader>zp", "<Cmd>lua require('telekasten').preview_img()<CR>", { noremap = true, silent = true })
+vim.keymap.set(
+	"n",
+	"<leader>zm",
+	"<Cmd>lua require('telekasten').browse_media()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set("n", "<leader>za", "<Cmd>lua require('telekasten').show_tags()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>#", "<Cmd>a require('telekasten').show_tags()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>zr", "<Cmd>lua require('telekasten').rename_note()<CR>", { noremap = true, silent = true })
+
+-- on hesitation, bring up the panel
+vim.keymap.set("n", "<Leader>zp", "<Cmd>lua require('telekasten').panel()<CR>", { noremap = true, silent = true })
+
+-- we could define [[ in **insert mode** to call insert link
+-- inoremap [[ <cmd>:lua require('telekasten').insert_link()<CR>
+-- alternatively: leader [
+vim.keymap.set(
+	"n",
+	"<leader>[",
+	"<Cmd>:lua require('telekasten').insert_link({ i=true })<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader>zt",
+	"<Cmd>:lua require('telekasten').toggle_todo({ i=true })<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"<leader># ",
+	"<Cmd>lua require('telekasten').show_tags({i = true})<cr>",
+	{ noremap = true, silent = true }
+)
+
+-- ----- the following are for syntax-coloring [[links]] and ==highlighted text==
+-- ----- (see the section about coloring in README.md)
+
+-- for gruvbox
+-- vim.cmd("hi tklink ctermfg=72 guifg=#689d6a cterm=bold,underline gui=bold,underline")
+-- vim.cmd("hi tkBrackets ctermfg=gray guifg=gray")
+
+-- real yellow
+vim.cmd("hi tkHighlight ctermbg=yellow ctermfg=darkred cterm=bold guibg=yellow guifg=darkred gui=bold")
+-- gruvbox
+-- hi tkHighlight ctermbg=214 ctermfg=124 cterm=bold guibg=#fabd2f guifg=#9d0006 gui=bold
+
+vim.cmd("hi link CalNavi CalRuler")
+vim.cmd("hi tkTagSep ctermfg=gray guifg=gray")
+vim.cmd("hi tkTag ctermfg=175 guifg=#d3869B")
