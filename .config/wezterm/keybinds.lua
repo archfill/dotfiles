@@ -11,8 +11,8 @@ M.tmux_keybinds = {
 	{ key = "j", mods = "SUPER", action = act({ CloseCurrentTab = { confirm = true } }) },
 	{ key = "h", mods = "SUPER", action = act({ ActivateTabRelative = -1 }) },
 	{ key = "l", mods = "SUPER", action = act({ ActivateTabRelative = 1 }) },
-	{ key = "h", mods = "SUPER|SHIFT", action = act({ MoveTabRelative = -1 }) },
-	{ key = "l", mods = "SUPER|SHIFT", action = act({ MoveTabRelative = 1 }) },
+	{ key = "<", mods = "SUPER|SHIFT", action = act({ MoveTabRelative = -1 }) },
+	{ key = ">", mods = "SUPER|SHIFT", action = act({ MoveTabRelative = 1 }) },
 	--{ key = "k", mods = "SUPER|CTRL", action = act.ActivateCopyMode },
 	{
 		key = "c",
