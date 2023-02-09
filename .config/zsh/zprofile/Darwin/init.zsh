@@ -5,7 +5,7 @@ if [ -d "/opt/homebrew/bin" ] ; then
 fi
 
 ## intel
-if [ -d "/usr/local/bin" ] ; then
+if [ -e "/usr/local/bin/brew" ] ; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 

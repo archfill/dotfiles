@@ -48,13 +48,15 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # kubectl completion
-which kubectl > /dev/null 2>&1 && ERRCHK=$?
+which kubectl > /dev/null 2>&1
+ERRCHK=$?
 if [[ $ERRCHK -eq 0 ]]; then
   [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 fi
 
 # helm completion
-which helm > /dev/null 2>&1 && ERRCHK=$?
+which helm > /dev/null 2>&1
+ERRCHK=$?
 if [[ $ERRCHK -eq 0 ]]; then
   [[ $commands[helm] ]] && source <(helm completion zsh)
 fi
