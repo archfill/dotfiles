@@ -354,6 +354,16 @@ local plugins = {
 	},
 
 	--------------------------------
+	-- Startup screen
+	{
+		"goolord/alpha-nvim",
+		event = "BufEnter",
+		config = function()
+			require("pluginconfig.alpha-nvim")
+		end,
+	},
+
+	--------------------------------
 	-- Scrollbar
 	{
 		"petertriho/nvim-scrollbar",
@@ -388,6 +398,17 @@ local plugins = {
 		event = "VimEnter",
 		config = function()
 			require("pluginconfig.winresizer")
+		end,
+	},
+
+	--------------------------------
+	-- Session
+	-- do not use the session per current directory
+	{
+		"jedrzejboczar/possession.nvim",
+		event = "BufEnter",
+		config = function()
+			require("pluginconfig.possession")
 		end,
 	},
 
