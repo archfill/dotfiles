@@ -35,47 +35,57 @@ local lspconfig = require("lspconfig")
 -- Setup lspconfig.
 local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
+local clangd_capabilities = vim.lsp.protocol.make_client_capabilities()
+clangd_capabilities.offsetEncoding = { "utf-16" }
+
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 local mason_lspconfig = require("mason-lspconfig")
 mason_lspconfig.setup_handlers({
 	function(server_name)
-		lspconfig[server_name].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-			settings = {
-				Lua = {
-					diagnostics = {
-						globals = { "vim" },
+		if server_name == "clangd" then
+			lspconfig[server_name].setup({
+				capabilities = clangd_capabilities,
+				on_attach = on_attach,
+			})
+		else
+			lspconfig[server_name].setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = {
+					Lua = {
+						diagnostics = {
+							globals = { "vim" },
+						},
 					},
 				},
-			},
-		})
+			})
+		end
 	end,
-	["emmet_ls"] = function()
-		-- emmet
-		lspconfig.emmet_ls.setup({
-			-- on_attach = on_attach,
-			capabilities = capabilities,
-			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less" },
-			init_options = {
-				html = {
-					options = {
-						-- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
-						["bem.enabled"] = true,
-					},
-				},
-			},
-		})
-	end,
-	["sourcekit"] = function()
-		-- swift
-		lspconfig.sourcekit.setup({
-			on_attach = on_attach,
-			capabilities = capabilities,
-			filetypes = { "swift", "c", "cpp", "objective-c", "objective-cpp" },
-		})
-	end,
+	-- ["emmet_ls"] = function()
+	-- 	-- emmet
+	-- 	lspconfig.emmet_ls.setup({
+	-- 		-- on_attach = on_attach,
+	-- 		capabilities = capabilities,
+	-- 		filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less" },
+	-- 		init_options = {
+	-- 			html = {
+	-- 				options = {
+	-- 					-- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
+	-- 					["bem.enabled"] = true,
+	-- 				},
+	-- 			},
+	-- 		},
+	-- 	})
+	-- end,
+	-- ["sourcekit"] = function()
+	-- 	-- swift
+	-- 	lspconfig.sourcekit.setup({
+	-- 		on_attach = on_attach,
+	-- 		capabilities = capabilities,
+	-- 		filetypes = { "swift", "c", "cpp", "objective-c", "objective-cpp" },
+	-- 	})
+	-- end,
 })
 
 -- lspconfig.dartls.setup({
