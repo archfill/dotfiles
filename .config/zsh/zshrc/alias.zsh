@@ -4,7 +4,7 @@ alias ll="ls -lh"
 
 alias vi="nvim"
 alias vim="nvim"
-alias tmux="tmux -u"
+# alias tmux="tmux -u"
 alias xdisplay="Xephyr -resizeable"
 ## git
 alias gacp='(){git add . && git commit -m "$1" && git push origin $(git_current_branch)}'
