@@ -1,11 +1,11 @@
-if vim.g.vscode then
-	-- VSCode extension
-	require("base-vscode")
-else
-	-- ordinary Neovim
-	require("base")
-	require("plugins")
-	require("colorscheme")
-end
+-- if vim.g.vscode then
+-- 	-- VSCode extension
+-- else
+-- 	-- ordinary Neovim
+-- end
+
+require("base")
+require("plugins")
+require("colorscheme")
 
 require("mapping")

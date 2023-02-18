@@ -76,6 +76,12 @@ local plugins = {
 			{ "hrsh7th/cmp-path" },
 			{ "hrsh7th/cmp-cmdline" },
 			{ "hrsh7th/cmp-nvim-lua" },
+			{
+				"zbirenbaum/copilot-cmp",
+				config = function()
+					require("copilot_cmp").setup()
+				end,
+			},
 			{ "hrsh7th/cmp-emoji" },
 			{ "hrsh7th/cmp-calc" },
 			{ "f3fora/cmp-spell" },
@@ -256,7 +262,10 @@ local plugins = {
 	{
 		"akinsho/bufferline.nvim",
 		event = "VimEnter",
-		enabled = function()
+		-- enabled = function()
+		-- 	return not vim.g.vscode
+		-- end,
+		cond = function()
 			return not vim.g.vscode
 		end,
 		config = function()
@@ -310,6 +319,9 @@ local plugins = {
 	{
 		"GustavoKatel/sidebar.nvim",
 		event = "VimEnter",
+		cond = function()
+			return not vim.g.vscode
+		end,
 		cmd = { "SidebarNvimToggle" },
 		config = function()
 			require("pluginconfig.sidebar")
@@ -358,6 +370,9 @@ local plugins = {
 	{
 		"goolord/alpha-nvim",
 		event = "BufEnter",
+		cond = function()
+			return not vim.g.vscode
+		end,
 		config = function()
 			require("pluginconfig.alpha-nvim")
 		end,
@@ -407,6 +422,9 @@ local plugins = {
 	{
 		"jedrzejboczar/possession.nvim",
 		event = "BufEnter",
+		cond = function()
+			return not vim.g.vscode
+		end,
 		config = function()
 			require("pluginconfig.possession")
 		end,
@@ -586,6 +604,19 @@ local plugins = {
 	-- 		})
 	-- 	end,
 	-- },
+
+	--------------------------------
+	-- AI completion
+	{
+		"zbirenbaum/copilot.lua",
+		-- cmd = { "Copilot" },
+		event = "InsertEnter",
+		config = function()
+			vim.defer_fn(function()
+				require("pluginconfig.copilot")
+			end, 100)
+		end,
+	},
 
 	--------------------------------
 	-- Coding

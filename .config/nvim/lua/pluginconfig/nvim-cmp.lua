@@ -91,6 +91,7 @@ cmp.setup({
 		["<CR>"] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 	},
 	sources = cmp.config.sources({
+		{ name = "copilot", priority = 90 },
 		{ name = "nvim_lsp", priority = 100 },
 		{ name = "luasnip", priority = 20 }, -- For luasnip users.
 		{ name = "path", priority = 100 },
@@ -106,12 +107,19 @@ cmp.setup({
 	}),
 })
 
--- Set configuration for specific filetype.
-cmp.setup.filetype("gitcommit", {
+cmp.setup.filetype({ "gitcommit", "markdown" }, {
 	sources = cmp.config.sources({
-		{ name = "cmp_git" }, -- You can specify the `cmp_git` source if you were installed it.
+		{ name = "copilot", priority = 90 },
+		{ name = "nvim_lsp", priority = 100 },
+		{ name = "luasnip", priority = 80 }, -- For luasnip users.
+		{ name = "path", priority = 100 },
+		{ name = "emoji", insert = true, priority = 60 },
 	}, {
-		{ name = "buffer" },
+		{ name = "buffer", priority = 50 },
+		-- { name = "omni", priority = 40 },
+		{ name = "spell", priority = 40 },
+		{ name = "calc", priority = 50 },
+		{ name = "treesitter", priority = 30 },
 	}),
 })
 
