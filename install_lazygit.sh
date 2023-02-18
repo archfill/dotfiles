@@ -1,4 +1,4 @@
-export VER="0.35"
+export VER="0.36.0"
 mkdir tmp_lazygit
 cd tmp_lazygit
 wget -O lazygit.tgz https://github.com/jesseduffield/lazygit/releases/download/v${VER}/lazygit_${VER}_Linux_arm64.tar.gz
