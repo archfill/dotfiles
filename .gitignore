@@ -43,8 +43,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-.zsh/.zcompdump
-.zsh/.zcompdump*
+.config/zsh/.zcompdump
+.config/zsh/.zcompdump*
 
 .tmux/resurrect/*
 .tmux/plugins/tmux-*
