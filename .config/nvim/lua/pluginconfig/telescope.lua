@@ -176,6 +176,10 @@ vim.keymap.set("n", "<leader>fd", "<cmd>Telescope find_files hidden=true<cr>", {
 vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>fm", "<cmd>Telescope my_mru<CR>", { noremap = true, silent = false })
+
+-- frecency
+vim.keymap.set("n", "<leader>ft", "<cmd>Telescope frecency<cr>", { noremap = true, silent = false })
 
 -- git
 vim.api.nvim_set_keymap(
@@ -202,9 +206,6 @@ vim.api.nvim_set_keymap(
 	"<Cmd>lua require('telescope.builtin').git_branches()<CR>",
 	{ noremap = true, silent = true }
 )
-
--- frecency
-vim.keymap.set("n", "<leader>ft", "<cmd>Telescope frecency<cr>", { noremap = true, silent = false })
 
 -- Flutter
 vim.keymap.set("n", "<leader>flc", "<cmd>Telescope flutter commands<cr>", { noremap = true, silent = false })
