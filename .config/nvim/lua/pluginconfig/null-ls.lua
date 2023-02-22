@@ -94,11 +94,13 @@ local sources = {
 		condition = function()
 			return vim.fn.executable("textlint") > 0
 		end,
+		-- filetypes = { "markdown", "text" },
 	}),
 	null_ls.builtins.formatting.textlint.with({
 		condition = function()
 			return vim.fn.executable("textlint") > 0
 		end,
+		-- filetypes = { "markdown", "text" },
 	}),
 	null_ls.builtins.diagnostics.zsh,
 	null_ls.builtins.code_actions.gitsigns,

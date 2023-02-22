@@ -13,6 +13,7 @@ which fnm > /dev/null 2>&1
 ERRCHK=$?
 if [[ $ERRCHK -eq 0 ]]; then
   eval "$(fnm env --use-on-cd)"
+  source <(fnm completions --shell zsh)
 fi
 
 # java

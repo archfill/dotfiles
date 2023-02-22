@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "preset-ja-technical-writing": {
+      "ja-no-mixed-period": false,
+    },
+    "preset-jtf-style": true,
+    "prh": {
+      "rulePaths": [
+        "~/dotfiles/textlint/prh-rules/media/WEB+DB_PRESS.yml",
+        "~/dotfiles/textlint/prh-rules/media/techbooster.yml"
+      ]
+    }
+  }
+}

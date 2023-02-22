@@ -29,6 +29,7 @@ link ".config/direnv"
 # neomutt
 link ".muttrc"
 link ".mutt"
+link ".textlintrc"
 
 #tmux
 TMUX_DIR="${HOME}/.tmux"
