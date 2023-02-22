@@ -90,6 +90,18 @@ local sources = {
 	-- 		return vim.fn.executable("swiftlint") > 0
 	-- 	end,
 	-- }),
+	null_ls.builtins.diagnostics.textlint.with({
+		condition = function()
+			return vim.fn.executable("textlint") > 0
+		end,
+	}),
+	null_ls.builtins.formatting.textlint.with({
+		condition = function()
+			return vim.fn.executable("textlint") > 0
+		end,
+	}),
+	null_ls.builtins.diagnostics.zsh,
+	null_ls.builtins.code_actions.gitsigns,
 }
 
 local lsp_formatting = function(bufnr)
