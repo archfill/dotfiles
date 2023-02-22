@@ -10,11 +10,11 @@ local os = require("os")
 -- end
 
 -- volta config
-if vim.fn.executable("volta") == 1 then
-	-- vim.g.node_host_prog = os.getenv("HOME") .. "/.volta/tools/image/packages/neovim/lib/node_modules/neovim/bin/cli.js"
-	-- vim.g.node_host_prog = os.getenv("HOME") .. "/.volta/bin/neovim-node-host"
-	vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
-end
+-- if vim.fn.executable("volta") == 1 then
+-- 	-- vim.g.node_host_prog = os.getenv("HOME") .. "/.volta/tools/image/packages/neovim/lib/node_modules/neovim/bin/cli.js"
+-- 	-- vim.g.node_host_prog = os.getenv("HOME") .. "/.volta/bin/neovim-node-host"
+-- 	vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
+-- end
 
 vim.o.sh = "zsh"
 

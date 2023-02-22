@@ -9,6 +9,12 @@ if [ -e "/usr/local/bin/brew" ] ; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
+which fnm > /dev/null 2>&1
+ERRCHK=$?
+if [[ $ERRCHK -eq 0 ]]; then
+  eval "$(fnm env --use-on-cd)"
+fi
+
 # java
 # if [ `/usr/libexec/java_home` ] ; then
 # export JAVA_HOME=`/usr/libexec/java_home`
