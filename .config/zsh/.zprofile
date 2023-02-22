@@ -5,18 +5,23 @@ export PATH=$HOME/.local/bin:$PATH
 #   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 # fi
 
-if [ -d "$HOME/.nodebrew/current/bin" ] ; then
-  export PATH=$HOME/.nodebrew/current/bin:$PATH
+if [ -d "$HOME/.volta" ] ; then
+  export VOLTA_HOME="$HOME/.volta"
+  export PATH=$VOLTA_HOME/bin:$PATH
 fi
 
-if [ -d "$ANYENV_ROOT" ] ; then
-  export PATH="$ANYENV_ROOT/bin:$PATH"
-  eval "$(anyenv init - zsh)"
+if [ -d "$HOME/.nodebrew/current/bin" ] ; then
+  export PATH=$HOME/.nodebrew/current/bin:$PATH
 fi
 
 if [ -d "$HOME/.nvm" ] ; then
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi
+
+if [ -d "$ANYENV_ROOT" ] ; then
+  export PATH="$ANYENV_ROOT/bin:$PATH"
+  eval "$(anyenv init - zsh)"
 fi
 
 if [ -d "$HOME/google-cloud-sdk" ] ; then
