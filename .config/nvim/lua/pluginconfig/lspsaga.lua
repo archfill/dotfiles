@@ -27,23 +27,29 @@ lspsaga.setup({ -- defaults ...
 	-- 	scroll_down = "<C-f>",
 	-- 	scroll_up = "<C-b>", -- quit can be a table
 	-- },
-	-- code_action_keys = {
-	-- 	quit = "q",
-	-- 	exec = "<CR>",
+	-- code_action = {
+	-- 	num_shortcut = true,
+	-- 	show_server_name = false,
+	-- 	extend_gitsigns = true,
+	-- 	keys = {
+	-- 		-- string | table type
+	-- 		quit = "q",
+	-- 		exec = "<CR>",
+	-- 	},
 	-- },
 	-- rename_action_quit = "<C-c>",
-	ui = {
-		code_action = "",
-		diagnostic = "",
-	},
+	-- ui = {
+	-- 	code_action = "",
+	-- 	diagnostic = "",
+	-- },
 	lightbulb = {
 		virtual_text = false,
 	},
-	finder = {
-		scroll_down = "<C-f>",
-		scroll_up = "<C-b>", -- quit can be a table
-		quit = { "q", "<ESC>" },
-	},
+	-- finder = {
+	-- 	scroll_down = "<C-f>",
+	-- 	scroll_up = "<C-b>", -- quit can be a table
+	-- 	quit = { "q", "<ESC>" },
+	-- },
 	symbol_in_winbar = {
 		-- in_custom = false,
 		enable = false,
