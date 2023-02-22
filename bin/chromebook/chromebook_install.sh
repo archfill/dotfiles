@@ -1,6 +1,6 @@
 #!/bin/sh
 
-./install.sh
+# ./install.sh
 
 # alacritty
 echo "alacritty for chromebook"
