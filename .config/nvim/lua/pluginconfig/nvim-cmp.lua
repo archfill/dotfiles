@@ -112,6 +112,7 @@ cmp.setup.filetype({ "gitcommit", "markdown" }, {
 		{ name = "copilot", priority = 90 },
 		{ name = "nvim_lsp", priority = 100 },
 		{ name = "luasnip", priority = 80 }, -- For luasnip users.
+		{ name = "rg", priority = 70 },
 		{ name = "path", priority = 100 },
 		{ name = "emoji", insert = true, priority = 60 },
 	}, {

@@ -35,11 +35,25 @@ local plugins = {
 	},
 
 	--------------------------------
+	-- Vim script Library
+	{ "tpope/vim-repeat", event = "VimEnter" },
+
+	--------------------------------
 	-- Lua Library
 	{ "nvim-lua/popup.nvim" },
-	{ "nvim-lua/plenary.nvim" }, -- do not lazy load
+	{ "nvim-lua/plenary.nvim" },
 	{ "MunifTanjim/nui.nvim" },
 	{ "tami5/sqlite.lua" },
+
+	--------------------------------
+	-- UI Library
+	{
+		"stevearc/dressing.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig.dressing")
+		end,
+	},
 
 	--------------------------------
 	-- denops
@@ -54,7 +68,7 @@ local plugins = {
 
 	-- font
 	{
-		"kyazdani42/nvim-web-devicons",
+		"nvim-tree/nvim-web-devicons",
 		config = function()
 			require("pluginconfig.nvim-web-devicons")
 		end,
@@ -108,6 +122,7 @@ local plugins = {
 					require("pluginconfig.skkeleton_indicator")
 				end,
 			},
+			{ "lukas-reineke/cmp-rg" },
 		},
 	},
 
@@ -116,9 +131,9 @@ local plugins = {
 	{
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre" },
-		-- config = function()
-		-- 	require("pluginconfig.nvim-lspconfig")
-		-- end,
+		config = function()
+			require("pluginconfig.nvim-lspconfig")
+		end,
 		dependencies = {
 			{
 				"williamboman/mason-lspconfig.nvim",
@@ -126,6 +141,7 @@ local plugins = {
 					require("pluginconfig.mason-lspconfig")
 				end,
 			},
+			{ "weilbith/nvim-lsp-smag", after = "nvim-lspconfig" },
 		},
 	},
 	{
@@ -224,6 +240,25 @@ local plugins = {
 		},
 	},
 
+	--------------------------------
+	-- Treesitter textobject & operator
+	{ "nvim-treesitter/nvim-treesitter-textobjects", event = "VimEnter" },
+	{
+		"chrisgrieser/nvim-various-textobjs",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig/nvim-various-textobjs")
+		end,
+	},
+	-- incremental-selection
+	{
+		"mfussenegger/nvim-treehopper",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig/nvim-treehopper")
+		end,
+	},
+
 	-- Treesitter UI customize
 	{
 		"mrjones2014/nvim-ts-rainbow",
@@ -243,6 +278,9 @@ local plugins = {
 	{
 		"romgrk/nvim-treesitter-context",
 		cmd = { "TSContextEnable" },
+		config = function()
+			require("treesitter-context").setup({})
+		end,
 	},
 
 	--------------------------------------------------------------
@@ -329,6 +367,16 @@ local plugins = {
 	},
 
 	--------------------------------
+	-- Window Separators
+	{
+		"nvim-zh/colorful-winsep.nvim",
+		event = "VimEnter",
+		config = function()
+			require("pluginconfig/colorful-winsep")
+		end,
+	},
+
+	--------------------------------
 	-- Snippet
 	{
 		"L3MON4D3/LuaSnip",
@@ -399,6 +447,28 @@ local plugins = {
 		event = "VimEnter",
 		config = function()
 			require("pluginconfig.hop")
+		end,
+	},
+
+	----------------
+	-- Horizontal Move
+	{
+		"jinh0/eyeliner.nvim",
+		event = "VimEnter",
+		config = function()
+			require("eyeliner").setup({})
+		end,
+	},
+	-- use {'gukz/ftFt.nvim', event = "VimEnter", config = function() require 'rc/pluginconfig/ftFt' end}
+	-- still wasn't great.
+	{
+		"ggandor/lightspeed.nvim",
+		event = "VimEnter",
+		init = function()
+			vim.g.lightspeed_no_default_keymaps = true
+		end,
+		config = function()
+			require("/pluginconfig/lightspeed")
 		end,
 	},
 
