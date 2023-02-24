@@ -383,6 +383,9 @@ local plugins = {
 	{
 		"petertriho/nvim-scrollbar",
 		event = "VimEnter",
+		cond = function()
+			return not vim.g.vscode
+		end,
 		config = function()
 			require("pluginconfig.nvim-scrollbar")
 		end,
