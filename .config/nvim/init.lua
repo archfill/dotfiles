@@ -5,7 +5,6 @@
 -- end
 
 require("base")
+require("mapping")
 require("plugins")
 require("colorscheme")
-
-require("mapping")

@@ -14,6 +14,10 @@
 -- lmap / lnoremap  |    -   |   @    |    @    |   -    |   -    |    -     |    -     |    @     |
 ---------------------------------------------------------------------------------------------------+
 
+-- leader key
+-- vim.keymap.set("n", "<Space>", "", {})
+-- vim.g.mapleader = " "
+
 -- コマンドモード関連
 -- HHKB用
 -- vim.keymap.set('n', ';', ':', { noremap = true, silent = false })
@@ -27,4 +31,4 @@ vim.keymap.set("n", "j", "gj", { noremap = true, silent = false })
 vim.keymap.set("n", "k", "gk", { noremap = true, silent = false })
 vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = false })
 -- " ESC連打でハイライト解除
-vim.keymap.set("n", "<leader><Esc>", ":nohlsearch<CR><Esc>", { noremap = false, silent = true })
+vim.keymap.set("n", "<leader>q", ":nohlsearch<CR><Esc>", { noremap = false, silent = true })
