@@ -424,6 +424,7 @@ local plugins = {
 		config = function()
 			require("pluginconfig.alpha-nvim")
 		end,
+		dependencies = { { "nvim-tree/nvim-web-devicons", "ColaMint/pokemon.nvim" } },
 	},
 
 	--------------------------------
