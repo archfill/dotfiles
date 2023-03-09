@@ -61,7 +61,13 @@ local plugins = {
 
 	--------------------------------
 	-- Notify
-	{ "rcarriga/nvim-notify" },
+	{
+		"rcarriga/nvim-notify",
+		event = "BufReadPre",
+		config = function()
+			require("pluginconfig/nvim-notify")
+		end,
+	},
 
 	-- color scheme
 	{ "EdenEast/nightfox.nvim" },
