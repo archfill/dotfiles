@@ -13,13 +13,13 @@ require("on")
 ---------------------------------------------------------------
 --- functions
 ---------------------------------------------------------------
--- local function enable_wayland()
--- 	local wayland = os.getenv("XDG_SESSION_TYPE")
--- 	if wayland == "wayland" then
--- 		return true
--- 	end
--- 	return false
--- end
+local function enable_wayland()
+	local wayland = os.getenv("XDG_SESSION_TYPE")
+	if wayland == "wayland" then
+		return true
+	end
+	return false
+end
 
 ---------------------------------------------------------------
 --- Merge the Config
@@ -69,9 +69,9 @@ local config = {
 	cursor_blink_ease_in = "Constant",
 	cursor_blink_ease_out = "Constant",
 	cursor_blink_rate = 0,
-	-- enable_wayland = enable_wayland(),
+	enable_wayland = enable_wayland(),
 	-- https://github.com/wez/wezterm/issues/1772
-	enable_wayland = false,
+	-- enable_wayland = false,
 	color_scheme = "nightfox",
 	hide_tab_bar_if_only_one_tab = false,
 	adjust_window_size_when_changing_font_size = false,
