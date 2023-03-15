@@ -11,8 +11,8 @@ case `uname -m` in
 
   neovim_nightly
   ;;
-'arm64' | 'arm')
-  declare -a info=($(./get_os_info.sh))
+'arm64' | 'arm' | 'aarch64')
+  declare -a info=($(~/dotfiles/bin/get_os_info.sh))
 
   case ${info[0]} in
   debian | ubuntu)
@@ -36,7 +36,9 @@ case `uname -m` in
     ;;
   esac
 
-  mkdir ~/build
+  if [ ! -e `~/build` ]; then
+    mkdir ~/build
+  fi
   cd ~/build
 
   if [ -e `./neovim` ]; then
