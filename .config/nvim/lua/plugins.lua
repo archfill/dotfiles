@@ -166,9 +166,6 @@ local plugins = {
 		end,
 	},
 	{
-		"folke/lsp-colors.nvim",
-	},
-	{
 		"folke/trouble.nvim",
 		event = "VimEnter",
 		config = function()
@@ -578,6 +575,13 @@ local plugins = {
 		event = "VimEnter",
 		config = function()
 			require("pluginconfig.project")
+		end,
+	},
+	{
+		"klen/nvim-config-local",
+		event = "BufEnter",
+		config = function()
+			require("pluginconfig/nvim-config-local")
 		end,
 	},
 
