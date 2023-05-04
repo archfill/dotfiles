@@ -70,7 +70,8 @@ local plugins = {
 	},
 
 	-- color scheme
-	{ "EdenEast/nightfox.nvim" },
+	-- { "EdenEast/nightfox.nvim" },
+  {"folke/tokyonight.nvim"},
 
 	-- font
 	{
