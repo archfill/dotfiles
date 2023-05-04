@@ -28,17 +28,27 @@ vim.api.nvim_create_autocmd("User", {
 	end,
 })
 
-vim.fn["skkeleton#config"]({
-	globalJisyo = "~/git/skk/SKK-JISYO.L",
-	useSkkServer = true,
-	skkServerHost = "192.168.0.100",
-	eggLikeNewline = true,
-	skkServerPort = 1178,
-	skkServerResEnc = "euc-jp",
-	skkServerReqEnc = "euc-jp",
-})
+-- vim.fn["skkeleton#config"]({
+-- 	globalJisyo = "~/git/skk/SKK-JISYO.L",
+-- 	useSkkServer = true,
+-- 	skkServerHost = "192.168.0.100",
+-- 	eggLikeNewline = true,
+-- 	skkServerPort = 1178,
+-- 	skkServerResEnc = "euc-jp",
+-- 	skkServerReqEnc = "euc-jp",
+-- })
 
 vim.cmd([[
+call skkeleton#config({
+  \ 'globalJisyo': '~/git/skk/SKK-JISYO.L',
+  \ 'useSkkServer': v:true,
+  \ 'skkServerHost': '192.168.0.100',
+  \ 'eggLikeNewline': v:true,
+  \ 'skkServerPort': 1178,
+  \ 'skkServerResEnc': 'euc-jp',
+  \ 'skkServerReqEnc': 'euc-jp',
+  \ })
+
 call skkeleton#register_kanatable('rom', {
   \ '/': 'henkanPoint',
   \ ';': 'abbrev',
