@@ -119,7 +119,7 @@ local plugins = {
 					require("pluginconfig.skkeleton")
 				end,
 				dependencies = {
-					{ "rinx/cmp-skkeleton" },
+					{ "rinx/cmp-skkeleton", "vim-denops/denops.vim" },
 				},
 			},
 			{
@@ -743,15 +743,44 @@ local plugins = {
 	},
 
 	-- neorg
-	{
-		"nvim-neorg/neorg",
-		event = "VimEnter",
-		cmd = "Neorg sync-parsers",
-		ft = { "norg" },
-		config = function()
-			require("pluginconfig.neorg")
-		end,
-	},
+	-- {
+	-- 	"nvim-neorg/neorg",
+	-- 	event = "VimEnter",
+	-- 	cmd = "Neorg sync-parsers",
+	-- 	ft = { "norg" },
+	-- 	config = function()
+	-- 		require("pluginconfig.neorg")
+	-- 	end,
+	-- },
+	-- {
+	-- 	"nvim-neorg/neorg",
+	-- 	event = "VimEnter",
+	-- 	build = ":Neorg sync-parsers",
+	-- 	opts = {
+	-- 		load = {
+	-- 			["core.defaults"] = {},
+	-- 			["core.norg.dirman"] = {
+	-- 				config = {
+	-- 					workspaces = {
+	-- 						work = "~/neorg/work",
+	-- 					},
+	-- 				},
+	-- 			},
+	-- 			-- ["core.integrations.telescope"] = {},
+	-- 			["core.norg.concealer"] = {
+	-- 				config = {
+	-- 					icon_preset = "diamond",
+	-- 				},
+	-- 			},
+	-- 			["core.norg.completion"] = {
+	-- 				config = {
+	-- 					engine = "nvim-cmp",
+	-- 				},
+	-- 			},
+	-- 		},
+	-- 	},
+	-- 	dependencies = { { "nvim-lua/plenary.nvim" } },
+	-- },
 
 	--------------------------------
 	{ "folke/neodev.nvim" },
