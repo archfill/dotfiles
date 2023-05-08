@@ -57,7 +57,7 @@ local local_config = load_local_config("local")
 --- Config
 ---------------------------------------------------------------
 local config = {
-	font = wezterm.font("HackGen Console NF"),
+	font = wezterm.font("HackGen Console NF", { weight = "Regular", stretch = "Normal", italic = false }),
 	font_size = 16.0,
 	check_for_updates = false,
 	use_ime = true,
@@ -72,7 +72,8 @@ local config = {
 	enable_wayland = enable_wayland(),
 	-- https://github.com/wez/wezterm/issues/1772
 	-- enable_wayland = false,
-	color_scheme = "nightfox",
+	-- color_scheme = "nightfox",
+	color_scheme = "tokyonight_night",
 	hide_tab_bar_if_only_one_tab = false,
 	adjust_window_size_when_changing_font_size = false,
 	selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
