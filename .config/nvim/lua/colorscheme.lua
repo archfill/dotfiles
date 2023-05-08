@@ -1,6 +1,7 @@
 require("colorscheme-option")
 -- require("colorscheme-nightfox")
 require("colorscheme-tokyonight")
+require("colorscheme-option-after")
 
 -- 透過
 -- vim.cmd("highlight Normal ctermbg=none guibg=NONE")
