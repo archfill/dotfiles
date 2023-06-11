@@ -19,7 +19,7 @@ end
 
 vim.o.sh = "zsh"
 
-vim.o.printfont = "HackGen Console NF:h14"
+-- vim.o.printfont = "HackGen Console NF:h14"
 vim.o.guifont = "HackGen Console NF:h14"
 
 -- setting
