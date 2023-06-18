@@ -2,12 +2,12 @@
 ## m1
 if [ -d "/opt/homebrew/bin" ] ; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
+else if [ -e "/usr/local/bin/brew" ] ; then
+    ## intel
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
 fi
 
-## intel
-if [ -e "/usr/local/bin/brew" ] ; then
-  eval "$(/usr/local/bin/brew shellenv)"
-fi
 
 which fnm > /dev/null 2>&1
 ERRCHK=$?
