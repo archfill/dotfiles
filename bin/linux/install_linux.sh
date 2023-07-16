@@ -17,6 +17,7 @@ debian | ubuntu)
     tmux \
     vim \
     silversearcher-ag \
+    ripgrep \
     fontconfig
 
   pip install requests

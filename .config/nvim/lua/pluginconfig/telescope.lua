@@ -120,13 +120,13 @@ end
 
 telescope_builtin.my_mru = function(opts)
 	local get_mru = function(opts2)
-		local res = pcall(requiref, "telescope._extensions.frecency")
+		local res = pcall(requiref, "frecency")
 		if not res then
 			return vim.tbl_filter(function(val)
 				return 0 ~= vim.fn.filereadable(val)
 			end, vim.v.oldfiles)
 		else
-			local db_client = require("telescope._extensions.frecency.db_client")
+			local db_client = require("frecency.db")
 			db_client.init()
 			-- too slow
 			-- local tbl = db_client.get_file_scores(opts, vim.fn.getcwd())
