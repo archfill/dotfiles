@@ -109,7 +109,7 @@ local sources = {
 local lsp_formatting = function(bufnr)
 	vim.lsp.buf.format({
 		filter = function(client)
-			return client.name ~= "tsserver"
+			return client.name ~= "tsserver" and client.name ~= "lua_ls"
 		end,
 		bufnr = bufnr,
 	})
@@ -125,12 +125,13 @@ local on_attach = function(client, bufnr)
 			callback = function()
 				lsp_formatting(bufnr)
 			end,
-			once = false,
+			-- once = false,
 		})
 	end
 end
 
 null_ls.setup({
+	diagnostics_format = "[#{c}] #{m} (#{s})",
 	sources = sources,
 	on_attach = on_attach,
 })
