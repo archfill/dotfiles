@@ -1,1 +1,1 @@
-export FLUTTER_ROOT="${HOME}/develop/flutter"
+# export FLUTTER_ROOT="${HOME}/develop/flutter"

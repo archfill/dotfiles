@@ -38,8 +38,9 @@ eval "$(pyenv virtualenv-init -)"
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # flutter
-export PATH="$PATH:$FLUTTER_ROOT/bin"
-export PATH="$PATH":"$HOME/.pub-cache/bin"
+# export PATH="$PATH:$FLUTTER_ROOT/bin"
+# export PATH="$PATH":"$HOME/.pub-cache/bin"
+export PATH="$PATH:$HOME/fvm/default/bin"
 
 # direnv
 eval "$(direnv hook zsh)"
