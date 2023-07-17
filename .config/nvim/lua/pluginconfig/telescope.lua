@@ -7,7 +7,6 @@ local telescope_builtin = require("telescope.builtin")
 local Path = require("plenary.path")
 
 require("telescope").load_extension("frecency")
--- require("telescope").load_extension("packer")
 require("telescope").load_extension("flutter")
 require("telescope").load_extension("memo")
 require("telescope").load_extension("luasnip")

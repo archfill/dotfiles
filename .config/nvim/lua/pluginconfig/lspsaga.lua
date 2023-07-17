@@ -39,7 +39,7 @@ lspsaga.setup({ -- defaults ...
 	-- },
 	-- rename_action_quit = "<C-c>",
 	ui = {
-		code_action = "",
+		code_action = "󰌵",
 	},
 	lightbulb = {
 		virtual_text = false,

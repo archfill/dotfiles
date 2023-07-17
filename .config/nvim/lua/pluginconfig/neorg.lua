@@ -1,5 +1,3 @@
--- require("packer").loader("nvim-cmp")
-
 require("neorg").setup({
 	load = {
 		["core.defaults"] = {},

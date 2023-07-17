@@ -13,7 +13,6 @@ require("indent_blankline").setup({
 		"vista",
 		"sagahover",
 		"sagasignature",
-		"packer",
 		"lazy",
 		"log",
 		"lspsagafinder",
