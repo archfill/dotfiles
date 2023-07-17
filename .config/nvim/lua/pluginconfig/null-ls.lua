@@ -9,7 +9,6 @@ local ignored_filetypes = {
 	"help",
 	"markdown",
 	"minimap",
-	"packer",
 	"lazy",
 	"dashboard",
 	"telescope",

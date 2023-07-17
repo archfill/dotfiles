@@ -1,15 +1,15 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-	vim.fn.system({
+if not vim.uv.fs_stat(lazypath) then
+	vim.system({
 		"git",
 		"clone",
 		"--filter=blob:none",
+		"--single-branch",
 		"https://github.com/folke/lazy.nvim.git",
-		"--branch=stable", -- latest stable release
 		lazypath,
-	})
+	}, { text = true }):wait()
 end
-vim.opt.rtp:prepend(lazypath)
+vim.opt.runtimepath:prepend(lazypath)
 
 ----------------------------------------------------------------
 ---- Load local plugins
@@ -175,9 +175,10 @@ local plugins = {
 	},
 	{
 		"j-hui/fidget.nvim",
+		tag = "legacy",
 		event = "VimEnter",
 		config = function()
-			require("fidget").setup({})
+			require("pluginconfig.fidget")
 		end,
 	},
 
@@ -196,12 +197,6 @@ local plugins = {
 				"nvim-telescope/telescope-frecency.nvim",
 				-- config = function()
 				-- 	require("telescope").load_extension("frecency")
-				-- end,
-			},
-			{
-				"nvim-telescope/telescope-packer.nvim",
-				-- config = function()
-				-- 	require("telescope").load_extension("packer")
 				-- end,
 			},
 			{
@@ -599,7 +594,7 @@ local plugins = {
 	--------------------------------
 	-- Git
 	{
-		"TimUntersberger/neogit",
+		"NeogitOrg/neogit",
 		-- event = "BufReadPre",
 		event = "VimEnter",
 		config = function()
