@@ -47,7 +47,7 @@
   "mason.nvim": { "branch": "main", "commit": "5ad3e113b0c3fde3caba8630599373046f6197e8" },
   "memolist.vim": { "branch": "master", "commit": "8090f7a973f266a600c2ea84ec6941346414300a" },
   "modes.nvim": { "branch": "main", "commit": "4d97a51ebbdb649b85f6d79da0009fddd7081a6b" },
-  "neo-tree.nvim": { "branch": "main", "commit": "9d7a7573581d7171ec5e30abf7ce5d8f28c16a0c" },
+  "neo-tree.nvim": { "branch": "main", "commit": "293395c80224fd6f179dffc1c641430c85f999b0" },
   "neodev.nvim": { "branch": "main", "commit": "d89c108a091172fa46dbdcb8486c6645127aabe1" },
   "neogit": { "branch": "master", "commit": "6ee2a9691aa345ff00907a4d5027a4ba754c8497" },
   "nlsp-settings.nvim": { "branch": "main", "commit": "64976a5ac70a9a43f3b1b42c5b1564f7f0e4077e" },
