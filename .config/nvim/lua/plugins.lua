@@ -160,7 +160,7 @@ local plugins = {
 
 	-- lsp ui
 	{
-		"glepnir/lspsaga.nvim",
+		"nvimdev/lspsaga.nvim",
 		event = "VimEnter",
 		config = function()
 			require("pluginconfig.lspsaga")
