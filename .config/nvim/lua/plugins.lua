@@ -165,6 +165,10 @@ local plugins = {
 		config = function()
 			require("pluginconfig.lspsaga")
 		end,
+		dependencies = {
+			{ "nvim-treesitter/nvim-treesitter" },
+			{ "nvim-tree/nvim-web-devicons" },
+		},
 	},
 	{
 		"folke/trouble.nvim",
@@ -231,7 +235,16 @@ local plugins = {
 			require("pluginconfig/nvim-treesitter")
 		end,
 		dependencies = {
-			{ "JoosepAlviste/nvim-ts-context-commentstring" },
+			{
+				"JoosepAlviste/nvim-ts-context-commentstring",
+				config = function()
+					require("ts_context_commentstring").setup({
+						-- enable = true,
+					})
+
+					vim.g.skip_ts_context_commentstring_module = true
+				end,
+			},
 			-- { "nvim-treesitter/nvim-treesitter-context" },
 			{ "nvim-treesitter/nvim-treesitter-refactor" },
 			{ "nvim-treesitter/nvim-tree-docs" },
