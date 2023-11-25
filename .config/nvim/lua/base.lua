@@ -69,7 +69,7 @@ vim.o.wrap = true -- 画面幅で折り返す
 -- vim.o.sidescrolloff = 5
 -- vim.o.pumheight = 10 -- 表示する補完候補の数
 vim.o.statuscolumn = "%=%{&nu ? v:relnum ? v:relnum : v:lnum : ''} %s%C"
--- vim.o.signcolumn = "yes"
+vim.o.signcolumn = "yes"
 
 -- " Tab系
 -- 不可視文字を可視化(タブが「▸-」と表示される)
