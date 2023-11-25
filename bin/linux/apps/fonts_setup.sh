@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+# udev gothic
+# mkdir -p ~/.local/share/fonts/UDEVGothic
+# UDEV_GOTHIC_RELEASES_URL="https://api.github.com/repos/yuru7/udev-gothic/releases"
+# curl -sfL "${UDEV_GOTHIC_RELEASES_URL}" | jq -r '.[0].assets | .[].browser_download_url' | grep _NF_ | xargs -I{} curl -fL -o /tmp/UDEVGothic.zip "{}"
+# (cd /tmp && unzip -j -o UDEVGothic.zip -d ~/.local/share/fonts/UDEVGothic)
+
+# cica
+# mkdir -p ~/.local/share/fonts/cica
+# CICA_RELEASES_URL="https://api.github.com/repos/miiton/Cica/releases"
+# curl -sfL "${CICA_RELEASES_URL}" | jq -r '.[0].assets | .[].browser_download_url' | grep -i without_emoji.zip | xargs -I{} curl -fL -o /tmp/Cica.zip "{}"
+# (cd /tmp && unzip -o Cica.zip -d ~/.local/share/fonts/cica)
+
 function mkdir-safe() {
   if [ ! -e $1 ]; then mkdir -p $1; fi
 }
