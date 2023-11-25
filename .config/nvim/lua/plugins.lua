@@ -254,10 +254,10 @@ local plugins = {
 
 	--------------------------------
 	-- Treesitter textobject & operator
-	{ "nvim-treesitter/nvim-treesitter-textobjects", event = "VimEnter" },
+	{ "nvim-treesitter/nvim-treesitter-textobjects", event = "VeryLazy" },
 	{
 		"chrisgrieser/nvim-various-textobjs",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig/nvim-various-textobjs")
 		end,
@@ -265,7 +265,7 @@ local plugins = {
 	-- incremental-selection
 	{
 		"mfussenegger/nvim-treehopper",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig/nvim-treehopper")
 		end,
@@ -281,7 +281,7 @@ local plugins = {
 	-- { "haringsrob/nvim_context_vt", event = "VimEnter" },
 	{
 		"m-demare/hlargs.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
 		config = function()
 			require("pluginconfig.hlargs")
@@ -329,7 +329,7 @@ local plugins = {
 	-- highlight
 	{
 		"norcalli/nvim-colorizer.lua",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("colorizer").setup()
 		end,
@@ -350,7 +350,7 @@ local plugins = {
 	-- },
 	{
 		"folke/todo-comments.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.todo-comments")
 		end,
@@ -410,7 +410,7 @@ local plugins = {
 	-- comment out
 	{
 		"numToStr/Comment.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("Comment").setup()
 		end,
