@@ -34,6 +34,7 @@ cmp.setup({
 				dictionary = "[Dictionary]",
 				mocword = "[mocword]",
 				cmdline_history = "[History]",
+				neorg = "[Neorg]",
 			},
 		}),
 	},
@@ -121,6 +122,24 @@ cmp.setup.filetype({ "gitcommit", "markdown" }, {
 		{ name = "spell", priority = 40 },
 		{ name = "calc", priority = 50 },
 		{ name = "treesitter", priority = 30 },
+	}),
+})
+
+cmp.setup.filetype("norg", {
+	sources = cmp.config.sources({
+		{ name = "neorg", priority = 100 },
+		-- { name = "copilot", priority = 90 },
+		-- { name = "nvim_lsp", priority = 100 },
+		-- { name = "luasnip", priority = 80 }, -- For luasnip users.
+		-- { name = "rg", priority = 70 },
+		-- { name = "path", priority = 100 },
+		-- { name = "emoji", insert = true, priority = 60 },
+	}, {
+		{ name = "buffer", priority = 50 },
+		-- { name = "omni", priority = 40 },
+		-- { name = "spell", priority = 40 },
+		-- { name = "calc", priority = 50 },
+		-- { name = "treesitter", priority = 30 },
 	}),
 })
 

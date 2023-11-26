@@ -1,20 +1,21 @@
 require("neorg").setup({
 	load = {
 		["core.defaults"] = {},
-		["core.norg.dirman"] = {
+		["core.dirman"] = {
 			config = {
 				workspaces = {
+					notes = "~/neorg/notes",
 					work = "~/neorg/work",
 				},
 			},
 		},
-		-- ["core.integrations.telescope"] = {},
-		["core.norg.concealer"] = {
+		["core.integrations.telescope"] = {},
+		["core.concealer"] = {
 			config = {
 				icon_preset = "diamond",
 			},
 		},
-		["core.norg.completion"] = {
+		["core.completion"] = {
 			config = {
 				engine = "nvim-cmp",
 			},
