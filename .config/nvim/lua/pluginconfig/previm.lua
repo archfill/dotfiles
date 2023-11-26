@@ -4,5 +4,5 @@
 -- nnoremap <silent> [previm]r :call previm#refresh()<CR>
 
 vim.g.previm_open_cmd = ""
-vim.keymap.set({ "n" }, "<Space>po", "<Cmd>PrevimOpen<CR>", { noremap = true, silent = true })
-vim.keymap.set({ "n" }, "<Space>pr", "<Cmd>call previm#refresh()<CR>", { noremap = true, silent = true })
+vim.keymap.set({ "n" }, "<leader>po", "<Cmd>PrevimOpen<CR>", { noremap = true, silent = true })
+vim.keymap.set({ "n" }, "<leader>pr", "<Cmd>call previm#refresh()<CR>", { noremap = true, silent = true })
