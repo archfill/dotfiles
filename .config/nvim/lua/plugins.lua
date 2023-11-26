@@ -28,7 +28,7 @@ local plugins = {
 	-- External package Installer
 	{
 		"williamboman/mason.nvim",
-		event = "VimEnter",
+		event = { "BufReadPre", "VimEnter" },
 		config = function()
 			require("mason").setup({})
 		end,
@@ -57,7 +57,7 @@ local plugins = {
 
 	--------------------------------
 	-- denops
-	{ "vim-denops/denops.vim", event = "VimEnter" },
+	{ "vim-denops/denops.vim", event = "VeryLazy" },
 
 	--------------------------------
 	-- Notify
@@ -228,7 +228,7 @@ local plugins = {
 	-- Treesitter
 	{
 		"nvim-treesitter/nvim-treesitter",
-		event = { "VimEnter" },
+		event = { "VeryLazy" },
 		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
 		cmd = "TSUpdateSync",
 		config = function()
@@ -274,11 +274,11 @@ local plugins = {
 	-- Treesitter UI customize
 	{
 		"mrjones2014/nvim-ts-rainbow",
-		event = "VimEnter",
+		event = "VeryLazy",
 		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
 	},
 	-- ↓flutter-toolsのと競合する
-	-- { "haringsrob/nvim_context_vt", event = "VimEnter" },
+	-- { "haringsrob/nvim_context_vt", event = "VeryLazy" },
 	{
 		"m-demare/hlargs.nvim",
 		event = "VeryLazy",
@@ -336,14 +336,14 @@ local plugins = {
 	},
 	{
 		"RRethy/vim-illuminate",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.vim-illuminate")
 		end,
 	},
 	-- {
 	-- 	"xiyaowong/nvim-cursorword",
-	-- 	event = "VimEnter",
+	-- 	event = "VeryLazy",
 	-- 	config = function()
 	-- 		require("pluginconfig.nvim-cursorword")
 	-- 	end,
@@ -357,7 +357,7 @@ local plugins = {
 	},
 	{
 		"mvllow/modes.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.modes")
 		end,
@@ -368,7 +368,7 @@ local plugins = {
 	-- conflict with clever-f (augroup sidebar_nvim_prevent_buffer_override)
 	{
 		"GustavoKatel/sidebar.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		cond = function()
 			return not vim.g.vscode
 		end,
@@ -382,7 +382,7 @@ local plugins = {
 	-- Window Separators
 	{
 		"nvim-zh/colorful-winsep.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig/colorful-winsep")
 		end,
@@ -392,7 +392,7 @@ local plugins = {
 	-- Snippet
 	{
 		"L3MON4D3/LuaSnip",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.LuaSnip")
 		end,
@@ -401,7 +401,7 @@ local plugins = {
 	-- formatter
 	{
 		"jose-elias-alvarez/null-ls.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.null-ls")
 		end,
@@ -419,7 +419,7 @@ local plugins = {
 	-- bracket
 	{
 		"windwp/nvim-autopairs",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("nvim-autopairs").setup({})
 		end,
@@ -457,7 +457,7 @@ local plugins = {
 	-- Move
 	{
 		"phaazon/hop.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.hop")
 		end,
@@ -467,16 +467,14 @@ local plugins = {
 	-- Horizontal Move
 	{
 		"jinh0/eyeliner.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("eyeliner").setup({})
 		end,
 	},
-	-- use {'gukz/ftFt.nvim', event = "VimEnter", config = function() require 'rc/pluginconfig/ftFt' end}
-	-- still wasn't great.
 	{
 		"ggandor/lightspeed.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		init = function()
 			vim.g.lightspeed_no_default_keymaps = true
 		end,
@@ -496,7 +494,7 @@ local plugins = {
 	},
 	{
 		"simeji/winresizer",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.winresizer")
 		end,
@@ -581,7 +579,7 @@ local plugins = {
 	-- Project
 	{
 		"ahmedkhalf/project.nvim",
-		event = "VimEnter",
+		event = "BufWinEnter",
 		config = function()
 			require("pluginconfig.project")
 		end,
@@ -598,7 +596,7 @@ local plugins = {
 	-- cursorline
 	-- {
 	-- 	"delphinus/auto-cursorline.nvim",
-	-- 	event = "VimEnter",
+	-- 	event = "VeryLazy",
 	-- 	config = function()
 	-- 		require("auto-cursorline").setup({})
 	-- 	end,
@@ -609,14 +607,14 @@ local plugins = {
 	{
 		"NeogitOrg/neogit",
 		-- event = "BufReadPre",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.neogit")
 		end,
 	},
 	{
 		"akinsho/git-conflict.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("git-conflict").setup()
 		end,
@@ -631,7 +629,7 @@ local plugins = {
 	},
 	{
 		"sindrets/diffview.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.diffview")
 		end,
@@ -641,7 +639,7 @@ local plugins = {
 	-- Translate
 	{
 		"uga-rosa/translate.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.translate")
 		end,
@@ -662,7 +660,7 @@ local plugins = {
 	-- Markdown
 	{
 		"previm/previm",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.previm")
 		end,
@@ -674,7 +672,7 @@ local plugins = {
 	--- Debugging
 	{
 		"rcarriga/nvim-dap-ui",
-		event = "VimEnter",
+		event = "VeryLazy",
 		dependencies = {
 			"mfussenegger/nvim-dap",
 			config = function()
@@ -726,7 +724,7 @@ local plugins = {
 	-- Popup Info
 	{
 		"lewis6991/hover.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.hover")
 		end,
@@ -752,15 +750,16 @@ local plugins = {
 	},
 
 	-- neorg
-	-- {
-	-- 	"nvim-neorg/neorg",
-	-- 	event = "VimEnter",
-	-- 	cmd = "Neorg sync-parsers",
-	-- 	ft = { "norg" },
-	-- 	config = function()
-	-- 		require("pluginconfig.neorg")
-	-- 	end,
-	-- },
+	{
+		"nvim-neorg/neorg",
+		event = "VeryLazy",
+		build = ":Neorg sync-parsers",
+		-- ft = { "norg" },
+		config = function()
+			require("pluginconfig.neorg")
+		end,
+		dependencies = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
+	},
 	-- {
 	-- 	"nvim-neorg/neorg",
 	-- 	event = "VimEnter",
