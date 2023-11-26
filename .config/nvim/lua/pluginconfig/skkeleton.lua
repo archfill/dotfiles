@@ -41,7 +41,7 @@ vim.api.nvim_create_autocmd("User", {
 vim.cmd([[
 call skkeleton#config({
   \ 'globalJisyo': '~/git/skk/SKK-JISYO.L',
-  \ 'useSkkServer': v:true,
+  \ 'useSkkServer': v:false,
   \ 'skkServerHost': '192.168.0.100',
   \ 'eggLikeNewline': v:true,
   \ 'skkServerPort': 1178,
