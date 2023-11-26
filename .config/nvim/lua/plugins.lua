@@ -412,7 +412,7 @@ local plugins = {
 		"numToStr/Comment.nvim",
 		event = "VeryLazy",
 		config = function()
-			require("Comment").setup()
+			require("pluginconfig.Comment")
 		end,
 	},
 
@@ -520,7 +520,7 @@ local plugins = {
 	-- Manual
 	{
 		"folke/which-key.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.which-key")
 		end,
