@@ -3,6 +3,22 @@ local wezterm = require("wezterm")
 local act = wezterm.action
 local utils = require("utils")
 
+--- target_triple
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+  -- Configs for Windows only
+  osKey = "CTRL"
+end
+
+if wezterm.target_triple == 'x86_64-apple-darwin' or wezterm.target_triple == 'aarch64-apple-darwin' then
+  -- Configs for OSX only
+  osKey = "SUPER"
+end
+
+if wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
+  -- Configs for Linux only
+  osKey = "CTRL"
+end
+
 ---------------------------------------------------------------
 --- keybinds
 ---------------------------------------------------------------
@@ -29,8 +45,8 @@ M.tmux_keybinds = {
 	{ key = "j", mods = "LEADER|CTRL", action = act({ ActivateTab = 6 }) },
 	{ key = "k", mods = "LEADER|CTRL", action = act({ ActivateTab = 7 }) },
 	{ key = "l", mods = "LEADER|CTRL", action = act({ ActivateTab = 8 }) },
-	{ key = "-", mods = "LEADER", action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
-	{ key = "|", mods = "LEADER", action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }) },
+	{ key = "v", mods = "LEADER", action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
+	{ key = "s", mods = "LEADER", action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }) },
 	{ key = "h", mods = "LEADER", action = act({ ActivatePaneDirection = "Left" }) },
 	{ key = "l", mods = "LEADER", action = act({ ActivatePaneDirection = "Right" }) },
 	{ key = "k", mods = "LEADER", action = act({ ActivatePaneDirection = "Up" }) },
@@ -44,8 +60,8 @@ M.tmux_keybinds = {
 }
 
 M.default_keybinds = {
-	{ key = "c", mods = "SUPER", action = act({ CopyTo = "Clipboard" }) },
-	{ key = "v", mods = "SUPER", action = act({ PasteFrom = "Clipboard" }) },
+	{ key = "c", mods = osKey, action = act({ CopyTo = "Clipboard" }) },
+	{ key = "v", mods = osKey, action = act({ PasteFrom = "Clipboard" }) },
 	{ key = "Insert", mods = "SHIFT", action = act({ PasteFrom = "PrimarySelection" }) },
 	{ key = "=", mods = "CTRL", action = "ResetFontSize" },
 	{ key = "+", mods = "CTRL", action = "IncreaseFontSize" },

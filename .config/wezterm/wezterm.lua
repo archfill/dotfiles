@@ -16,13 +16,14 @@ require("on")
 --  - Linux
 
 --- target_triple
-if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-	-- Configs for Windows only
-	-- font_dirs = {
-	--     'C:\\Users\\whoami\\.dotfiles\\.fonts'
-	-- }
-	DEFAULT_PROG = { "wsl.exe", "~", "-d", "Arch" }
-	FONT_SIZE = 12.0
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+  -- Configs for Windows only
+  -- font_dirs = {
+  --     'C:\\Users\\whoami\\.dotfiles\\.fonts'
+  -- }
+  --default_prog = {'wsl.exe', '~', '-d', 'Ubuntu'}
+  default_prog = {'wsl.exe', '~', '-d', 'Arch'}
+  font_size = 12.0
 
 	LOCAL_CONFIG = {}
 end
