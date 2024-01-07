@@ -1,4 +1,4 @@
-export PATH=${HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+export PATH=${HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
 # if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
