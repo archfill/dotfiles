@@ -21,6 +21,7 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   -- font_dirs = {
   --     'C:\\Users\\whoami\\.dotfiles\\.fonts'
   -- }
+  --default_prog = {'wsl.exe', '~', '-d', 'Ubuntu'}
   default_prog = {'wsl.exe', '~', '-d', 'Arch'}
   font_size = 12.0
 
