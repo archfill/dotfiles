@@ -25,32 +25,32 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   default_prog = {'wsl.exe', '~', '-d', 'Arch'}
   font_size = 12.0
 
-  local_config = {}
+	LOCAL_CONFIG = {}
 end
 
-if wezterm.target_triple == 'x86_64-apple-darwin' or wezterm.target_triple == 'aarch64-apple-darwin' then
-  -- Configs for OSX only
-  -- font_dirs    = { '$HOME/.dotfiles/.fonts' }
-  font_size = 16.0
+if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "aarch64-apple-darwin" then
+	-- Configs for OSX only
+	-- font_dirs    = { '$HOME/.dotfiles/.fonts' }
+	FONT_SIZE = 16.0
 
-    --- load local_config
-    -- Write settings you don't want to make public, such as ssh_domains
-    package.path = os.getenv("HOME") .. "/.local/share/wezterm/?.lua;" .. package.path
-    local function load_local_config(module)
-        local m = package.searchpath(module, package.path)
-        if m == nil then
-            return {}
-        end
-        return dofile(m)
-    end
+	--- load local_config
+	-- Write settings you don't want to make public, such as ssh_domains
+	package.path = os.getenv("HOME") .. "/.local/share/wezterm/?.lua;" .. package.path
+	local function load_local_config(module)
+		local m = package.searchpath(module, package.path)
+		if m == nil then
+			return {}
+		end
+		return dofile(m)
+	end
 
-    local_config = load_local_config("local")
+	LOCAL_CONFIG = load_local_config("local")
 end
 
-if wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
-  -- Configs for Linux only
-  -- font_dirs    = { '$HOME/.dotfiles/.fonts' }
-  font_size = 12.0
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+	-- Configs for Linux only
+	-- font_dirs    = { '$HOME/.dotfiles/.fonts' }
+	FONT_SIZE = 12.0
 end
 
 ---------------------------------------------------------------
@@ -88,7 +88,8 @@ end
 ---------------------------------------------------------------
 local config = {
 	font = wezterm.font("HackGen Console NF", { weight = "Regular", stretch = "Normal", italic = false }),
-	font_size = font_size,
+	-- font = wezterm.font("UDEV Gothic 35NFLG"),
+	font_size = FONT_SIZE,
 	check_for_updates = false,
 	use_ime = true,
 	-- ime_preedit_rendering = "System",
@@ -145,8 +146,8 @@ local config = {
 	-- https://github.com/wez/wezterm/issues/2756
 	-- webgpu_preferred_adapter = gpus[1],
 	-- front_end = "WebGpu",
-    default_prog = default_prog,
+	default_prog = DEFAULT_PROG,
 }
 
-local merged_config = utils.merge_tables(config, local_config)
+local merged_config = utils.merge_tables(config, LOCAL_CONFIG)
 return utils.merge_tables(merged_config, create_ssh_domain_from_ssh_config(merged_config.ssh_domains))

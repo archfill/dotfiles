@@ -60,6 +60,17 @@ vim.o.showmatch = true
 vim.o.wildmode = "list:longest"
 vim.o.wildignore = vim.o.wildignore .. "node_modules/**,.git/**"
 
+vim.o.display = "lastline" -- 長い行は 1 行に収まります
+vim.o.showmode = false
+vim.o.matchtime = 1 -- 括弧のペアを見つけるまでのミリ秒数
+vim.o.wrap = true -- 画面幅で折り返す
+-- vim.o.title = false -- タイトルを書き換えません
+-- vim.o.scrolloff = 5
+-- vim.o.sidescrolloff = 5
+-- vim.o.pumheight = 10 -- 表示する補完候補の数
+vim.o.statuscolumn = "%=%{&nu ? v:relnum ? v:relnum : v:lnum : ''} %s%C"
+vim.o.signcolumn = "yes"
+
 -- " Tab系
 -- 不可視文字を可視化(タブが「▸-」と表示される)
 vim.o.list = true

@@ -61,6 +61,7 @@ yabai -m rule --add app="WineCX" manage=off
 yabai -m rule --add app="HoloCure" manage=off
 yabai -m rule --add app="UTM" manage=off
 yabai -m rule --add app="LINE" manage=off
+yabai -m rule --add app="Loopback" manage=off
 
 # skhd -c $HOME/.config/skhd/skhdrc
 

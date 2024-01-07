@@ -12,7 +12,7 @@ require("telescope").load_extension("memo")
 require("telescope").load_extension("luasnip")
 require("telescope").load_extension("ui-select")
 
-require("telescope").setup({
+local telescope_opts = {
 	defaults = {
 		-- Default configuration for telescope goes here:
 		-- config_key = value,
@@ -56,8 +56,6 @@ require("telescope").setup({
 		frecency = {
 			db_root = vim.fn.stdpath("state"),
 			ignore_patterns = { "*.git/*", "*/tmp/*", "*/node_modules/*" },
-			db_safe_mode = false,
-			auto_validate = true,
 		},
 		project = {
 			base_dirs = (function()
@@ -80,7 +78,9 @@ require("telescope").setup({
 			end)(),
 		},
 	},
-})
+}
+
+require("telescope").setup(telescope_opts)
 
 local function join_uniq(tbl, tbl2)
 	local res = {}
@@ -125,26 +125,37 @@ telescope_builtin.my_mru = function(opts)
 				return 0 ~= vim.fn.filereadable(val)
 			end, vim.v.oldfiles)
 		else
-			local db_client = require("frecency.db")
-			db_client.init()
-			-- too slow
-			-- local tbl = db_client.get_file_scores(opts, vim.fn.getcwd())
-			local tbl = db_client.get_file_scores(opts2)
+			local f = require("frecency.frecency")
+			local frecency = f.new(opts2)
+			local db_client = frecency.database
+			local files = db_client:get_entries(vim.uv.cwd())
+
+			local r = require("frecency.recency")
+			local recency = r.new(opts2)
+			for _, file in ipairs(files) do
+				file.score = file.ages and recency:calculate(file.count, file.ages) or 0
+				file.ages = nil
+			end
+			table.sort(files, function(a, b)
+				return a.score > b.score or (a.score == b.score and a.path > b.path)
+			end)
+
 			local get_filename_table = function(tbl2)
 				local res2 = {}
 				for _, v in pairs(tbl2) do
-					res2[#res2 + 1] = v["filename"]
+					res2[#res2 + 1] = v["path"]
 				end
 				return res2
 			end
-			return get_filename_table(tbl)
+			return get_filename_table(files)
 		end
 	end
-	local results_mru = get_mru(opts)
-	local results_mru_cur = filter_by_cwd_paths(results_mru, vim.loop.cwd())
+	local o = vim.tbl_extend("force", telescope_opts.extensions.frecency, opts or {})
+	local results_mru = get_mru(o)
+	local results_mru_cur = filter_by_cwd_paths(results_mru, vim.uv.cwd())
 
-	local show_untracked = vim.F.if_nil(opts.show_untracked, true)
-	local recurse_submodules = vim.F.if_nil(opts.recurse_submodules, false)
+	local show_untracked = vim.F.if_nil(o.show_untracked, true)
+	local recurse_submodules = vim.F.if_nil(o.recurse_submodules, false)
 	if show_untracked and recurse_submodules then
 		error("Git does not suppurt both --others and --recurse-submodules")
 	end
@@ -157,7 +168,6 @@ telescope_builtin.my_mru = function(opts)
 		recurse_submodules and "--recurse-submodules" or nil,
 	}
 	local results_git = utils.get_os_command_output(cmd)
-
 	local results = join_uniq(results_mru_cur, results_git)
 
 	pickers
@@ -167,7 +177,6 @@ telescope_builtin.my_mru = function(opts)
 				results = results,
 				entry_maker = opts.entry_maker or make_entry.gen_from_file(opts),
 			}),
-			-- default_text = vim.fn.getcwd(),
 			sorter = conf.file_sorter(opts),
 			previewer = conf.file_previewer(opts),
 		})
