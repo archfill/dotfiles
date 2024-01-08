@@ -6,7 +6,7 @@ local utils = require("utils")
 --- target_triple
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   -- Configs for Windows only
-  osKey = "CTRL"
+  osKey = "CTRL|SHIFT"
 end
 
 if wezterm.target_triple == 'x86_64-apple-darwin' or wezterm.target_triple == 'aarch64-apple-darwin' then
@@ -16,7 +16,7 @@ end
 
 if wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
   -- Configs for Linux only
-  osKey = "CTRL"
+  osKey = "CTRL|SHIFT"
 end
 
 ---------------------------------------------------------------
