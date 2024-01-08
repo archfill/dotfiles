@@ -51,6 +51,19 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	-- Configs for Linux only
 	-- font_dirs    = { '$HOME/.dotfiles/.fonts' }
 	FONT_SIZE = 12.0
+
+	--- load local_config
+	-- Write settings you don't want to make public, such as ssh_domains
+	package.path = os.getenv("HOME") .. "/.local/share/wezterm/?.lua;" .. package.path
+	local function load_local_config(module)
+		local m = package.searchpath(module, package.path)
+		if m == nil then
+			return {}
+		end
+		return dofile(m)
+	end
+
+	LOCAL_CONFIG = load_local_config("local")
 end
 
 ---------------------------------------------------------------
