@@ -23,6 +23,10 @@ zinit light chrissicool/zsh-256color
 zinit lucid has'docker' for \
   as'completion' is-snippet \
   'https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker' \
-  \
-  as'completion' is-snippet \
-  'https://github.com/docker/compose/blob/master/contrib/completion/zsh/_docker-compose' \
+
+# zinit lucid has'docker' for \
+#   as'completion' is-snippet \
+#   'https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker' \
+#   \
+#   as'completion' is-snippet \
+#   'https://github.com/docker/compose/blob/master/contrib/completion/zsh/_docker-compose' \
