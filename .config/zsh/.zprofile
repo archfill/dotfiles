@@ -68,3 +68,7 @@ if [[ $ERRCHK -eq 0 ]]; then
 fi
 
 [ -f $ZDOTDIR/zprofile/`uname`/init.zsh ] && . $ZDOTDIR/zprofile/`uname`/init.zsh
+
+if [ -f "/usr/bin/vendor_perl/po4a" ] ; then
+  export PATH=/usr/bin/vendor_perl:$PATH
+fi
