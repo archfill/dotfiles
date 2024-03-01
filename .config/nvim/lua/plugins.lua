@@ -273,9 +273,12 @@ local plugins = {
 
 	-- Treesitter UI customize
 	{
-		"mrjones2014/nvim-ts-rainbow",
-		event = "VeryLazy",
-		-- event = { "BufRead", "BufNewFile", "InsertEnter" },
+		"HiPhish/rainbow-delimiters.nvim",
+		event = "BufReadPost",
+		config = function()
+			-- patch https://github.com/nvim-treesitter/nvim-treesitter/issues/1124
+			vim.cmd.edit({ bang = true })
+		end,
 	},
 	-- ↓flutter-toolsのと競合する
 	-- { "haringsrob/nvim_context_vt", event = "VeryLazy" },
