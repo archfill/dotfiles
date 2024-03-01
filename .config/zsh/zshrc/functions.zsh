@@ -13,3 +13,8 @@ function precmd() {
     tmux refresh-client -S
   fi
 }
+
+function select-history() {
+  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+  CURSOR=$#BUFFER
+}
