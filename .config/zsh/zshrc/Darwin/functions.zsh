@@ -20,9 +20,3 @@ function gx() {
 }
 compdef gx-complete gx
 
-function g() {
-  local src=$(ghq list | fzf --preview "ls -laTp $(ghq root)/{} | tail -n+4 | awk '{print \$9\"/\"\$6\"/\"\$7 \" \" \$10}'")
-  if [ -n "$src" ]; then
-    cd $(ghq root)/$src
-  fi
-}
