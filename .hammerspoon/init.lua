@@ -31,5 +31,5 @@ hs.hotkey.bind({ "ctrl", "shift" }, "z", function()
 	end
 end)
 
-stackline = require("stackline")
-stackline:init()
+-- stackline = require("stackline")
+-- stackline:init()
