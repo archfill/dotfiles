@@ -95,3 +95,7 @@ vim.o.wrapscan = true
 vim.o.hlsearch = true
 
 vim.opt.clipboard:append({ "unnamedplus" })
+
+if vim.fn.has("wsl") then
+	require("wsl-config")
+end
