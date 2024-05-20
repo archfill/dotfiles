@@ -677,10 +677,13 @@ local plugins = {
 		"rcarriga/nvim-dap-ui",
 		event = "VeryLazy",
 		dependencies = {
-			"mfussenegger/nvim-dap",
-			config = function()
-				require("pluginconfig.nvim-dap")
-			end,
+			{
+				"mfussenegger/nvim-dap",
+				config = function()
+					require("pluginconfig.nvim-dap")
+				end,
+			},
+			{ "nvim-neotest/nvim-nio" },
 		},
 		config = function()
 			require("pluginconfig.nvim-dap-ui")
