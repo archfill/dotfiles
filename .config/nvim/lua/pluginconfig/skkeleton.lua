@@ -38,10 +38,21 @@ vim.api.nvim_create_autocmd("User", {
 -- 	skkServerReqEnc = "euc-jp",
 -- })
 
+-- call skkeleton#config({
+--   \ 'globalDictionaries': ["~/git/skk-dict/SKK-JISYO.L"],
+--   \ 'userDictionary': "/hoge",
+--   \ 'sources': ["skk_dictionary"],
+--   \ 'skkServerHost': '192.168.0.100',
+--   \ 'eggLikeNewline': v:true,
+--   \ 'skkServerPort': 1178,
+--   \ 'skkServerResEnc': 'euc-jp',
+--   \ 'skkServerReqEnc': 'euc-jp'
+--   \ })
+
 vim.cmd([[
 call skkeleton#config({
-  \ 'globalJisyo': '~/git/skk-dict/SKK-JISYO.L',
-  \ 'sources': ["skk_dictionary"]
+  \ 'globalDictionaries': ["~/git/skk-dict/SKK-JISYO.L"],
+  \ 'sources': ["skk_dictionary"],
   \ 'skkServerHost': '192.168.0.100',
   \ 'eggLikeNewline': v:true,
   \ 'skkServerPort': 1178,
