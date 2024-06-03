@@ -198,12 +198,6 @@ local plugins = {
 		end,
 		dependencies = {
 			{
-				"nvim-telescope/telescope-frecency.nvim",
-				-- config = function()
-				-- 	require("telescope").load_extension("frecency")
-				-- end,
-			},
-			{
 				"delphinus/telescope-memo.nvim",
 				-- config = function()
 				-- 	require("telescope").load_extension("memo")
@@ -223,6 +217,13 @@ local plugins = {
 			},
 			{ "nvim-telescope/telescope-symbols.nvim" }, --- Used in telekasten.nvim
 		},
+	},
+	{
+		"nvim-telescope/telescope-frecency.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("telescope").load_extension("frecency")
+		end,
 	},
 
 	-- Treesitter
