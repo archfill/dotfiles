@@ -756,16 +756,16 @@ local plugins = {
 	},
 
 	-- neorg
-	{
-		"nvim-neorg/neorg",
-		event = "VeryLazy",
-		build = ":Neorg sync-parsers",
-		-- ft = { "norg" },
-		config = function()
-			require("pluginconfig.neorg")
-		end,
-		dependencies = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
-	},
+	-- {
+	-- 	"nvim-neorg/neorg",
+	-- 	event = "VeryLazy",
+	-- 	build = ":Neorg sync-parsers",
+	-- 	-- ft = { "norg" },
+	-- 	config = function()
+	-- 		require("pluginconfig.neorg")
+	-- 	end,
+	-- 	dependencies = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
+	-- },
 	-- {
 	-- 	"nvim-neorg/neorg",
 	-- 	event = "VimEnter",
