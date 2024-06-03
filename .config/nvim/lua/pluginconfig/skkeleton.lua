@@ -41,19 +41,19 @@ vim.api.nvim_create_autocmd("User", {
 vim.cmd([[
 call skkeleton#config({
   \ 'globalJisyo': '~/git/skk-dict/SKK-JISYO.L',
-  \ 'useSkkServer': v:false,
+  \ 'sources': ["skk_dictionary"]
   \ 'skkServerHost': '192.168.0.100',
   \ 'eggLikeNewline': v:true,
   \ 'skkServerPort': 1178,
   \ 'skkServerResEnc': 'euc-jp',
-  \ 'skkServerReqEnc': 'euc-jp',
+  \ 'skkServerReqEnc': 'euc-jp'
   \ })
 
 call skkeleton#register_kanatable('rom', {
   \ '/': 'henkanPoint',
   \ ';': 'abbrev',
   \ 'jj': 'escape',
-  \ "z\<Space>": ["\u3000", ''],
+  \ "z\<Space>": ["\u3000", '']
   \ })
 
 " 例: <C-l>で全角モードに入れるようにします
