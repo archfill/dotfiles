@@ -3,6 +3,7 @@ local utils = require("utils")
 local keybinds = require("keybinds")
 local scheme = wezterm.get_builtin_color_schemes()["nightfox"]
 local act = wezterm.action
+local mux = wezterm.mux
 
 local function create_tab_title(tab, tabs, panes, config, hover, max_width)
 	local user_title = tab.active_pane.user_vars.panetitle
@@ -30,6 +31,11 @@ end
 ---------------------------------------------------------------
 --- wezterm on
 ---------------------------------------------------------------
+wezterm.on("gui-startup", function(cmd)
+	local tab, pane, window = mux.spawn_window(cmd or {})
+	window:gui_window():maximize()
+end)
+
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
 	local title = create_tab_title(tab, tabs, panes, config, hover, max_width)
 
