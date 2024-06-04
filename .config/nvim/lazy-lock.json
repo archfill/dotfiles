@@ -24,7 +24,6 @@
   "colorful-winsep.nvim": { "branch": "main", "commit": "4ac6a8cab5866ec3de3f5e3bc202e0c682d4d806" },
   "convert-git-url.nvim": { "branch": "main", "commit": "fd97c92a627175546f8572088b2b240b92f2790d" },
   "copilot-cmp": { "branch": "master", "commit": "72fbaa03695779f8349be3ac54fa8bd77eed3ee3" },
-  "copilot.lua": { "branch": "master", "commit": "f7612f5af4a7d7615babf43ab1e67a2d790c13a6" },
   "denops.vim": { "branch": "main", "commit": "9dd9ae9da9b8d65916dd44e0e4d881665397de63" },
   "diffview.nvim": { "branch": "main", "commit": "3afa6a053f680e9f1329c4a151db988a482306cd" },
   "dressing.nvim": { "branch": "master", "commit": "e3714c8049b2243e792492c4149e4cc395c68eb9" },
