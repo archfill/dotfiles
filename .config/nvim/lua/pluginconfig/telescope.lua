@@ -6,7 +6,7 @@ local conf = require("telescope.config").values
 local telescope_builtin = require("telescope.builtin")
 local Path = require("plenary.path")
 
--- require("telescope").load_extension("frecency")
+require("telescope").load_extension("frecency")
 require("telescope").load_extension("flutter")
 require("telescope").load_extension("memo")
 require("telescope").load_extension("luasnip")
@@ -125,7 +125,7 @@ telescope_builtin.my_mru = function(opts)
 				return 0 ~= vim.fn.filereadable(val)
 			end, vim.v.oldfiles)
 		else
-			local f = require("frecency.frecency")
+			local f = require("frecency")
 			local frecency = f.new(opts2)
 			local db_client = frecency.database
 			local files = db_client:get_entries(vim.uv.cwd())
