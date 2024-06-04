@@ -198,6 +198,13 @@ local plugins = {
 		end,
 		dependencies = {
 			{
+				"nvim-telescope/telescope-frecency.nvim",
+				-- event = "VeryLazy",
+				-- config = function()
+				-- 	require("telescope").load_extension("frecency")
+				-- end,
+			},
+			{
 				"delphinus/telescope-memo.nvim",
 				-- config = function()
 				-- 	require("telescope").load_extension("memo")
@@ -217,13 +224,6 @@ local plugins = {
 			},
 			{ "nvim-telescope/telescope-symbols.nvim" }, --- Used in telekasten.nvim
 		},
-	},
-	{
-		"nvim-telescope/telescope-frecency.nvim",
-		event = "VeryLazy",
-		config = function()
-			require("telescope").load_extension("frecency")
-		end,
 	},
 
 	-- Treesitter
@@ -705,16 +705,16 @@ local plugins = {
 
 	--------------------------------
 	-- AI completion
-	{
-		"zbirenbaum/copilot.lua",
-		-- cmd = { "Copilot" },
-		event = "InsertEnter",
-		config = function()
-			vim.defer_fn(function()
-				require("pluginconfig.copilot")
-			end, 100)
-		end,
-	},
+	-- {
+	-- 	"zbirenbaum/copilot.lua",
+	-- 	-- cmd = { "Copilot" },
+	-- 	event = "InsertEnter",
+	-- 	config = function()
+	-- 		vim.defer_fn(function()
+	-- 			require("pluginconfig.copilot")
+	-- 		end, 100)
+	-- 	end,
+	-- },
 
 	--------------------------------
 	-- Coding
