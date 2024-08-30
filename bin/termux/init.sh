@@ -2,6 +2,8 @@
 
 echo "--- setting start ---"
 
+ROOT_DIR="/data/data/com.termux/files/usr"
+
 mkdir -p ${HOME}/.config
 mkdir -p ${HOME}/git
 
@@ -40,3 +42,5 @@ bash ${HOME}/dotfiles/bin/apps/zinit.sh
 bash ${HOME}/dotfiles/bin/apps/volta.sh
 bash ${HOME}/dotfiles/bin/apps/pyenv.sh
 echo "-- apps setup finish ---"
+
+chsh -s ${ROOT_DIR}/bin/zsh
