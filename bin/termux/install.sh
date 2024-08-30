@@ -7,4 +7,6 @@ neovim \
 wget \
 curl \
 git \
-clang
+clang \
+nodejs-lts \
+python
