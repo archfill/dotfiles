@@ -24,6 +24,7 @@ curl -OL https://github.com/yuru7/HackGen/releases/download/${HACKGEN_VERSION}/H
 unzip HackGen_NF_${HACKGEN_VERSION}.zip
 mv HackGen_NF_${HACKGEN_VERSION}/HackGenConsoleNF-Regular.ttf ${HOME}/.termux/font.ttf
 cd $temp_dir
+rm -rf ${HOME}/temp
 termux-reload-settings
 
 # install
