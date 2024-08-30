@@ -43,4 +43,4 @@ bash ${HOME}/dotfiles/bin/apps/volta.sh
 bash ${HOME}/dotfiles/bin/apps/pyenv.sh
 echo "-- apps setup finish ---"
 
-chsh -s ${ROOT_DIR}/bin/zsh
+chsh -s zsh
