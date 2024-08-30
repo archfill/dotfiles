@@ -4,6 +4,11 @@ echo "--- setting start ---"
 
 mkdir -p ${HOME}/.config
 
+# install
+echo "--- apps install setup start ---"
+bash ${HOME}/dotfiles/bin/termux/install.sh
+echo "--- apps install setup finish ---"
+
 # link
 echo "--- link setup start ---"
 bash ${HOME}/dotfiles/bin/termux/link.sh
