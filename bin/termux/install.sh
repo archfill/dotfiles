@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-pkg install zsh \
+pkg install -y zsh \
 git \
 vim \
 neovim \
 wget \
 curl \
-git
+git \
+clang
