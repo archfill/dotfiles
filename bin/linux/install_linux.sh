@@ -49,6 +49,7 @@ debian | ubuntu)
     lazygit \
     luarocks \
     lua51 \
+    bottom \
     the_silver_searcher
 
   sudo pip2 install requests
