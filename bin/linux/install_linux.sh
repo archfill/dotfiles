@@ -28,14 +28,18 @@ debian | ubuntu)
   ;;
 "arch" )
   echo "arch"
-  sudo pacman -Suy --noconfirm \
-    ripgrep \
-    wget \
-    unzip
 
-  pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+  sudo pacman -Suy --needed git base-devel --noconfirm
+  git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+  cd ..
+  rm -rf yay
 
   yay -Syu --noconfirm \
+    ripgrep \
+    wget \
+    unzip \
+    curl \
+    fontconfig \
     neomutt \
     w3m \
     mpv \
@@ -43,6 +47,8 @@ debian | ubuntu)
     zsh \
     tmux \
     lazygit \
+    luarocks \
+    lua51 \
     the_silver_searcher
 
   sudo pip2 install requests
