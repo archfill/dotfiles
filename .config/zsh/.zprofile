@@ -72,3 +72,11 @@ fi
 if [ -f "/usr/bin/vendor_perl/po4a" ] ; then
   export PATH=/usr/bin/vendor_perl:$PATH
 fi
+
+# flutter
+export PATH="$PATH:$HOME/.pub-cache/bin"
+# fvm global path
+if [ -d "$HOME/fvm/default/bin" ] ; then
+  export PATH="$PATH:$HOME/fvm/default/bin"
+fi
+
