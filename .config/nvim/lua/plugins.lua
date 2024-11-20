@@ -125,6 +125,9 @@ local plugins = {
 			},
 			{
 				"delphinus/skkeleton_indicator.nvim",
+				cond = function()
+					return not vim.g.vscode
+				end,
 				config = function()
 					require("pluginconfig.skkeleton_indicator")
 				end,
