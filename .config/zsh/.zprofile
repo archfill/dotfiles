@@ -1,3 +1,7 @@
+# 補完機能を有効にする
+autoload -Uz compinit && compinit -u
+autoload bashcompinit && bashcompinit
+
 export PATH=${HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
