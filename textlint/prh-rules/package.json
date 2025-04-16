@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.mjs"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/prh/rules.git"
@@ -20,6 +21,6 @@
     "prh": "^5.4.4"
   },
   "devDependencies": {
-    "glob-expand": "^0.2.1"
+    "globby": "^14.1.0"
   }
 }
