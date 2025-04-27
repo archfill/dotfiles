@@ -1,64 +1,79 @@
 #!/usr/bin/env bash
 
-echo "Linux config start"
+set -euo pipefail
+trap 'echo "[Error] Command \"$BASH_COMMAND\" failed."; exit 1' ERR
 
-declare -a info=($(${HOME}/dotfiles/bin/get_os_info.sh))
+echo "[Start] Linux configuration"
 
-case ${info[0]} in
-debian | ubuntu)
-  echo "debian or ubuntu"
-  sudo apt update
-  sudo apt install -y python3 \
-    python3-pip \
-    wget \
-    w3m \
-    neomutt \
-    zsh \
-    tmux \
-    vim \
-    silversearcher-ag \
-    ripgrep \
-    fontconfig
+# Get OS info
+read -r distro arch <<< "$("${HOME}/dotfiles/bin/get_os_info.sh")"
 
-  pip install requests
+install_common_packages_debian() {
+    echo "[Info] Installing packages for Debian/Ubuntu..."
+    sudo apt update
+    sudo apt install -y \
+      python3 \
+      python3-pip \
+      wget \
+      w3m \
+      neomutt \
+      zsh \
+      tmux \
+      vim \
+      silversearcher-ag \
+      ripgrep \
+      fontconfig
 
-  if [[ ${info[1]} == "x86_64" ]]; then
-      echo x86_64
-  fi
-  ;;
-"arch" )
-  echo "arch"
+    pip3 install --user requests
+}
 
-  sudo pacman -Suy --needed git base-devel --noconfirm
-  git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
-  cd ..
-  rm -rf yay
+install_common_packages_arch() {
+    echo "[Info] Installing packages for Arch Linux..."
+    sudo pacman -Suy --needed git base-devel --noconfirm
 
-  yay -Syu --noconfirm \
-    ripgrep \
-    wget \
-    unzip \
-    curl \
-    fontconfig \
-    neomutt \
-    w3m \
-    mpv \
-    vim \
-    zsh \
-    tmux \
-    lazygit \
-    luarocks \
-    lua51 \
-    bottom \
-    the_silver_searcher
+    tempdir=$(mktemp -d)
+    git clone https://aur.archlinux.org/yay.git "${tempdir}/yay"
+    pushd "${tempdir}/yay" >/dev/null
+    makepkg -si --noconfirm
+    popd >/dev/null
+    rm -rf "${tempdir}"
 
-  sudo pip2 install requests
+    yay -Syu --noconfirm \
+      ripgrep \
+      wget \
+      unzip \
+      curl \
+      fontconfig \
+      neomutt \
+      w3m \
+      mpv \
+      vim \
+      zsh \
+      tmux \
+      lazygit \
+      luarocks \
+      lua51 \
+      bottom \
+      the_silver_searcher
 
-  sudo pip3 install mps-youtube
-  ;;
-*)
-    echo "unsupported"
+    pip3 install --user mps-youtube
+}
+
+case "${distro}" in
+  debian | ubuntu)
+    echo "[Detected] Debian/Ubuntu"
+    install_common_packages_debian
+    if [[ "${arch}" == "x86_64" ]]; then
+      echo "[Info] Architecture: x86_64"
+    fi
+    ;;
+  arch)
+    echo "[Detected] Arch Linux"
+    install_common_packages_arch
+    ;;
+  *)
+    echo "[Warning] Unsupported distribution: ${distro}"
     ;;
 esac
 
-echo "Linux config end"
+echo "[Success] Linux configuration completed."

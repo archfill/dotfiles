@@ -1,48 +1,55 @@
 #!/usr/bin/env bash
 
-echo "dotfiles setup start."
+set -euo pipefail
+trap 'echo "[Error] Command \"$BASH_COMMAND\" failed."; exit 1' ERR
 
-mkdir -p ~/.config
+mkdir -p "$HOME/.config"
 
-# link
-echo "link setup start."
-bash ${HOME}/dotfiles/bin/link.sh
-echo "link setup finish."
+echo "[Start] Dotfiles setup at $(date)"
 
-echo "check os..."
-if [ "$(uname)" = 'Darwin' ]; then
-  # mac
-  echo "this is os mac."
-  bash ${HOME}/dotfiles/bin/mac/link.sh
-  bash ${HOME}/dotfiles/bin/mac/brew.sh
-  bash ${HOME}/dotfiles/bin/mac/config.sh
-elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
-  # linux
-  echo "this is os linux."
-  bash ${HOME}/dotfiles/bin/linux/install_linux.sh
+run() {
+  bash "$HOME/dotfiles/$1"
+}
 
-  ## fonts setup
-  bash ${HOME}/dotfiles/bin/linux/apps/fonts_setup.sh
-  bash ${HOME}/dotfiles/bin/linux/apps/deno_install.sh
-  bash ${HOME}/dotfiles/bin/linux/apps/neovim_install.sh
-elif [ "$(expr substr $(uname -s) 1 10)" = 'MINGW32_NT' ]; then
-  # cygwin
-  echo "this is os windows."
-  bash ${HOME}/dotfiles/bin/cygwin/install_cygwin.sh
-else
-  echo "Your platform ($(uname -a)) is not supported."
-  exit 1
-fi
+echo "[Info] Starting to create symbolic links"
+run "bin/link.sh"
 
-# apps setup
-echo "apps setup start."
-bash ${HOME}/dotfiles/bin/apps_setup.sh
-echo "apps setup finish."
+OS_NAME="$(uname)"
+echo "[Info] Detected OS: $OS_NAME"
 
-# config setup
-echo "config setup start."
-bash ${HOME}/dotfiles/bin/config.sh
-echo "config setup finish."
+case "$OS_NAME" in
+  Darwin)
+    echo "[OS] macOS setup starting"
+    run "bin/mac/link.sh"
+    run "bin/mac/brew.sh"
+    run "bin/mac/config.sh"
+    ;;
 
-echo "dotfiles setup finish."
+  Linux)
+    echo "[OS] Linux setup starting"
+    run "bin/linux/apps/fonts_setup.sh"
+    run "bin/linux/apps/deno_install.sh"
+    run "bin/linux/apps/neovim_install.sh"
+    run "bin/linux/install_linux.sh"
+    ;;
+
+  MINGW32_NT*|MINGW64_NT*)
+    echo "[OS] Windows (Cygwin) setup starting"
+    run "bin/cygwin/install_cygwin.sh"
+    ;;
+
+  *)
+    echo "[Error] Unsupported OS: $OS_NAME"
+    exit 1
+    ;;
+esac
+
+echo "[Info] Starting app setup"
+run "bin/apps_setup.sh"
+
+echo "[Info] Starting config setup"
+run "bin/config.sh"
+
+echo "[Success] Dotfiles setup completed at $(date)"
+
 exit 0
