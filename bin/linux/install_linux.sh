@@ -56,7 +56,7 @@ install_common_packages_arch() {
       bottom \
       the_silver_searcher
 
-    pip3 install --user mps-youtube
+    pip install --user mps-youtube
 }
 
 case "${distro}" in
