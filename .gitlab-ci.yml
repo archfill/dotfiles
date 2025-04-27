@@ -8,6 +8,12 @@ before_script:
   # - dockerd &
   # - sleep 5
   # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  # create user
+  useradd -m builder
+  # give builder sudo if needed (optional)
+  echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+  # switch to builder
+  su - builder
 
 test:
   stage: test
