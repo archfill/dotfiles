@@ -18,6 +18,7 @@ test:
   tags:
     - docker
   script:
+    - ln -snf `pwd` /home/builder/dotfiles
     - sudo -u builder bash -c "cd $CI_PROJECT_DIR && make init"
   only:
     - /^main.*$/
