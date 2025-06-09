@@ -8,15 +8,21 @@ source "${SCRIPT_DIR}/common.sh"
 
 # dotfilesのルートディレクトリを取得
 get_dotfiles_root() {
+    log_info "DEBUG: get_dotfiles_root called - DOTFILES_DIR = ${DOTFILES_DIR:-'unset'}"
+    
     # 環境変数DOTFILES_DIRが設定されている場合はそれを使用
     if [[ -n "${DOTFILES_DIR:-}" ]]; then
+        log_info "DEBUG: returning existing DOTFILES_DIR = $DOTFILES_DIR"
         echo "$DOTFILES_DIR"
         return 0
     fi
     
+    log_info "DEBUG: searching for dotfiles root starting from SCRIPT_DIR = $SCRIPT_DIR"
     local current_dir="$SCRIPT_DIR"
     while [[ "$current_dir" != "/" ]]; do
+        log_info "DEBUG: checking directory: $current_dir"
         if [[ -f "$current_dir/CLAUDE.md" ]] || [[ -f "$current_dir/.gitignore" ]]; then
+            log_info "DEBUG: found dotfiles root: $current_dir"
             echo "$current_dir"
             return 0
         fi
@@ -24,16 +30,24 @@ get_dotfiles_root() {
     done
     
     # フォールバック
-    echo "${HOME}/dotfiles"
+    local fallback="${HOME}/dotfiles"
+    log_info "DEBUG: using fallback: $fallback"
+    echo "$fallback"
 }
 
 # 設定ファイルの読み込み
 load_config() {
+    log_info "DEBUG: load_config start - DOTFILES_DIR = ${DOTFILES_DIR:-'unset'}"
+    
     # DOTFILES_DIRが未設定の場合のみ取得・設定
     if [[ -z "${DOTFILES_DIR:-}" ]]; then
+        log_info "DEBUG: DOTFILES_DIR is unset, calling get_dotfiles_root"
         local dotfiles_root
         dotfiles_root="$(get_dotfiles_root)"
         export DOTFILES_DIR="$dotfiles_root"
+        log_info "DEBUG: set DOTFILES_DIR = $DOTFILES_DIR"
+    else
+        log_info "DEBUG: DOTFILES_DIR is already set, skipping get_dotfiles_root"
     fi
     
     # バージョン設定ファイルの読み込み
