@@ -95,8 +95,11 @@ jobs:
 
   test-macos:
     name: Test on macOS
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' && github.repository_owner != 'gitea' }}  # Skip on Forgejo/Gitea (no macOS runners)
+    strategy:
+      matrix:
+        os: [macos-latest, macos-14]  # macos-latest (Intel x86_64), macos-14 (Apple Silicon M1)
     
     steps:
     - name: Checkout repository
@@ -136,7 +139,34 @@ jobs:
           exit 1
         fi
         
+        # Display architecture information
         echo "macOS detection working correctly"
+        echo "Architecture: $(detect_architecture)"
+        echo "System info: $(uname -m)"
+        
+        # Verify architecture detection for both Intel and Apple Silicon
+        arch=$(detect_architecture)
+        system_arch=$(uname -m)
+        
+        case "$system_arch" in
+          x86_64)
+            if [[ "$arch" != "x86_64" ]]; then
+              echo "ERROR: Architecture detection failed for Intel Mac"
+              exit 1
+            fi
+            echo "✓ Intel Mac (x86_64) detected correctly"
+            ;;
+          arm64)
+            if [[ "$arch" != "arm64" ]]; then
+              echo "ERROR: Architecture detection failed for Apple Silicon Mac"
+              exit 1
+            fi
+            echo "✓ Apple Silicon Mac (arm64) detected correctly"
+            ;;
+          *)
+            echo "WARNING: Unknown architecture: $system_arch"
+            ;;
+        esac
         
     - name: Test package manager detection
       run: |
@@ -478,8 +508,11 @@ jobs:
 
   test-setup-macos:
     name: Test Full Setup on macOS
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' && github.repository_owner != 'gitea' }}
+    strategy:
+      matrix:
+        os: [macos-latest, macos-14]  # macos-latest (Intel x86_64), macos-14 (Apple Silicon M1)
     
     steps:
     - name: Checkout repository
@@ -530,11 +563,42 @@ jobs:
         source bin/lib/common.sh
         echo "Platform: $(detect_platform)"
         echo "Architecture: $(detect_architecture)"
+        echo "System architecture: $(uname -m)"
+        
+        # Test architecture-specific paths
+        arch=$(uname -m)
+        echo "Testing architecture-specific configurations..."
+        
+        case "$arch" in
+          x86_64)
+            echo "✓ Running on Intel Mac (x86_64)"
+            # Test Intel-specific Homebrew paths
+            if [[ -d "/usr/local/bin" ]]; then
+              echo "✓ Intel Homebrew path exists"
+            fi
+            ;;
+          arm64)
+            echo "✓ Running on Apple Silicon Mac (arm64)"
+            # Test Apple Silicon-specific Homebrew paths
+            if [[ -d "/opt/homebrew" ]]; then
+              echo "✓ Apple Silicon Homebrew path exists"
+            fi
+            ;;
+        esac
         
         # Verify configuration loading works
         source bin/lib/config_loader.sh
         load_config
         echo "✓ Configuration loaded successfully"
+        
+        # Test zsh profile loading for the specific architecture
+        if [[ -f ".config/zsh/zprofile/Darwin/init.zsh" ]]; then
+          echo "✓ Darwin zsh profile exists"
+          
+          # Test that the profile doesn't have syntax errors
+          zsh -n .config/zsh/zprofile/Darwin/init.zsh
+          echo "✓ Darwin zsh profile syntax is valid"
+        fi
 
   test-setup-archlinux:
     name: Test Full Setup on Arch Linux
