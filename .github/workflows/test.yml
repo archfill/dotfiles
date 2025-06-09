@@ -7,6 +7,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Skip execution on Forgejo
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Forgejo/Gitea compatibility
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.GITEA_TOKEN || secrets.FORGEJO_TOKEN }}
@@ -15,6 +20,7 @@ jobs:
   test-linux:
     name: Test on Linux
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     strategy:
       matrix:
         os-variant: [ubuntu-20.04, ubuntu-22.04]
@@ -90,7 +96,7 @@ jobs:
   test-macos:
     name: Test on macOS
     runs-on: macos-latest
-    if: github.repository_owner != 'forgejo' && github.repository_owner != 'gitea'  # Skip on Forgejo/Gitea (no macOS runners)
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' && github.repository_owner != 'gitea' }}  # Skip on Forgejo/Gitea (no macOS runners)
     
     steps:
     - name: Checkout repository
@@ -150,6 +156,7 @@ jobs:
   test-configuration:
     name: Test Configuration Management
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     
     steps:
     - name: Checkout repository
@@ -199,6 +206,7 @@ jobs:
   test-documentation:
     name: Test Documentation Consistency
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     
     steps:
     - name: Checkout repository
@@ -246,6 +254,7 @@ jobs:
   test-scripts-syntax:
     name: Test Script Syntax
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     
     steps:
     - name: Checkout repository
@@ -288,7 +297,7 @@ jobs:
   pr-validation:
     name: Pull Request Validation
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: ${{ github.event_name == 'pull_request' && !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     
     steps:
     - name: Checkout PR
@@ -377,6 +386,7 @@ jobs:
   test-integration:
     name: Integration Test
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: [test-linux, test-configuration, test-scripts-syntax]
     
     steps:
@@ -435,8 +445,8 @@ jobs:
   notify-results:
     name: Notify Test Results
     runs-on: ubuntu-latest
+    if: ${{ always() && !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: [test-linux, test-macos, test-configuration, test-documentation, test-scripts-syntax, test-integration, pr-validation]
-    if: always()
     
     steps:
     - name: Check test results
