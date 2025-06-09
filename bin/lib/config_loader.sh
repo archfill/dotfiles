@@ -32,11 +32,13 @@ load_config() {
     local dotfiles_root
     dotfiles_root="$(get_dotfiles_root)"
     
-    # DOTFILES_DIRを設定
-    export DOTFILES_DIR="$dotfiles_root"
+    # DOTFILES_DIRが未設定の場合のみ設定
+    if [[ -z "${DOTFILES_DIR:-}" ]]; then
+        export DOTFILES_DIR="$dotfiles_root"
+    fi
     
     # バージョン設定ファイルの読み込み
-    local versions_file="${dotfiles_root}/config/versions.conf"
+    local versions_file="${DOTFILES_DIR}/config/versions.conf"
     if [[ -f "$versions_file" ]]; then
         log_info "Loading versions configuration from $versions_file"
         source "$versions_file"
@@ -45,7 +47,7 @@ load_config() {
     fi
     
     # 個人設定ファイルの読み込み（存在する場合）
-    local personal_config="${dotfiles_root}/config/personal.conf"
+    local personal_config="${DOTFILES_DIR}/config/personal.conf"
     if [[ -f "$personal_config" ]]; then
         log_info "Loading personal configuration from $personal_config"
         source "$personal_config"
@@ -57,7 +59,7 @@ load_config() {
     fi
     
     # 環境変数の読み込み（.env.local）
-    local env_file="${dotfiles_root}/.env.local"
+    local env_file="${DOTFILES_DIR}/.env.local"
     if [[ -f "$env_file" ]]; then
         log_info "Loading environment variables from $env_file"
         set -a  # 変数を自動でexport
