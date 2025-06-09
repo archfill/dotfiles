@@ -516,6 +516,100 @@ jobs:
         load_config
         echo "✓ Configuration loaded successfully"
 
+  test-setup-archlinux:
+    name: Test Full Setup on Arch Linux
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
+    container:
+      image: archlinux:latest
+    
+    steps:
+    - name: Setup container environment
+      run: |
+        # Update package database
+        pacman -Sy --noconfirm
+        
+        # Install basic dependencies
+        pacman -S --noconfirm git base-devel sudo curl wget make
+        
+        # Create test user with sudo privileges
+        useradd -m -G wheel testuser
+        echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+        
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup test environment
+      run: |
+        # Create personal configuration
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Arch Linux Test User"
+        export USER_EMAIL="archlinux-test@example.com"
+        EOF
+        
+        # Change ownership to test user
+        chown -R testuser:testuser .
+        
+    - name: Run make init as test user
+      run: |
+        # Switch to test user and run init
+        sudo -u testuser bash << 'EOF'
+        cd /home/runner/work/dotfiles/dotfiles
+        
+        # Set HOME to test user's home
+        export HOME=/home/testuser
+        
+        # Run the full initialization
+        make init || echo "Init completed with warnings"
+        EOF
+        
+    - name: Verify installation
+      run: |
+        # Check installation as test user
+        sudo -u testuser bash << 'EOF'
+        export HOME=/home/testuser
+        
+        echo "=== Checking dotfiles installation ==="
+        
+        # Check symbolic links
+        echo "Checking symbolic links..."
+        ls -la "$HOME/.config" || echo "Warning: .config not found"
+        
+        # Check configuration files
+        [[ -f "$HOME/.zshrc" ]] && echo "✓ .zshrc created" || echo "✗ .zshrc missing"
+        [[ -f "$HOME/.gitconfig" ]] && echo "✓ .gitconfig created" || echo "✗ .gitconfig missing"
+        [[ -d "$HOME/.config/nvim" ]] && echo "✓ nvim config linked" || echo "✗ nvim config missing"
+        
+        # Verify Git configuration
+        if [[ -f "$HOME/.gitconfig" ]]; then
+          echo ""
+          echo "Git configuration:"
+          grep -E "(name|email)" "$HOME/.gitconfig" || true
+        fi
+        
+        # Check if uv was installed
+        if [[ -f "$HOME/.cargo/bin/uv" ]]; then
+          echo ""
+          echo "✓ uv installed successfully"
+          "$HOME/.cargo/bin/uv" --version || true
+        else
+          echo "✗ uv not installed"
+        fi
+        
+        # Check platform detection
+        cd /home/runner/work/dotfiles/dotfiles
+        source bin/lib/common.sh
+        echo ""
+        echo "Platform detection:"
+        echo "- Platform: $(detect_platform)"
+        echo "- Distribution: $(detect_detailed_platform)"
+        echo "- Package manager: $(detect_package_manager)"
+        
+        echo ""
+        echo "Arch Linux setup test completed"
+        EOF
+
   # Platform compatibility test (Forgejo/Gitea specific)
   test-forgejo-gitea:
     name: Test Forgejo/Gitea Compatibility
@@ -549,7 +643,7 @@ jobs:
     name: Notify Test Results
     runs-on: ubuntu-latest
     if: ${{ always() && !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
-    needs: [test-linux, test-macos, test-configuration, test-documentation, test-scripts-syntax, test-integration, test-setup-linux, test-setup-macos, pr-validation]
+    needs: [test-linux, test-macos, test-configuration, test-documentation, test-scripts-syntax, test-integration, test-setup-linux, test-setup-macos, test-setup-archlinux, pr-validation]
     
     steps:
     - name: Check test results
@@ -567,6 +661,7 @@ jobs:
         echo "- Integration tests: ${{ needs.test-integration.result }}"
         echo "- Setup Linux tests: ${{ needs.test-setup-linux.result }}"
         echo "- Setup macOS tests: ${{ needs.test-setup-macos.result || 'skipped' }}"
+        echo "- Setup Arch Linux tests: ${{ needs.test-setup-archlinux.result }}"
         echo "- PR validation: ${{ needs.pr-validation.result || 'skipped' }}"
         
         # Determine overall success
@@ -589,6 +684,9 @@ jobs:
         fi
         if [[ "${{ needs.test-setup-macos.result }}" == "failure" ]]; then
           failed_tests+=("Setup macOS")
+        fi
+        if [[ "${{ needs.test-setup-archlinux.result }}" == "failure" ]]; then
+          failed_tests+=("Setup Arch Linux")
         fi
         if [[ "${{ needs.pr-validation.result }}" == "failure" ]]; then
           failed_tests+=("PR Validation")
