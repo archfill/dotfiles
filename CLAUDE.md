@@ -14,9 +14,22 @@ This is a comprehensive cross-platform dotfiles repository that automates develo
 
 ### Main Setup Commands
 - `make init` - Complete dotfiles initialization and setup
+- `make config` - Setup Git configuration with personal settings
+- `make links` - Create symbolic links for dotfiles
 - `make termux-setup` - Setup for Android Termux environment
 - `make neovim-install` - Install Neovim on Linux systems
 - `make neovim-uninstall` - Remove Neovim installation
+
+### Testing and Maintenance Commands
+- `make test` - Run dotfiles functionality tests
+- `make status` - Show current dotfiles status and configuration
+- `make info` - Display system and dotfiles information
+- `make validate` - Validate dotfiles configuration and structure
+- `make debug` - Show debug information for troubleshooting
+- `make clean` - Clean up temporary files and caches
+- `make update` - Update dotfiles and submodules
+- `make backup` - Create backup of current configuration
+- `make help` - Show all available commands with descriptions
 
 ### Specialized Configuration Scripts
 - `./config_memolist.sh` - Configure note-taking system with optional Nextcloud sync
@@ -34,9 +47,31 @@ This is a comprehensive cross-platform dotfiles repository that automates develo
 ### Core Setup Process
 The repository uses a multi-stage setup process:
 1. **OS Detection** - `bin/init.sh` detects platform and runs appropriate setup
-2. **Package Installation** - Platform-specific scripts in `bin/{mac,linux,chromebook,termux,cygwin}/`
-3. **Configuration Linking** - `bin/link.sh` creates symlinks from `.config/` to home directory
-4. **Application Setup** - `bin/apps_setup.sh` installs and configures applications
+2. **Configuration Loading** - Shared configuration system loads versions and personal settings
+3. **Package Installation** - Platform-specific scripts in `bin/{mac,linux,chromebook,termux,cygwin}/`
+4. **Configuration Linking** - `bin/link.sh` creates symlinks from `.config/` to home directory
+5. **Application Setup** - `bin/apps_setup.sh` installs and configures applications
+
+### Shared Library System
+
+The repository now includes a comprehensive shared library system in `bin/lib/`:
+
+#### Core Libraries
+- **`common.sh`** - Platform detection, logging, error handling, utility functions
+- **`config_loader.sh`** - Configuration management, version control, personal settings
+- **`uv_installer.sh`** - Unified Python environment management with uv
+- **`symlink_manager.sh`** - Advanced symlink creation with backup and validation
+
+#### Configuration Management
+- **`config/versions.conf`** - Centralized version management for all tools
+- **`config/personal.conf`** - Personal settings (Git excluded, created from template)
+- **`.env.local`** - Environment variables (Git excluded)
+
+#### Benefits
+- **Eliminates code duplication** across platform-specific scripts
+- **Provides consistent error handling** and logging across all scripts
+- **Enables centralized configuration management** for easier maintenance
+- **Supports platform-specific customization** while maintaining shared functionality
 
 ### Key Configuration Areas
 
@@ -61,18 +96,40 @@ The repository uses a multi-stage setup process:
 
 ### Testing and Validation
 
-No automated tests are present. Changes should be validated by:
-1. Running setup scripts on target platforms
-2. Verifying symbolic links are created correctly
-3. Testing application configurations manually
+Automated testing is now available via the test suite. Changes should be validated by:
+1. Running `make test` to execute the automated test suite
+2. Running setup scripts on target platforms
+3. Verifying symbolic links are created correctly
+4. Testing application configurations manually
+
+#### Test Suite
+- **Test Script**: `bin/test.sh` provides comprehensive functionality testing
+- **Test Coverage**: Platform detection, configuration loading, file operations, command checks
+- **Usage**: `make test` or `bash bin/test.sh`
 
 ### Development Workflow
 
 When modifying configurations:
 1. Edit files in `.config/` directories (not in home directory)
-2. Test changes on relevant platforms
-3. For new features, update appropriate platform-specific setup scripts in `bin/`
-4. Consider cross-platform compatibility when adding new tools
+2. Test changes using `make test` for basic validation
+3. Test changes on relevant platforms
+4. For new features, update appropriate platform-specific setup scripts in `bin/`
+5. Consider cross-platform compatibility when adding new tools
+6. **Update documentation and tests when adding new functionality**
+7. **IMPORTANT: Update README.md and README.ja.md after any significant changes or new features**
+
+#### Code Quality Standards
+- Follow snake_case naming convention for files and functions
+- Use verb prefixes for functions (install_, setup_, create_, detect_, etc.)
+- Include proper error handling with `setup_error_handling()`
+- Use shared libraries from `bin/lib/` instead of duplicating code
+- Add appropriate logging with `log_info()`, `log_success()`, etc.
+
+#### Documentation Requirements
+- **README Updates**: Any changes to commands, features, or architecture must be reflected in both README.md and README.ja.md
+- **Version Consistency**: Ensure both language versions contain equivalent information
+- **Command Updates**: When adding new make targets or scripts, update the command tables in both READMEs
+- **Architecture Changes**: Document any modifications to the shared library system or configuration management
 
 ### Japanese Language Features
 
@@ -129,3 +186,108 @@ The repository has been fully migrated from pyenv to uv:
 - **Package Installation**: Use `uv add <package>` or `uv pip install <package>`
 - **Virtual Environments**: uv automatically manages virtual environments per project
 - **Running Scripts**: Use `uv run <script.py>` to run Python scripts with proper dependencies
+
+## Recent Major Refactoring (2025年6月)
+
+A comprehensive refactoring was performed to modernize the codebase and improve maintainability:
+
+### Phase 1: Emergency Fixes (緊急修正)
+- **Created shared library system** in `bin/lib/` with common functions
+- **Unified uv installation** across all platforms using `bin/lib/uv_installer.sh`
+- **Fixed syntax errors** in `install_wezterm.sh` (corrected backtick usage and error handling)
+- **Standardized error handling** with `setup_error_handling()` function
+- **Updated 5 scripts** to use shared libraries: Linux, Cygwin, Chromebook installers, and uv app script
+
+### Phase 2: Structural Improvements (構造改善)
+- **Externalized configuration**: Created `config/versions.conf` for version management
+- **Removed hardcoded personal information**: Moved Git user settings to external configuration
+- **Unified platform detection**: Enhanced `bin/lib/common.sh` with comprehensive platform detection
+- **Created configuration loader**: `bin/lib/config_loader.sh` for centralized settings management
+- **Unified symlink management**: `bin/lib/symlink_manager.sh` with backup functionality
+- **Updated .gitignore**: Added exclusions for personal configuration files
+
+### Phase 3: Quality Improvements (品質向上)
+- **Standardized naming conventions**: Converted to snake_case with verb prefixes
+- **Enhanced documentation**: Created comprehensive `bin/lib/README.md`
+- **Added test suite**: `bin/test.sh` with 8 automated tests
+- **Expanded Makefile**: Added 20+ new commands with help system
+- **Modernized existing scripts**: Updated Neovim installer with shared libraries
+
+### Benefits Achieved
+- **Eliminated code duplication**: 4 uvinstall scripts → 1 shared function
+- **Improved security**: Personal information no longer hardcoded
+- **Enhanced reliability**: Unified error handling and logging
+- **Better maintainability**: Centralized configuration management
+- **Increased testability**: Automated test suite for core functionality
+- **Improved user experience**: Rich command-line interface with `make help`
+
+### Files Created/Modified in Refactoring
+#### New Files:
+- `bin/lib/common.sh` - Core utilities and platform detection
+- `bin/lib/config_loader.sh` - Configuration management system
+- `bin/lib/uv_installer.sh` - Unified Python environment setup
+- `bin/lib/symlink_manager.sh` - Advanced symlink management
+- `bin/lib/README.md` - Comprehensive library documentation
+- `bin/test.sh` - Automated test suite
+- `config/versions.conf` - Centralized version management
+- `config/personal.conf.template` - Personal settings template
+
+#### Modified Files:
+- `bin/config.sh` - Externalized personal information
+- `bin/link.sh` - Modernized with shared libraries
+- `bin/linux/install_linux.sh` - Uses shared uv installer
+- `bin/cygwin/install_cygwin.sh` - Uses shared libraries
+- `bin/chromebook/chromebook_install.sh` - Uses shared libraries
+- `bin/apps/uv.sh` - Unified installation approach
+- `bin/linux/apps/neovim_install.sh` - Complete modernization
+- `install_wezterm.sh` - Fixed syntax and added proper error handling
+- `Makefile` - Extensive expansion with 20+ new commands
+- `.gitignore` - Added personal configuration exclusions
+- `.config/alacritty/alacritty_chromebook.yml` - Renamed for consistency
+
+This refactoring transforms the repository from a collection of individual scripts into a cohesive, maintainable system with proper software engineering practices.
+
+#### Documentation Updates (2025年6月)
+- **Created comprehensive README.md**: English documentation with full feature coverage
+- **Created README.ja.md**: Japanese localized documentation with cultural considerations
+- **Updated CLAUDE.md**: Added refactoring history and development guidelines
+- **Added library documentation**: bin/lib/README.md with detailed API reference
+
+#### CI/CD Implementation (2025年6月)
+- **Created unified GitHub Actions workflows**: Compatible with GitHub, Forgejo, and Gitea
+- **Main test suite**: `.github/workflows/test.yml` with multi-platform testing and PR validation
+- **Release validation**: `.github/workflows/release.yml` with comprehensive release testing and security audit
+- **Cross-platform compatibility**: Works seamlessly across GitHub Actions, Forgejo Actions, and Gitea Actions
+- **Security scanning**: Automated checks for potential secrets and security issues
+- **Intelligent platform detection**: Automatically adapts behavior based on the hosting platform
+
+## Documentation Maintenance Rules
+
+### CRITICAL REQUIREMENT: README Synchronization
+**Any modifications to this repository MUST include corresponding updates to the README files.**
+
+#### When to Update READMEs:
+1. **New commands added** to Makefile
+2. **New scripts or libraries** created in bin/
+3. **Configuration changes** that affect user workflow
+4. **Architecture modifications** in the shared library system
+5. **New platform support** or feature additions
+6. **Version updates** in config/versions.conf
+7. **Any breaking changes** that affect existing functionality
+
+#### Update Process:
+1. Modify functionality/add features
+2. Test changes with `make test`
+3. Update README.md (English)
+4. Update README.ja.md (Japanese) with equivalent content
+5. Verify both versions are consistent
+6. Commit all changes together
+
+#### Documentation Standards:
+- **Accuracy**: All commands and examples must work as documented
+- **Completeness**: Both language versions must contain equivalent information
+- **Clarity**: Use clear, concise language appropriate for each audience
+- **Examples**: Include practical, copy-pasteable examples
+- **Structure**: Maintain consistent section organization across versions
+
+This ensures users always have access to current, accurate documentation regardless of their language preference.

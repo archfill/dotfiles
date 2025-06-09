@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-trap 'echo "[Error] Command \"$BASH_COMMAND\" failed."; exit 1' ERR
+# 共通ライブラリをインポート
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/../lib/common.sh"
+source "${SCRIPT_DIR}/../lib/uv_installer.sh"
 
-echo "[Start] Linux configuration"
+# エラーハンドリングを設定
+setup_error_handling
+
+log_info "Starting Linux configuration"
 
 # Get OS info
 read -r distro arch <<< "$("${HOME}/dotfiles/bin/get_os_info.sh")"
 
 install_common_packages_debian() {
-    echo "[Info] Installing packages for Debian/Ubuntu..."
+    log_info "Installing packages for Debian/Ubuntu..."
     sudo apt update
     sudo apt install -y \
       python3 \
@@ -25,15 +30,12 @@ install_common_packages_debian() {
       fontconfig \
       curl
 
-    # Install uv
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    
-    # Install Python packages with uv instead of pip
-    # pip3 install --user requests
+    # Install uv using common library
+    install_uv
 }
 
 install_common_packages_arch() {
-    echo "[Info] Installing packages for Arch Linux..."
+    log_info "Installing packages for Arch Linux..."
     sudo pacman -Suy --needed git base-devel --noconfirm
 
     tempdir=$(mktemp -d)
@@ -61,26 +63,25 @@ install_common_packages_arch() {
       bottom \
       the_silver_searcher
 
-    # Install uv
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    
-    # Install Python packages with uv instead of pip
-    # pip install --user mps-youtube
+    # Install uv using common library
+    install_uv
 }
 
 case "${distro}" in
   debian | ubuntu)
-    echo "[Detected] Debian/Ubuntu"
+    log_info "Detected Debian/Ubuntu"
     install_common_packages_debian
     if [[ "${arch}" == "x86_64" ]]; then
-      echo "[Info] Architecture: x86_64"
+      log_info "Architecture: x86_64"
     fi
     ;;
   arch)
-    echo "[Detected] Arch Linux"
+    log_info "Detected Arch Linux"
     install_common_packages_arch
     ;;
   *)
-    echo "[Warning] Unsupported distribution: ${distro}"
+    log_warning "Unsupported distribution: ${distro}"
+    ;;
+esac
 
-echo "[Success] Linux configuration completed."
+log_success "Linux configuration completed."
