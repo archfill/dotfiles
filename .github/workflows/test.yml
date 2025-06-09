@@ -442,9 +442,13 @@ jobs:
         export TEST_HOME="$HOME/dotfiles-test"
         export HOME="$TEST_HOME"
         
+        # Set DOTFILES_DIR to current directory
+        export DOTFILES_DIR="$(pwd)"
+        
         # Ensure we're in the correct directory
         echo "Current directory: $(pwd)"
         echo "HOME directory: $HOME"
+        echo "DOTFILES_DIR: $DOTFILES_DIR"
         
         # Run the full initialization
         make init || (echo "make init failed with exit code $?" && exit 1)
@@ -501,9 +505,13 @@ jobs:
         export TEST_HOME="$HOME/dotfiles-test"
         export HOME="$TEST_HOME"
         
+        # Set DOTFILES_DIR to current directory
+        export DOTFILES_DIR="$(pwd)"
+        
         # Ensure we're in the correct directory
         echo "Current directory: $(pwd)"
         echo "HOME directory: $HOME"
+        echo "DOTFILES_DIR: $DOTFILES_DIR"
         
         # Since this is a GitHub Actions runner, we'll do a limited test
         # to avoid installing too many packages
@@ -572,8 +580,12 @@ jobs:
         # Set HOME to test user's home
         export HOME=/home/testuser
         
+        # Set DOTFILES_DIR to current directory
+        export DOTFILES_DIR="$(pwd)"
+        
         echo "Current directory: $(pwd)"
         echo "HOME directory: $HOME"
+        echo "DOTFILES_DIR: $DOTFILES_DIR"
         
         # Run the full initialization
         make init || (echo "make init failed with exit code $?" && exit 1)
