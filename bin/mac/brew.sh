@@ -4,11 +4,6 @@
 # if printf '%s\n' "${apps_head[@]}" | grep -qx "${v}"; then
 
 apps=(
-  'font-fira-code' \
-  'font-powerline-symbols' \
-  'font-hackgen' \
-  'font-hackgen-nerd' \
-  'font-hack-nerd-font' \
   'awscli' \
   'bat' \
   'bazelisk' \
@@ -79,7 +74,7 @@ apps=(
 # brew tap
 brew tap gcenx/wine
 brew tap homebrew/cask
-brew tap homebrew/cask-fonts
+# Note: homebrew/cask-fonts will be added automatically by font_manager.sh if needed
 brew tap homebrew/core
 brew tap homebrew/services
 brew tap jakehilborn/jakehilborn

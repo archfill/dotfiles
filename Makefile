@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -143,3 +143,30 @@ backup: ## Create backup of current configuration
 	mkdir -p "$$BACKUP_DIR"; \
 	cp -r . "$$BACKUP_DIR/" 2>/dev/null || true; \
 	echo "Backup created at: $$BACKUP_DIR"
+
+# フォント管理コマンド
+fonts: ## Install recommended fonts for current platform
+	@echo "Installing recommended fonts..."
+	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts developer'
+
+fonts-list: ## List available and installed fonts
+	@echo "Font installation status:"
+	@bash -c 'source ./bin/lib/font_manager.sh && list_installed_fonts'
+
+fonts-install: ## Install specific font (usage: make fonts-install FONT=font-name)
+	@if [ -z "$(FONT)" ]; then \
+		echo "Usage: make fonts-install FONT=<font-name>"; \
+		echo "Available fonts:"; \
+		bash -c 'source ./bin/lib/font_manager.sh && init_font_configs && for key in $${!FONT_CONFIGS[@]}; do echo "  $$key"; done | sort'; \
+	else \
+		echo "Installing font: $(FONT)"; \
+		bash -c 'source ./bin/lib/font_manager.sh && install_font "$(FONT)"'; \
+	fi
+
+fonts-japanese: ## Install Japanese-focused font set
+	@echo "Installing Japanese font set..."
+	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts japanese'
+
+fonts-all: ## Install all available fonts
+	@echo "Installing all available fonts..."
+	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts all'
