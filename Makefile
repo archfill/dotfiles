@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -65,6 +65,11 @@ wezterm-install: ## Build and install WezTerm terminal from source
 yaskkserv2-build: ## Build Japanese SKK input method server
 	@echo "Building yaskkserv2..."
 	bash ./make_yaskkserv2.sh
+
+# Flutter開発環境
+flutter-setup: ## Install and setup Flutter development environment
+	@echo "Setting up Flutter development environment..."
+	bash ./bin/apps/flutter.sh
 
 # テストとメンテナンス
 test: ## Run dotfiles functionality tests

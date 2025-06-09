@@ -405,3 +405,168 @@ ls -la "${DOTFILES_DIR}/bin/get_os_info.sh"
   - パス参照問題、Neovimダウンロード、uvインストール、appsセットアップの4つの主要問題を解決
   - Linux環境での初期化プロセスが100%成功するように修正
   - fontconfigエラーの適切な処理を追加
+
+#### Apple Silicon Mac対応 (2025年6月9日)
+**背景**: GitHub ActionsでIntel Mac（x86_64）のみテストしていたため、Apple Silicon（M1/M2/M3）での動作保証が不十分
+**対応内容**:
+- **マルチアーキテクチャテスト**: `macos-latest`（Intel）と`macos-14`（Apple Silicon）を追加
+- **アーキテクチャ検出強化**: x86_64とarm64の正確な識別テスト
+- **Homebrewパス検証**: Intel（`/usr/local/bin`）とApple Silicon（`/opt/homebrew`）両方の確認
+- **zsh設定検証**: Darwin用zshプロファイルの構文チェック追加
+
+#### macOS CI環境修正 (2025年6月9日)
+**問題**: macOS GitHub Actionsで複数のエラーが発生
+1. **パス処理エラー**: `Library/Application\ Support`でのシェル構文エラー
+2. **権限問題**: Homebrewインストールでのタイムアウト
+3. **ディレクトリ不存在**: lazygit設定ディレクトリの自動作成不備
+
+**修正内容**:
+- `bin/mac/link.sh`のパス引用符処理を統一
+- 親ディレクトリ自動作成機能を追加
+- `SKIP_PACKAGE_INSTALL=1`環境変数サポートをmacOSに拡張
+- CI環境でのHomebrew、フォント、アプリセットアップをスキップ可能に
+
+#### volta PATH設定重複解消 (2025年6月9日)
+**問題発見**: volta設定が複数ファイルで重複し、PATH競合リスクが存在
+- 共通設定（`.config/zsh/.zprofile`）
+- Darwin固有設定（`.config/zsh/zprofile/Darwin/init.zsh`）
+- Linux固有設定（`.config/zsh/zprofile/Linux/init.zsh`）
+
+**解決策**:
+- プラットフォーム固有ファイルからvolta設定を削除
+- 共通設定ファイルに一元化
+- Node.js管理ツールの優先順位制御（volta > nodebrew > nvm）
+- 設定読み込み順序の最適化
+
+**結果**: PATH重複解消、効率的なNode.js環境管理、フォールバック機能の確立
+
+### 2025年6月10日 - zsh設定リファクタリングとFlutter統合
+
+#### zsh設定の包括的リファクタリング
+**背景**: zsh設定に重複、非推奨設定、プラットフォーム間の不整合が存在し、保守性とパフォーマンスに課題があった
+
+**実施したリファクタリング内容**:
+
+##### **Phase 1: 設定の統合と外部化**
+1. **非推奨設定の削除**:
+   - anyenv設定を削除（uvに統一済み）
+   - 古いnvm設定を削除（voltaに統一済み）
+   - `.zshenv`と`.config/zsh/.zprofile`から設定削除
+
+2. **ハードコードパスの外部化**:
+   - `config/versions.conf`にzsh関連パスを追加:
+     ```bash
+     GOOGLE_CLOUD_SDK_PATH="$HOME/google-cloud-sdk"
+     ZINIT_HOME="$HOME/.local/share/zinit/zinit.git"
+     ANDROID_TOOLS_DIR="$HOME/AndroidTools"
+     ANDROID_LIBRARY_DIR="$HOME/Library/Android"
+     ```
+
+3. **重複設定の統合**:
+   - **Android SDK設定**: 3つの重複パターンを統一関数`setup_android_sdk()`に集約
+   - **Google Cloud SDK設定**: Darwin固有の重複を共通設定に移動
+   - **uv設定**: プラットフォーム固有ファイルから共通設定に統合
+
+##### **Phase 2: プラットフォーム固有設定の整理**
+1. **ファイル構造の整合性確保**:
+   - 空ファイル削除: `Darwin/bindkey.zsh`（0バイト）
+   - 欠落ファイル作成: Linux用`base.zsh`、`bindkey.zsh`、`plugins.zsh`
+   - プラットフォーム間の一貫性確立
+
+2. **動的パス検出の実装**:
+   - **AWS CLI補完**: Apple Silicon/Intel Homebrew + PATH検索
+   - **Terraform補完**: アーキテクチャ対応の動的パス検出
+   - **zinit**: 3つのインストール場所を自動検出
+
+##### **Phase 3: 読み込み順序の最適化**
+1. **論理的読み込み順序**:
+   ```bash
+   # 最適化された順序
+   1. options.zsh      # 基本オプション
+   2. base.zsh         # 基本設定
+   3. functions.zsh    # 関数定義
+   4. plugins.zsh      # プラグイン
+   5. alias.zsh        # エイリアス
+   6. bindkey.zsh      # キーバインド
+   ```
+
+2. **競合解決**:
+   - Node.js管理をvolta優先に統一
+   - `setup_nodejs_manager()`関数で自動フォールバック実装
+
+#### Flutter開発環境の完全統合
+**背景**: Flutter開発のサポートが部分的で、設定が分散していた
+
+**実装した機能**:
+
+##### **1. Flutter自動インストールスクリプト** (`bin/apps/flutter.sh`)
+- **プラットフォーム対応**: macOS（Homebrew + 手動）、Linux（手動）
+- **アーキテクチャ対応**: Apple Silicon (arm64) / Intel (x86_64)
+- **機能**:
+  - Flutter SDK自動ダウンロード・インストール
+  - FVM（Flutter Version Management）自動セットアップ
+  - プラットフォーム固有依存関係インストール
+  - flutter doctor実行と設定検証
+
+##### **2. 統一されたzsh Flutter設定**
+- **動的パス検出**:
+  ```bash
+  setup_flutter_environment() {
+    # pub cache、FVM、Flutter本体のPATH設定
+    # 5つのFlutterインストール場所を自動検出
+    # FLUTTER_ROOT環境変数自動設定
+  }
+  ```
+
+##### **3. 設定の外部化**
+- `config/versions.conf`への追加:
+  ```bash
+  # Flutter開発環境
+  FLUTTER_VERSION="stable"
+  FVM_VERSION="3.1.0"
+  DART_VERSION="stable"
+  FLUTTER_INSTALL_DIR="$HOME/development/flutter"
+  FLUTTER_PUB_CACHE_PATH="$HOME/.pub-cache/bin"
+  FVM_DEFAULT_PATH="$HOME/fvm/default/bin"
+  ```
+
+##### **4. プラットフォーム固有エイリアス**
+- **共通エイリアス**: `fl`、`flrun`、`fltest`、`fldoc`等
+- **FVM統合**: `fvmlist`、`fvmuse`、`fvminstall`
+- **macOS固有**: iOS Simulator（`ios`）、Android Studio（`studio`）
+- **Linux固有**: Android Studio動的パス検出
+
+##### **5. Makefileコマンド統合**
+- `make flutter-setup`: ワンコマンドでFlutter環境構築
+- `.PHONY`ターゲットとヘルプシステムに統合
+
+#### 技術的改善効果
+
+##### **保守性向上**
+- **重複削除**: Google Cloud SDK、Android設定の重複解消
+- **設定統一**: 3つのプラットフォーム間での一貫した設定管理
+- **外部化**: ハードコードされたパス・バージョンを`config/versions.conf`に移行
+
+##### **パフォーマンス向上**
+- **読み込み順序最適化**: 競合リスクの排除
+- **volta優先**: 高速なNode.js環境管理
+- **条件分岐効率化**: 不要な初期化処理の削減
+
+##### **クロスプラットフォーム対応**
+- **動的検出**: 環境に応じた自動パス設定
+- **アーキテクチャ対応**: Intel/Apple Silicon両対応
+- **フォールバック**: 複数ツールの優先順位制御
+
+#### 動作確認結果
+- ✅ **構文チェック**: 全zshファイルが正常
+- ✅ **テストスイート**: 8/8テストケースが成功
+- ✅ **設定読み込み**: Flutter設定が正常に読み込み
+- ✅ **Makefileコマンド**: `make flutter-setup`が利用可能
+
+#### 今後の展開
+1. **Windows/WSL対応**: Flutter Windows環境サポート検討
+2. **IDE統合**: VS Code、Android Studio設定の自動化
+3. **CI/CD拡張**: Flutter projectのビルド・テスト統合
+4. **ドキュメント更新**: README.mdとREADME.ja.mdにFlutter開発ガイド追加
+
+この包括的リファクタリングにより、zsh設定の保守性が大幅に向上し、Flutter開発環境が完全に統合された。設定の重複解消、動的パス検出、プラットフォーム間の一貫性確保により、より堅牢で効率的な開発環境が実現された。

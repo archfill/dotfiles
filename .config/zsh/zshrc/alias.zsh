@@ -4,6 +4,7 @@ alias ll="ls -lh"
 
 alias vi="nvim"
 alias vim="nvim"
+# Removed: tmux unicode support (now default in modern tmux)
 # alias tmux="tmux -u"
 alias xdisplay="Xephyr -resizeable"
 ## git

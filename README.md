@@ -23,6 +23,7 @@ A comprehensive, cross-platform dotfiles repository that automates development e
 - **Git**: Lazygit integration and advanced Git configurations
 - **Python**: Modern development with [uv](https://github.com/astral-sh/uv) package manager
 - **Node.js**: [Volta](https://volta.sh/) for reliable JavaScript toolchain management
+- **Flutter**: Cross-platform mobile development with FVM version management
 
 ### 🇯🇵 **Japanese Language Features**
 - **SKK Input Method**: yaskkserv2 server with comprehensive dictionaries
@@ -35,32 +36,135 @@ A comprehensive, cross-platform dotfiles repository that automates development e
 - **Zettelkasten**: Knowledge management for research and documentation
 - **Documentation**: Automated text linting and style checking
 
-## 🚀 Quick Start
+## 🚀 Setup Guide
 
-### 1. Clone Repository
+### ⚠️ **Prerequisites (Required Before Installation)**
+
+Before running any setup commands, you **MUST** configure these items locally:
+
+#### **1. Personal Configuration** 
+```bash
+# Copy the template file
+cp config/personal.conf.template config/personal.conf
+
+# Edit with your information
+nano config/personal.conf
+```
+
+**Required settings:**
+```bash
+export USER_NAME="Your Full Name"
+export USER_EMAIL="your.email@example.com"
+```
+
+> ⚡ **Important**: The setup will fail without proper personal configuration!
+
+#### **2. Git Repository URL (if needed)**
+Update the clone URL to match your fork:
+```bash
+git clone https://github.com/YOUR-USERNAME/dotfiles.git ~/dotfiles
+```
+
+### 📦 **Installation Steps**
+
+#### **Step 1: Clone Repository**
 ```bash
 git clone https://github.com/your-username/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
-### 2. Initial Setup
+#### **Step 2: Configure Personal Settings**
 ```bash
-# Complete setup (recommended)
-make init
+# Essential: Create personal configuration
+cp config/personal.conf.template config/personal.conf
 
-# Or step-by-step setup
-make config    # Configure Git settings
-make links     # Create symbolic links
-make test      # Verify installation
+# Edit the file with your details
+$EDITOR config/personal.conf
 ```
 
-### 3. Platform-Specific Setup
+#### **Step 3: Run Complete Setup**
 ```bash
-# For Android Termux
-make termux-setup
+# Complete automated setup (recommended)
+make init
+```
 
-# For Linux Neovim installation
+**What `make init` does:**
+- ✅ Creates symbolic links for all configuration files
+- ✅ Installs platform-specific packages (Homebrew, apt, etc.)
+- ✅ Sets up development tools (uv, volta, Neovim, etc.)
+- ✅ Configures Git with your personal settings
+- ✅ Installs fonts and terminal configurations
+
+#### **Step 4: Verify Installation**
+```bash
+# Test the installation
+make test
+
+# Check status
+make status
+```
+
+### 🔧 **Alternative: Step-by-Step Setup**
+
+If you prefer manual control:
+
+```bash
+# 1. Configure Git settings
+make config
+
+# 2. Create symbolic links only
+make links
+
+# 3. Install platform-specific packages
+# (varies by platform - see commands below)
+
+# 4. Verify installation
+make test
+```
+
+### 🖥️ **Platform-Specific Commands**
+
+#### **macOS**
+```bash
+# Install Homebrew packages
+bash bin/mac/brew.sh
+
+# Setup fonts
+bash bin/mac/fonts_setup.sh
+
+# Configure macOS-specific settings
+bash bin/mac/config.sh
+```
+
+#### **Linux**
+```bash
+# Install Linux packages
+bash bin/linux/install_linux.sh
+
+# Setup fonts  
+bash bin/linux/apps/fonts_setup.sh
+
+# Install Neovim
 make neovim-install
+```
+
+#### **Android (Termux)**
+```bash
+# Complete Termux setup
+make termux-setup
+```
+
+### 🔍 **Verification Commands**
+
+```bash
+# Check if dotfiles are working
+make validate
+
+# See detailed system information
+make info
+
+# Debug any issues
+make debug
 ```
 
 ## 📋 Available Commands
@@ -92,6 +196,7 @@ Run `make help` to see all available commands:
 | `make zettelkasten-config` | Setup knowledge management |
 | `make wezterm-install` | Build WezTerm from source |
 | `make yaskkserv2-build` | Build Japanese input server |
+| `make flutter-setup` | Install Flutter development environment |
 
 ## 🏗️ Architecture
 
@@ -200,6 +305,57 @@ alias python='uv run python'
 alias pip='uv pip'
 alias pyproject-init='uv init'
 ```
+
+## 📱 Flutter Development
+
+This repository includes comprehensive Flutter development environment setup with cross-platform support.
+
+### **Installation**
+```bash
+# Complete Flutter setup (recommended)
+make flutter-setup
+
+# Manual setup
+bash bin/apps/flutter.sh
+```
+
+### **Features**
+- **Cross-platform support**: macOS, Linux with automatic architecture detection
+- **FVM integration**: Flutter Version Management for project-specific versions
+- **Dependency management**: Automatic installation of platform-specific requirements
+- **Development aliases**: Streamlined commands for Flutter development
+
+### **Flutter Aliases**
+```bash
+# Development commands
+fl doctor          # flutter doctor
+flrun             # flutter run
+flclean           # flutter clean
+fltest            # flutter test
+flpub get         # flutter pub get
+
+# FVM commands (if installed)
+fvmlist           # List available Flutter versions
+fvmuse            # Switch Flutter version for project
+fvminstall        # Install specific Flutter version
+
+# Platform-specific shortcuts
+ios               # Open iOS Simulator (macOS)
+studio            # Open Android Studio
+```
+
+### **Configuration**
+Flutter settings are managed in `config/versions.conf`:
+```bash
+FLUTTER_VERSION="stable"     # stable, beta, dev, or specific version
+FVM_VERSION="3.1.0"         # Flutter Version Management version
+DART_VERSION="stable"       # Dart SDK version
+```
+
+### **Supported Installation Methods**
+- **macOS**: Homebrew (preferred) or manual installation
+- **Linux**: Manual installation with automatic dependency resolution
+- **Automatic detection**: Multiple Flutter installation locations supported
 
 ## 🧪 Testing
 
