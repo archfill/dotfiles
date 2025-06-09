@@ -8,6 +8,12 @@ source "${SCRIPT_DIR}/common.sh"
 
 # dotfilesのルートディレクトリを取得
 get_dotfiles_root() {
+    # 環境変数DOTFILES_DIRが設定されている場合はそれを使用
+    if [[ -n "${DOTFILES_DIR:-}" ]]; then
+        echo "$DOTFILES_DIR"
+        return 0
+    fi
+    
     local current_dir="$SCRIPT_DIR"
     while [[ "$current_dir" != "/" ]]; do
         if [[ -f "$current_dir/CLAUDE.md" ]] || [[ -f "$current_dir/.gitignore" ]]; then
@@ -25,6 +31,9 @@ get_dotfiles_root() {
 load_config() {
     local dotfiles_root
     dotfiles_root="$(get_dotfiles_root)"
+    
+    # DOTFILES_DIRを設定
+    export DOTFILES_DIR="$dotfiles_root"
     
     # バージョン設定ファイルの読み込み
     local versions_file="${dotfiles_root}/config/versions.conf"
