@@ -18,9 +18,14 @@ debian | ubuntu)
     vim \
     silversearcher-ag \
     ripgrep \
-    fontconfig
+    fontconfig \
+    curl
 
-  pip install requests
+  # Install uv
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  
+  # Install Python packages with uv instead of pip
+  # pip install requests
 
   if [[ ${info[1]} == "x86_64" ]]; then
       echo x86_64
@@ -52,9 +57,12 @@ debian | ubuntu)
     bottom \
     the_silver_searcher
 
-  sudo pip2 install requests
-
-  sudo pip3 install mps-youtube
+  # Install uv
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  
+  # Install Python packages with uv instead of pip
+  # sudo pip2 install requests
+  # sudo pip3 install mps-youtube
   ;;
 *)
     echo "unsupported"

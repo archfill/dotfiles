@@ -29,8 +29,7 @@ apps=(
   'openssl' \
   'openjdk' \
   'openjdk@11' \
-  'pyenv' \
-  'pyenv-virtualenv' \
+  'uv' \
   'qmk' \
   'readline' \
   'ranger' \

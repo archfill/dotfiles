@@ -15,3 +15,11 @@ alias tmux-start='tmux -u attach -t main'
 
 # function nvimvenvを呼び出し
 alias nvim=nvimvenv
+
+## Python/uv aliases
+alias python='uv run python'
+alias pip='uv pip'
+alias pyproject-init='uv init'
+alias pyenv-install='uv python install'
+alias pyenv-versions='uv python list'
+alias pyenv-which='uv python which'
