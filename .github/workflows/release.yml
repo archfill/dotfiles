@@ -22,6 +22,11 @@ on:
         - full
         - comprehensive
 
+# Skip execution on Forgejo
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Cross-platform compatibility
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.GITEA_TOKEN || secrets.FORGEJO_TOKEN }}
@@ -30,6 +35,7 @@ jobs:
   validate-release:
     name: Validate Release
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -162,6 +168,7 @@ jobs:
   test-installation-simulation:
     name: Simulate Fresh Installation
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: validate-release
     container:
       image: ubuntu:22.04
@@ -217,6 +224,7 @@ jobs:
   test-documentation-accuracy:
     name: Test Documentation Accuracy
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: validate-release
     
     steps:
@@ -298,8 +306,8 @@ jobs:
   test-comprehensive:
     name: Comprehensive Release Test
     runs-on: ubuntu-latest
+    if: ${{ needs.validate-release.outputs.test-level == 'comprehensive' && !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: [validate-release, test-installation-simulation, test-documentation-accuracy]
-    if: needs.validate-release.outputs.test-level == 'comprehensive'
     
     steps:
     - name: Checkout release
@@ -344,6 +352,7 @@ jobs:
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: validate-release
     
     steps:
@@ -392,8 +401,8 @@ jobs:
   create-release-summary:
     name: Create Release Summary
     runs-on: ubuntu-latest
+    if: ${{ always() && !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
     needs: [validate-release, test-installation-simulation, test-documentation-accuracy, test-comprehensive, security-audit]
-    if: always()
     
     steps:
     - name: Checkout release
