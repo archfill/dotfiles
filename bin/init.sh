@@ -27,6 +27,7 @@ case "$OS_NAME" in
     echo "[OS] macOS setup starting"
     run "bin/mac/link.sh"
     run "bin/mac/brew.sh"
+    run "bin/mac/fonts_setup.sh"
     run "bin/mac/config.sh"
     ;;
 
