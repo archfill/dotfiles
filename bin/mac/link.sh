@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+trap 'echo "[Error] Command \"$BASH_COMMAND\" failed."; exit 1' ERR
+
 function link() {
   if [ $# == 1 ]; then
     DOT_PATH="${HOME}/dotfiles/$1"

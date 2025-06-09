@@ -1,0 +1,36 @@
+title = "Custom Gitleaks config"
+version = 2
+
+[allowlist]
+files = ["README.md", "LICENSE"]
+
+[[rules]]
+id = "generic-password-assignment"
+description = "Generic password assignment"
+regex = '''(?i)(password|pass|pwd)\s*=\s*['"]?[a-zA-Z0-9@#%^&*()_+=\-!]+['"]?'''
+tags = ["key", "password", "generic"]
+
+[[rules]]
+id = "mutt-smtp-password"
+description = "SMTP password hardcoded (mutt)"
+regex = '''(?i)smtp_pass\s*=\s*['"]?[a-zA-Z0-9@#%^&*()_+=\-!]+['"]?'''
+tags = ["mutt", "smtp", "password"]
+
+[[rules]]
+id = "mutt-imap-password"
+description = "IMAP password hardcoded (mutt)"
+regex = '''(?i)imap_pass\s*=\s*['"]?[a-zA-Z0-9@#%^&*()_+=\-!]+['"]?'''
+tags = ["mutt", "imap", "password"]
+
+[[rules]]
+id = "smtp-url-credentials"
+description = "SMTP URL with credentials"
+regex = '''smtp://[^:@\s]+:[^:@\s]+@[^:\s]+'''
+tags = ["smtp", "creds", "url"]
+
+[[rules]]
+id = "jwt-detection"
+description = "Possible JWT token"
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+tags = ["jwt", "token"]
+
