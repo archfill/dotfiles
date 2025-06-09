@@ -438,10 +438,16 @@ jobs:
         
     - name: Run make init
       run: |
-        export HOME="$HOME/dotfiles-test"
+        # Set test home directory
+        export TEST_HOME="$HOME/dotfiles-test"
+        export HOME="$TEST_HOME"
+        
+        # Ensure we're in the correct directory
+        echo "Current directory: $(pwd)"
+        echo "HOME directory: $HOME"
         
         # Run the full initialization
-        make init
+        make init || (echo "make init failed with exit code $?" && exit 1)
         
         # Verify key components were installed
         echo "Checking installation results..."
@@ -491,7 +497,13 @@ jobs:
         
     - name: Run make init (dry-run for safety)
       run: |
-        export HOME="$HOME/dotfiles-test"
+        # Set test home directory
+        export TEST_HOME="$HOME/dotfiles-test"
+        export HOME="$TEST_HOME"
+        
+        # Ensure we're in the correct directory
+        echo "Current directory: $(pwd)"
+        echo "HOME directory: $HOME"
         
         # Since this is a GitHub Actions runner, we'll do a limited test
         # to avoid installing too many packages
@@ -500,7 +512,7 @@ jobs:
         export SKIP_PACKAGE_INSTALL=1
         
         # Run initialization steps that don't require sudo
-        bash bin/init.sh || echo "Init script completed with warnings"
+        bash bin/init.sh || (echo "Init script failed with exit code $?" && exit 1)
         
     - name: Verify basic setup
       run: |
@@ -560,8 +572,11 @@ jobs:
         # Set HOME to test user's home
         export HOME=/home/testuser
         
+        echo "Current directory: $(pwd)"
+        echo "HOME directory: $HOME"
+        
         # Run the full initialization
-        make init || echo "Init completed with warnings"
+        make init || (echo "make init failed with exit code $?" && exit 1)
         EOF
         
     - name: Verify installation
