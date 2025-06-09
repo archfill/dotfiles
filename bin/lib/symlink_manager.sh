@@ -77,8 +77,10 @@ create_symlink_from_dotfiles() {
         return 1
     fi
     
+    log_info "DEBUG: create_symlink_from_dotfiles DOTFILES_DIR = ${DOTFILES_DIR}"
     local source_path="${DOTFILES_DIR}/${relative_path}"
     local target_path="${HOME}/${relative_path}"
+    log_info "DEBUG: source_path = ${source_path}, target_path = ${target_path}"
     
     create_symlink "$source_path" "$target_path" "$backup_existing"
 }
@@ -119,13 +121,16 @@ create_symlinks_batch() {
     local success_count=0
     
     log_info "Creating ${#config_list[@]} symlinks..."
+    log_info "DEBUG: DOTFILES_DIR at start of batch = ${DOTFILES_DIR}"
     
     for config_path in "${config_list[@]}"; do
+        log_info "DEBUG: Processing $config_path, DOTFILES_DIR = ${DOTFILES_DIR}"
         if create_symlink_from_dotfiles "$config_path"; then
             success_count=$((success_count + 1))
         else
             failed_count=$((failed_count + 1))
         fi
+        log_info "DEBUG: After processing $config_path, DOTFILES_DIR = ${DOTFILES_DIR}"
     done
     
     log_info "Symlink creation completed: $success_count success, $failed_count failed"
