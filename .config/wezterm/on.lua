@@ -134,28 +134,31 @@ end
 
 local function get_current_working_dir_status(pane)
 	local results = {}
-	local cwd_uri = pane:get_current_working_dir()
-	if cwd_uri then
-		cwd_uri = cwd_uri:sub(8)
-		local slash = cwd_uri:find("/")
-		local cwd = ""
-		local hostname = ""
-		if slash then
-			hostname = cwd_uri:sub(1, slash - 1)
-			-- Remove the domain name portion of the hostname
-			local dot = hostname:find("[.]")
-			if dot then
-				hostname = hostname:sub(1, dot - 1)
-			end
-			-- and extract the cwd from the uri
-			cwd = cwd_uri:sub(slash)
+	local cwd_url_object = pane:get_current_working_dir()
 
-			if hostname then
-				hostname = wezterm.hostname()
-			end
+	if cwd_url_object then
+		local cwd_path = cwd_url_object.path -- Urlオブジェクトのpathプロパティから文字列を取得
+		if #cwd_path >= 8 then -- 文字列の長さをチェック
+			local slash = cwd_path:find("/")
+			local cwd = ""
+			local hostname = ""
+			if slash then
+				hostname = cwd_path:sub(1, slash - 1)
+				-- Remove the domain name portion of the hostname
+				local dot = hostname:find("[.]")
+				if dot then
+					hostname = hostname:sub(1, dot - 1)
+				end
+				-- and extract the cwd from the uri
+				cwd = cwd_path:sub(slash)
 
-			table.insert(results, cwd)
-			table.insert(results, hostname)
+				if hostname then
+					hostname = wezterm.hostname()
+				end
+
+				table.insert(results, cwd)
+				table.insert(results, hostname)
+			end
 		end
 	end
 	return results
