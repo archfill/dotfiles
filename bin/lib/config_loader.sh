@@ -8,21 +8,15 @@ source "${SCRIPT_DIR}/common.sh"
 
 # dotfilesのルートディレクトリを取得
 get_dotfiles_root() {
-    log_info "DEBUG: get_dotfiles_root called - DOTFILES_DIR = ${DOTFILES_DIR:-'unset'}"
-    
     # 環境変数DOTFILES_DIRが設定されている場合はそれを使用
     if [[ -n "${DOTFILES_DIR:-}" ]]; then
-        log_info "DEBUG: returning existing DOTFILES_DIR = $DOTFILES_DIR"
         echo "$DOTFILES_DIR"
         return 0
     fi
     
-    log_info "DEBUG: searching for dotfiles root starting from SCRIPT_DIR = $SCRIPT_DIR"
     local current_dir="$SCRIPT_DIR"
     while [[ "$current_dir" != "/" ]]; do
-        log_info "DEBUG: checking directory: $current_dir"
         if [[ -f "$current_dir/CLAUDE.md" ]] || [[ -f "$current_dir/.gitignore" ]]; then
-            log_info "DEBUG: found dotfiles root: $current_dir"
             echo "$current_dir"
             return 0
         fi
@@ -30,44 +24,32 @@ get_dotfiles_root() {
     done
     
     # フォールバック
-    local fallback="${HOME}/dotfiles"
-    log_info "DEBUG: using fallback: $fallback"
-    echo "$fallback"
+    echo "${HOME}/dotfiles"
 }
 
 # 設定ファイルの読み込み
 load_config() {
-    log_info "DEBUG: load_config start - DOTFILES_DIR = ${DOTFILES_DIR:-'unset'}"
-    
     # DOTFILES_DIRが未設定の場合のみ取得・設定
     if [[ -z "${DOTFILES_DIR:-}" ]]; then
-        log_info "DEBUG: DOTFILES_DIR is unset, calling get_dotfiles_root"
         local dotfiles_root
         dotfiles_root="$(get_dotfiles_root)"
         export DOTFILES_DIR="$dotfiles_root"
-        log_info "DEBUG: set DOTFILES_DIR = $DOTFILES_DIR"
-    else
-        log_info "DEBUG: DOTFILES_DIR is already set, skipping get_dotfiles_root"
     fi
     
     # バージョン設定ファイルの読み込み
-    log_info "DEBUG: Before versions config - DOTFILES_DIR = ${DOTFILES_DIR}"
     local versions_file="${DOTFILES_DIR}/config/versions.conf"
     if [[ -f "$versions_file" ]]; then
         log_info "Loading versions configuration from $versions_file"
         source "$versions_file"
-        log_info "DEBUG: After versions config - DOTFILES_DIR = ${DOTFILES_DIR}"
     else
         log_warning "Versions configuration file not found: $versions_file"
     fi
     
     # 個人設定ファイルの読み込み（存在する場合）
-    log_info "DEBUG: Before personal config - DOTFILES_DIR = ${DOTFILES_DIR}"
     local personal_config="${DOTFILES_DIR}/config/personal.conf"
     if [[ -f "$personal_config" ]]; then
         log_info "Loading personal configuration from $personal_config"
         source "$personal_config"
-        log_info "DEBUG: After personal config - DOTFILES_DIR = ${DOTFILES_DIR}"
     else
         log_info "Personal configuration file not found (optional): $personal_config"
         # デフォルト値を使用
@@ -76,20 +58,16 @@ load_config() {
     fi
     
     # 環境変数の読み込み（.env.local）
-    log_info "DEBUG: Before env file - DOTFILES_DIR = ${DOTFILES_DIR}"
     local env_file="${DOTFILES_DIR}/.env.local"
     if [[ -f "$env_file" ]]; then
         log_info "Loading environment variables from $env_file"
         set -a  # 変数を自動でexport
         source "$env_file"
         set +a
-        log_info "DEBUG: After env file - DOTFILES_DIR = ${DOTFILES_DIR}"
     fi
     
     # 設定値の検証
-    log_info "DEBUG: Before validate_config - DOTFILES_DIR = ${DOTFILES_DIR}"
     validate_config
-    log_info "DEBUG: After validate_config - DOTFILES_DIR = ${DOTFILES_DIR}"
 }
 
 # 設定値の検証
