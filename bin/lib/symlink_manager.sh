@@ -71,9 +71,10 @@ create_symlink_from_dotfiles() {
     local relative_path="$1"
     local backup_existing="${2:-true}"
     
-    # DOTFILES_DIRが設定されていない場合のみload_config
+    # DOTFILES_DIRが設定されていない場合はエラー
     if [[ -z "${DOTFILES_DIR:-}" ]]; then
-        load_config  # DOTFILES_DIRを取得
+        log_error "DOTFILES_DIR is not set. Please set DOTFILES_DIR environment variable."
+        return 1
     fi
     
     local source_path="${DOTFILES_DIR}/${relative_path}"
