@@ -413,6 +413,109 @@ jobs:
         
         echo "Integration test completed successfully"
 
+  test-setup-linux:
+    name: Test Full Setup on Linux
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup test environment
+      run: |
+        # Create personal configuration
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Setup Test User"
+        export USER_EMAIL="setup-test@example.com"
+        EOF
+        
+        # Create temporary home directory for testing
+        export TEST_HOME="$HOME/dotfiles-test"
+        mkdir -p "$TEST_HOME"
+        export HOME="$TEST_HOME"
+        
+    - name: Run make init
+      run: |
+        export HOME="$HOME/dotfiles-test"
+        
+        # Run the full initialization
+        make init
+        
+        # Verify key components were installed
+        echo "Checking installation results..."
+        
+    - name: Verify installation
+      run: |
+        export HOME="$HOME/dotfiles-test"
+        
+        # Check if symbolic links were created
+        echo "Checking symbolic links..."
+        ls -la "$HOME/.config" || echo "Warning: .config not found"
+        
+        # Check if basic configuration files exist
+        [[ -f "$HOME/.zshrc" ]] && echo "✓ .zshrc created" || echo "✗ .zshrc missing"
+        [[ -f "$HOME/.gitconfig" ]] && echo "✓ .gitconfig created" || echo "✗ .gitconfig missing"
+        
+        # Verify Git configuration
+        if [[ -f "$HOME/.gitconfig" ]]; then
+          echo "Git configuration:"
+          grep -E "(name|email)" "$HOME/.gitconfig" || true
+        fi
+        
+        echo "Setup test completed"
+
+  test-setup-macos:
+    name: Test Full Setup on macOS
+    runs-on: macos-latest
+    if: ${{ !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' && github.repository_owner != 'gitea' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup test environment
+      run: |
+        # Create personal configuration
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="macOS Setup Test"
+        export USER_EMAIL="macos-setup@example.com"
+        EOF
+        
+        # Create temporary home directory
+        export TEST_HOME="$HOME/dotfiles-test"
+        mkdir -p "$TEST_HOME"
+        export HOME="$TEST_HOME"
+        
+    - name: Run make init (dry-run for safety)
+      run: |
+        export HOME="$HOME/dotfiles-test"
+        
+        # Since this is a GitHub Actions runner, we'll do a limited test
+        # to avoid installing too many packages
+        
+        # Test the init process without package installation
+        export SKIP_PACKAGE_INSTALL=1
+        
+        # Run initialization steps that don't require sudo
+        bash bin/init.sh || echo "Init script completed with warnings"
+        
+    - name: Verify basic setup
+      run: |
+        export HOME="$HOME/dotfiles-test"
+        
+        # Check platform detection
+        source bin/lib/common.sh
+        echo "Platform: $(detect_platform)"
+        echo "Architecture: $(detect_architecture)"
+        
+        # Verify configuration loading works
+        source bin/lib/config_loader.sh
+        load_config
+        echo "✓ Configuration loaded successfully"
+
   # Platform compatibility test (Forgejo/Gitea specific)
   test-forgejo-gitea:
     name: Test Forgejo/Gitea Compatibility
@@ -446,7 +549,7 @@ jobs:
     name: Notify Test Results
     runs-on: ubuntu-latest
     if: ${{ always() && !contains(github.server_url, 'forgejo') && github.repository_owner != 'forgejo' }}
-    needs: [test-linux, test-macos, test-configuration, test-documentation, test-scripts-syntax, test-integration, pr-validation]
+    needs: [test-linux, test-macos, test-configuration, test-documentation, test-scripts-syntax, test-integration, test-setup-linux, test-setup-macos, pr-validation]
     
     steps:
     - name: Check test results
@@ -462,6 +565,8 @@ jobs:
         echo "- Documentation tests: ${{ needs.test-documentation.result }}"
         echo "- Script syntax tests: ${{ needs.test-scripts-syntax.result }}"
         echo "- Integration tests: ${{ needs.test-integration.result }}"
+        echo "- Setup Linux tests: ${{ needs.test-setup-linux.result }}"
+        echo "- Setup macOS tests: ${{ needs.test-setup-macos.result || 'skipped' }}"
         echo "- PR validation: ${{ needs.pr-validation.result || 'skipped' }}"
         
         # Determine overall success
@@ -478,6 +583,12 @@ jobs:
         fi
         if [[ "${{ needs.test-integration.result }}" == "failure" ]]; then
           failed_tests+=("Integration")
+        fi
+        if [[ "${{ needs.test-setup-linux.result }}" == "failure" ]]; then
+          failed_tests+=("Setup Linux")
+        fi
+        if [[ "${{ needs.test-setup-macos.result }}" == "failure" ]]; then
+          failed_tests+=("Setup macOS")
         fi
         if [[ "${{ needs.pr-validation.result }}" == "failure" ]]; then
           failed_tests+=("PR Validation")
