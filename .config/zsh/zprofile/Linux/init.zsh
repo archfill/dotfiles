@@ -4,11 +4,7 @@ fi
 
 # Volta settings moved to shared .zprofile to avoid duplication
 
-# uv
-export PATH="$HOME/.cargo/bin:$PATH"
-if command -v uv >/dev/null 2>&1; then
-  eval "$(uv generate-shell-completion zsh)"
-fi
+# uv configuration moved to shared .zprofile
 
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   source /etc/profile.d/vte.sh

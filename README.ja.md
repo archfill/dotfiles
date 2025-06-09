@@ -23,6 +23,7 @@
 - **Git**: Lazygit 統合と高度な Git 設定
 - **Python**: [uv](https://github.com/astral-sh/uv) パッケージマネージャーによるモダンな開発
 - **Node.js**: [Volta](https://volta.sh/) による信頼性の高いJavaScriptツールチェーン管理
+- **Flutter**: FVMバージョン管理によるクロスプラットフォームモバイル開発
 
 ### 🇯🇵 **日本語言語機能**
 - **SKK 入力方式**: 高性能な yaskkserv2 サーバーと包括的辞書
@@ -35,32 +36,135 @@
 - **Zettelkasten**: 研究・文書化用のナレッジマネジメント
 - **文書化**: 自動テキスト校正とスタイルチェック
 
-## 🚀 クイックスタート
+## 🚀 セットアップガイド
 
-### 1. リポジトリのクローン
+### ⚠️ **前提条件（インストール前に必須）**
+
+いずれかのセットアップコマンドを実行する前に、これらの項目をローカルで設定する**必要があります**：
+
+#### **1. 個人設定** 
+```bash
+# テンプレートファイルをコピー
+cp config/personal.conf.template config/personal.conf
+
+# あなたの情報で編集
+nano config/personal.conf
+```
+
+**必要な設定:**
+```bash
+export USER_NAME="あなたのフルネーム"
+export USER_EMAIL="your.email@example.com"
+```
+
+> ⚡ **重要**: 適切な個人設定なしではセットアップが失敗します！
+
+#### **2. Git リポジトリ URL（必要に応じて）**
+フォークに合わせてクローン URL を更新：
+```bash
+git clone https://github.com/YOUR-USERNAME/dotfiles.git ~/dotfiles
+```
+
+### 📦 **インストール手順**
+
+#### **ステップ1: リポジトリのクローン**
 ```bash
 git clone https://github.com/your-username/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
-### 2. 初期セットアップ
+#### **ステップ2: 個人設定の構成**
 ```bash
-# 完全セットアップ（推奨）
-make init
+# 必須: 個人設定を作成
+cp config/personal.conf.template config/personal.conf
 
-# またはステップバイステップセットアップ
-make config    # Git 設定の構成
-make links     # シンボリックリンクの作成
-make test      # インストールの確認
+# ファイルをあなたの詳細で編集
+$EDITOR config/personal.conf
 ```
 
-### 3. プラットフォーム固有のセットアップ
+#### **ステップ3: 完全セットアップの実行**
 ```bash
-# Android Termux の場合
-make termux-setup
+# 完全自動セットアップ（推奨）
+make init
+```
 
-# Linux での Neovim インストールの場合
+**`make init` が実行すること:**
+- ✅ すべての設定ファイルのシンボリックリンクを作成
+- ✅ プラットフォーム固有のパッケージをインストール（Homebrew、apt など）
+- ✅ 開発ツールをセットアップ（uv、volta、Neovim など）
+- ✅ あなたの個人設定で Git を設定
+- ✅ フォントとターミナル設定をインストール
+
+#### **ステップ4: インストールの確認**
+```bash
+# インストールをテスト
+make test
+
+# ステータスを確認
+make status
+```
+
+### 🔧 **代替: ステップバイステップセットアップ**
+
+手動制御を希望する場合：
+
+```bash
+# 1. Git設定を構成
+make config
+
+# 2. シンボリックリンクのみ作成
+make links
+
+# 3. プラットフォーム固有パッケージをインストール
+# （以下のコマンドを参照 - プラットフォームにより異なります）
+
+# 4. インストールを確認
+make test
+```
+
+### 🖥️ **プラットフォーム固有のコマンド**
+
+#### **macOS**
+```bash
+# Homebrew パッケージをインストール
+bash bin/mac/brew.sh
+
+# フォントをセットアップ
+bash bin/mac/fonts_setup.sh
+
+# macOS固有設定を構成
+bash bin/mac/config.sh
+```
+
+#### **Linux**
+```bash
+# Linux パッケージをインストール
+bash bin/linux/install_linux.sh
+
+# フォントをセットアップ
+bash bin/linux/apps/fonts_setup.sh
+
+# Neovim をインストール
 make neovim-install
+```
+
+#### **Android (Termux)**
+```bash
+# 完全 Termux セットアップ
+make termux-setup
+```
+
+### 🔍 **確認コマンド**
+
+```bash
+# dotfiles が動作しているかチェック
+make validate
+
+# 詳細なシステム情報を表示
+make info
+
+# 問題をデバッグ
+make debug
 ```
 
 ## 📋 利用可能なコマンド
@@ -92,6 +196,7 @@ make neovim-install
 | `make zettelkasten-config` | ナレッジマネジメントのセットアップ |
 | `make wezterm-install` | WezTerm のソースからビルド |
 | `make yaskkserv2-build` | 日本語入力サーバーのビルド |
+| `make flutter-setup` | Flutter開発環境のインストール |
 
 ## 🏗️ アーキテクチャ
 
@@ -200,6 +305,57 @@ alias python='uv run python'
 alias pip='uv pip'
 alias pyproject-init='uv init'
 ```
+
+## 📱 Flutter開発
+
+このリポジトリには、クロスプラットフォーム対応の包括的なFlutter開発環境セットアップが含まれています。
+
+### **インストール**
+```bash
+# 完全Flutter セットアップ（推奨）
+make flutter-setup
+
+# 手動セットアップ
+bash bin/apps/flutter.sh
+```
+
+### **機能**
+- **クロスプラットフォーム対応**: macOS、Linuxでのアーキテクチャ自動検出
+- **FVM統合**: プロジェクト固有バージョン用のFlutter Version Management
+- **依存関係管理**: プラットフォーム固有要件の自動インストール
+- **開発エイリアス**: Flutter開発用の効率化コマンド
+
+### **Flutterエイリアス**
+```bash
+# 開発コマンド
+fl doctor          # flutter doctor
+flrun             # flutter run
+flclean           # flutter clean
+fltest            # flutter test
+flpub get         # flutter pub get
+
+# FVMコマンド（インストール済みの場合）
+fvmlist           # 利用可能なFlutterバージョン一覧
+fvmuse            # プロジェクト用Flutterバージョン切り替え
+fvminstall        # 特定Flutterバージョンのインストール
+
+# プラットフォーム固有ショートカット
+ios               # iOS Simulator起動（macOS）
+studio            # Android Studio起動
+```
+
+### **設定**
+Flutter設定は`config/versions.conf`で管理されます：
+```bash
+FLUTTER_VERSION="stable"     # stable、beta、dev、または特定バージョン
+FVM_VERSION="3.1.0"         # Flutter Version Managementバージョン
+DART_VERSION="stable"       # Dart SDKバージョン
+```
+
+### **対応インストール方法**
+- **macOS**: Homebrew（推奨）または手動インストール
+- **Linux**: 依存関係自動解決付き手動インストール
+- **自動検出**: 複数のFlutterインストール場所に対応
 
 ## 🧪 テスト
 

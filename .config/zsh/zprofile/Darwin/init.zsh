@@ -11,11 +11,8 @@ fi
 
 # Volta settings moved to shared .zprofile to avoid duplication
 
-# java
-# if [ `/usr/libexec/java_home` ] ; then
-# export JAVA_HOME=`/usr/libexec/java_home`
-# PATH=${JAVA_HOME}/bin:${PATH}
-# fi
+# Java configuration - removed default version, keeping specific version only
+# Default Java setup removed to avoid conflicts with jenv
 if [ `/usr/libexec/java_home -v "11"` ] ; then
   export JAVA_HOME=`/usr/libexec/java_home -v "11"`
   export PATH=${JAVA_HOME}/bin:${PATH}
@@ -26,31 +23,16 @@ if [ -d "$HOME/.jenv/bin" ] ; then
   eval "$(jenv init -)"
 fi
 
-# uv
-export PATH="$HOME/.cargo/bin:$PATH"
-if command -v uv >/dev/null 2>&1; then
-  eval "$(uv generate-shell-completion zsh)"
-fi
+# uv configuration moved to shared .zprofile
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# flutter
-# export PATH="$PATH:$FLUTTER_ROOT/bin"
+# Flutter configuration moved to shared configuration
+# Individual FLUTTER_ROOT should be set in personal.conf if needed
 
 # direnv
 eval "$(direnv hook zsh)"
 
-# google-cloud-sdk
-## m1
-if [ -d "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" ] ; then
-  source "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-  source "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
-fi
-
-## intel
-if [ -d "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" ] ; then
-  source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-  source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
-fi
+# Google Cloud SDK configuration moved to shared .zprofile to avoid duplication
 
 # mysql-client
 ## m1
