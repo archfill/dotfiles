@@ -373,7 +373,10 @@ update_font_cache() {
         "linux")
             if command -v fc-cache >/dev/null 2>&1; then
                 log_info "Updating font cache..."
-                fc-cache -fv >/dev/null 2>&1
+                # Suppress fontconfig memory errors in CI environments
+                fc-cache -fv >/dev/null 2>&1 || {
+                    log_warning "Font cache update failed, but fonts may still work"
+                }
             else
                 log_warning "fc-cache not available, font cache not updated"
             fi

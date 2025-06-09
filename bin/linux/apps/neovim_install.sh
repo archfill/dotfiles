@@ -18,7 +18,24 @@ case "$(detect_architecture)" in
   install_neovim_nightly_x64() {
     log_info "Installing Neovim nightly for x86_64"
     mkdir -p ~/.local/
-    curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz | tar zx --strip-components 1 -C ~/.local/
+    # Download with error checking
+    local nvim_url="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
+    local tmp_file="/tmp/nvim-linux64.tar.gz"
+    
+    log_info "Downloading Neovim from: $nvim_url"
+    if ! curl -fsSL "$nvim_url" -o "$tmp_file"; then
+      log_error "Failed to download Neovim"
+      return 1
+    fi
+    
+    log_info "Extracting Neovim to ~/.local/"
+    if ! tar -xzf "$tmp_file" --strip-components=1 -C ~/.local/; then
+      log_error "Failed to extract Neovim"
+      rm -f "$tmp_file"
+      return 1
+    fi
+    
+    rm -f "$tmp_file"
     log_success "Neovim nightly installation completed"
   }
 
