@@ -16,9 +16,12 @@ source "${DOTFILES_DIR}/bin/lib/symlink_manager.sh"
 setup_error_handling
 
 log_info "Starting dotfiles symlink creation"
+log_info "DEBUG: DOTFILES_DIR before load_config = ${DOTFILES_DIR}"
 
 # 設定ファイルを読み込み
 load_config
+
+log_info "DEBUG: DOTFILES_DIR after load_config = ${DOTFILES_DIR}"
 
 # 基本設定ファイルの一覧
 BASIC_CONFIGS=(
