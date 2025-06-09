@@ -17,25 +17,23 @@ case "$(detect_architecture)" in
 'x86_64')
   install_neovim_nightly_x64() {
     log_info "Installing Neovim nightly for x86_64"
-    mkdir -p ~/.local/
-    # Download with error checking
-    local nvim_url="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
-    local tmp_file="/tmp/nvim-linux64.tar.gz"
+    mkdir -p ~/.local/bin
+    # Download AppImage with error checking
+    local nvim_url="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.appimage"
+    local nvim_file="$HOME/.local/bin/nvim"
     
-    log_info "Downloading Neovim from: $nvim_url"
-    if ! curl -fsSL "$nvim_url" -o "$tmp_file"; then
-      log_error "Failed to download Neovim"
+    log_info "Downloading Neovim AppImage from: $nvim_url"
+    if ! curl -fsSL "$nvim_url" -o "$nvim_file"; then
+      log_error "Failed to download Neovim AppImage"
       return 1
     fi
     
-    log_info "Extracting Neovim to ~/.local/"
-    if ! tar -xzf "$tmp_file" --strip-components=1 -C ~/.local/; then
-      log_error "Failed to extract Neovim"
-      rm -f "$tmp_file"
+    log_info "Making Neovim executable"
+    if ! chmod +x "$nvim_file"; then
+      log_error "Failed to make Neovim executable"
       return 1
     fi
     
-    rm -f "$tmp_file"
     log_success "Neovim nightly installation completed"
   }
 
