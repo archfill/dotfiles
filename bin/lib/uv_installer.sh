@@ -48,8 +48,8 @@ install_uv() {
         uv --version
         
         # PATH設定の案内
-        log_info "Make sure ~/.cargo/bin is in your PATH"
-        log_info "Add this to your shell profile: export PATH=\"\$HOME/.cargo/bin:\$PATH\""
+        log_info "Make sure ~/.local/bin and ~/.cargo/bin are in your PATH"
+        log_info "Add this to your shell profile: export PATH=\"\$HOME/.local/bin:\$HOME/.cargo/bin:\$PATH\""
         
         return 0
     else
@@ -70,6 +70,8 @@ install_uv_official() {
         log_info "Official uv installer completed"
         
         # 環境変数の更新（現在のセッション用）
+        # uvは~/.local/binにインストールされる
+        export PATH="$HOME/.local/bin:$PATH"
         export PATH="$HOME/.cargo/bin:$PATH"
         
         return 0
