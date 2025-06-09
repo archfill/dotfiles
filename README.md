@@ -22,6 +22,7 @@ A comprehensive, cross-platform dotfiles repository that automates development e
 - **Shell**: Zsh with optimized prompt and completion systems
 - **Git**: Lazygit integration and advanced Git configurations
 - **Python**: Modern development with [uv](https://github.com/astral-sh/uv) package manager
+- **Node.js**: [Volta](https://volta.sh/) for reliable JavaScript toolchain management
 
 ### 🇯🇵 **Japanese Language Features**
 - **SKK Input Method**: yaskkserv2 server with comprehensive dictionaries

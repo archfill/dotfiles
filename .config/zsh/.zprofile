@@ -9,17 +9,20 @@ export PATH=$HOME/.local/bin:$PATH
 #   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 # fi
 
+# Node.js version management - prioritize volta over other tools
 if [ -d "$HOME/.volta" ] ; then
+  # Volta JavaScript toolchain manager (preferred)
   export VOLTA_HOME="$HOME/.volta"
-  export PATH=$VOLTA_HOME/bin:$PATH
-  fpath+=~/.config/zsh/completions/_volta
-fi
-
-if [ -d "$HOME/.nodebrew/current/bin" ] ; then
+  export PATH="$VOLTA_HOME/bin:$PATH"
+  # Add volta completion if available
+  if [[ -f ~/.config/zsh/completions/_volta ]]; then
+    fpath+=(~/.config/zsh/completions)
+  fi
+elif [ -d "$HOME/.nodebrew/current/bin" ] ; then
+  # Fallback to nodebrew if volta not available
   export PATH=$HOME/.nodebrew/current/bin:$PATH
-fi
-
-if [ -d "$HOME/.nvm" ] ; then
+elif [ -d "$HOME/.nvm" ] ; then
+  # Fallback to nvm if neither volta nor nodebrew available
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi

@@ -25,6 +25,7 @@ apps=(
   'openjdk' \
   'openjdk@11' \
   'uv' \
+  'volta' \
   'qmk' \
   'readline' \
   'ranger' \
