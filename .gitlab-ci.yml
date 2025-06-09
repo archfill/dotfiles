@@ -8,14 +8,17 @@ before_script:
   # - dockerd &
   # - sleep 5
   # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - useradd -m builder
+  - echo "builder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+  - export HOME=/home/builder
+  - chown -R builder:builder $CI_PROJECT_DIR
 
 test:
   stage: test
   tags:
     - docker
   script:
-    - ln -snf `pwd` /root/dotfiles
-    - cd /root/dotfiles
-    - make init
+    - ln -snf `pwd` /home/builder/dotfiles
+    - sudo -u builder bash -c "cd $CI_PROJECT_DIR && make init"
   only:
     - /^main.*$/

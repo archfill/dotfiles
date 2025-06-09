@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+trap 'echo "[Error] Command \"$BASH_COMMAND\" failed."; exit 1' ERR
+
 function link() {
   TARGET_PATH="${HOME}/$1"
   DOT_PATH="${HOME}/dotfiles/$1"
