@@ -29,11 +29,10 @@ get_dotfiles_root() {
 
 # 設定ファイルの読み込み
 load_config() {
-    local dotfiles_root
-    dotfiles_root="$(get_dotfiles_root)"
-    
-    # DOTFILES_DIRが未設定の場合のみ設定
+    # DOTFILES_DIRが未設定の場合のみ取得・設定
     if [[ -z "${DOTFILES_DIR:-}" ]]; then
+        local dotfiles_root
+        dotfiles_root="$(get_dotfiles_root)"
         export DOTFILES_DIR="$dotfiles_root"
     fi
     
