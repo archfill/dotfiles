@@ -3,12 +3,17 @@
 set -euo pipefail
 trap 'echo "[Error] Command \"$BASH_COMMAND\" failed."; exit 1' ERR
 
+# Set DOTFILES_DIR if not already set
+if [[ -z "${DOTFILES_DIR:-}" ]]; then
+  DOTFILES_DIR="$HOME/dotfiles"
+fi
+
 mkdir -p "$HOME/.config"
 
 echo "[Start] Dotfiles setup at $(date)"
 
 run() {
-  bash "$HOME/dotfiles/$1"
+  bash "$DOTFILES_DIR/$1"
 }
 
 echo "[Info] Starting to create symbolic links"
