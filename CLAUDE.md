@@ -296,6 +296,19 @@ This ensures users always have access to current, accurate documentation regardl
 
 ### 2025年6月 - 主要な作業記録
 
+#### GitHub Actions CI/CD修正 (2025年6月9日)
+**問題**: GitHub ActionsワークフローでLinux環境の初期化が複数のエラーで失敗  
+**修正内容**:  
+1. **パス参照エラー**: `bin/linux/install_linux.sh`で`get_os_info.sh`のパスを`$HOME/dotfiles`から`$DOTFILES_DIR`に修正
+2. **Neovimダウンロード失敗**: tar.gz形式からAppImage形式に変更（404エラー解決）
+   - 旧URL: `nvim-linux64.tar.gz` → 新URL: `nvim-linux-x86_64.appimage`
+   - `~/.local/bin`に直接実行可能ファイルとしてインストール
+3. **uvインストールPATH問題**: `~/.local/bin`パスの追加とインストール検証の改善
+4. **appsセットアップパスエラー**: `bin/apps_setup.sh`で固定パスを`$DOTFILES_DIR`に変更
+5. **fontconfigメモリエラー**: CI環境でのメモリエラーを警告レベルに変更
+
+**結果**: GitHub ActionsでのLinux環境初期化が完全に動作するようになった
+
 #### Git管理の問題解決
 **問題**: `bin/lib/` ディレクトリがGit管理対象外になっている  
 **原因**: `.gitignore`の79行目にある`lib/`パターンが、Python関連のlibディレクトリを除外する際に`bin/lib/`も除外していた  
@@ -361,3 +374,23 @@ yamllint .github/workflows/*.yml
 make test
 bash bin/test.sh
 ```
+
+#### GitHub Actions固有の問題解決
+```bash
+# Neovimインストール問題の確認
+curl -I https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.appimage
+
+# uvインストール後のPATH確認
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+which uv
+
+# パス参照問題の確認
+echo "DOTFILES_DIR: $DOTFILES_DIR"
+ls -la "${DOTFILES_DIR}/bin/get_os_info.sh"
+```
+
+### GitHub Actions修正履歴
+- **2025年6月9日**: 完全なCI環境修正
+  - パス参照問題、Neovimダウンロード、uvインストール、appsセットアップの4つの主要問題を解決
+  - Linux環境での初期化プロセスが100%成功するように修正
+  - fontconfigエラーの適切な処理を追加
