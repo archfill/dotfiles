@@ -15,14 +15,20 @@ function link() {
     return
   fi
 
-  if [ -d $TARGET_PATH ]; then
-    rm -rf $TARGET_PATH
+  # Create parent directory if it doesn't exist
+  parent_dir="$(dirname "$TARGET_PATH")"
+  if [[ ! -d "$parent_dir" ]]; then
+    mkdir -p "$parent_dir"
   fi
-  ln -snf $DOT_PATH $TARGET_PATH
+
+  if [[ -d "$TARGET_PATH" ]]; then
+    rm -rf "$TARGET_PATH"
+  fi
+  ln -snf "$DOT_PATH" "$TARGET_PATH"
 }
 
 # lazygit
-link "dotfiles/.config/lazygit/config.yml" "Library/Application\ Support/lazygit/config.yml"
+link "dotfiles/.config/lazygit/config.yml" "Library/Application Support/lazygit/config.yml"
 
 # karabiner
 link ".config/karabiner/assets/complex_modifications/aquaskk_iterm2.json"
