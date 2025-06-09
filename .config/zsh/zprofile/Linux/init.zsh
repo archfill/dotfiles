@@ -2,6 +2,8 @@ if [ -d "/home/linuxbrew" ] ; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+# Volta settings moved to shared .zprofile to avoid duplication
+
 # uv
 export PATH="$HOME/.cargo/bin:$PATH"
 if command -v uv >/dev/null 2>&1; then

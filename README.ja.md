@@ -22,6 +22,7 @@
 - **シェル**: 最適化されたプロンプトと補完システムを備えた Zsh
 - **Git**: Lazygit 統合と高度な Git 設定
 - **Python**: [uv](https://github.com/astral-sh/uv) パッケージマネージャーによるモダンな開発
+- **Node.js**: [Volta](https://volta.sh/) による信頼性の高いJavaScriptツールチェーン管理
 
 ### 🇯🇵 **日本語言語機能**
 - **SKK 入力方式**: 高性能な yaskkserv2 サーバーと包括的辞書

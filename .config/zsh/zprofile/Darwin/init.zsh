@@ -9,12 +9,7 @@ else if [ -e "/usr/local/bin/brew" ] ; then
 fi
 
 
-which fnm > /dev/null 2>&1
-ERRCHK=$?
-if [[ $ERRCHK -eq 0 ]]; then
-  eval "$(fnm env --use-on-cd)"
-  fpath+=~/.config/zsh/completions/_fnm
-fi
+# Volta settings moved to shared .zprofile to avoid duplication
 
 # java
 # if [ `/usr/libexec/java_home` ] ; then

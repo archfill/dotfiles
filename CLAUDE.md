@@ -375,6 +375,17 @@ make test
 bash bin/test.sh
 ```
 
+#### Node.jsツール競合解決 (2025年6月9日)
+**問題**: 3つのNode.jsバージョン管理ツール（nvm、volta、fnm）が同時に設定され競合
+**解決策**: voltaに統一し、nvmとanyenvを削除
+**理由**: WSL環境での安定性、プロジェクト固定機能、クロスプラットフォーム対応を重視
+**変更内容**:
+- `bin/apps/nvm.sh`、`bin/apps/anyenv.sh` 削除
+- `bin/apps/volta.sh` 強化（完全セットアップ版に変更）
+- macOS zsh設定でfnmからvoltaに変更
+- Linux用volta設定とセットアップスクリプト追加
+- Homebrewパッケージリストにvolta追加
+
 #### GitHub Actions固有の問題解決
 ```bash
 # Neovimインストール問題の確認
