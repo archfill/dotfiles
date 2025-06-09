@@ -26,8 +26,15 @@ case "$OS_NAME" in
   Darwin)
     echo "[OS] macOS setup starting"
     run "bin/mac/link.sh"
-    run "bin/mac/brew.sh"
-    run "bin/mac/fonts_setup.sh"
+    
+    # Skip package installation in CI environment
+    if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" ]]; then
+      run "bin/mac/brew.sh"
+      run "bin/mac/fonts_setup.sh"
+    else
+      echo "[Info] Skipping package installation (CI environment)"
+    fi
+    
     run "bin/mac/config.sh"
     ;;
 
@@ -50,8 +57,13 @@ case "$OS_NAME" in
     ;;
 esac
 
-echo "[Info] Starting app setup"
-run "bin/apps_setup.sh"
+# Skip app setup in CI environment
+if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" ]]; then
+  echo "[Info] Starting app setup"
+  run "bin/apps_setup.sh"
+else
+  echo "[Info] Skipping app setup (CI environment)"
+fi
 
 echo "[Info] Starting config setup"
 run "bin/config.sh"
