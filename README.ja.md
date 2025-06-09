@@ -222,22 +222,30 @@ make debug     # トラブルシューティング情報
 
 ### **継続的インテグレーション**
 
-このリポジトリは **Forgejo Actions** による自動テストを使用：
+このリポジトリは **GitHub Actions と Forgejo Actions** による自動テストを使用：
 
 - **🔄 自動テスト**: プッシュやプルリクエストごとに包括的なテストを実行
 - **🖥️ マルチプラットフォーム**: Ubuntu と macOS 環境でテスト実行
 - **📋 プルリクエスト検証**: コード品質とドキュメント一貫性を確保
 - **🚀 リリース検証**: リリース前の包括的テスト
 - **🔒 セキュリティチェック**: 潜在的な機密情報とセキュリティ問題をスキャン
+- **🛠️ CI環境修正**: パス解決、Neovim AppImageインストール、uv PATH設定の特殊処理
 
 **ワークフローファイル**:
 - `.github/workflows/test.yml` - PR検証を含むメインテストスイート
 - `.github/workflows/release.yml` - リリース検証とセキュリティ監査
 
 **プラットフォーム互換性**:
-- ✅ **GitHub Actions** (github.com)
-- ✅ **Forgejo Actions** (セルフホスト)
-- ✅ **Gitea Actions** (gitea.com)
+- ✅ **GitHub Actions** (github.com) - プライマリCI プラットフォーム
+- ✅ **Forgejo Actions** (セルフホスト) - セカンダリ/バックアッププラットフォーム
+- ✅ **Gitea Actions** (gitea.com) - 互換性のあるワークフロー
+
+**最新のCI改善 (2025年6月)**:
+- Linux環境初期化の失敗を修正
+- AppImage形式への切り替えによるNeovimダウンロード問題を解決
+- uv PythonパッケージマネージャーのPATH設定を改善
+- fontconfigメモリ問題のエラーハンドリングを強化
+- 全スクリプトでDOTFILES_DIRパス解決を統一
 
 ## 🇯🇵 日本語言語サポート
 

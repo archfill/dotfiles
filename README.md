@@ -222,22 +222,30 @@ make debug     # Troubleshooting info
 
 ### **Continuous Integration**
 
-This repository uses **Forgejo Actions** for automated testing:
+This repository uses **GitHub Actions and Forgejo Actions** for automated testing:
 
 - **🔄 Automated Testing**: Every push and pull request triggers comprehensive tests
 - **🖥️ Multi-Platform**: Tests run on Ubuntu and macOS environments
 - **📋 Pull Request Validation**: Ensures code quality and documentation consistency
 - **🚀 Release Validation**: Comprehensive testing before releases
 - **🔒 Security Checks**: Scans for potential secrets and security issues
+- **🛠️ CI Environment Fixes**: Specialized handling for path resolution, Neovim AppImage installation, and uv PATH configuration
 
 **Workflow Files**:
 - `.github/workflows/test.yml` - Main test suite with PR validation
 - `.github/workflows/release.yml` - Release validation and security audit
 
 **Platform Compatibility**:
-- ✅ **GitHub Actions** (github.com)
-- ✅ **Forgejo Actions** (self-hosted)
-- ✅ **Gitea Actions** (gitea.com)
+- ✅ **GitHub Actions** (github.com) - Primary CI platform
+- ✅ **Forgejo Actions** (self-hosted) - Secondary/backup platform
+- ✅ **Gitea Actions** (gitea.com) - Compatible workflows
+
+**Recent CI Improvements (June 2025)**:
+- Fixed Linux environment initialization failures
+- Resolved Neovim download issues by switching to AppImage format
+- Improved uv Python package manager PATH configuration
+- Enhanced error handling for fontconfig memory issues
+- Unified DOTFILES_DIR path resolution across all scripts
 
 ## 🇯🇵 Japanese Language Support
 
