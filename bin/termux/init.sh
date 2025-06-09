@@ -42,7 +42,7 @@ echo "-- apps setup start ---"
 bash ${HOME}/dotfiles/bin/apps/zinit.sh
 # bash ${HOME}/dotfiles/bin/apps/volta.sh
 # bash ${HOME}/dotfiles/bin/apps/nvm.sh
-# bash ${HOME}/dotfiles/bin/apps/pyenv.sh
+bash ${HOME}/dotfiles/bin/apps/uv.sh
 echo "-- apps setup finish ---"
 
 chsh -s zsh

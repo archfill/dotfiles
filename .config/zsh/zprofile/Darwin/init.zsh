@@ -31,10 +31,11 @@ if [ -d "$HOME/.jenv/bin" ] ; then
   eval "$(jenv init -)"
 fi
 
-# pyenv
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# uv
+export PATH="$HOME/.cargo/bin:$PATH"
+if command -v uv >/dev/null 2>&1; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # flutter
