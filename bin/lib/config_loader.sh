@@ -51,19 +51,23 @@ load_config() {
     fi
     
     # バージョン設定ファイルの読み込み
+    log_info "DEBUG: Before versions config - DOTFILES_DIR = ${DOTFILES_DIR}"
     local versions_file="${DOTFILES_DIR}/config/versions.conf"
     if [[ -f "$versions_file" ]]; then
         log_info "Loading versions configuration from $versions_file"
         source "$versions_file"
+        log_info "DEBUG: After versions config - DOTFILES_DIR = ${DOTFILES_DIR}"
     else
         log_warning "Versions configuration file not found: $versions_file"
     fi
     
     # 個人設定ファイルの読み込み（存在する場合）
+    log_info "DEBUG: Before personal config - DOTFILES_DIR = ${DOTFILES_DIR}"
     local personal_config="${DOTFILES_DIR}/config/personal.conf"
     if [[ -f "$personal_config" ]]; then
         log_info "Loading personal configuration from $personal_config"
         source "$personal_config"
+        log_info "DEBUG: After personal config - DOTFILES_DIR = ${DOTFILES_DIR}"
     else
         log_info "Personal configuration file not found (optional): $personal_config"
         # デフォルト値を使用
@@ -72,16 +76,20 @@ load_config() {
     fi
     
     # 環境変数の読み込み（.env.local）
+    log_info "DEBUG: Before env file - DOTFILES_DIR = ${DOTFILES_DIR}"
     local env_file="${DOTFILES_DIR}/.env.local"
     if [[ -f "$env_file" ]]; then
         log_info "Loading environment variables from $env_file"
         set -a  # 変数を自動でexport
         source "$env_file"
         set +a
+        log_info "DEBUG: After env file - DOTFILES_DIR = ${DOTFILES_DIR}"
     fi
     
     # 設定値の検証
+    log_info "DEBUG: Before validate_config - DOTFILES_DIR = ${DOTFILES_DIR}"
     validate_config
+    log_info "DEBUG: After validate_config - DOTFILES_DIR = ${DOTFILES_DIR}"
 }
 
 # 設定値の検証
