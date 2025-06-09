@@ -71,7 +71,10 @@ create_symlink_from_dotfiles() {
     local relative_path="$1"
     local backup_existing="${2:-true}"
     
-    load_config  # DOTFILES_DIRを取得
+    # DOTFILES_DIRが設定されていない場合のみload_config
+    if [[ -z "${DOTFILES_DIR:-}" ]]; then
+        load_config  # DOTFILES_DIRを取得
+    fi
     
     local source_path="${DOTFILES_DIR}/${relative_path}"
     local target_path="${HOME}/${relative_path}"
