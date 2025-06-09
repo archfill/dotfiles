@@ -291,3 +291,73 @@ This refactoring transforms the repository from a collection of individual scrip
 - **Structure**: Maintain consistent section organization across versions
 
 This ensures users always have access to current, accurate documentation regardless of their language preference.
+
+## Work History and Issue Resolution (作業履歴と問題解決)
+
+### 2025年6月 - 主要な作業記録
+
+#### Git管理の問題解決
+**問題**: `bin/lib/` ディレクトリがGit管理対象外になっている  
+**原因**: `.gitignore`の79行目にある`lib/`パターンが、Python関連のlibディレクトリを除外する際に`bin/lib/`も除外していた  
+**解決**: 80行目に`!bin/lib/`を追加し、bin/lib/ディレクトリを明示的に管理対象に含める  
+**影響**: 共有ライブラリシステムが正常にバージョン管理されるようになった
+
+#### Git設定の更新
+**変更**: Gitのユーザー名を「Yusaku Hieda」から「archfill」に変更  
+**コマンド**: `git config --global user.name "archfill"`  
+**確認**: `git config --global user.name`で変更を確認済み
+
+#### リポジトリ構成の確認
+- **Origin remote**: Forgejoサーバー（メインリポジトリ）
+- **GitHub remote**: GitHubリポジトリ（ミラーまたはバックアップ）
+- 両方のプラットフォームで GitHub Actions/Forgejo Actions 互換のワークフローが動作
+
+#### 成果物の確認
+- **bin/lib/共有ライブラリシステム**: 正常にGit管理対象
+- **CI/CDワークフロー**: GitHub, Forgejo, Gitea互換で動作確認済み
+- **ドキュメント**: README.md（英語）、README.ja.md（日本語）両方完備
+- **テストスイート**: `bin/test.sh`による包括的テスト
+- **設定管理**: `config/versions.conf`による一元化
+
+#### 技術的決定と教訓
+1. **.gitignoreの設計**: 包括的除外パターンを使用する際は、必要なディレクトリの明示的包含（`!pattern`）を忘れずに追加
+2. **Git設定管理**: グローバル設定変更は影響範囲が広いため、変更前後の確認を必須とする
+3. **ドキュメント保守**: 作業内容は必ずCLAUDE.mdに記録し、後の参照と学習に活用
+4. **リポジトリ構成**: 複数のGitサービス（Forgejo + GitHub）を使用する場合の運用方法確立
+
+### トラブルシューティング指針
+
+#### bin/lib/がGit管理対象外になった場合
+```bash
+# 問題確認
+git status | grep "bin/lib"
+
+# .gitignoreの確認
+grep -n "lib/" .gitignore
+
+# 解決方法: .gitignoreに例外パターンを追加
+echo "!bin/lib/" >> .gitignore
+git add .gitignore bin/lib/
+git commit -m "Fix: Include bin/lib/ in Git tracking"
+```
+
+#### Git設定の確認・変更
+```bash
+# 現在の設定確認
+git config --global user.name
+git config --global user.email
+
+# 設定変更
+git config --global user.name "新しい名前"
+git config --global user.email "新しいメール"
+```
+
+#### CI/CDトラブルシューティング
+```bash
+# ワークフローファイルの構文チェック
+yamllint .github/workflows/*.yml
+
+# テストの本地実行
+make test
+bash bin/test.sh
+```
