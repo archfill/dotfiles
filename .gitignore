@@ -175,6 +175,10 @@ go.work
 *.p12
 *.pfx
 
+### Personal Configuration (added by refactoring) ###
+config/personal.conf
+.dotfiles_backup/
+
 # -----------------------------------------------------------------------------
 # Build Artifacts
 # -----------------------------------------------------------------------------

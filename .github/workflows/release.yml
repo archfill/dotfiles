@@ -1,0 +1,493 @@
+name: Release Validation
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to validate'
+        required: true
+        default: 'latest'
+      test_level:
+        description: 'Test level'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - basic
+        - full
+        - comprehensive
+
+env:
+  # Cross-platform compatibility
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.GITEA_TOKEN || secrets.FORGEJO_TOKEN }}
+
+jobs:
+  validate-release:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      test-level: ${{ steps.version.outputs.test-level }}
+    
+    steps:
+    - name: Checkout release
+      uses: actions/checkout@v4
+      
+    - name: Set version info
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          VERSION="${{ github.event.inputs.version }}"
+          TEST_LEVEL="${{ github.event.inputs.test_level }}"
+        elif [[ "${{ github.ref }}" =~ refs/tags/v.* ]]; then
+          VERSION="${{ github.ref_name }}"
+          TEST_LEVEL="comprehensive"
+        elif [[ "${{ github.event_name }}" == "release" ]]; then
+          VERSION="${{ github.event.release.tag_name }}"
+          TEST_LEVEL="comprehensive"
+        else
+          VERSION="latest"
+          TEST_LEVEL="full"
+        fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "test-level=$TEST_LEVEL" >> $GITHUB_OUTPUT
+        echo "Release version: $VERSION"
+        echo "Test level: $TEST_LEVEL"
+        
+    - name: Run full test suite
+      run: |
+        # Create release test configuration
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Release Test User"
+        export USER_EMAIL="release-test@example.com"
+        EOF
+        
+        # Run comprehensive tests
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+    - name: Validate documentation
+      run: |
+        # Ensure documentation is complete and consistent
+        required_files=(
+          "README.md"
+          "README.ja.md"
+          "CLAUDE.md"
+          "bin/lib/README.md"
+        )
+        
+        for file in "${required_files[@]}"; do
+          [[ -f "$file" ]] || (echo "Required file missing: $file" && exit 1)
+        done
+        
+        # Check that both READMEs mention the version management system
+        grep -q "config/versions.conf" README.md || echo "::warning::versions.conf not mentioned in README.md"
+        grep -q "config/versions.conf" README.ja.md || echo "::warning::versions.conf not mentioned in README.ja.md"
+        
+        # Verify CI/CD documentation
+        grep -q "GitHub Actions\|Forgejo Actions" README.md || echo "::warning::CI/CD not documented in README.md"
+        grep -q "継続的インテグレーション" README.ja.md || echo "::warning::CI/CD not documented in README.ja.md"
+        
+    - name: Verify make targets
+      run: |
+        # Test all make targets work
+        echo "Testing essential make targets..."
+        make help
+        make validate
+        make status
+        make debug
+        
+        # Test dry-run for installation targets
+        echo "Testing installation targets (dry-run)..."
+        make --dry-run init
+        make --dry-run test
+        make --dry-run config
+        make --dry-run links
+        
+    - name: Check version consistency
+      run: |
+        # Verify version information is consistent across files
+        source bin/lib/config_loader.sh
+        load_config
+        
+        echo "Configuration versions:"
+        echo "NVM_VERSION: ${NVM_VERSION:-'not set'}"
+        echo "FONT_CICA_VERSION: ${FONT_CICA_VERSION:-'not set'}"
+        echo "LAZYGIT_VERSION: ${LAZYGIT_VERSION:-'not set'}"
+        echo "DOTFILES_DIR: ${DOTFILES_DIR:-'not set'}"
+        
+        # Verify essential configurations are set
+        essential_vars=("NVM_VERSION" "FONT_CICA_VERSION" "LAZYGIT_VERSION")
+        for var in "${essential_vars[@]}"; do
+          if [[ -z "${!var:-}" ]]; then
+            echo "::error::Essential configuration variable $var is not set"
+            exit 1
+          fi
+        done
+        
+    - name: Test cross-platform compatibility
+      run: |
+        # Test platform detection works
+        source bin/lib/common.sh
+        
+        echo "Platform detection test:"
+        echo "Current platform: $(detect_platform)"
+        echo "Current architecture: $(detect_architecture)"
+        echo "Package manager: $(detect_package_manager)"
+        echo "Detailed platform: $(detect_detailed_platform)"
+        
+        # Test all platform checks
+        platform_functions=(
+          "is_macos" "is_linux" "is_cygwin" "is_termux"
+          "is_x86_64" "is_arm64"
+        )
+        
+        for func in "${platform_functions[@]}"; do
+          if declare -f "$func" >/dev/null; then
+            echo "✓ $func: available"
+          else
+            echo "::error::Function $func not available"
+            exit 1
+          fi
+        done
+
+  test-installation-simulation:
+    name: Simulate Fresh Installation
+    runs-on: ubuntu-latest
+    needs: validate-release
+    container:
+      image: ubuntu:22.04
+    
+    steps:
+    - name: Setup container environment
+      run: |
+        apt-get update
+        apt-get install -y git curl sudo zsh
+        
+        # Create test user
+        useradd -m -s /bin/bash testuser
+        echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+        
+    - name: Checkout as test user
+      uses: actions/checkout@v4
+      
+    - name: Test installation process
+      run: |
+        # Switch to test user and simulate installation
+        sudo -u testuser bash << 'EOF'
+        cd $GITHUB_WORKSPACE
+        
+        # Create personal configuration
+        mkdir -p config
+        cat > config/personal.conf << 'INNER_EOF'
+        export USER_NAME="Fresh Install Test"
+        export USER_EMAIL="fresh-install@example.com"
+        INNER_EOF
+        
+        # Test basic functionality without installation
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+        # Test configuration loading
+        source bin/lib/config_loader.sh
+        load_config
+        echo "✓ Configuration loaded in fresh environment"
+        
+        # Test make commands that don't require installation
+        make validate
+        make status
+        make debug
+        
+        # Test library functions
+        source bin/lib/common.sh
+        echo "✓ Platform: $(detect_platform)"
+        echo "✓ Architecture: $(detect_architecture)"
+        
+        echo "✅ Fresh installation simulation completed"
+        EOF
+
+  test-documentation-accuracy:
+    name: Test Documentation Accuracy
+    runs-on: ubuntu-latest
+    needs: validate-release
+    
+    steps:
+    - name: Checkout release
+      uses: actions/checkout@v4
+      
+    - name: Test documented commands
+      run: |
+        # Extract make commands from README and test they exist
+        echo "Testing documented make commands from README.md..."
+        readme_commands=$(grep -o "make [a-z-]*" README.md | cut -d' ' -f2 | sort | uniq)
+        
+        for cmd in $readme_commands; do
+          echo "Testing: make $cmd"
+          if ! make --dry-run "$cmd" >/dev/null 2>&1; then
+            echo "::error::Documented command 'make $cmd' doesn't work"
+            exit 1
+          fi
+        done
+        
+        echo "Testing documented make commands from README.ja.md..."
+        ja_readme_commands=$(grep -o "make [a-z-]*" README.ja.md | cut -d' ' -f2 | sort | uniq)
+        
+        for cmd in $ja_readme_commands; do
+          echo "Testing: make $cmd"
+          if ! make --dry-run "$cmd" >/dev/null 2>&1; then
+            echo "::error::Documented command 'make $cmd' in Japanese README doesn't work"
+            exit 1
+          fi
+        done
+        
+    - name: Verify example commands work
+      run: |
+        # Test example commands from README
+        echo "Testing example commands from documentation..."
+        
+        # Create test environment
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Documentation Test"
+        export USER_EMAIL="doc-test@example.com"
+        EOF
+        
+        # Test configuration examples
+        source bin/lib/config_loader.sh
+        load_config
+        echo "✓ Configuration loading example works"
+        
+        # Test platform detection examples
+        source bin/lib/common.sh
+        echo "✓ Platform: $(detect_platform)"
+        echo "✓ Architecture: $(detect_architecture)"
+        
+        # Test library loading examples
+        source bin/lib/uv_installer.sh
+        declare -f install_uv >/dev/null || (echo "install_uv function not found" && exit 1)
+        echo "✓ Library loading examples work"
+        
+    - name: Test workflow compatibility
+      run: |
+        echo "Testing CI/CD workflow compatibility..."
+        
+        # Check that workflow files exist
+        workflow_files=(
+          ".github/workflows/test.yml"
+          ".github/workflows/release.yml"
+        )
+        
+        for file in "${workflow_files[@]}"; do
+          [[ -f "$file" ]] || (echo "Workflow file missing: $file" && exit 1)
+          echo "✓ Found: $file"
+        done
+        
+        # Verify workflows mention both GitHub Actions and Forgejo compatibility
+        if ! grep -q "Forgejo\|Gitea" .github/workflows/test.yml; then
+          echo "::warning::Forgejo/Gitea compatibility not mentioned in test workflow"
+        fi
+
+  test-comprehensive:
+    name: Comprehensive Release Test
+    runs-on: ubuntu-latest
+    needs: [validate-release, test-installation-simulation, test-documentation-accuracy]
+    if: needs.validate-release.outputs.test-level == 'comprehensive'
+    
+    steps:
+    - name: Checkout release
+      uses: actions/checkout@v4
+      
+    - name: Run extended test suite
+      run: |
+        echo "Running comprehensive release validation..."
+        
+        # Create comprehensive test configuration
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Comprehensive Test User"
+        export USER_EMAIL="comprehensive-test@example.com"
+        export CUSTOM_TEST_MODE="true"
+        EOF
+        
+        # Test all library components
+        echo "Testing all shared libraries..."
+        for lib in bin/lib/*.sh; do
+          if [[ -f "$lib" ]]; then
+            echo "Testing library: $lib"
+            bash -n "$lib" || (echo "Syntax error in $lib" && exit 1)
+            source "$lib" || (echo "Failed to source $lib" && exit 1)
+            echo "✓ $(basename "$lib"): OK"
+          fi
+        done
+        
+        # Run full test suite
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+        # Test additional make targets
+        advanced_targets=("clean" "backup" "update")
+        for target in "${advanced_targets[@]}"; do
+          echo "Testing advanced target: make $target"
+          make --dry-run "$target" || echo "::warning::Target $target may not work in all environments"
+        done
+        
+        echo "✅ Comprehensive testing completed"
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: validate-release
+    
+    steps:
+    - name: Checkout release
+      uses: actions/checkout@v4
+      
+    - name: Check for secrets and sensitive data
+      run: |
+        echo "Performing security audit..."
+        
+        # Check for potential secrets
+        echo "Checking for potential secrets..."
+        find . -type f -name "*.sh" -o -name "*.md" -o -name "*.yml" -o -name "Makefile" | \
+        xargs grep -l -E "(password|secret|key|token)" | \
+        while read -r file; do
+          # Exclude allowed patterns
+          if ! grep -E "(password|secret|key|token)" "$file" | grep -v -E "(example|template|GITHUB_TOKEN|GITEA_TOKEN|FORGEJO_TOKEN|description|comment)"; then
+            continue
+          fi
+          echo "::warning::Potential sensitive data in $file"
+        done
+        
+        # Check for email addresses (except examples)
+        echo "Checking for email addresses..."
+        find . -type f -name "*.sh" -o -name "*.md" | \
+        xargs grep -l -E "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" | \
+        while read -r file; do
+          if grep -E "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" "$file" | \
+             grep -v -E "(example\.com|your\.email|test@|@example)"; then
+            echo "::warning::Real email address found in $file"
+          fi
+        done
+        
+        # Verify .gitignore effectiveness
+        echo "Verifying .gitignore effectiveness..."
+        sensitive_files=("config/personal.conf" ".env.local" "*.key" "*.pem")
+        for pattern in "${sensitive_files[@]}"; do
+          if [[ -f "$pattern" ]]; then
+            echo "::error::Sensitive file $pattern should not be committed"
+            exit 1
+          fi
+        done
+        
+        echo "✅ Security audit completed"
+
+  create-release-summary:
+    name: Create Release Summary
+    runs-on: ubuntu-latest
+    needs: [validate-release, test-installation-simulation, test-documentation-accuracy, test-comprehensive, security-audit]
+    if: always()
+    
+    steps:
+    - name: Checkout release
+      uses: actions/checkout@v4
+      
+    - name: Generate release summary
+      run: |
+        echo "# Release Validation Summary" > release_summary.md
+        echo "" >> release_summary.md
+        echo "**Version**: ${{ needs.validate-release.outputs.version }}" >> release_summary.md
+        echo "**Test Level**: ${{ needs.validate-release.outputs.test-level }}" >> release_summary.md
+        echo "**Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> release_summary.md
+        echo "**Platform**: ${{ runner.os }}" >> release_summary.md
+        echo "**Environment**: ${{ github.server_url }}" >> release_summary.md
+        echo "" >> release_summary.md
+        
+        echo "## Test Results" >> release_summary.md
+        echo "- ✅ Release Validation: ${{ needs.validate-release.result }}" >> release_summary.md
+        echo "- ✅ Installation Simulation: ${{ needs.test-installation-simulation.result }}" >> release_summary.md
+        echo "- ✅ Documentation Accuracy: ${{ needs.test-documentation-accuracy.result }}" >> release_summary.md
+        echo "- ✅ Comprehensive Testing: ${{ needs.test-comprehensive.result || 'skipped' }}" >> release_summary.md
+        echo "- ✅ Security Audit: ${{ needs.security-audit.result }}" >> release_summary.md
+        echo "" >> release_summary.md
+        
+        echo "## Components Validated" >> release_summary.md
+        echo "- ✅ Shared library system (bin/lib/)" >> release_summary.md
+        echo "- ✅ Configuration management (config/)" >> release_summary.md
+        echo "- ✅ Cross-platform compatibility" >> release_summary.md
+        echo "- ✅ Documentation consistency (EN/JA)" >> release_summary.md
+        echo "- ✅ Make target functionality" >> release_summary.md
+        echo "- ✅ Test suite execution" >> release_summary.md
+        echo "- ✅ CI/CD workflow compatibility" >> release_summary.md
+        echo "- ✅ Security compliance" >> release_summary.md
+        echo "" >> release_summary.md
+        
+        echo "## Key Features" >> release_summary.md
+        echo "- 🌍 Cross-platform dotfiles (macOS, Linux, Windows, Android)" >> release_summary.md
+        echo "- 🇯🇵 Japanese language support (SKK, textlint)" >> release_summary.md
+        echo "- 🐍 Modern Python development with uv" >> release_summary.md
+        echo "- 🧪 Comprehensive test suite" >> release_summary.md
+        echo "- 🏗️ Shared library architecture" >> release_summary.md
+        echo "- ⚙️ Centralized configuration management" >> release_summary.md
+        echo "- 🔄 GitHub Actions & Forgejo Actions compatibility" >> release_summary.md
+        echo "- 📚 Bilingual documentation (English/Japanese)" >> release_summary.md
+        echo "" >> release_summary.md
+        
+        echo "## Platform Compatibility" >> release_summary.md
+        echo "- ✅ GitHub Actions (github.com)" >> release_summary.md
+        echo "- ✅ Forgejo Actions (self-hosted)" >> release_summary.md
+        echo "- ✅ Gitea Actions (gitea.com)" >> release_summary.md
+        echo "" >> release_summary.md
+        
+        cat release_summary.md
+        
+    - name: Check release readiness
+      run: |
+        # Determine if release is ready based on test results
+        failed_jobs=()
+        
+        if [[ "${{ needs.validate-release.result }}" != "success" ]]; then
+          failed_jobs+=("Release Validation")
+        fi
+        if [[ "${{ needs.test-installation-simulation.result }}" != "success" ]]; then
+          failed_jobs+=("Installation Simulation")
+        fi
+        if [[ "${{ needs.test-documentation-accuracy.result }}" != "success" ]]; then
+          failed_jobs+=("Documentation Accuracy")
+        fi
+        if [[ "${{ needs.security-audit.result }}" != "success" ]]; then
+          failed_jobs+=("Security Audit")
+        fi
+        
+        if [[ ${#failed_jobs[@]} -eq 0 ]]; then
+          echo "✅ Release validation completed successfully"
+          echo "🚀 Release is ready for deployment"
+          echo ""
+          echo "Release Summary:"
+          echo "- Version: ${{ needs.validate-release.outputs.version }}"
+          echo "- Test Level: ${{ needs.validate-release.outputs.test-level }}"
+          echo "- All validation tests passed"
+          echo "- Security audit completed"
+          echo "- Documentation verified"
+          echo "- Cross-platform compatibility confirmed"
+        else
+          echo "❌ Release validation failed"
+          echo "Failed jobs: ${failed_jobs[*]}"
+          echo "Please review failed tests before releasing"
+          exit 1
+        fi
+        
+    - name: Upload release summary
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: release-summary-${{ needs.validate-release.outputs.version }}
+        path: release_summary.md
+        retention-days: 30

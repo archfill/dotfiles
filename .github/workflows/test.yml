@@ -1,0 +1,484 @@
+name: Dotfiles Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  # Forgejo/Gitea compatibility
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.GITEA_TOKEN || secrets.FORGEJO_TOKEN }}
+
+jobs:
+  test-linux:
+    name: Test on Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os-variant: [ubuntu-20.04, ubuntu-22.04]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up test environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl git zsh tmux vim
+        
+    - name: Create test configuration
+      run: |
+        # Create minimal personal configuration for testing
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Test User"
+        export USER_EMAIL="test@example.com"
+        EOF
+        
+    - name: Run dotfiles tests
+      run: |
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+    - name: Test library loading
+      run: |
+        # Test shared libraries can be loaded
+        source bin/lib/common.sh
+        source bin/lib/config_loader.sh
+        
+        # Test basic functions
+        echo "Platform: $(detect_platform)"
+        echo "Architecture: $(detect_architecture)"
+        
+    - name: Test configuration loading
+      run: |
+        source bin/lib/config_loader.sh
+        load_config
+        echo "Configuration loaded successfully"
+        
+    - name: Test uv installer (dry run)
+      run: |
+        source bin/lib/common.sh
+        source bin/lib/uv_installer.sh
+        
+        # Test uv installation functions exist
+        declare -f install_uv >/dev/null || exit 1
+        declare -f verify_uv_installation >/dev/null || exit 1
+        echo "uv installer functions available"
+        
+    - name: Validate Makefile targets
+      run: |
+        # Test that all documented make targets exist
+        make help
+        make --dry-run test
+        make --dry-run validate
+        make --dry-run status
+        make --dry-run debug
+        
+    - name: Test symlink manager (dry run)
+      run: |
+        source bin/lib/common.sh
+        source bin/lib/symlink_manager.sh
+        
+        # Test symlink functions exist
+        declare -f create_symlink >/dev/null || exit 1
+        declare -f create_symlink_from_dotfiles >/dev/null || exit 1
+        echo "Symlink manager functions available"
+
+  test-macos:
+    name: Test on macOS
+    runs-on: macos-latest
+    if: github.repository_owner != 'forgejo' && github.repository_owner != 'gitea'  # Skip on Forgejo/Gitea (no macOS runners)
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up test environment
+      run: |
+        # Install basic tools if not present
+        which git || (echo "Git not found" && exit 1)
+        which curl || (echo "curl not found" && exit 1)
+        
+    - name: Create test configuration
+      run: |
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Test User"
+        export USER_EMAIL="test@example.com"
+        EOF
+        
+    - name: Run dotfiles tests
+      run: |
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+    - name: Test macOS-specific detection
+      run: |
+        source bin/lib/common.sh
+        
+        # Verify macOS detection
+        if [[ "$(detect_platform)" != "macos" ]]; then
+          echo "ERROR: Platform detection failed on macOS"
+          exit 1
+        fi
+        
+        if ! is_macos; then
+          echo "ERROR: is_macos() function failed"
+          exit 1
+        fi
+        
+        echo "macOS detection working correctly"
+        
+    - name: Test package manager detection
+      run: |
+        source bin/lib/common.sh
+        
+        pkg_mgr=$(detect_package_manager)
+        echo "Detected package manager: $pkg_mgr"
+        
+        # On macOS, should detect brew if available
+        if command -v brew >/dev/null 2>&1; then
+          if [[ "$pkg_mgr" != "brew" ]]; then
+            echo "ERROR: Should detect brew on macOS"
+            exit 1
+          fi
+        fi
+
+  test-configuration:
+    name: Test Configuration Management
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Test versions.conf parsing
+      run: |
+        source bin/lib/config_loader.sh
+        load_config
+        
+        # Verify key configuration values are loaded
+        echo "NVM_VERSION: ${NVM_VERSION:-'not set'}"
+        echo "FONT_CICA_VERSION: ${FONT_CICA_VERSION:-'not set'}"
+        echo "LAZYGIT_VERSION: ${LAZYGIT_VERSION:-'not set'}"
+        
+        # Ensure essential versions are defined
+        [[ -n "${NVM_VERSION:-}" ]] || (echo "NVM_VERSION not set" && exit 1)
+        [[ -n "${FONT_CICA_VERSION:-}" ]] || (echo "FONT_CICA_VERSION not set" && exit 1)
+        
+    - name: Test personal config template
+      run: |
+        # Verify template exists and is valid
+        [[ -f "config/personal.conf.template" ]] || (echo "Personal config template missing" && exit 1)
+        
+        # Verify template contains required variables
+        grep -q "USER_NAME" config/personal.conf.template || (echo "USER_NAME missing from template" && exit 1)
+        grep -q "USER_EMAIL" config/personal.conf.template || (echo "USER_EMAIL missing from template" && exit 1)
+        
+    - name: Test configuration validation
+      run: |
+        # Create test personal config
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Test User"
+        export USER_EMAIL="test@example.com"
+        EOF
+        
+        source bin/lib/config_loader.sh
+        load_config
+        
+        # Test validation function
+        if ! validate_config; then
+          echo "Configuration validation failed"
+          exit 1
+        fi
+
+  test-documentation:
+    name: Test Documentation Consistency
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Verify README files exist
+      run: |
+        [[ -f "README.md" ]] || (echo "README.md missing" && exit 1)
+        [[ -f "README.ja.md" ]] || (echo "README.ja.md missing" && exit 1)
+        [[ -f "bin/lib/README.md" ]] || (echo "Library README missing" && exit 1)
+        
+    - name: Check Makefile targets in documentation
+      run: |
+        # Extract make targets from Makefile
+        make_targets=$(grep "^[a-zA-Z_-]*:" Makefile | cut -d: -f1 | grep -v "^#" | sort)
+        
+        # Check if main targets are documented in README
+        while IFS= read -r target; do
+          if [[ "$target" =~ ^(help|all)$ ]]; then
+            continue  # Skip meta targets
+          fi
+          
+          if ! grep -q "make $target" README.md; then
+            echo "WARNING: Target '$target' not found in README.md"
+          fi
+        done <<< "$make_targets"
+        
+    - name: Verify command consistency between READMEs
+      run: |
+        # Extract make commands from both READMEs
+        en_commands=$(grep -o "make [a-z-]*" README.md | sort | uniq)
+        ja_commands=$(grep -o "make [a-z-]*" README.ja.md | sort | uniq)
+        
+        # Compare command lists
+        if [[ "$en_commands" != "$ja_commands" ]]; then
+          echo "WARNING: Make commands differ between README.md and README.ja.md"
+          echo "English README commands:"
+          echo "$en_commands"
+          echo "Japanese README commands:"
+          echo "$ja_commands"
+        else
+          echo "Make commands consistent between both READMEs"
+        fi
+
+  test-scripts-syntax:
+    name: Test Script Syntax
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Install shellcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+        
+    - name: Test shell script syntax
+      run: |
+        # Find all shell scripts and test syntax
+        find . -name "*.sh" -type f | while IFS= read -r script; do
+          echo "Checking syntax: $script"
+          bash -n "$script" || (echo "Syntax error in $script" && exit 1)
+        done
+        
+    - name: Run shellcheck on key scripts
+      run: |
+        # Run shellcheck on important scripts
+        key_scripts=(
+          "bin/test.sh"
+          "bin/config.sh"
+          "bin/link.sh"
+          "bin/lib/common.sh"
+          "bin/lib/config_loader.sh"
+          "bin/lib/uv_installer.sh"
+          "bin/lib/symlink_manager.sh"
+        )
+        
+        for script in "${key_scripts[@]}"; do
+          if [[ -f "$script" ]]; then
+            echo "Running shellcheck on: $script"
+            shellcheck "$script" || echo "Shellcheck warnings in $script"
+          fi
+        done
+
+  # Pull Request specific validation
+  pr-validation:
+    name: Pull Request Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout PR
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Get changed files
+      id: changed-files
+      run: |
+        # Get list of changed files
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+        else
+          BASE_SHA="origin/main"
+        fi
+        
+        git diff --name-only "$BASE_SHA"...HEAD > changed_files.txt
+        echo "Changed files:"
+        cat changed_files.txt
+        
+        # Check if documentation needs updating
+        has_code_changes=false
+        has_readme_changes=false
+        
+        while IFS= read -r file; do
+          case "$file" in
+            bin/*.sh|Makefile|config/*)
+              has_code_changes=true
+              ;;
+            README.md|README.ja.md)
+              has_readme_changes=true
+              ;;
+          esac
+        done < changed_files.txt
+        
+        echo "has_code_changes=$has_code_changes" >> $GITHUB_OUTPUT
+        echo "has_readme_changes=$has_readme_changes" >> $GITHUB_OUTPUT
+        
+    - name: Check documentation updates
+      if: steps.changed-files.outputs.has_code_changes == 'true'
+      run: |
+        if [[ "${{ steps.changed-files.outputs.has_readme_changes }}" != "true" ]]; then
+          echo "::warning::Code changes detected but README files not updated"
+          echo "Please update README.md and README.ja.md according to CLAUDE.md guidelines"
+          echo "Changed files that may require documentation updates:"
+          grep -E "(bin/|Makefile|config/)" changed_files.txt || true
+        fi
+        
+    - name: Validate changed shell scripts
+      run: |
+        # Check only changed shell scripts
+        if [[ -f "changed_files.txt" ]]; then
+          changed_scripts=$(grep "\.sh$" changed_files.txt || true)
+          
+          if [[ -n "$changed_scripts" ]]; then
+            echo "Validating changed shell scripts:"
+            while IFS= read -r script; do
+              if [[ -f "$script" ]]; then
+                echo "Checking: $script"
+                bash -n "$script" || (echo "::error::Syntax error in $script" && exit 1)
+              fi
+            done <<< "$changed_scripts"
+          fi
+        fi
+        
+    - name: Security check for secrets
+      run: |
+        # Check for potential secrets in changed files
+        if [[ -f "changed_files.txt" ]]; then
+          while IFS= read -r file; do
+            if [[ -f "$file" ]]; then
+              # Check for email patterns (except examples)
+              if grep -E "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" "$file" | grep -v "example.com" | grep -v "your.email" | grep -v "test@"; then
+                echo "::warning::Potential email address found in $file"
+              fi
+              
+              # Check for potential API keys or tokens
+              if grep -E "(api[_-]?key|token|secret|password)" "$file" | grep -v "example" | grep -v "template" | grep -v "GITHUB_TOKEN" | grep -v "GITEA_TOKEN" | grep -v "FORGEJO_TOKEN"; then
+                echo "::warning::Potential secret found in $file"
+              fi
+            fi
+          done < changed_files.txt
+        fi
+
+  test-integration:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    needs: [test-linux, test-configuration, test-scripts-syntax]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Full integration test
+      run: |
+        # Create test environment
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Integration Test User"
+        export USER_EMAIL="integration-test@example.com"
+        EOF
+        
+        # Run comprehensive test
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+        # Test make commands that don't require installation
+        make validate
+        make status
+        make debug
+        
+        echo "Integration test completed successfully"
+
+  # Platform compatibility test (Forgejo/Gitea specific)
+  test-forgejo-gitea:
+    name: Test Forgejo/Gitea Compatibility
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'forgejo' || github.repository_owner == 'gitea' || contains(github.server_url, 'forgejo') || contains(github.server_url, 'gitea')
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Test in Forgejo/Gitea environment
+      run: |
+        echo "Running in Forgejo/Gitea environment"
+        echo "Server URL: ${{ github.server_url }}"
+        echo "Repository: ${{ github.repository }}"
+        
+        # Create test configuration
+        mkdir -p config
+        cat > config/personal.conf << 'EOF'
+        export USER_NAME="Forgejo Test User"
+        export USER_EMAIL="forgejo-test@example.com"
+        EOF
+        
+        # Run basic tests
+        chmod +x bin/test.sh
+        bash bin/test.sh
+        
+        echo "Forgejo/Gitea compatibility test completed"
+
+  notify-results:
+    name: Notify Test Results
+    runs-on: ubuntu-latest
+    needs: [test-linux, test-macos, test-configuration, test-documentation, test-scripts-syntax, test-integration, pr-validation]
+    if: always()
+    
+    steps:
+    - name: Check test results
+      run: |
+        echo "Test suite completed"
+        echo "Platform: ${{ runner.os }}"
+        echo "Environment: ${{ github.server_url }}"
+        echo ""
+        echo "Test Results:"
+        echo "- Linux tests: ${{ needs.test-linux.result }}"
+        echo "- macOS tests: ${{ needs.test-macos.result || 'skipped' }}"
+        echo "- Configuration tests: ${{ needs.test-configuration.result }}"
+        echo "- Documentation tests: ${{ needs.test-documentation.result }}"
+        echo "- Script syntax tests: ${{ needs.test-scripts-syntax.result }}"
+        echo "- Integration tests: ${{ needs.test-integration.result }}"
+        echo "- PR validation: ${{ needs.pr-validation.result || 'skipped' }}"
+        
+        # Determine overall success
+        failed_tests=()
+        
+        if [[ "${{ needs.test-linux.result }}" == "failure" ]]; then
+          failed_tests+=("Linux")
+        fi
+        if [[ "${{ needs.test-configuration.result }}" == "failure" ]]; then
+          failed_tests+=("Configuration")
+        fi
+        if [[ "${{ needs.test-scripts-syntax.result }}" == "failure" ]]; then
+          failed_tests+=("Script Syntax")
+        fi
+        if [[ "${{ needs.test-integration.result }}" == "failure" ]]; then
+          failed_tests+=("Integration")
+        fi
+        if [[ "${{ needs.pr-validation.result }}" == "failure" ]]; then
+          failed_tests+=("PR Validation")
+        fi
+        
+        if [[ ${#failed_tests[@]} -gt 0 ]]; then
+          echo ""
+          echo "❌ Failed tests: ${failed_tests[*]}"
+          exit 1
+        else
+          echo ""
+          echo "✅ All tests passed successfully!"
+          echo "Dotfiles are ready for deployment"
+        fi

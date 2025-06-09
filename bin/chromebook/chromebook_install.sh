@@ -1,20 +1,25 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# ./install.sh
+# 共通ライブラリをインポート
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/../lib/common.sh"
+source "${SCRIPT_DIR}/../lib/uv_installer.sh"
 
-echo "Chromebook setup start"
+# エラーハンドリングを設定
+setup_error_handling
 
-# Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
+log_info "Starting Chromebook setup"
+
+# Install uv using common library
+install_uv
 
 # alacritty
-echo "alacritty for chromebook"
+log_info "Setting up alacritty for chromebook"
 ALACRITTY_DIR=~/.config/alacritty
 ALACRITTY_FILE=$ALACRITTY_DIR/alacritty.yml
-unlink $ALACRITTY_DIR
+unlink $ALACRITTY_DIR 2>/dev/null || true
 rm -rf $ALACRITTY_DIR
 mkdir -p $ALACRITTY_DIR
-ln -sf ~/dotfiles/.config/alacritty/alacritty-chromebook.yml $ALACRITTY_FILE
+ln -sf ~/dotfiles/.config/alacritty/alacritty_chromebook.yml $ALACRITTY_FILE
 
-echo "Chromebook setup end"
-exit 0
+log_success "Chromebook setup completed"
