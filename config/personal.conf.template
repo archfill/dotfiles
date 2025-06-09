@@ -1,0 +1,13 @@
+# Personal Configuration Template
+# Copy this file to personal.conf and customize with your information
+# personal.conf is excluded from Git to keep personal information private
+
+# Git configuration
+export USER_NAME="Your Name"
+export USER_EMAIL="your.email@example.com"
+
+# Optional: Custom settings
+# export CUSTOM_SETTING="value"
+
+# Note: This file serves as a template for personal.conf
+# The actual personal.conf file should not be committed to Git
