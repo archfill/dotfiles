@@ -2,9 +2,15 @@
 
 # 共通ライブラリをインポート
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/lib/common.sh"
-source "${SCRIPT_DIR}/lib/config_loader.sh"
-source "${SCRIPT_DIR}/lib/symlink_manager.sh"
+
+# DOTFILES_DIRが設定されていない場合は設定
+if [[ -z "${DOTFILES_DIR:-}" ]]; then
+  DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+fi
+
+source "${DOTFILES_DIR}/bin/lib/common.sh"
+source "${DOTFILES_DIR}/bin/lib/config_loader.sh"
+source "${DOTFILES_DIR}/bin/lib/symlink_manager.sh"
 
 # エラーハンドリングを設定
 setup_error_handling
