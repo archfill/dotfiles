@@ -42,6 +42,9 @@ M.default_keybinds = {
 		mods = "CTRL|SHIFT|ALT",
 		action = act.Multiple({ act.CopyMode("ClearSelectionMode"), act.ActivateCopyMode, act.ClearSelection }),
 	},
+	-- Window management
+	{ key = "Enter", mods = osKey, action = "ToggleFullScreen" },
+	{ key = "F11", mods = "NONE", action = "ToggleFullScreen" },
 }
 
 function M.create_keybinds()

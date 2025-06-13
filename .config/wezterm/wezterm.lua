@@ -106,9 +106,7 @@ local config = {
 		{ family = "UDEV Gothic 35NFLG" },
 	}),
 	font_size = FONT_SIZE,
-	-- Font rendering improvements
-	font_antialias = "Subpixel",
-	font_hinting = "Full",
+	-- Font rendering improvements (using modern freetype settings)
 	check_for_updates = false,
 	use_ime = true,
 	-- ime_preedit_rendering = "System",
@@ -204,7 +202,7 @@ local config = {
 	window_background_opacity = 0.95,
 	macos_window_background_blur = 30,
 	-- Modern window decorations
-	window_decorations = "RESIZE",
+	window_decorations = "TITLE | RESIZE",
 	window_close_confirmation = "NeverPrompt",
 	-- Smooth animations
 	animation_fps = 60,
