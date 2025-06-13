@@ -175,3 +175,34 @@ fonts-japanese: ## Install Japanese-focused font set
 fonts-all: ## Install all available fonts
 	@echo "Installing all available fonts..."
 	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts all'
+
+# ghq関連コマンド
+ghq-setup: ## Setup ghq for repository management
+	@echo "Setting up ghq..."
+	@bash bin/apps/ghq.sh
+
+ghq-list: ## List all repositories managed by ghq
+	@echo "Repositories managed by ghq:"
+	@if command -v ghq >/dev/null 2>&1; then \
+		ghq list; \
+	else \
+		echo "ghq is not installed. Run 'make ghq-setup' first."; \
+	fi
+
+ghq-get: ## Clone a repository with ghq (usage: make ghq-get REPO=github.com/user/repo)
+	@if [ -z "$(REPO)" ]; then \
+		echo "Usage: make ghq-get REPO=<repository-url>"; \
+		echo "Example: make ghq-get REPO=github.com/user/repo"; \
+	else \
+		echo "Cloning repository: $(REPO)"; \
+		ghq get "$(REPO)"; \
+	fi
+
+tmux-reload: ## Reload tmux configuration
+	@echo "Reloading tmux configuration..."
+	@if tmux info >/dev/null 2>&1; then \
+		tmux source-file ~/.config/tmux/tmux.conf; \
+		echo "✅ tmux configuration reloaded"; \
+	else \
+		echo "❌ tmux is not running"; \
+	fi
