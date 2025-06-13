@@ -13,7 +13,15 @@ fi
 files="${DOTFILES_DIR}/bin/apps/*"
 for filepath in $files; do
   if [[ -f "$filepath" && ! "${filepath}" == *setup.sh* ]]; then
-    log_info "Running app setup: $(basename "$filepath")"
+    script_name="$(basename "$filepath")"
+    log_info "Running app setup: $script_name"
+    
+    # Skip certain scripts in CI environment
+    if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]] && [[ "$script_name" == "ghq.sh" ]]; then
+      log_info "Skipping $script_name in CI environment"
+      continue
+    fi
+    
     bash "${filepath}"
   fi
 done

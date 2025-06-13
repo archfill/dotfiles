@@ -24,3 +24,15 @@ alias pyproject-init='uv init'
 alias pyenv-install='uv python install'
 alias pyenv-versions='uv python list'
 alias pyenv-which='uv python which'
+
+## ghq aliases
+alias ghq-list='ghq list'
+alias ghq-root='ghq root'
+alias ghq-look='ghq look'
+alias gq='ghq list | fzf --preview "echo {} && echo && cat $(ghq root)/{}/README.md 2>/dev/null || ls -la $(ghq root)/{}" | xargs -I {} sh -c "cd $(ghq root)/{} && exec $SHELL"'
+alias ghq-remove='ghq list | fzf --multi | xargs -I {} rm -rf $(ghq root)/{}'
+alias ghq-update='ghq list | xargs -I {} git -C $(ghq root)/{} pull'
+
+## Project navigation shortcuts
+alias p='g'  # Short alias for project selection
+alias repo='g'  # Alternative alias
