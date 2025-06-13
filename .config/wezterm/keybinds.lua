@@ -22,111 +22,35 @@ end
 ---------------------------------------------------------------
 --- keybinds
 ---------------------------------------------------------------
-M.tmux_keybinds = {
-	{ key = "k", mods = "SUPER", action = act({ SpawnTab = "CurrentPaneDomain" }) },
-	{ key = "j", mods = "SUPER", action = act({ CloseCurrentTab = { confirm = true } }) },
-	{ key = "h", mods = "SUPER", action = act({ ActivateTabRelative = -1 }) },
-	{ key = "l", mods = "SUPER", action = act({ ActivateTabRelative = 1 }) },
-	{ key = "<", mods = "SUPER|SHIFT", action = act({ MoveTabRelative = -1 }) },
-	{ key = ">", mods = "SUPER|SHIFT", action = act({ MoveTabRelative = 1 }) },
-	--{ key = "k", mods = "SUPER|CTRL", action = act.ActivateCopyMode },
-	{
-		key = "c",
-		mods = "SUPER|SHIFT",
-		action = act.Multiple({ act.CopyMode("ClearSelectionMode"), act.ActivateCopyMode, act.ClearSelection }),
-	},
-	{ key = "p", mods = "SUPER|SHIFT", action = act({ PasteFrom = "PrimarySelection" }) },
-	{ key = "a", mods = "LEADER|CTRL", action = act({ ActivateTab = 0 }) },
-	{ key = "s", mods = "LEADER|CTRL", action = act({ ActivateTab = 1 }) },
-	{ key = "d", mods = "LEADER|CTRL", action = act({ ActivateTab = 2 }) },
-	{ key = "f", mods = "LEADER|CTRL", action = act({ ActivateTab = 3 }) },
-	{ key = "g", mods = "LEADER|CTRL", action = act({ ActivateTab = 4 }) },
-	{ key = "h", mods = "LEADER|CTRL", action = act({ ActivateTab = 5 }) },
-	{ key = "j", mods = "LEADER|CTRL", action = act({ ActivateTab = 6 }) },
-	{ key = "k", mods = "LEADER|CTRL", action = act({ ActivateTab = 7 }) },
-	{ key = "l", mods = "LEADER|CTRL", action = act({ ActivateTab = 8 }) },
-	{ key = "v", mods = "LEADER", action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
-	{ key = "s", mods = "LEADER", action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }) },
-	{ key = "h", mods = "LEADER", action = act({ ActivatePaneDirection = "Left" }) },
-	{ key = "l", mods = "LEADER", action = act({ ActivatePaneDirection = "Right" }) },
-	{ key = "k", mods = "LEADER", action = act({ ActivatePaneDirection = "Up" }) },
-	{ key = "j", mods = "LEADER", action = act({ ActivatePaneDirection = "Down" }) },
-	{ key = "h", mods = "LEADER|SHIFT", action = act({ AdjustPaneSize = { "Left", 1 } }) },
-	{ key = "l", mods = "LEADER|SHIFT", action = act({ AdjustPaneSize = { "Right", 1 } }) },
-	{ key = "k", mods = "LEADER|SHIFT", action = act({ AdjustPaneSize = { "Up", 1 } }) },
-	{ key = "j", mods = "LEADER|SHIFT", action = act({ AdjustPaneSize = { "Down", 1 } }) },
-	{ key = "Enter", mods = "LEADER", action = "QuickSelect" },
-	{ key = "/", mods = "LEADER", action = act.Search("CurrentSelectionOrEmptyString") },
-}
+-- Disabled tmux_keybinds to use external tmux
+-- M.tmux_keybinds = {}
 
 M.default_keybinds = {
+	-- Basic clipboard operations
 	{ key = "c", mods = osKey, action = act({ CopyTo = "Clipboard" }) },
 	{ key = "v", mods = osKey, action = act({ PasteFrom = "Clipboard" }) },
 	{ key = "Insert", mods = "SHIFT", action = act({ PasteFrom = "PrimarySelection" }) },
+	-- Font size controls
 	{ key = "=", mods = "CTRL", action = "ResetFontSize" },
 	{ key = "+", mods = "CTRL", action = "IncreaseFontSize" },
 	{ key = "-", mods = "CTRL", action = "DecreaseFontSize" },
-	{ key = "UpArrow", mods = "LEADER", action = act({ ScrollByPage = -1 }) },
-	{ key = "DownArrow", mods = "LEADER", action = act({ ScrollByPage = 1 }) },
-	{ key = "z", mods = "LEADER", action = "ReloadConfiguration" },
-	{ key = "z", mods = "LEADER|SHIFT", action = act({ EmitEvent = "toggle-tmux-keybinds" }) },
-	{ key = "e", mods = "LEADER", action = act({ EmitEvent = "trigger-nvim-with-scrollback" }) },
-	{ key = "q", mods = "LEADER", action = act({ CloseCurrentPane = { confirm = true } }) },
-	{ key = "x", mods = "LEADER", action = act({ CloseCurrentPane = { confirm = true } }) },
+	-- Configuration reload (using different key combination to avoid tmux conflict)
+	{ key = "F5", mods = "NONE", action = "ReloadConfiguration" },
+	-- Copy mode activation (using different key combination)
 	{
-		key = "r",
-		mods = "LEADER",
-		-- action = act({
-		-- 	ActivateKeyTable = {
-		-- 		name = "resize_pane",
-		-- 		one_shot = false,
-		-- 		timeout_milliseconds = 3000,
-		-- 		replace_current = false,
-		-- 	},
-		-- }),
-		action = act.ActivateKeyTable({
-			name = "resize_pane",
-			one_shot = false,
-			timeout_milliseconds = 3000,
-			replace_current = false,
-		}),
-	},
-	{
-		key = "s",
-		mods = "LEADER",
-		action = act.PaneSelect({
-			alphabet = "asdfghjkl-",
-		}),
-	},
-	{
-		key = "b",
-		mods = "LEADER",
-		action = act.RotatePanes("CounterClockwise"),
-	},
-	{
-		key = "f",
-		mods = "LEADER",
-		action = act.RotatePanes("Clockwise"),
+		key = "c",
+		mods = "CTRL|SHIFT|ALT",
+		action = act.Multiple({ act.CopyMode("ClearSelectionMode"), act.ActivateCopyMode, act.ClearSelection }),
 	},
 }
 
 function M.create_keybinds()
-	return utils.merge_lists(M.default_keybinds, M.tmux_keybinds)
+	-- Return only default keybinds since tmux_keybinds is disabled
+	return M.default_keybinds
 end
 
 M.key_tables = {
-	resize_pane = {
-		{ key = "LeftArrow", action = act({ AdjustPaneSize = { "Left", 1 } }) },
-		{ key = "h", action = act({ AdjustPaneSize = { "Left", 1 } }) },
-		{ key = "RightArrow", action = act({ AdjustPaneSize = { "Right", 1 } }) },
-		{ key = "l", action = act({ AdjustPaneSize = { "Right", 1 } }) },
-		{ key = "UpArrow", action = act({ AdjustPaneSize = { "Up", 1 } }) },
-		{ key = "k", action = act({ AdjustPaneSize = { "Up", 1 } }) },
-		{ key = "DownArrow", action = act({ AdjustPaneSize = { "Down", 1 } }) },
-		{ key = "j", action = act({ AdjustPaneSize = { "Down", 1 } }) },
-		-- Cancel the mode by pressing escape
-		{ key = "Escape", action = "PopKeyTable" },
-	},
+	-- Removed resize_pane table to avoid conflicts with tmux
 	copy_mode = {
 		{
 			key = "Escape",
