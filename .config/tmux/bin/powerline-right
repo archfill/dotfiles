@@ -1,0 +1,36 @@
+#!/bin/bash
+# Modern Powerline Right Status (2025 Edition)
+
+# カラーパレット (Tokyo Night)
+color_bg="#1a1b26"
+color_fg="#c0caf5"
+color_accent="#7aa2f7"
+color_secondary="#9ece6a"
+color_highlight="#ff9e64"
+color_active="#bb9af7"
+
+# システム負荷
+load_avg=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | sed 's/,//')
+cpu_info="#[fg=$color_bg,bg=$color_active] 󰍛 $load_avg #[fg=$color_active,bg=$color_bg]"
+
+# メモリ使用量
+if command -v free > /dev/null; then
+    mem_usage=$(free | awk 'NR==2{printf "%.0f%%", $3*100/$2}')
+    mem_info="#[fg=$color_bg,bg=$color_secondary] 󰆼 $mem_usage #[fg=$color_secondary,bg=$color_bg]"
+else
+    mem_info=""
+fi
+
+# バッテリー情報（利用可能な場合）
+battery_info=""
+if [ -x "$(command -v ~/.config/tmux/bin/battery)" ]; then
+    battery_raw=$(~/.config/tmux/bin/battery --tmux)
+    if [ -n "$battery_raw" ]; then
+        battery_info="#[fg=$color_bg,bg=$color_highlight] 󰁹 $battery_raw #[fg=$color_highlight,bg=$color_bg]"
+    fi
+fi
+
+# 日時表示（アイコン付き）
+datetime="#[fg=$color_bg,bg=$color_accent] 󰅐 %m/%d %H:%M #[default]"
+
+echo "$cpu_info$mem_info$battery_info$datetime"

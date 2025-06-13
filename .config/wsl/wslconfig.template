@@ -1,0 +1,37 @@
+# WSL設定ファイルテンプレート
+# このファイルはWindows側のユーザーディレクトリ（C:\Users\username\.wslconfig）に配置する
+
+[wsl2]
+# メモリ使用量制限（システムRAMの50%程度を推奨）
+memory=8GB
+
+# スワップファイルサイズ
+swap=2GB
+
+# 使用するプロセッサ数（物理コア数の75%程度を推奨）
+processors=4
+
+# ネットワーク設定
+localhostForwarding=true
+
+# VMの実行場所（デフォルト: %USERPROFILE%）
+# vmIdleTimeout=60000
+
+# I/O最適化設定
+pageReporting=false
+
+# GUI アプリケーション サポート (WSLg)
+guiApplications=true
+
+# デバッグコンソール出力
+debugConsole=false
+
+[experimental]
+# 自動メモリ回収
+autoMemoryReclaim=gradual
+
+# スパース VHD
+sparseVhd=true
+
+# ホストとの時刻同期
+autoProxy=true

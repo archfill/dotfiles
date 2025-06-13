@@ -1,0 +1,24 @@
+#!/bin/bash
+# Modern Powerline Left Status (2025 Edition)
+
+# カラーパレット (Tokyo Night)
+color_bg="#1a1b26"
+color_accent="#7aa2f7"
+color_secondary="#9ece6a"
+color_highlight="#ff9e64"
+
+# セッション情報
+session_name="#S"
+session_info="#[fg=$color_bg,bg=$color_accent,bold] 󰊠 $session_name #[fg=$color_accent,bg=$color_bg]"
+
+# システム情報（ユーザー@ホスト）
+user_host="#[fg=$color_bg,bg=$color_secondary] $(whoami)@$(hostname -s) #[fg=$color_secondary,bg=$color_bg]"
+
+# Git情報（現在のディレクトリがGitリポジトリの場合）
+git_info=""
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    branch=$(git branch --show-current 2>/dev/null || echo "detached")
+    git_info="#[fg=$color_bg,bg=$color_highlight]  $branch #[fg=$color_highlight,bg=$color_bg]"
+fi
+
+echo "$session_info$user_host$git_info"
