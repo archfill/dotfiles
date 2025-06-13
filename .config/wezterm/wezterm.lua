@@ -100,9 +100,15 @@ end
 --- Config
 ---------------------------------------------------------------
 local config = {
-	font = wezterm.font("HackGen Console NF", { weight = "Regular", stretch = "Normal", italic = false }),
-	-- font = wezterm.font("UDEV Gothic 35NFLG"),
+	font = wezterm.font_with_fallback({
+		{ family = "JetBrains Mono", weight = "Regular", harfbuzz_features = { "calt=1", "clig=1", "liga=1" } },
+		{ family = "HackGen Console NF", weight = "Regular" },
+		{ family = "UDEV Gothic 35NFLG" },
+	}),
 	font_size = FONT_SIZE,
+	-- Font rendering improvements
+	font_antialias = "Subpixel",
+	font_hinting = "Full",
 	check_for_updates = false,
 	use_ime = true,
 	-- ime_preedit_rendering = "System",
@@ -110,39 +116,106 @@ local config = {
 	warn_about_missing_glyphs = false,
 	-- enable_kitty_graphics = false,
 	-- animation_fps = 1,
-	cursor_blink_ease_in = "Constant",
-	cursor_blink_ease_out = "Constant",
-	cursor_blink_rate = 0,
+	-- Modern cursor
+	default_cursor_style = "BlinkingBlock",
+	cursor_blink_ease_in = "EaseIn",
+	cursor_blink_ease_out = "EaseOut",
+	cursor_blink_rate = 800,
 	enable_wayland = enable_wayland(),
 	-- https://github.com/wez/wezterm/issues/1772
 	-- enable_wayland = false,
-	-- color_scheme = "nightfox",
-	color_scheme = "tokyonight_night",
-	hide_tab_bar_if_only_one_tab = false,
+	-- Modern color scheme
+	color_scheme = "Catppuccin Mocha",
+	-- hide_tab_bar_if_only_one_tab = false, -- moved below
 	adjust_window_size_when_changing_font_size = false,
 	selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%",
 	window_padding = {
-		left = 0,
-		right = 0,
-		top = 0,
-		bottom = 0,
+		left = 20,
+		right = 20,
+		top = 20,
+		bottom = 20,
 	},
-	use_fancy_tab_bar = false,
+	use_fancy_tab_bar = true,
+	tab_bar_at_bottom = false,
+	show_new_tab_button_in_tab_bar = false,
 	colors = {
+		-- Modern color overrides for Catppuccin Mocha
+		foreground = "#CDD6F4",
+		background = "#1E1E2E",
+		cursor_bg = "#F5E0DC",
+		cursor_fg = "#1E1E2E",
+		cursor_border = "#F5E0DC",
+		selection_fg = "#1E1E2E",
+		selection_bg = "#F5E0DC",
+		scrollbar_thumb = "#585B70",
+		split = "#6C7086",
+		
+		ansi = {
+			"#45475A", -- black
+			"#F38BA8", -- red
+			"#A6E3A1", -- green
+			"#F9E2AF", -- yellow
+			"#89B4FA", -- blue
+			"#F5C2E7", -- magenta
+			"#94E2D5", -- cyan
+			"#BAC2DE", -- white
+		},
+		brights = {
+			"#585B70", -- bright black
+			"#F38BA8", -- bright red
+			"#A6E3A1", -- bright green
+			"#F9E2AF", -- bright yellow
+			"#89B4FA", -- bright blue
+			"#F5C2E7", -- bright magenta
+			"#94E2D5", -- bright cyan
+			"#A6ADC8", -- bright white
+		},
+		
 		tab_bar = {
-			background = scheme.background,
-			new_tab = { bg_color = "#2e3440", fg_color = scheme.ansi[8], intensity = "Bold" },
-			new_tab_hover = { bg_color = scheme.ansi[1], fg_color = scheme.brights[8], intensity = "Bold" },
-			-- format-tab-title
-			-- active_tab = { bg_color = "#121212", fg_color = "#FCE8C3" },
-			-- inactive_tab = { bg_color = scheme.background, fg_color = "#FCE8C3" },
-			-- inactive_tab_hover = { bg_color = scheme.ansi[1], fg_color = "#FCE8C3" },
+			background = "#11111B",
+			active_tab = {
+				bg_color = "#89B4FA",
+				fg_color = "#1E1E2E",
+				intensity = "Bold",
+			},
+			inactive_tab = {
+				bg_color = "#313244",
+				fg_color = "#CDD6F4",
+			},
+			inactive_tab_hover = {
+				bg_color = "#45475A",
+				fg_color = "#CDD6F4",
+				intensity = "Bold",
+			},
+			new_tab = {
+				bg_color = "#313244",
+				fg_color = "#CDD6F4",
+			},
+			new_tab_hover = {
+				bg_color = "#45475A",
+				fg_color = "#CDD6F4",
+				intensity = "Bold",
+			},
 		},
 	},
 	-- exit_behavior = "CloseOnCleanExit",
 	-- tab_bar_at_bottom = false,
 	-- window_close_confirmation = "AlwaysPrompt",
-	window_background_opacity = 0.9,
+	window_background_opacity = 0.95,
+	macos_window_background_blur = 30,
+	-- Modern window decorations
+	window_decorations = "RESIZE",
+	window_close_confirmation = "NeverPrompt",
+	-- Smooth animations
+	animation_fps = 60,
+	max_fps = 60,
+	-- Additional modern effects
+	text_background_opacity = 1.0,
+	-- Enable ligatures and advanced font features
+	harfbuzz_features = { "calt=1", "clig=1", "liga=1" },
+	-- Improved text rendering
+	freetype_load_target = "HorizontalLcd",
+	freetype_render_target = "HorizontalLcd",
 	disable_default_key_bindings = true,
 	-- visual_bell = {
 	-- 	fade_in_function = "EaseIn",
@@ -152,7 +225,8 @@ local config = {
 	-- },
 	-- separate <Tab> <C-i>
 	-- enable_csi_u_key_encoding = true,
-	leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 },
+	-- Disable leader key to avoid conflicts with tmux
+	-- leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 },
 	keys = keybinds.create_keybinds(),
 	key_tables = keybinds.key_tables,
 	mouse_bindings = keybinds.mouse_bindings,
@@ -160,6 +234,12 @@ local config = {
 	-- webgpu_preferred_adapter = gpus[1],
 	-- front_end = "WebGpu",
 	default_prog = DEFAULT_PROG,
+	-- Disable built-in multiplexer to use tmux
+	enable_tab_bar = true,
+	hide_tab_bar_if_only_one_tab = true,
+	unix_domains = {},
+	-- Disable multiplexing completely
+	mux_server_port = nil,
 }
 
 local merged_config = utils.merge_tables(config, LOCAL_CONFIG)
