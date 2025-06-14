@@ -43,7 +43,6 @@ case "$OS_NAME" in
     run "bin/linux/install_linux.sh"
     run "bin/linux/apps/fonts_setup.sh"
     run "bin/linux/apps/deno_install.sh"
-    run "bin/linux/apps/neovim_install.sh"
     ;;
 
   MINGW32_NT*|MINGW64_NT*)

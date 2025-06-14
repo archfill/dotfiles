@@ -84,7 +84,7 @@ local plugins = {
 	-- Auto Completion
 	{
 		"hrsh7th/nvim-cmp",
-		event = "VimEnter",
+		event = { "InsertEnter", "CmdlineEnter" },
 		config = function()
 			require("pluginconfig.editor.nvim-cmp")
 		end,
@@ -150,7 +150,6 @@ local plugins = {
 					require("pluginconfig.lsp.mason-lspconfig")
 				end,
 			},
-			{ "weilbith/nvim-lsp-smag", after = "nvim-lspconfig" },
 		},
 	},
 	{
@@ -201,10 +200,7 @@ local plugins = {
 		dependencies = {
 			{
 				"nvim-telescope/telescope-frecency.nvim",
-				-- event = "VeryLazy",
-				-- config = function()
-				-- 	require("telescope").load_extension("frecency")
-				-- end,
+				dependencies = { "tami5/sqlite.lua" },
 			},
 			{
 				"delphinus/telescope-memo.nvim",
@@ -279,8 +275,7 @@ local plugins = {
 		"HiPhish/rainbow-delimiters.nvim",
 		event = "BufReadPost",
 		config = function()
-			-- patch https://github.com/nvim-treesitter/nvim-treesitter/issues/1124
-			vim.cmd.edit({ bang = true })
+			-- No additional configuration needed, plugin works out of the box
 		end,
 	},
 	-- ↓flutter-toolsのと競合する
@@ -347,13 +342,6 @@ local plugins = {
 			require("pluginconfig.editor.vim-illuminate")
 		end,
 	},
-	-- {
-	-- 	"xiyaowong/nvim-cursorword",
-	-- 	event = "VeryLazy",
-	-- 	config = function()
-	-- 		require("pluginconfig.nvim-cursorword")
-	-- 	end,
-	-- },
 	{
 		"folke/todo-comments.nvim",
 		event = "VeryLazy",
@@ -398,7 +386,7 @@ local plugins = {
 	-- Snippet
 	{
 		"L3MON4D3/LuaSnip",
-		event = "VeryLazy",
+		event = "InsertEnter",
 		config = function()
 			require("pluginconfig.editor.LuaSnip")
 		end,
@@ -451,7 +439,7 @@ local plugins = {
 		config = function()
 			require("pluginconfig.ui.alpha-nvim")
 		end,
-		dependencies = { { "nvim-tree/nvim-web-devicons", "ColaMint/pokemon.nvim" } },
+		dependencies = { { "nvim-tree/nvim-web-devicons" } },
 	},
 
 	--------------------------------
@@ -478,35 +466,9 @@ local plugins = {
 		end,
 	},
 
-	----------------
-	-- Horizontal Move
-	{
-		"jinh0/eyeliner.nvim",
-		event = "VeryLazy",
-		config = function()
-			require("eyeliner").setup({})
-		end,
-	},
-	{
-		"ggandor/lightspeed.nvim",
-		event = "VeryLazy",
-		init = function()
-			vim.g.lightspeed_no_default_keymaps = true
-		end,
-		config = function()
-			require("pluginconfig.editor.lightspeed")
-		end,
-	},
 
 	--------------------------------
 	-- Window
-	{
-		"kwkarlwang/bufresize.nvim",
-		event = "WinNew",
-		config = function()
-			require("pluginconfig.editor.bufresize")
-		end,
-	},
 	{
 		"simeji/winresizer",
 		event = "VeryLazy",
@@ -543,7 +505,7 @@ local plugins = {
 	-- Commandline
 	{
 		"folke/noice.nvim",
-		event = "VimEnter",
+		event = "VeryLazy",
 		config = function()
 			require("pluginconfig.ui.noice")
 		end,
@@ -634,7 +596,6 @@ local plugins = {
 			require("git-conflict").setup()
 		end,
 	},
-	{ "yutkat/convert-git-url.nvim", cmd = { "ConvertGitUrl" } },
 	{
 		"lewis6991/gitsigns.nvim",
 		event = "VimEnter",
@@ -702,41 +663,12 @@ local plugins = {
 		end,
 	},
 
-	--------------------------------
-	-- OpenAI
-	{
-		"jackMort/ChatGPT.nvim",
-		cmd = { "ChatGPT", "ChatGPTActAs" },
-		config = function()
-			require("chatgpt").setup({
-				-- optional configuration
-			})
-		end,
-	},
 
 	--------------------------------
 	-- AI completion
-	-- {
-	-- 	"zbirenbaum/copilot.lua",
-	-- 	-- cmd = { "Copilot" },
-	-- 	event = "InsertEnter",
-	-- 	config = function()
-	-- 		vim.defer_fn(function()
-	-- 			require("pluginconfig.copilot")
-	-- 		end, 100)
-	-- 	end,
-	-- },
 
 	--------------------------------
 	-- Coding
-	--- Writing assistant
-	{
-		"rareitems/put_at_end.nvim",
-		event = { "BufNewFile", "BufReadPre" },
-		config = function()
-			require("pluginconfig.editor.put_at_end")
-		end,
-	},
 
 	--------------------------------
 	-- Popup Info
@@ -752,13 +684,6 @@ local plugins = {
 	-- tools
 	--- memo
 	{
-		"glidenote/memolist.vim",
-		event = "VimEnter",
-		config = function()
-			require("pluginconfig.tools.memolist")
-		end,
-	},
-	{
 		"renerocksai/telekasten.nvim",
 		event = "VimEnter",
 		config = function()
@@ -767,46 +692,6 @@ local plugins = {
 		dependencies = { "renerocksai/calendar-vim" },
 	},
 
-	-- neorg
-	-- {
-	-- 	"nvim-neorg/neorg",
-	-- 	event = "VeryLazy",
-	-- 	build = ":Neorg sync-parsers",
-	-- 	-- ft = { "norg" },
-	-- 	config = function()
-	-- 		require("pluginconfig.language.neorg")
-	-- 	end,
-	-- 	dependencies = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
-	-- },
-	-- {
-	-- 	"nvim-neorg/neorg",
-	-- 	event = "VimEnter",
-	-- 	build = ":Neorg sync-parsers",
-	-- 	opts = {
-	-- 		load = {
-	-- 			["core.defaults"] = {},
-	-- 			["core.norg.dirman"] = {
-	-- 				config = {
-	-- 					workspaces = {
-	-- 						work = "~/neorg/work",
-	-- 					},
-	-- 				},
-	-- 			},
-	-- 			-- ["core.integrations.telescope"] = {},
-	-- 			["core.norg.concealer"] = {
-	-- 				config = {
-	-- 					icon_preset = "diamond",
-	-- 				},
-	-- 			},
-	-- 			["core.norg.completion"] = {
-	-- 				config = {
-	-- 					engine = "nvim-cmp",
-	-- 				},
-	-- 			},
-	-- 		},
-	-- 	},
-	-- 	dependencies = { { "nvim-lua/plenary.nvim" } },
-	-- },
 
 	--------------------------------
 	{ "folke/neodev.nvim" },

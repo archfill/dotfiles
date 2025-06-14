@@ -4,6 +4,9 @@ setopt no_global_rcs
 export ZDOTDIR=$HOME/.config/zsh
 export ZRCDIR=$ZDOTDIR/zshrc
 
+# Dotfiles directory path for scripts and aliases
+export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
+
 # Modern package managers are used instead:
 # - uv for Python (replaces pyenv)
 # - volta for Node.js (replaces nvm)

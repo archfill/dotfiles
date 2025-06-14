@@ -20,7 +20,6 @@ apps=(
   'lazygit' \
   'make' \
   'neomutt' \
-  'neovim' \
   'openssl' \
   'openjdk' \
   'openjdk@11' \
@@ -43,7 +42,6 @@ apps=(
   'yabai' \
   'yq' \
   'zlib' \
-  '--HEAD neovim' \
   '--cask altserver' \
   '--cask android-platform-tools' \
   '--cask appflowy' \

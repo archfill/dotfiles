@@ -36,3 +36,23 @@ alias ghq-update='ghq list | xargs -I {} git -C $(ghq root)/{} pull'
 ## Project navigation shortcuts
 alias p='g'  # Short alias for project selection
 alias repo='g'  # Alternative alias
+
+## Neovim Version Management aliases
+# Helper function for Neovim switcher
+_nvim_switch() {
+    local switcher="${DOTFILES_DIR:-$HOME/dotfiles}/bin/apps/neovim_switcher.sh"
+    if [[ -f "$switcher" ]]; then
+        bash "$switcher" "$@"
+    else
+        echo "Error: Neovim switcher not found at $switcher"
+        echo "Please check DOTFILES_DIR environment variable or run 'make neovim-setup'"
+        return 1
+    fi
+}
+
+# Neovim management aliases that work from anywhere
+alias nvim-s='_nvim_switch s'         # Switch to stable
+alias nvim-n='_nvim_switch n'         # Switch to nightly  
+alias nvim-t='_nvim_switch t'         # Toggle versions
+alias nvim-u='_nvim_switch u'         # Update current version
+alias nvim-status='_nvim_switch status'  # Show status
