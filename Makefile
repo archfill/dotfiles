@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup neovim-setup neovim-stable neovim-nightly neovim-status neovim-install neovim-uninstall neovim-toggle neovim-update nvim-s nvim-n nvim-t nvim-u
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -40,15 +40,6 @@ termux-setup: ## Setup for Android Termux environment
 	@echo "Setting up Termux environment..."
 	bash ./bin/termux/init.sh
 
-# Neovim関連
-neovim-install: ## Install Neovim on Linux systems
-	@echo "Installing Neovim..."
-	bash ./bin/linux/apps/neovim_install.sh
-
-neovim-uninstall: ## Remove Neovim installation
-	@echo "Uninstalling Neovim..."
-	bash ./bin/linux/apps/neovim_uninstall.sh
-
 # 専用設定スクリプト
 memolist-config: ## Configure note-taking system with optional Nextcloud sync
 	@echo "Configuring memolist..."
@@ -70,6 +61,63 @@ yaskkserv2-build: ## Build Japanese SKK input method server
 flutter-setup: ## Install and setup Flutter development environment
 	@echo "Setting up Flutter development environment..."
 	bash ./bin/apps/flutter.sh
+
+# Neovim管理コマンド
+neovim-setup: ## Setup Neovim stable/nightly switcher
+	@echo "Setting up Neovim version switcher..."
+	bash ./bin/apps/neovim_switcher.sh setup
+
+neovim-stable: ## Switch to Neovim stable version
+	@echo "Switching to Neovim stable version..."
+	bash ./bin/apps/neovim_switcher.sh stable
+
+neovim-nightly: ## Switch to Neovim nightly version
+	@echo "Switching to Neovim nightly version..."
+	bash ./bin/apps/neovim_switcher.sh nightly
+
+neovim-status: ## Show current Neovim version status
+	@bash ./bin/apps/neovim_switcher.sh status
+
+neovim-install: ## Install Neovim (usage: make neovim-install VERSION=stable/nightly)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Usage: make neovim-install VERSION=<stable|nightly>"; \
+		echo "Example: make neovim-install VERSION=stable"; \
+		echo "Example: make neovim-install VERSION=nightly"; \
+	else \
+		echo "Installing Neovim $(VERSION) version..."; \
+		bash ./bin/apps/neovim_installer.sh install "$(VERSION)"; \
+	fi
+
+neovim-uninstall: ## Uninstall Neovim (usage: make neovim-uninstall VERSION=stable/nightly)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Usage: make neovim-uninstall VERSION=<stable|nightly>"; \
+		echo "Example: make neovim-uninstall VERSION=stable"; \
+		echo "Example: make neovim-uninstall VERSION=nightly"; \
+	else \
+		echo "Uninstalling Neovim $(VERSION) version..."; \
+		bash ./bin/apps/neovim_installer.sh uninstall "$(VERSION)"; \
+	fi
+
+neovim-toggle: ## Toggle between stable and nightly versions
+	@echo "Toggling Neovim version..."
+	bash ./bin/apps/neovim_switcher.sh toggle
+
+neovim-update: ## Update current Neovim version
+	@echo "Updating current Neovim version..."
+	bash ./bin/apps/neovim_switcher.sh update
+
+# クイックエイリアスコマンド（超短縮形）
+nvim-s: ## Quick switch to stable (alias for neovim-stable)
+	@bash ./bin/apps/neovim_switcher.sh s
+
+nvim-n: ## Quick switch to nightly (alias for neovim-nightly)
+	@bash ./bin/apps/neovim_switcher.sh n
+
+nvim-t: ## Quick toggle between versions (alias for neovim-toggle)
+	@bash ./bin/apps/neovim_switcher.sh t
+
+nvim-u: ## Quick update current version (alias for neovim-update)
+	@bash ./bin/apps/neovim_switcher.sh u
 
 # テストとメンテナンス
 test: ## Run dotfiles functionality tests

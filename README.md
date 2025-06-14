@@ -18,6 +18,7 @@ A comprehensive, cross-platform dotfiles repository that automates development e
 
 ### 🛠️ **Development Environment**
 - **Neovim**: 50+ plugins with LSP, completion, debugging, and AI assistance
+  - **Version Switcher**: Seamless switching between stable and nightly versions
 - **Terminal**: WezTerm (primary), Alacritty, Kitty with custom themes
 - **Shell**: Zsh with optimized prompt and completion systems
 - **Git**: Lazygit integration and advanced Git configurations
@@ -197,6 +198,39 @@ Run `make help` to see all available commands:
 | `make wezterm-install` | Build WezTerm from source |
 | `make yaskkserv2-build` | Build Japanese input server |
 | `make flutter-setup` | Install Flutter development environment |
+
+### **Neovim Management**
+| Command | Description |
+|---------|-------------|
+| `make neovim-setup` | Setup Neovim stable/nightly switcher |
+| `make neovim-stable` | Switch to stable version |
+| `make neovim-nightly` | Switch to nightly version |
+| `make neovim-toggle` | Toggle between stable/nightly |
+| `make neovim-update` | Update current version |
+| `make neovim-status` | Show current version status |
+| `make neovim-install VERSION=stable` | Install stable version |
+| `make neovim-install VERSION=nightly` | Install nightly version |
+| `make neovim-uninstall VERSION=stable` | Uninstall stable version |
+| `make neovim-uninstall VERSION=nightly` | Uninstall nightly version |
+
+### **Neovim Quick Commands**
+
+#### **Make Commands (from dotfiles directory)**
+| Command | Description |
+|---------|-------------|
+| `make nvim-s` | 🚀 Quick switch to stable |
+| `make nvim-n` | 🌙 Quick switch to nightly |
+| `make nvim-t` | 🔄 Quick toggle between versions |
+| `make nvim-u` | ⬆️ Quick update current version |
+
+#### **Zsh Aliases (work from anywhere)**
+| Command | Description |
+|---------|-------------|
+| `nvim-s` | 🚀 Switch to stable (global alias) |
+| `nvim-n` | 🌙 Switch to nightly (global alias) |
+| `nvim-t` | 🔄 Toggle between versions (global alias) |
+| `nvim-u` | ⬆️ Update current version (global alias) |
+| `nvim-status` | 📊 Show status (global alias) |
 
 ## 🏗️ Architecture
 
