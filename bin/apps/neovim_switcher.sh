@@ -22,9 +22,10 @@ load_config
 
 # 定数定義
 readonly NVIM_CONFIG_DIR="$HOME/.config"
-readonly NVIM_STABLE_CONFIG="$NVIM_CONFIG_DIR/nvim-stable"
-readonly NVIM_NIGHTLY_CONFIG="$NVIM_CONFIG_DIR/nvim-nightly"
-readonly NVIM_CURRENT_LINK="$NVIM_CONFIG_DIR/nvim-current"
+readonly NVIM_UNIFIED_CONFIG="$DOTFILES_DIR/.config/nvim"
+readonly NVIM_LEGACY_STABLE_CONFIG="$NVIM_CONFIG_DIR/nvim-stable"
+readonly NVIM_LEGACY_NIGHTLY_CONFIG="$NVIM_CONFIG_DIR/nvim-nightly"
+readonly NVIM_CURRENT_CONFIG="$NVIM_CONFIG_DIR/nvim"
 readonly NVIM_STATE_FILE="$HOME/.neovim_version_state"
 
 # バイナリ関連の定数
@@ -179,6 +180,13 @@ init_config_directories() {
     # dotfilesリポジトリ内の分離された設定を使用
     local dotfiles_stable_config="$DOTFILES_DIR/.config/nvim-stable"
     local dotfiles_nightly_config="$DOTFILES_DIR/.config/nvim-nightly"
+    local dotfiles_common_config="$DOTFILES_DIR/.config/nvim-common"
+    
+    # 共通設定が存在することを確認
+    if [[ ! -d "$dotfiles_common_config" ]]; then
+        log_error "共通設定ディレクトリが見つかりません: $dotfiles_common_config"
+        log_error "設定の共通化に失敗する可能性があります"
+    fi
     
     # dotfiles内の設定が存在することを確認
     if [[ ! -d "$dotfiles_stable_config" ]]; then
@@ -216,19 +224,28 @@ init_config_directories() {
     else
         log_info "nightly版設定は既に存在します: $NVIM_NIGHTLY_CONFIG"
     fi
+    
+    # 共通設定ディレクトリの作成・更新
+    if [[ -d "$dotfiles_common_config" ]]; then
+        local target_common_config="$NVIM_CONFIG_DIR/nvim-common"
+        if [[ ! -d "$target_common_config" ]] || [[ "$dotfiles_common_config" -nt "$target_common_config" ]]; then
+            log_info "共通設定をコピー・更新しています..."
+            rm -rf "$target_common_config"
+            cp -r "$dotfiles_common_config" "$target_common_config"
+            log_success "共通設定ディレクトリを更新しました: $target_common_config"
+        else
+            log_info "共通設定は最新です: $target_common_config"
+        fi
+    fi
 }
 
-# 設定とバイナリを切り替え
+# 設定とバイナリを切り替え（統合システム版）
 switch_config() {
     local target_version="$1"
-    local target_config=""
     
     case "$target_version" in
-        "stable")
-            target_config="$NVIM_STABLE_CONFIG"
-            ;;
-        "nightly")
-            target_config="$NVIM_NIGHTLY_CONFIG"
+        "stable"|"nightly")
+            # 有効なバージョン
             ;;
         *)
             log_error "無効なバージョンです: $target_version"
@@ -242,20 +259,30 @@ switch_config() {
     # バイナリの切り替え
     switch_binary "$target_version"
     
-    # 現在のシンボリックリンクを削除
-    if [[ -L "$NVIM_CONFIG_DIR/nvim" ]]; then
-        rm "$NVIM_CONFIG_DIR/nvim"
-    elif [[ -d "$NVIM_CONFIG_DIR/nvim" ]] && [[ ! -L "$NVIM_CONFIG_DIR/nvim" ]]; then
-        log_error "警告: $NVIM_CONFIG_DIR/nvim が通常のディレクトリです。手動で移動してください。"
+    # 統合設定ディレクトリが存在するかチェック
+    if [[ ! -d "$NVIM_UNIFIED_CONFIG" ]]; then
+        log_error "統合設定ディレクトリが見つかりません: $NVIM_UNIFIED_CONFIG"
         return 1
     fi
     
-    # 新しいシンボリックリンクを作成
-    ln -sf "$target_config" "$NVIM_CONFIG_DIR/nvim"
+    # 現在のシンボリックリンクを削除
+    if [[ -L "$NVIM_CURRENT_CONFIG" ]]; then
+        rm "$NVIM_CURRENT_CONFIG"
+    elif [[ -d "$NVIM_CURRENT_CONFIG" ]] && [[ ! -L "$NVIM_CURRENT_CONFIG" ]]; then
+        log_error "警告: $NVIM_CURRENT_CONFIG が通常のディレクトリです。手動で移動してください。"
+        return 1
+    fi
+    
+    # 統合設定ディレクトリにシンボリックリンクを作成
+    ln -sf "$NVIM_UNIFIED_CONFIG" "$NVIM_CURRENT_CONFIG"
+    
+    # 環境変数とステートファイルでバージョンを設定
+    export NVIM_VERSION_TYPE="$target_version"
     save_current_version "$target_version"
     
     log_success "Neovim設定を${target_version}版に切り替えました"
-    log_info "設定パス: $target_config"
+    log_info "統合設定パス: $NVIM_UNIFIED_CONFIG"
+    log_info "バージョンタイプ: $target_version"
 }
 
 # Toggle切り替え（stable⇔nightly）
@@ -457,15 +484,15 @@ main() {
             setup_neovim_switcher
             ;;
         "stable")
-            if [[ ! -d "$NVIM_STABLE_CONFIG" ]]; then
-                log_error "stable版設定が見つかりません。先に 'setup' を実行してください。"
+            if [[ ! -d "$NVIM_UNIFIED_CONFIG" ]]; then
+                log_error "統合設定ディレクトリが見つかりません。設定を確認してください。"
                 exit 1
             fi
             switch_config "stable"
             ;;
         "nightly")
-            if [[ ! -d "$NVIM_NIGHTLY_CONFIG" ]]; then
-                log_error "nightly版設定が見つかりません。先に 'setup' を実行してください。"
+            if [[ ! -d "$NVIM_UNIFIED_CONFIG" ]]; then
+                log_error "統合設定ディレクトリが見つかりません。設定を確認してください。"
                 exit 1
             fi
             switch_config "nightly"
@@ -487,15 +514,15 @@ main() {
             ;;
         # 短縮形コマンド
         "s")
-            if [[ ! -d "$NVIM_STABLE_CONFIG" ]]; then
-                log_error "stable版設定が見つかりません。先に 'setup' を実行してください。"
+            if [[ ! -d "$NVIM_UNIFIED_CONFIG" ]]; then
+                log_error "統合設定ディレクトリが見つかりません。設定を確認してください。"
                 exit 1
             fi
             switch_config "stable"
             ;;
         "n")
-            if [[ ! -d "$NVIM_NIGHTLY_CONFIG" ]]; then
-                log_error "nightly版設定が見つかりません。先に 'setup' を実行してください。"
+            if [[ ! -d "$NVIM_UNIFIED_CONFIG" ]]; then
+                log_error "統合設定ディレクトリが見つかりません。設定を確認してください。"
                 exit 1
             fi
             switch_config "nightly"

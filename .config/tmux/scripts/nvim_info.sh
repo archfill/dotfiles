@@ -37,11 +37,31 @@ get_nvim_info() {
     local version
     version=$(nvim --version --clean 2>/dev/null | head -n1 | sed 's/NVIM //' | cut -d' ' -f1)
     
-    # 現在の設定タイプを判定
+    # 現在の設定タイプを判定（統合システム対応）
     local config_type=""
     local icon=""
     
-    if [[ -L "$HOME/.config/nvim" ]]; then
+    # 方法1: 状態ファイルから判定（優先）
+    if [[ -f "$HOME/.neovim_version_state" ]]; then
+        local state_content
+        state_content=$(cat "$HOME/.neovim_version_state" 2>/dev/null || echo "")
+        
+        case "$state_content" in
+            "stable")
+                config_type="S"
+                icon="󰟢"  # 安定版アイコン（盾）
+                ;;
+            "nightly")
+                config_type="N"
+                icon="󰌌"  # 開発版アイコン（月）
+                ;;
+            *)
+                config_type="?"
+                icon="󰈅"  # 不明アイコン
+                ;;
+        esac
+    # 方法2: 従来のシンボリックリンク判定（フォールバック）
+    elif [[ -L "$HOME/.config/nvim" ]]; then
         local target
         target=$(readlink "$HOME/.config/nvim" 2>/dev/null || echo "")
         
@@ -53,6 +73,25 @@ get_nvim_info() {
             *nvim-nightly*)
                 config_type="N"
                 icon="󰌌"  # 開発版アイコン（月）
+                ;;
+            *nvim-unified*)
+                # 統合システムの場合、バイナリから判定
+                local nvim_binary
+                nvim_binary=$(readlink "$HOME/.local/bin/nvim" 2>/dev/null || echo "")
+                case "$nvim_binary" in
+                    *nvim-stable*)
+                        config_type="S"
+                        icon="󰟢"
+                        ;;
+                    *nvim-nightly*)
+                        config_type="N"
+                        icon="󰌌"
+                        ;;
+                    *)
+                        config_type="U"  # 統合システム（Unified）
+                        icon="󰻧"  # 統合アイコン
+                        ;;
+                esac
                 ;;
             *)
                 config_type="?"
