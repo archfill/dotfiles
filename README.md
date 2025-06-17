@@ -18,7 +18,9 @@ A comprehensive, cross-platform dotfiles repository that automates development e
 
 ### 🛠️ **Development Environment**
 - **Neovim**: 50+ plugins with LSP, completion, debugging, and AI assistance
-  - **Version Switcher**: Seamless switching between stable and nightly versions
+  - **Unified Management**: Seamless switching between stable, nightly, and HEAD versions
+  - **HEAD Tracking**: Automatic building from latest source with bundled Tree-sitter
+  - **Auto-Update**: Optional systemd/cron-based automatic updates
 - **Terminal**: WezTerm (primary), Alacritty, Kitty with custom themes
 - **Shell**: Zsh with optimized prompt and completion systems
 - **Git**: Lazygit integration and advanced Git configurations
@@ -199,48 +201,50 @@ Run `make help` to see all available commands:
 | `make yaskkserv2-build` | Build Japanese input server |
 | `make flutter-setup` | Install Flutter development environment |
 
-### **Neovim Management**
+### **Neovim Unified Management**
 | Command | Description |
 |---------|-------------|
-| `make neovim-setup` | Setup Neovim stable/nightly switcher |
-| `make neovim-stable` | Switch to stable version |
-| `make neovim-nightly` | Switch to nightly version |
-| `make neovim-toggle` | Toggle between stable/nightly |
-| `make neovim-update` | Update current version |
-| `make neovim-status` | Show current version status |
 | `make neovim-install VERSION=stable` | Install stable version |
 | `make neovim-install VERSION=nightly` | Install nightly version |
+| `make neovim-install VERSION=head` | Install latest HEAD version |
+| `make neovim-switch VERSION=stable` | Switch to stable version |
+| `make neovim-switch VERSION=nightly` | Switch to nightly version |
+| `make neovim-switch VERSION=head` | Switch to HEAD version |
 | `make neovim-uninstall VERSION=stable` | Uninstall stable version |
 | `make neovim-uninstall VERSION=nightly` | Uninstall nightly version |
+| `make neovim-uninstall VERSION=head` | Uninstall HEAD version |
+| `make neovim-uninstall VERSION=all` | Remove all versions |
+| `make neovim-status` | Show unified status of all versions |
+| `make neovim-update` | Update current active version |
+| `make neovim-deps` | Check and install build dependencies |
 
-### **Neovim Quick Commands**
-
-#### **Make Commands (from dotfiles directory)**
+### **Neovim HEAD Version (Advanced)**
 | Command | Description |
 |---------|-------------|
-| `make nvim-s` | 🚀 Quick switch to stable |
-| `make nvim-n` | 🌙 Quick switch to nightly |
-| `make nvim-t` | 🔄 Quick toggle between versions |
-| `make nvim-u` | ⬆️ Quick update current version |
+| `make neovim-head-build` | Build from latest HEAD source |
+| `make neovim-head-update` | Update HEAD if changes available |
+| `make neovim-head-status` | Show HEAD build status |
+| `make neovim-head-clean` | Clean build artifacts |
+| `make neovim-head-clean-all` | Clean all data and rebuild |
 
-#### **Zsh Aliases (work from anywhere)**
+### **Neovim Auto-Update System**
 | Command | Description |
 |---------|-------------|
-| `nvim-s` | 🚀 Switch to stable (global alias) |
-| `nvim-n` | 🌙 Switch to nightly (global alias) |
-| `nvim-t` | 🔄 Toggle between versions (global alias) |
-| `nvim-u` | ⬆️ Update current version (global alias) |
-| `nvim-status` | 📊 Show status (global alias) |
+| `make neovim-head-auto-install` | Install automatic HEAD update system |
+| `make neovim-head-auto-status` | Show auto-update system status |
+| `make neovim-head-auto-uninstall` | Remove auto-update system |
 
 ## 🏗️ Architecture
 
 ### **Shared Library System**
 Modern, maintainable architecture with shared libraries in `bin/lib/`:
 
-- **`common.sh`** - Platform detection, logging, error handling
+- **`common.sh`** - Platform detection, logging, error handling, utility functions
 - **`config_loader.sh`** - Configuration management and version control
-- **`uv_installer.sh`** - Unified Python environment setup
-- **`symlink_manager.sh`** - Advanced symlink management with backup
+- **`uv_installer.sh`** - Unified Python environment setup with uv
+- **`volta_installer.sh`** - JavaScript toolchain management with Volta
+- **`symlink_manager.sh`** - Advanced symlink management with backup and validation
+- **`font_manager.sh`** - Cross-platform font installation and management
 
 ### **Configuration Management**
 - **`config/versions.conf`** - Centralized version management

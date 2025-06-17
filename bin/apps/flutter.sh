@@ -3,8 +3,6 @@
 # Flutter installation script
 # This script installs Flutter SDK and FVM (Flutter Version Management)
 
-set -euo pipefail
-
 # Load shared libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

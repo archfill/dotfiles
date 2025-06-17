@@ -3,6 +3,10 @@
 # 共通ライブラリ - dotfiles共通関数
 # このファイルは他のスクリプトからsourceして使用する
 
+# パフォーマンス向上のためのキャッシュ変数
+declare -g _CACHED_PLATFORM=""
+declare -g _CACHED_ARCHITECTURE=""
+
 # エラーハンドリングの共通設定
 setup_error_handling() {
     set -euo pipefail
@@ -28,14 +32,21 @@ log_error() {
 
 # プラットフォーム検出の共通関数群
 
-# 基本プラットフォーム検出
+# 基本プラットフォーム検出（キャッシュ対応）
 detect_platform() {
+    if [[ -n "$_CACHED_PLATFORM" ]]; then
+        echo "$_CACHED_PLATFORM"
+        return 0
+    fi
+    
     case "$(uname -s)" in
-        Darwin*)    echo "macos" ;;
-        Linux*)     echo "linux" ;;
-        CYGWIN*)    echo "cygwin" ;;
-        *)          echo "unknown" ;;
+        Darwin*)    _CACHED_PLATFORM="macos" ;;
+        Linux*)     _CACHED_PLATFORM="linux" ;;
+        CYGWIN*)    _CACHED_PLATFORM="cygwin" ;;
+        *)          _CACHED_PLATFORM="unknown" ;;
     esac
+    
+    echo "$_CACHED_PLATFORM"
 }
 
 # アーキテクチャ検出（get_os_bitと互換性維持）
@@ -43,18 +54,24 @@ get_os_bit() {
     uname -m
 }
 
-# 詳細なアーキテクチャ情報
+# 詳細なアーキテクチャ情報（キャッシュ対応）
 detect_architecture() {
+    if [[ -n "$_CACHED_ARCHITECTURE" ]]; then
+        echo "$_CACHED_ARCHITECTURE"
+        return 0
+    fi
+    
     local arch
     arch="$(uname -m)"
     
     case "$arch" in
-        x86_64|amd64)   echo "x86_64" ;;
-        arm64|aarch64)  echo "arm64" ;;
-        armv7l)         echo "armv7" ;;
-        i386|i686)      echo "i386" ;;
-        *)              echo "$arch" ;;
+        x86_64|amd64)   _CACHED_ARCHITECTURE="x86_64" ;;
+        arm64|aarch64)  _CACHED_ARCHITECTURE="arm64" ;;
+        i386|i686)      _CACHED_ARCHITECTURE="i386" ;;
+        *)              _CACHED_ARCHITECTURE="$arch" ;;
     esac
+    
+    echo "$_CACHED_ARCHITECTURE"
 }
 
 # Linuxディストリビューション検出（get_os_distributionと互換性維持）

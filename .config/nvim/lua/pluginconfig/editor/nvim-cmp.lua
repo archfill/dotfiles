@@ -17,6 +17,7 @@ cmp.setup({
 		format = require("lspkind").cmp_format({
 			with_text = true,
 			menu = {
+				lazydev = "[LazyDev]",
 				buffer = "[Buffer]",
 				nvim_lsp = "[LSP]",
 				cmp_tabnine = "[TabNine]",
@@ -92,6 +93,7 @@ cmp.setup({
 		["<CR>"] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 	},
 	sources = cmp.config.sources({
+		{ name = "lazydev", group_index = 0 }, -- lazydev.nvim補完ソース（最高優先度）
 		{ name = "copilot", priority = 90 },
 		{ name = "nvim_lsp", priority = 100 },
 		{ name = "luasnip", priority = 20 }, -- For luasnip users.

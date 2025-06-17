@@ -10,8 +10,9 @@ setup_error_handling
 
 log_info "Starting Linux configuration"
 
-# Get OS info
-read -r distro arch <<< "$("${DOTFILES_DIR}/bin/get_os_info.sh")"
+# Get OS info using shared library functions
+distro="$(get_os_distribution)"
+arch="$(detect_architecture)"
 
 install_common_packages_debian() {
     log_info "Installing packages for Debian/Ubuntu..."

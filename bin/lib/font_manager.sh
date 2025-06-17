@@ -96,7 +96,7 @@ is_font_installed() {
     esac
 }
 
-# GitHub Releasesから最新バージョンを取得
+# GitHub Releasesから最新バージョンを取得（最適化版）
 get_latest_font_version() {
     local github_repo="$1"
     
@@ -106,13 +106,21 @@ get_latest_font_version() {
     fi
     
     local api_url="https://api.github.com/repos/${github_repo}/releases/latest"
+    local api_response
     local version
+    
+    # API応答をキャッシュして複数回のcurl呼び出しを回避
+    api_response=$(curl -s "$api_url" 2>/dev/null)
+    if [[ $? -ne 0 || -z "$api_response" ]]; then
+        log_error "Failed to fetch version information from GitHub API"
+        return 1
+    fi
     
     # GitHub API制限対策：jqがあれば使用、なければgrepで抽出
     if command -v jq >/dev/null 2>&1; then
-        version=$(curl -s "$api_url" | jq -r '.tag_name' 2>/dev/null)
+        version=$(echo "$api_response" | jq -r '.tag_name' 2>/dev/null)
     else
-        version=$(curl -s "$api_url" | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
+        version=$(echo "$api_response" | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
     fi
     
     if [[ -n "$version" && "$version" != "null" ]]; then
