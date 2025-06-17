@@ -1,92 +1,35 @@
--- local function is_available_navic()
--- 	local ok, _ = pcall(require, "nvim-navic")
--- 	if not ok then
--- 		return false
--- 	end
--- 	return require("nvim-navic").is_available()
--- end
+-- lualine.nvim設定
+-- 美しい高性能ステータスライン
 
-local function is_available_lspsaga()
-	local ok, _ = pcall(require, "lspsaga")
-	if not ok then
-		return false
-	end
-	return true
+local status_ok, lualine = pcall(require, "lualine")
+if not status_ok then
+	return
 end
 
-local function esc(x)
-	return (
-		x:gsub("%%", "%%%%")
-			:gsub("^%^", "%%^")
-			:gsub("%$$", "%%$")
-			:gsub("%(", "%%(")
-			:gsub("%)", "%%)")
-			:gsub("%.", "%%.")
-			:gsub("%[", "%%[")
-			:gsub("%]", "%%]")
-			:gsub("%*", "%%*")
-			:gsub("%+", "%%+")
-			:gsub("%-", "%%-")
-			:gsub("%?", "%%?")
-	)
-end
-
-local function get_cwd()
-	local cwd = vim.fn.getcwd()
-	local git_dir = require("lualine.components.branch.git_branch").find_git_dir(cwd)
-	local root = vim.fs.dirname(git_dir)
-	if cwd == root then
-		return ""
-	end
-	local d, n = string.gsub(cwd, esc(root) .. "/", "")
-	if n == 0 and d == nil then
-		return ""
-	end
-	return "(./" .. d .. ")"
-end
-
-require("lualine").setup({
+lualine.setup({
 	options = {
 		icons_enabled = true,
-		theme = "auto",
-		component_separators = { left = "|", right = "|" },
+		theme = "auto", -- カラースキームに自動適応
+		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
-		disabled_filetypes = {},
+		disabled_filetypes = {
+			statusline = {},
+			winbar = {},
+		},
+		ignore_focus = {},
 		always_divide_middle = true,
-		globalstatus = true,
+		globalstatus = true, -- 統一ステータスライン（パフォーマンス向上）
+		refresh = {
+			statusline = 200, -- 高速更新間隔
+			tabline = 1000,
+			winbar = 1000,
+		},
 	},
 	sections = {
 		lualine_a = { "mode" },
 		lualine_b = { "branch", "diff", "diagnostics" },
-		lualine_c = {
-			{ "filename", path = 1 },
-			{ get_cwd },
-			{ 'require("lspsaga.symbolwinbar"):get_winbar()', cond = is_available_lspsaga },
-		},
-		lualine_x = {
-			-- {
-			-- 	require("noice").api.status.message.get_hl,
-			-- 	cond = require("noice").api.status.message.has,
-			-- },
-			{
-				require("noice").api.status.command.get,
-				cond = require("noice").api.status.command.has,
-				color = { fg = "#ff9e64" },
-			},
-			{
-				require("noice").api.status.mode.get,
-				cond = require("noice").api.status.mode.has,
-				color = { fg = "#ff9e64" },
-			},
-			{
-				require("noice").api.status.search.get,
-				cond = require("noice").api.status.search.has,
-				color = { fg = "#ff9e64" },
-			},
-			"encoding",
-			"fileformat",
-			"filetype",
-		},
+		lualine_c = { "filename" },
+		lualine_x = { "encoding", "fileformat", "filetype" },
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
 	},
@@ -99,5 +42,12 @@ require("lualine").setup({
 		lualine_z = {},
 	},
 	tabline = {},
-	extensions = {},
+	winbar = {},
+	inactive_winbar = {},
+	extensions = {
+		"neo-tree",
+		"telescope",
+		"lazy",
+		"mason",
+	},
 })

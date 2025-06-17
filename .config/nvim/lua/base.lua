@@ -1,5 +1,8 @@
 -- local os = require("os")
 
+-- VSCode環境検出
+vim.g.vscode_mode = vim.g.vscode or false
+
 -- if vim.fn.has('mac') == 1 then
 -- -- Mac の共通設定
 -- local fzfExists = vim.fn.getftype('/opt/homebrew/opt/fzf')
@@ -9,13 +12,12 @@
 -- vim.o.rtp = vim.o.rtp .. '/usr/local/opt/fzf' end
 -- end
 
--- volta config
-if vim.fn.executable("volta") == 1 then
-	-- vim.g.node_host_prog = os.getenv("HOME") .. "/.volta/tools/image/packages/neovim/lib/node_modules/neovim/bin/cli.js"
-	-- vim.g.node_host_prog = os.getenv("HOME") .. "/.volta/bin/neovim-node-host"
-	vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
-	-- vim.g.node_host_prog = vim.call("system", 'volta which node | tr -d "\n"')
-end
+-- volta config（遅延実行で起動速度向上）
+vim.defer_fn(function()
+	if vim.fn.executable("volta") == 1 then
+		vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
+	end
+end, 100)
 
 vim.o.sh = "zsh"
 
@@ -95,6 +97,9 @@ vim.o.wrapscan = true
 vim.o.hlsearch = true
 
 vim.opt.clipboard:append({ "unnamedplus" })
+
+-- ファイルタイプ検出とプラグイン有効化
+vim.cmd("filetype plugin indent on")
 
 if vim.fn.has("wsl") == 1 then
 	require("wsl-config")

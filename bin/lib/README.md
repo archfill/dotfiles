@@ -64,6 +64,22 @@ install_uv
 verify_uv_installation
 ```
 
+### `volta_installer.sh` - JavaScript環境管理
+Voltaインストールと設定を統一的に管理します。
+
+**主要機能：**
+- `install_volta()` - VoltaのインストールとPATH設定
+- `install_nodejs_toolchain()` - Node.js LTSとnpmのインストール
+- `setup_volta_complete()` - 完全なVoltaセットアップ
+- `is_volta_installed()` - Voltaインストール状況の確認
+- `setup_volta_environment()` - 環境変数とシェル設定の構成
+
+**使用例：**
+```bash
+source "${SCRIPT_DIR}/lib/volta_installer.sh"
+setup_volta_complete  # Volta + Node.js toolchainの完全セットアップ
+```
+
 ### `symlink_manager.sh` - シンボリックリンク管理
 dotfilesのシンボリックリンク作成を統一的に管理します。
 

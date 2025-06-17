@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup neovim-setup neovim-stable neovim-nightly neovim-status neovim-install neovim-uninstall neovim-toggle neovim-update nvim-s nvim-n nvim-t nvim-u
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup neovim-install neovim-switch neovim-uninstall neovim-status neovim-update neovim-deps neovim-head-build neovim-head-update neovim-head-status neovim-head-auto-install neovim-head-auto-status neovim-head-clean
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -62,62 +62,65 @@ flutter-setup: ## Install and setup Flutter development environment
 	@echo "Setting up Flutter development environment..."
 	bash ./bin/apps/flutter.sh
 
-# Neovim管理コマンド
-neovim-setup: ## Setup Neovim stable/nightly switcher
-	@echo "Setting up Neovim version switcher..."
-	bash ./bin/apps/neovim_switcher.sh setup
-
-neovim-stable: ## Switch to Neovim stable version
-	@echo "Switching to Neovim stable version..."
-	bash ./bin/apps/neovim_switcher.sh stable
-
-neovim-nightly: ## Switch to Neovim nightly version
-	@echo "Switching to Neovim nightly version..."
-	bash ./bin/apps/neovim_switcher.sh nightly
-
-neovim-status: ## Show current Neovim version status
-	@bash ./bin/apps/neovim_switcher.sh status
-
-neovim-install: ## Install Neovim (usage: make neovim-install VERSION=stable/nightly)
+# ===== 統一Neovim管理システム（推奨） =====
+neovim-install: ## Install Neovim version (usage: make neovim-install VERSION=stable/nightly/head)
 	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make neovim-install VERSION=<stable|nightly>"; \
-		echo "Example: make neovim-install VERSION=stable"; \
-		echo "Example: make neovim-install VERSION=nightly"; \
+		echo "Usage: make neovim-install VERSION=<stable|nightly|head>"; \
+		echo "Examples:"; \
+		echo "  make neovim-install VERSION=stable"; \
+		echo "  make neovim-install VERSION=nightly"; \
+		echo "  make neovim-install VERSION=head"; \
+		echo ""; \
+		bash ./bin/neovim-unified-manager.sh status; \
 	else \
 		echo "Installing Neovim $(VERSION) version..."; \
-		bash ./bin/apps/neovim_installer.sh install "$(VERSION)"; \
+		if ! bash ./bin/neovim-unified-manager.sh install "$(VERSION)"; then \
+			echo "❌ Installation failed. Check logs and dependencies."; \
+			echo "For HEAD version, ensure you have: git, cmake, make, ninja, gcc, g++, pkg-config"; \
+			exit 1; \
+		fi; \
 	fi
 
-neovim-uninstall: ## Uninstall Neovim (usage: make neovim-uninstall VERSION=stable/nightly)
+neovim-switch: ## Switch Neovim version (usage: make neovim-switch VERSION=stable/nightly/head)
 	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make neovim-uninstall VERSION=<stable|nightly>"; \
-		echo "Example: make neovim-uninstall VERSION=stable"; \
-		echo "Example: make neovim-uninstall VERSION=nightly"; \
+		echo "Usage: make neovim-switch VERSION=<stable|nightly|head>"; \
+		echo "Examples:"; \
+		echo "  make neovim-switch VERSION=stable"; \
+		echo "  make neovim-switch VERSION=nightly"; \
+		echo "  make neovim-switch VERSION=head"; \
+		echo ""; \
+		bash ./bin/neovim-unified-manager.sh status; \
 	else \
-		echo "Uninstalling Neovim $(VERSION) version..."; \
-		bash ./bin/apps/neovim_installer.sh uninstall "$(VERSION)"; \
+		echo "Switching to Neovim $(VERSION)..."; \
+		bash ./bin/neovim-unified-manager.sh switch "$(VERSION)"; \
 	fi
 
-neovim-toggle: ## Toggle between stable and nightly versions
-	@echo "Toggling Neovim version..."
-	bash ./bin/apps/neovim_switcher.sh toggle
+neovim-uninstall: ## Uninstall Neovim version (usage: make neovim-uninstall VERSION=stable/nightly/head/all)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Usage: make neovim-uninstall VERSION=<stable|nightly|head|all>"; \
+		echo "Examples:"; \
+		echo "  make neovim-uninstall VERSION=stable"; \
+		echo "  make neovim-uninstall VERSION=nightly"; \
+		echo "  make neovim-uninstall VERSION=head"; \
+		echo "  make neovim-uninstall VERSION=all"; \
+		echo ""; \
+		bash ./bin/neovim-unified-manager.sh status; \
+	else \
+		echo "Uninstalling Neovim $(VERSION)..."; \
+		bash ./bin/neovim-unified-manager.sh uninstall "$(VERSION)"; \
+	fi
 
-neovim-update: ## Update current Neovim version
+neovim-status: ## Show unified status of all Neovim versions
+	@bash ./bin/neovim-unified-manager.sh status
+
+neovim-update: ## Update current active Neovim version
 	@echo "Updating current Neovim version..."
-	bash ./bin/apps/neovim_switcher.sh update
+	@bash ./bin/neovim-unified-manager.sh update
 
-# クイックエイリアスコマンド（超短縮形）
-nvim-s: ## Quick switch to stable (alias for neovim-stable)
-	@bash ./bin/apps/neovim_switcher.sh s
+neovim-deps: ## Check and install build dependencies for HEAD version
+	@echo "Checking build dependencies..."
+	@bash ./bin/neovim-unified-manager.sh deps
 
-nvim-n: ## Quick switch to nightly (alias for neovim-nightly)
-	@bash ./bin/apps/neovim_switcher.sh n
-
-nvim-t: ## Quick toggle between versions (alias for neovim-toggle)
-	@bash ./bin/apps/neovim_switcher.sh t
-
-nvim-u: ## Quick update current version (alias for neovim-update)
-	@bash ./bin/apps/neovim_switcher.sh u
 
 # テストとメンテナンス
 test: ## Run dotfiles functionality tests
@@ -254,3 +257,141 @@ tmux-reload: ## Reload tmux configuration
 	else \
 		echo "❌ tmux is not running"; \
 	fi
+
+# ===== Neovim HEAD 詳細管理（上級者向け） =====
+neovim-head-build: ## [ADVANCED] Build Neovim from latest HEAD (direct tracker)
+	@echo "Building Neovim from latest HEAD..."
+	@bash ./bin/neovim-head-tracker.sh build
+
+neovim-head-update: ## [ADVANCED] Update Neovim HEAD only if changes are available
+	@echo "Checking for Neovim HEAD updates..."
+	@bash ./bin/neovim-head-tracker.sh update
+
+neovim-head-status: ## [ADVANCED] Show Neovim HEAD build status and version info
+	@bash ./bin/neovim-head-tracker.sh status
+
+neovim-head-clean: ## [ADVANCED] Clean Neovim HEAD build artifacts
+	@echo "Cleaning Neovim HEAD build artifacts..."
+	@bash ./bin/neovim-head-tracker.sh clean
+
+neovim-head-clean-all: ## [ADVANCED] Clean all Neovim HEAD data and rebuild from scratch
+	@echo "Cleaning all Neovim HEAD data..."
+	@bash ./bin/neovim-head-tracker.sh clean-all
+
+# ===== 自動更新システム =====
+neovim-head-auto-install: ## Install automatic Neovim HEAD update system
+	@echo "Installing Neovim HEAD auto-update system..."
+	@echo "Choose update method:"
+	@echo "  1) Systemd timer (recommended for systemd systems)"
+	@echo "  2) Cron job (traditional method)"
+	@read -p "Enter choice [1-2]: " choice; \
+	case $$choice in \
+		1) bash ./bin/neovim-auto-updater.sh install-systemd daily ;; \
+		2) bash ./bin/neovim-auto-updater.sh install-cron "0 2 * * *" ;; \
+		*) echo "Invalid choice. Use 'bash ./bin/neovim-auto-updater.sh' manually." ;; \
+	esac
+
+neovim-head-auto-status: ## Show Neovim HEAD auto-update system status
+	@bash ./bin/neovim-auto-updater.sh status
+
+neovim-head-auto-uninstall: ## Remove Neovim HEAD auto-update system
+	@echo "Removing auto-update system..."
+	@bash ./bin/neovim-auto-updater.sh uninstall
+
+# ===== Neovim HEAD 高度なコマンド =====
+neovim-head-deps-check: ## Check build dependencies for Neovim HEAD
+	@echo "Checking Neovim HEAD build dependencies..."
+	@bash ./bin/neovim-head-tracker.sh check
+
+neovim-head-force-rebuild: ## Force complete rebuild of Neovim HEAD
+	@echo "Force rebuilding Neovim HEAD..."
+	@bash ./bin/neovim-head-tracker.sh clean-all
+	@bash ./bin/neovim-head-tracker.sh build
+
+neovim-head-info: ## Show detailed information about Neovim HEAD setup
+	@echo "=== Neovim HEAD Information ==="
+	@echo ""
+	@bash ./bin/neovim-head-tracker.sh status
+	@echo ""
+	@echo "=== Auto-Update Status ==="
+	@bash ./bin/neovim-auto-updater.sh status
+
+
+# ===== macOS特化コマンド =====
+macos-setup: ## Complete macOS development environment setup (dotfiles + apps + neovim)
+	@echo "Setting up complete macOS development environment..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo "🍎 Starting comprehensive macOS setup..."; \
+		echo ""; \
+		echo "📋 This will install:"; \
+		echo "  • Dotfiles configuration"; \
+		echo "  • Homebrew packages and casks"; \
+		echo "  • Development tools"; \
+		echo "  • Fonts"; \
+		echo "  • Neovim build dependencies"; \
+		echo ""; \
+		bash ./bin/init.sh; \
+		echo ""; \
+		echo "🔧 Installing Neovim build dependencies..."; \
+		bash ./bin/neovim-unified-manager.sh deps; \
+		echo ""; \
+		echo "✅ macOS setup completed!"; \
+		echo ""; \
+		echo "💡 Next steps:"; \
+		echo "  • Install Neovim HEAD: make neovim-install VERSION=head"; \
+		echo "  • Run tests: make macos-test"; \
+		echo "  • Check status: make neovim-status"; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+macos-setup-minimal: ## Setup only Neovim build dependencies on macOS
+	@echo "Setting up minimal macOS environment (Neovim dependencies only)..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		bash ./bin/neovim-unified-manager.sh deps; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+macos-setup-essential: ## Setup essential macOS development environment
+	@echo "Setting up essential macOS development environment..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo "🍎 Starting essential macOS setup..."; \
+		echo ""; \
+		echo "📋 This will install:"; \
+		echo "  • Essential development tools"; \
+		echo "  • Programming languages (uv, volta, etc.)"; \
+		echo "  • Core utilities and GUI apps"; \
+		echo "  • Neovim build dependencies"; \
+		echo ""; \
+		DOTFILES_INSTALL_MODE=essential bash ./bin/init.sh; \
+		bash ./bin/neovim-unified-manager.sh deps; \
+		echo ""; \
+		echo "✅ Essential macOS setup completed!"; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+macos-packages-minimal: ## Install minimal Homebrew packages only
+	@echo "Installing minimal Homebrew packages..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		DOTFILES_INSTALL_MODE=minimal bash ./bin/mac/brew.sh; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+macos-test: ## Run macOS-specific environment tests
+	@echo "Running macOS tests..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		bash ./bin/test-macos.sh; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+# ===== Neovim統一管理システム完了 =====
+# 非推奨エイリアスコマンドを削除し、統一コマンドのみ提供

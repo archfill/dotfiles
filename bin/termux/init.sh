@@ -1,48 +1,58 @@
 #!/usr/bin/env bash
 
-echo "--- setting start ---"
+# Load shared libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+source "$DOTFILES_DIR/bin/lib/common.sh"
+
+# Setup standardized error handling
+setup_error_handling
+
+log_info "Termux environment setup starting..."
 
 ROOT_DIR="/data/data/com.termux/files/usr"
 
-mkdir -p ${HOME}/.config
-mkdir -p ${HOME}/git
+mkdir -p "${HOME}/.config"
+mkdir -p "${HOME}/git"
 
-mkdir -p ${HOME}/git/termux
-mkdir -p ${HOME}/.termux
-# color
-# ${HOME}/.termux/colors.properties
-git clone https://github.com/Iamafnan/termux-tokyonight.git ${HOME}/git/termux/termux-tokyonight
-cp ${HOME}/git/termux/termux-tokyonight/colorschemes/tokyonight-night.properties ${HOME}/.termux/colors.properties
+mkdir -p "${HOME}/git/termux"
+mkdir -p "${HOME}/.termux"
 
-# font
-# ${HOME}/.termux/font.ttf
+# Setup color scheme
+log_info "Setting up Termux color scheme..."
+if [[ ! -d "${HOME}/git/termux/termux-tokyonight" ]]; then
+    git clone https://github.com/Iamafnan/termux-tokyonight.git "${HOME}/git/termux/termux-tokyonight"
+fi
+cp "${HOME}/git/termux/termux-tokyonight/colorschemes/tokyonight-night.properties" "${HOME}/.termux/colors.properties"
+
+# Setup font
+log_info "Setting up Termux font..."
 HACKGEN_VERSION=v2.9.0
-temp_dir=`pwd`
-rm -rf ${HOME}/temp
-mkdir -p ${HOME}/temp
-cd ${HOME}/temp
-curl -OL https://github.com/yuru7/HackGen/releases/download/${HACKGEN_VERSION}/HackGen_NF_${HACKGEN_VERSION}.zip
-unzip HackGen_NF_${HACKGEN_VERSION}.zip
-mv HackGen_NF_${HACKGEN_VERSION}/HackGenConsoleNF-Regular.ttf ${HOME}/.termux/font.ttf
-cd $temp_dir
+temp_dir=$(pwd)
+rm -rf "${HOME}/temp"
+mkdir -p "${HOME}/temp"
+cd "${HOME}/temp"
+curl -OL "https://github.com/yuru7/HackGen/releases/download/${HACKGEN_VERSION}/HackGen_NF_${HACKGEN_VERSION}.zip"
+unzip "HackGen_NF_${HACKGEN_VERSION}.zip"
+mv "HackGen_NF_${HACKGEN_VERSION}/HackGenConsoleNF-Regular.ttf" "${HOME}/.termux/font.ttf"
+cd "$temp_dir"
 termux-reload-settings
 
-# install
-echo "--- apps install setup start ---"
-bash ${HOME}/dotfiles/bin/termux/install.sh
-echo "--- apps install setup finish ---"
+# Install packages
+log_info "Installing Termux packages..."
+bash "${DOTFILES_DIR}/bin/termux/install.sh"
 
-# link
-echo "--- link setup start ---"
-bash ${HOME}/dotfiles/bin/termux/link.sh
-echo "--- link setup finish ---"
+# Setup symlinks
+log_info "Setting up symlinks..."
+bash "${DOTFILES_DIR}/bin/termux/link.sh"
 
-# apps
-echo "-- apps setup start ---"
-bash ${HOME}/dotfiles/bin/apps/zinit.sh
-# bash ${HOME}/dotfiles/bin/apps/volta.sh
-# bash ${HOME}/dotfiles/bin/apps/nvm.sh
-bash ${HOME}/dotfiles/bin/apps/uv.sh
-echo "-- apps setup finish ---"
+# Setup applications
+log_info "Setting up applications..."
+bash "${DOTFILES_DIR}/bin/apps/zinit.sh"
+bash "${DOTFILES_DIR}/bin/apps/uv.sh"
 
+# Change default shell to zsh
+log_info "Changing default shell to zsh..."
 chsh -s zsh
+
+log_success "Termux environment setup completed!"

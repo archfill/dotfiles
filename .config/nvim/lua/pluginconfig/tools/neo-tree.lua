@@ -128,7 +128,7 @@ require("neo-tree").setup({
 	filesystem = {
 		filtered_items = {
 			visible = false, -- when true, they will just be displayed differently than normal items
-			hide_dotfiles = true,
+			hide_dotfiles = false,
 			hide_gitignored = true,
 			hide_hidden = true, -- only works on Windows for hidden files/directories
 			hide_by_name = {
@@ -199,4 +199,4 @@ require("neo-tree").setup({
 	},
 })
 
-vim.keymap.set("n", "<leader>e", ":Neotree position=float reveal toggle<cr>", { noremap = true, silent = true })
+-- キーマップはkeymap/plugins.luaで管理（パフォーマンス最適化）
