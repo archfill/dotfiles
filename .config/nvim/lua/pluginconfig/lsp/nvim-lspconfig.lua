@@ -14,9 +14,12 @@ if not lspconfig_ok then
 	return
 end
 
+-- Try blink.cmp first, fallback to cmp_nvim_lsp for compatibility
+local blink_cmp_ok, blink_cmp = pcall(require, "blink.cmp")
 local cmp_nvim_lsp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-if not cmp_nvim_lsp_ok then
-	vim.notify("cmp_nvim_lsp not found", vim.log.levels.WARN)
+
+if not blink_cmp_ok and not cmp_nvim_lsp_ok then
+	vim.notify("Neither blink.cmp nor cmp_nvim_lsp found", vim.log.levels.WARN)
 	return
 end
 
@@ -36,8 +39,15 @@ local on_attach = function(client, bufnr)
 	-- ここでは複雑な設定やハンドラのみ定義
 end
 
--- 補完機能の設定
-local capabilities = cmp_nvim_lsp.default_capabilities()
+-- 補完機能の設定 - blink.cmp優先、fallbackはnvim-cmp
+local capabilities
+if blink_cmp_ok then
+	capabilities = blink_cmp.get_lsp_capabilities()
+elseif cmp_nvim_lsp_ok then
+	capabilities = cmp_nvim_lsp.default_capabilities()
+else
+	capabilities = vim.lsp.protocol.make_client_capabilities()
+end
 
 -- 基本的なLSPサーバー設定（mason-lspconfigに依存しない）
 local servers = {

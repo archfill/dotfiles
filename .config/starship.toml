@@ -1,0 +1,284 @@
+# Modern Starship Configuration
+# Inspired by Tokyo Night and Catppuccin themes with nerd font symbols
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[╭─](bold bright-black)\
+$os\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$python\
+$nodejs\
+$rust\
+$golang\
+$java\
+$docker_context\
+$kubernetes\
+$aws\
+$gcloud\
+$azure\
+$package\
+$c\
+$cmake\
+$lua\
+$line_break\
+[╰─](bold bright-black)$character"""
+
+right_format = """$cmd_duration"""
+
+# OS symbol with modern icons
+[os]
+disabled = false
+format = "[$symbol]($style) "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+
+# User info with modern styling
+[username]
+disabled = false
+style_user = "bold cyan"
+style_root = "bold red"
+format = "[$user]($style) "
+show_always = false
+
+[hostname]
+ssh_only = true
+format = "[@$hostname](bold yellow) "
+trim_at = "."
+disabled = false
+
+# Directory with truncation and modern styling
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+fish_style_pwd_dir_length = 1
+use_logical_path = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+style = "bold cyan"
+read_only = "󰌾 "
+read_only_style = "red"
+truncation_symbol = "…/"
+repo_root_style = "bold blue"
+before_repo_root_style = "dim cyan"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Videos" = " "
+"Desktop" = " "
+"Public" = " "
+"Templates" = " "
+
+# Git configuration with modern symbols
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style = "bold purple"
+truncation_length = 30
+only_attached = false
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold red"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+conflicted = "=${count}"
+deleted = "✘${count}"
+renamed = "»${count}"
+modified = "!${count}"
+staged = "+${count}"
+untracked = "?${count}"
+stashed = "$${count}"
+
+[git_metrics]
+disabled = false
+added_style = "bold blue"
+deleted_style = "bold red"
+only_nonzero_diffs = true
+format = '([+$added]($added_style) )([-$deleted]($deleted_style) )'
+
+# Language versions with modern icons
+[python]
+symbol = " "
+format = '[$symbol$pyenv_prefix($version )(\($virtualenv\) )]($style)'
+style = "yellow bold"
+pyenv_version_name = true
+pyenv_prefix = "pyenv "
+python_binary = ["./venv/bin/python", "python", "python3", "python2"]
+detect_extensions = ["py"]
+version_format = "v${raw}"
+
+[nodejs]
+symbol = " "
+format = "[$symbol($version )]($style)"
+style = "bold green"
+detect_files = ["package.json", ".nvmrc"]
+detect_folders = ["node_modules"]
+detect_extensions = ["js", "mjs", "cjs", "ts", "tsx"]
+version_format = "v${raw}"
+
+[rust]
+symbol = " "
+format = "[$symbol($version )]($style)"
+style = "bold red"
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
+version_format = "v${raw}"
+
+[golang]
+symbol = " "
+format = "[$symbol($version )]($style)"
+style = "bold cyan"
+detect_extensions = ["go"]
+detect_files = ["go.mod", "go.sum", "glide.yaml", "Gopkg.yml", "Gopkg.lock", ".go-version"]
+detect_folders = ["Godeps"]
+version_format = "v${raw}"
+
+[java]
+symbol = " "
+format = "[$symbol($version )]($style)"
+style = "red dimmed"
+detect_extensions = ["java", "class", "jar", "gradle", "clj", "cljc"]
+detect_files = ["pom.xml", "build.gradle.kts", "build.sbt", ".java-version", "deps.edn", "project.clj", "build.boot"]
+version_format = "v${raw}"
+
+[lua]
+symbol = " "
+format = "[$symbol($version )]($style)"
+style = "blue bold"
+detect_extensions = ["lua"]
+detect_files = [".lua-version"]
+detect_folders = ["lua"]
+version_format = "v${raw}"
+
+[c]
+symbol = " "
+format = "[$symbol($version(-$name) )]($style)"
+style = "149 bold"
+detect_extensions = ["c", "h"]
+detect_files = []
+detect_folders = []
+version_format = "v${raw}"
+
+[cmake]
+symbol = "△ "
+format = "[$symbol($version )]($style)"
+style = "blue bold"
+detect_extensions = []
+detect_files = ["CMakeLists.txt", "CMakeCache.txt"]
+detect_folders = []
+version_format = "v${raw}"
+
+# Cloud and container platforms
+[docker_context]
+symbol = " "
+format = "[$symbol$context]($style) "
+style = "blue bold"
+only_with_files = true
+detect_extensions = []
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+detect_folders = []
+
+[kubernetes]
+symbol = "⎈ "
+format = '[$symbol$context( \($namespace\))]($style) '
+style = "cyan bold"
+disabled = false
+
+[aws]
+symbol = " "
+format = '[$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+style = "bold yellow"
+expiration_symbol = "X"
+disabled = false
+
+[gcloud]
+symbol = "☁️ "
+format = '[$symbol$account(@$domain)(\($region\))]($style) '
+style = "bold blue"
+disabled = false
+
+[azure]
+symbol = "󰠅 "
+format = "[$symbol($subscription)]($style) "
+style = "blue bold"
+disabled = false
+
+# Package version
+[package]
+symbol = "󰏗 "
+format = "[$symbol$version]($style) "
+style = "208 bold"
+display_private = false
+disabled = false
+
+# Command duration with better formatting
+[cmd_duration]
+min_time = 2_000
+format = "[ $duration]($style)"
+style = "yellow bold"
+show_milliseconds = true
+show_notifications = false
+min_time_to_notify = 45_000
+
+# Character with modern arrows
+[character]
+format = "$symbol "
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+vimcmd_replace_one_symbol = "[❮](bold purple)"
+vimcmd_replace_symbol = "[❮](bold purple)"
+vimcmd_visual_symbol = "[❮](bold yellow)"
+
+# Line break for better readability
+[line_break]
+disabled = false
