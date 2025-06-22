@@ -15,10 +15,11 @@ local Path = require("plenary.path")
 local function safe_load_extension(extension_name)
 	local ok, _ = pcall(telescope.load_extension, extension_name)
 	if not ok then
-		vim.notify("Telescope extension '" .. extension_name .. "' not available", vim.log.levels.WARN)
-	else
-		vim.notify("Loaded telescope extension: " .. extension_name, vim.log.levels.INFO)
+		-- 警告レベル以下の通知は表示しない（静寂モード）
+		-- vim.notify("Telescope extension '" .. extension_name .. "' not available", vim.log.levels.WARN)
 	end
+	-- 成功時の通知も無効化（静寂モード）
+	-- vim.notify("Loaded telescope extension: " .. extension_name, vim.log.levels.INFO)
 	return ok
 end
 
@@ -39,10 +40,10 @@ local extensions_loaded = {
 	frecency = safe_load_extension("frecency"),
 	yanky = safe_load_extension("yanky"),
 	media_files = safe_load_extension("media_files"),
-	git_conflicts = safe_load_extension("git_conflicts"),
+	conflicts = safe_load_extension("conflicts"),
 	tabs = safe_load_extension("tabs"),
 	cmdline = safe_load_extension("cmdline"),
-	session = safe_load_extension("session"),
+	xray23 = safe_load_extension("xray23"),
 }
 
 -- ===== PERFORMANCE-OPTIMIZED DEFAULTS =====
@@ -68,8 +69,8 @@ local telescope_opts = {
 			"%.mp4",
 			"%.zip",
 			"target/*",
-			build/*",
-			dist/*",
+			"build/*",
+			"dist/*",
 		},
 
 		-- 美しいUI設定
@@ -447,14 +448,12 @@ local telescope_opts = {
 		},
 
 		-- Git Conflicts: Git競合解決
-		git_conflicts = {
-			telescope = {
-				layout_strategy = "horizontal",
-				layout_config = {
-					height = 0.7,
-					width = 0.9,
-					preview_width = 0.6,
-				},
+		conflicts = {
+			layout_strategy = "horizontal",
+			layout_config = {
+				height = 0.7,
+				width = 0.9,
+				preview_width = 0.6,
 			},
 		},
 
@@ -485,13 +484,14 @@ local telescope_opts = {
 			},
 		},
 
-		-- Session: セッション管理
-		session = {
+		-- Session: セッション管理 (xray23)
+		xray23 = {
 			prompt_title = "Sessions",
 			layout_config = {
 				width = 0.6,
 				height = 0.5,
 			},
+			sessionDir = vim.fn.stdpath("data") .. "/vimSession",
 		},
 	},
 }

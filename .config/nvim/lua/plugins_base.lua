@@ -65,6 +65,10 @@ local common_plugins = {
 			"debugloop/telescope-undo.nvim",
 			-- 見出し検索
 			"crispgm/telescope-heading.nvim",
+			-- Git競合解決
+			"Snikimonkd/telescope-git-conflicts.nvim",
+			-- セッション管理
+			"HUAHUAI23/telescope-session.nvim",
 
 			-- ===== HIGH PRIORITY ADDITIONS =====
 			-- Frecency: 学習機能付きファイル検索
@@ -86,14 +90,10 @@ local common_plugins = {
 					"nvim-lua/popup.nvim",
 				},
 			},
-			-- Git Conflicts: Git競合解決支援
-			"Susensio/telescope-git-conflicts.nvim",
 			-- Tabs: タブ管理強化
 			"LukasPietzschmann/telescope-tabs",
 			-- Command Line: フローティングコマンドライン
 			"jonarrien/telescope-cmdline.nvim",
-			-- Session: セッション管理
-			"xray23/telescope-session.nvim",
 		},
 		config = function()
 			require("pluginconfig.tools.telescope")
@@ -377,12 +377,13 @@ local common_plugins = {
 
 	-- Flutter統合開発ツール
 	{
-		"akinsho/flutter-tools.nvim",
+		"nvim-flutter/flutter-tools.nvim",
 		ft = { "dart" },
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"stevearc/dressing.nvim",
 		},
+		keys = plugin_keymaps.get_plugin_keys("flutter_tools"),
 		config = function()
 			require("pluginconfig.language.flutter-tools")
 		end,
@@ -397,9 +398,10 @@ local common_plugins = {
 		end,
 	},
 
+
 	-- pubspec.yaml管理
 	{
-		"akinsho/pubspec.nvim",
+		"nvim-flutter/pubspec-assist.nvim",
 		ft = { "yaml" },
 		config = function()
 			require("pluginconfig.language.pubspec")
@@ -418,6 +420,18 @@ local common_plugins = {
 		},
 		config = function()
 			require("pluginconfig.debug.nvim-dap")
+		end,
+	},
+
+	-- ===== AI DEVELOPMENT TOOLS =====
+	-- Claude Code Integration
+	{
+		"greggh/claude-code.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		keys = plugin_keymaps.get_plugin_keys("claude_code"),
+		cmd = { "ClaudeCode", "ClaudeCodeContinue", "ClaudeCodeVerbose", "ClaudeCodeResume" },
+		config = function()
+			require("pluginconfig.tools.claude-code")
 		end,
 	},
 }

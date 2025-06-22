@@ -58,8 +58,8 @@ lint.linters_by_ft = {
 	-- 外部依存言語
 	dart = { "dart_analyzer" },
 	
-	-- Lua (using selene if available)
-	lua = { "selene" },
+	-- Lua (using luacheck if available, fallback to selene)
+	lua = { "luacheck" },
 }
 
 -- Create autocommand for linting
@@ -72,15 +72,21 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 		local linters = lint.linters_by_ft[vim.bo.filetype]
 		if linters then
 			-- Check if any of the linters are actually available
+			local has_available_linter = false
 			for _, linter_name in ipairs(linters) do
 				local linter = lint.linters[linter_name]
 				if linter and linter.cmd then
 					-- Check if the command exists
 					if vim.fn.executable(linter.cmd) == 1 then
-						lint.try_lint()
+						has_available_linter = true
 						break
 					end
 				end
+			end
+			
+			-- Only try to lint if we have at least one available linter
+			if has_available_linter then
+				pcall(lint.try_lint)
 			end
 		end
 	end,
@@ -88,5 +94,5 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 
 -- Manual linting keymap
 vim.keymap.set("n", "<leader>l", function()
-	lint.try_lint()
+	pcall(lint.try_lint)
 end, { desc = "Trigger linting for current file" })
