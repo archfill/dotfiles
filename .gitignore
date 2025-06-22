@@ -78,6 +78,7 @@ eggs/
 .eggs/
 lib/
 !bin/lib/
+!.config/zsh/lib/
 lib64/
 parts/
 sdist/
@@ -140,6 +141,7 @@ go.work
 ### Neovim ###
 /nvim/plugin/**
 .config/nvim/plugin/packer_compiled.lua
+.config/nvim/lua/config/local.lua
 
 ### Git ###
 *.orig
