@@ -1,0 +1,68 @@
+-- local.lua.template
+-- Personal/Local Neovim configuration template
+-- 
+-- Usage:
+-- 1. Copy this file to local.lua: cp local.lua.template local.lua
+-- 2. Edit local.lua with your personal settings
+-- 3. local.lua is ignored by git for security
+--
+-- Note: This file contains example configurations. Uncomment and modify as needed.
+
+local M = {}
+
+-- ===== SQL Language Server (sqls) Configuration =====
+-- Uncomment and configure for SQL development
+M.sqls = {
+	-- SQL server connections
+	connections = {
+		-- MySQL Example
+		{
+			driver = "mysql",
+			-- Use environment variables for security
+			-- dataSourceName = os.getenv("MYSQL_DSN") or "user:<PASSWORD>@tcp(host:port)/database"
+			dataSourceName = "root:<PASSWORD>@tcp(127.0.0.1:3306)/your_database",
+		},
+		-- PostgreSQL Example
+		{
+			driver = "postgresql",
+			-- Use environment variables for security
+			-- dataSourceName = os.getenv("POSTGRES_DSN") or "host=host port=port user=user password=<PASSWORD> dbname=database sslmode=disable"
+			dataSourceName = "host=127.0.0.1 port=5432 user=postgres password=<PASSWORD> dbname=your_database sslmode=disable",
+		},
+		-- SQLite Example
+		-- {
+		--     driver = "sqlite3",
+		--     dataSourceName = "/path/to/your/database.db",
+		-- },
+	},
+}
+
+-- ===== Other Personal LSP Configurations =====
+-- Add your personal LSP configurations here
+
+-- Example: Custom LSP server paths
+-- M.custom_lsp_paths = {
+--     lua_language_server = "/custom/path/to/lua-language-server",
+--     pyright = "/custom/path/to/pyright",
+-- }
+
+-- Example: Personal key mappings
+-- M.personal_keymaps = {
+--     -- Add your personal key mappings here
+-- }
+
+-- Example: Personal plugin configurations
+-- M.personal_plugins = {
+--     -- Add your personal plugin configurations here
+-- }
+
+-- ===== Environment-specific Settings =====
+-- M.development = {
+--     -- Development environment specific settings
+-- }
+-- 
+-- M.work = {
+--     -- Work environment specific settings
+-- }
+
+return M

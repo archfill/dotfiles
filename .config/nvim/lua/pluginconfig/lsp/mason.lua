@@ -98,22 +98,71 @@ mason.setup({
 vim.api.nvim_create_user_command("MasonInstallEssentials", function()
 	local essential_packages = {
 		-- LSP Servers (Essential)
-		"lua-language-server",    -- Lua
-		"pyright",               -- Python
+		"lua-language-server",       -- Lua
+		"pyright",                  -- Python
 		"typescript-language-server", -- TypeScript/JavaScript
-		"json-lsp",              -- JSON
-		"yaml-language-server",   -- YAML
-		"bash-language-server",   -- Bash
+		"json-lsp",                 -- JSON
+		"yaml-language-server",      -- YAML
+		"bash-language-server",      -- Bash
+		"rust-analyzer",            -- Rust
+		"gopls",                    -- Go
+		"clangd",                   -- C/C++
+		"html-lsp",                 -- HTML
+		"css-lsp",                  -- CSS
+		
+		-- Tier1 LSP Servers
+		"intelephense",             -- PHP
+		"solargraph",               -- Ruby
+		"sqls",                     -- SQL
+		"terraform-ls",             -- Terraform/HCL
+		"kotlin-language-server",   -- Kotlin
 		
 		-- Formatters (Essential)
-		"stylua",                -- Lua
-		"prettier",              -- Web (JS/TS/HTML/CSS/JSON/YAML)
-		"black",                 -- Python
-		"shfmt",                 -- Shell scripts
+		"stylua",                   -- Lua
+		"prettier",                 -- Web (JS/TS/HTML/CSS/JSON/YAML)
+		"black",                    -- Python
+		"isort",                    -- Python imports
+		"rustfmt",                  -- Rust
+		"gofmt",                    -- Go
+		"goimports",               -- Go imports
+		"clang-format",            -- C/C++
+		"shfmt",                   -- Shell scripts
+		
+		-- Tier1 Formatters
+		"php-cs-fixer",            -- PHP
+		"rubocop",                 -- Ruby
+		"sql-formatter",           -- SQL
+		"terraform-fmt",           -- Terraform/HCL (内蔵だが一応)
+		"ktlint",                  -- Kotlin
 		
 		-- Linters (Essential)
-		"luacheck",              -- Lua
-		"shellcheck",            -- Shell scripts
+		"luacheck",                -- Lua
+		"shellcheck",              -- Shell scripts
+		"eslint_d",                -- JavaScript/TypeScript
+		"pylint",                  -- Python
+		"golangci-lint",           -- Go
+		"cppcheck",                -- C/C++
+		"yamllint",                -- YAML
+		
+		-- Tier1 Linters
+		"phpstan",                 -- PHP
+		-- rubocop (共通)           -- Ruby
+		"sqlfluff",                -- SQL
+		"tflint",                  -- Terraform/HCL
+		-- ktlint (共通)            -- Kotlin
+		
+		-- 既存言語不足対応
+		"marksman",                -- Markdown LSP
+		"dockerfile-language-server", -- Docker LSP
+		"selene",                  -- Lua linter
+		"htmlhint",                -- HTML linter
+		"stylelint",               -- CSS linter
+		"dockfmt",                 -- Docker formatter
+		
+		-- 外部依存言語（条件付き対応）
+		"jdtls",                   -- Java LSP
+		"dart-language-server",    -- Dart/Flutter LSP
+		"dart-analyzer",           -- Dart linter
 	}
 	
 	-- 非同期でインストール
@@ -124,9 +173,9 @@ vim.api.nvim_create_user_command("MasonInstallEssentials", function()
 	end
 	
 	vim.notify(
-		string.format("%d個の必須パッケージをインストール中\n:Mason で進行状況を確認", #essential_packages),
+		string.format("%d個の必須パッケージ（全言語完全対応）をインストール中\n:Mason で進行状況を確認", #essential_packages),
 		vim.log.levels.INFO,
-		{ title = "Mason v2.0.0 Essential Setup" }
+		{ title = "Mason v2.0.0 Ultimate Language Support" }
 	)
 end, { desc = "Mason v2.0.0: 必須パッケージを一括インストール" })
 
