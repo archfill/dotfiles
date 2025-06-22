@@ -32,12 +32,69 @@ local common_plugins = {
 		end,
 	},
 
-	-- Telescope: ファジーファインダー
+	-- Telescope: ファジーファインダー + 高性能拡張
 	{
 		"nvim-telescope/telescope.nvim",
 		keys = plugin_keymaps.get_plugin_keys("telescope"),
 		cmd = { "Telescope" },
-		dependencies = { "nvim-lua/plenary.nvim" },
+		dependencies = { 
+			"nvim-lua/plenary.nvim",
+			-- ===== CORE EXTENSIONS =====
+			-- 高性能ソーター拡張
+			{
+				"nvim-telescope/telescope-fzf-native.nvim",
+				build = "make",
+				cond = function()
+					return vim.fn.executable "make" == 1
+				end,
+			},
+			-- ファイルブラウザー拡張
+			"nvim-telescope/telescope-file-browser.nvim",
+			-- UI統合拡張
+			"nvim-telescope/telescope-ui-select.nvim",
+			-- 記号・絵文字検索
+			"nvim-telescope/telescope-symbols.nvim",
+			-- プロジェクト管理
+			{
+				"nvim-telescope/telescope-project.nvim",
+				dependencies = { "nvim-telescope/telescope-file-browser.nvim" },
+			},
+			-- 最近使用ファイル
+			"smartpde/telescope-recent-files",
+			-- アンドゥツリー
+			"debugloop/telescope-undo.nvim",
+			-- 見出し検索
+			"crispgm/telescope-heading.nvim",
+
+			-- ===== HIGH PRIORITY ADDITIONS =====
+			-- Frecency: 学習機能付きファイル検索
+			{
+				"nvim-telescope/telescope-frecency.nvim",
+				dependencies = {
+					{ "kkharji/sqlite.lua" },
+				},
+			},
+			-- Yanky: ヤンク履歴管理
+			{
+				"gbprod/yanky.nvim",
+				opts = {},
+			},
+			-- Media Files: 画像・PDF・動画プレビュー
+			{
+				"nvim-telescope/telescope-media-files.nvim",
+				dependencies = {
+					"nvim-lua/popup.nvim",
+				},
+			},
+			-- Git Conflicts: Git競合解決支援
+			"Susensio/telescope-git-conflicts.nvim",
+			-- Tabs: タブ管理強化
+			"LukasPietzschmann/telescope-tabs",
+			-- Command Line: フローティングコマンドライン
+			"jonarrien/telescope-cmdline.nvim",
+			-- Session: セッション管理
+			"xray23/telescope-session.nvim",
+		},
 		config = function()
 			require("pluginconfig.tools.telescope")
 		end,
