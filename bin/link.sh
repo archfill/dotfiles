@@ -34,15 +34,22 @@ BASIC_CONFIGS=(
     ".mutt"
     ".textlintrc"
     ".tmux/bin"
-    ".tmux.conf"
-    ".tmux-powerlinerc"
     ".config/zsh"
     ".zshenv"
+    ".config/sheldon"
+    ".config/starship.toml"
 )
 
 # 基本設定ファイルのシンボリックリンク作成
 log_info "Creating basic configuration symlinks"
 create_symlinks_batch "${BASIC_CONFIGS[@]}"
+
+# 特別なパスマッピングが必要な設定ファイル
+log_info "Creating special path mapping symlinks"
+# tmux設定: .config/tmux/tmux.conf → ~/.tmux.conf
+if [[ -f "${DOTFILES_DIR}/.config/tmux/tmux.conf" ]]; then
+    create_symlink "${DOTFILES_DIR}/.config/tmux/tmux.conf" "${HOME}/.tmux.conf"
+fi
 
 # tmuxディレクトリの作成（必要な場合）
 TMUX_DIR="${HOME}/.tmux"

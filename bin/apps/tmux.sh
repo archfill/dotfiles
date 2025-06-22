@@ -13,5 +13,6 @@ fi
 rm-safe "${TMUX_PLUGINS_DIR}/tpm"
 git clone https://github.com/tmux-plugins/tpm ${TMUX_PLUGINS_DIR}/tpm
 
-rm-safe "${HOME}/git/tmux-powerline"
-git clone https://github.com/chill-rf/tmux-powerline.git ${HOME}/git/tmux-powerline
+# Removed: tmux-powerline (not using anymore - using custom Catppuccin status bar)
+# rm-safe "${HOME}/git/tmux-powerline"
+# git clone https://github.com/chill-rf/tmux-powerline.git ${HOME}/git/tmux-powerline

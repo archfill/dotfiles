@@ -48,7 +48,8 @@ bash "${DOTFILES_DIR}/bin/termux/link.sh"
 
 # Setup applications
 log_info "Setting up applications..."
-bash "${DOTFILES_DIR}/bin/apps/zinit.sh"
+bash "${DOTFILES_DIR}/bin/apps/sheldon.sh"
+bash "${DOTFILES_DIR}/bin/apps/starship.sh"
 bash "${DOTFILES_DIR}/bin/apps/uv.sh"
 
 # Change default shell to zsh
