@@ -200,6 +200,41 @@ M.pubspec = {
 	{ "<leader>Po", "<cmd>terminal flutter pub outdated<cr>", desc = "Outdated Packages", ft = "yaml" },
 }
 
+-- Claude Code AI統合キーマップ
+M.claude_code = {
+	-- ===== CORE COMMANDS =====
+	{ "<C-,>", "<cmd>ClaudeCode<CR>", desc = "Claude Code: クイックトグル", mode = { "n", "t" } },
+	{ "<leader>cc", "<cmd>ClaudeCode<CR>", desc = "Claude Code: ターミナルトグル" },
+	
+	-- ===== CONVERSATION MANAGEMENT =====
+	{ "<leader>cC", "<cmd>ClaudeCodeContinue<CR>", desc = "Claude Code: 会話を継続" },
+	{ "<leader>cR", "<cmd>ClaudeCodeResume<CR>", desc = "Claude Code: 会話を選択して再開" },
+	
+	-- ===== OUTPUT OPTIONS =====
+	{ "<leader>cV", "<cmd>ClaudeCodeVerbose<CR>", desc = "Claude Code: 詳細モード" },
+}
+
+-- Flutter Tools統合開発環境キーマップ
+M.flutter_tools = {
+	-- ===== DEVICE MANAGEMENT =====
+	{ "<leader>Fd", "<cmd>FlutterDevices<CR>", desc = "Flutter: Show Devices" },
+	{ "<leader>Fe", "<cmd>FlutterEmulators<CR>", desc = "Flutter: Show Emulators" },
+	
+	-- ===== RUN & DEBUG =====
+	{ "<leader>Fr", "<cmd>FlutterRun<CR>", desc = "Flutter: Run" },
+	{ "<leader>FR", "<cmd>FlutterRestart<CR>", desc = "Flutter: Hot Restart" },
+	{ "<leader>Fq", "<cmd>FlutterQuit<CR>", desc = "Flutter: Quit" },
+	{ "<leader>FD", "<cmd>FlutterDetach<CR>", desc = "Flutter: Detach" },
+	
+	-- ===== OUTLINE & TOOLS =====
+	{ "<leader>Fo", "<cmd>FlutterOutlineToggle<CR>", desc = "Flutter: Toggle Outline" },
+	{ "<leader>Ft", "<cmd>FlutterDevTools<CR>", desc = "Flutter: Open DevTools" },
+	{ "<leader>Fc", "<cmd>FlutterLogClear<CR>", desc = "Flutter: Clear Logs" },
+	
+	-- ===== RELOAD & HOT RELOAD =====
+	{ "<leader>FH", "<cmd>FlutterReload<CR>", desc = "Flutter: Hot Reload" },
+}
+
 -- デバッグキーマップ
 M.nvim_dap = {
 	-- ===== DEBUG CONTROLS =====
