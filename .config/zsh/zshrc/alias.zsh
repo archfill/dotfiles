@@ -1,6 +1,13 @@
-alias ls="ls -G"
-alias la="ls -a"
-alias ll="ls -lh"
+# ls aliases - conditionally use eza or traditional ls  
+if command -v eza >/dev/null 2>&1; then
+  # Modern eza-based aliases (defined in tools.zsh)
+  true  # eza aliases are defined in tools.zsh
+else
+  # Traditional ls aliases
+  alias ls="ls -G"
+  alias la="ls -a"
+  alias ll="ls -lh"
+fi
 
 alias vi="nvim"
 alias vim="nvim"
@@ -33,4 +40,38 @@ alias ghq-update='ghq list | xargs -I {} git -C $(ghq root)/{} pull'
 ## Project navigation shortcuts
 alias p='g'  # Short alias for project selection
 alias repo='g'  # Alternative alias
+
+## Flutter development aliases (cross-platform)
+alias fl='flutter'
+alias flpub='flutter pub'
+alias flrun='flutter run'
+alias flclean='flutter clean'
+alias fldoc='flutter doctor'
+alias fltest='flutter test'
+
+# FVM aliases (if FVM is available)
+if command -v fvm >/dev/null 2>&1; then
+  alias fvmlist='fvm list'
+  alias fvmuse='fvm use'
+  alias fvminstall='fvm install'
+fi
+
+# Platform-specific development tool aliases
+case "$(uname)" in
+  Darwin)
+    # iOS Simulator shortcuts (macOS only)
+    alias ios='open -a Simulator'
+    alias iphone='xcrun simctl boot "iPhone 15 Pro" 2>/dev/null || echo "iPhone 15 Pro simulator not available"'
+    # Android Studio
+    alias studio='open -a "Android Studio"'
+    ;;
+  Linux)
+    # Linux Android development
+    if command -v android-studio >/dev/null 2>&1; then
+      alias studio='android-studio'
+    elif [[ -f "/opt/android-studio/bin/studio.sh" ]]; then
+      alias studio='/opt/android-studio/bin/studio.sh'
+    fi
+    ;;
+esac
 

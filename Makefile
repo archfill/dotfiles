@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup neovim-install neovim-switch neovim-uninstall neovim-status neovim-update neovim-deps neovim-head-build neovim-head-update neovim-head-status neovim-head-auto-install neovim-head-auto-status neovim-head-clean
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup neovim-install neovim-switch neovim-uninstall neovim-status neovim-update neovim-deps neovim-head-build neovim-head-update neovim-head-status neovim-head-auto-install neovim-head-auto-status neovim-head-clean java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -392,6 +392,86 @@ macos-test: ## Run macOS-specific environment tests
 		echo "❌ This command is only for macOS"; \
 		exit 1; \
 	fi
+
+# ===== Development SDKs Management =====
+# Individual SDK setup commands
+java-setup: ## Install Java 21 LTS via SDKMAN!
+	@echo "Installing Java 21 LTS via SDKMAN!..."
+	@bash ./bin/apps/java-sdkman.sh
+
+rust-setup: ## Install Rust stable toolchain via rustup
+	@echo "Installing Rust stable toolchain via rustup..."
+	@bash ./bin/apps/rust-rustup.sh
+
+go-setup: ## Install Go latest via g version manager
+	@echo "Installing Go latest via g version manager..."
+	@bash ./bin/apps/go-g.sh
+
+php-setup: ## Install PHP 8.3 via phpenv
+	@echo "Installing PHP 8.3 via phpenv..."
+	@bash ./bin/apps/php-phpenv.sh
+
+ruby-setup: ## Install Ruby 3.2 via rbenv
+	@echo "Installing Ruby 3.2 via rbenv..."
+	@bash ./bin/apps/ruby-rbenv.sh
+
+terraform-setup: ## Install Terraform CLI
+	@echo "Installing Terraform CLI..."
+	@bash ./bin/apps/terraform.sh
+
+docker-setup: ## Setup Docker Engine
+	@echo "Setting up Docker Engine..."
+	@bash ./bin/apps/docker.sh
+
+# Grouped SDK setup commands
+core-sdks: java-setup rust-setup go-setup ## Install core development SDKs (Java, Rust, Go)
+	@echo "✅ Core SDKs installation completed!"
+
+web-sdks: php-setup ruby-setup ## Install web development SDKs (PHP, Ruby)
+	@echo "✅ Web development SDKs installation completed!"
+
+devops-sdks: terraform-setup docker-setup ## Install DevOps tools (Terraform, Docker)
+	@echo "✅ DevOps tools installation completed!"
+
+all-sdks: core-sdks web-sdks devops-sdks ## Install all supported SDKs and tools
+	@echo "🚀 All SDKs and development tools installation completed!"
+	@echo ""
+	@echo "📊 Run 'make sdk-status' to verify installations"
+
+# SDK status and management
+sdk-status: ## Check all SDK installation status
+	@echo "Checking SDK installation status..."
+	@bash -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_status'
+
+sdk-versions: ## Show installed SDK versions in compact format
+	@echo "Showing installed SDK versions..."
+	@bash -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_versions'
+
+sdk-paths: ## Show SDK environment variables and paths
+	@echo "SDK environment variables:"
+	@bash -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_paths'
+
+# Quick environment setup
+dev-environment: init all-sdks ## Complete development environment setup (dotfiles + all SDKs)
+	@echo "🎉 Complete development environment setup finished!"
+	@echo ""
+	@echo "📋 What was installed:"
+	@echo "  • Dotfiles configuration"
+	@echo "  • Java 21 LTS (SDKMAN!)"
+	@echo "  • Rust stable (rustup)"
+	@echo "  • Go latest (g)"
+	@echo "  • PHP 8.3 (phpenv)"
+	@echo "  • Ruby 3.2 (rbenv)"
+	@echo "  • Terraform CLI"
+	@echo "  • Docker Engine setup"
+	@echo "  • Node.js (volta - existing)"
+	@echo "  • Python (uv - existing)"
+	@echo "  • Flutter SDK (existing)"
+	@echo ""
+	@echo "🔧 Next steps:"
+	@echo "  • Restart your shell: exec $$SHELL"
+	@echo "  • Check status: make sdk-status"
+	@echo "  • Install Neovim LSP tools: nvim and run :MasonInstallEssentials"
 
 # ===== Neovim統一管理システム完了 =====
 # 非推奨エイリアスコマンドを削除し、統一コマンドのみ提供
