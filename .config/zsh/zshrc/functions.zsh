@@ -1,17 +1,19 @@
 
 function precmd() {
-  if [ ! -z $TMUX ]; then
+  if [[ -n "$TMUX" ]]; then
     tmux refresh-client -S
   fi
 }
 
 function select-history() {
   BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
-  CURSOR=$#BUFFER
+  CURSOR="$#BUFFER"
+  return 0
 }
 
 function dotfiles() {
   cd ~/dotfiles
+  return 0
 }
 
 # ghq-based project selection with enhanced fzf preview
@@ -47,19 +49,23 @@ function g() {
     local repo_path="$(ghq root)/$src"
     echo "🚀 Changing to: $repo_path"
     cd "$repo_path"
+    return 0
   fi
+  return 1
 }
 
 # Quick ghq operations
 function ghq-get() {
-  if [[ $# -eq 0 ]]; then
+  if [[ "$#" -eq 0 ]]; then
     echo "Usage: ghq-get <repository-url>"
     echo "Example: ghq-get github.com/user/repo"
     return 1
   fi
   ghq get "$1" && g
+  return 0
 }
 
 function ghq-clone() {
   ghq-get "$@"
+  return "$?"
 }

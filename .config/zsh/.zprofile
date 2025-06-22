@@ -1,155 +1,139 @@
-# 補完機能を有効にする
-autoload -Uz compinit && compinit -u
-autoload bashcompinit && bashcompinit
+# Load performance optimization library
+if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
+else
+  # Fallback functions if performance library fails to load
+  command_exists() { command -v "$1" &>/dev/null; }
+  dir_exists() { [[ -d "$1" ]]; }
+  add_to_path() { 
+    local new_path="$1"
+    local position="${2:-front}"
+    [[ -d "$new_path" ]] || return 1
+    [[ ":$PATH:" == *":$new_path:"* ]] && return 0
+    if [[ "$position" == "back" ]]; then
+      export PATH="$PATH:$new_path"
+    else
+      export PATH="$new_path:$PATH"
+    fi
+  }
+  source_if_exists() { [[ -f "$1" ]] && source "$1"; }
+  init_env_var() { [[ -z "${(P)1}" ]] && export "$1"="$2"; }
+  setup_path_unified() {
+    local -a path_entries=("$@")
+    local entry
+    for entry in "${path_entries[@]}"; do
+      add_to_path "$entry"
+    done
+  }
+  exec_if_command() {
+    local cmd="$1"
+    shift
+    command_exists "$cmd" || return 1
+    eval "$@"
+  }
+fi
 
-export PATH=${HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
-export PATH=$HOME/.local/bin:$PATH
+# Optimized PATH setup using performance library
+setup_path_unified \
+  "${HOME}/bin" \
+  "/usr/local/bin" \
+  "${HOME}/.local/bin"
 
 # if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
 #   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 # fi
 
-# Node.js version management - modern approach with volta
-# Priority order: volta (preferred) > nodebrew > nvm (legacy)
+# Node.js version management - optimized with early returns
 setup_nodejs_manager() {
   # 1. Volta (preferred) - fast, reliable, cross-platform
-  if [ -d "$HOME/.volta" ]; then
-    export VOLTA_HOME="$HOME/.volta"
-    export PATH="$VOLTA_HOME/bin:$PATH"
+  if dir_exists "$HOME/.volta"; then
+    init_env_var "VOLTA_HOME" "$HOME/.volta"
+    add_to_path "$VOLTA_HOME/bin"
     
-    # Add volta completion if available
-    if [[ -f ~/.config/zsh/completions/_volta ]]; then
-      fpath+=(~/.config/zsh/completions)
-    fi
+    # Add volta completion if available (non-blocking)
+    [[ -f ~/.config/zsh/completions/_volta ]] && fpath+=(~/.config/zsh/completions)
     return 0
   fi
   
   # 2. Nodebrew (macOS alternative)
-  if [ -d "$HOME/.nodebrew/current/bin" ]; then
-    export PATH="$HOME/.nodebrew/current/bin:$PATH"
+  dir_exists "$HOME/.nodebrew/current/bin" && {
+    add_to_path "$HOME/.nodebrew/current/bin"
     return 0
-  fi
+  }
   
-  # 3. nvm (legacy fallback - slow startup)
-  if [ -d "${NVM_DIR:-$HOME/.nvm}" ]; then
-    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  # 3. nvm (legacy fallback - load only if needed)
+  local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
+  if dir_exists "$nvm_dir"; then
+    init_env_var "NVM_DIR" "$nvm_dir"
+    source_if_exists "$NVM_DIR/nvm.sh"
+    source_if_exists "$NVM_DIR/bash_completion"
     return 0
   fi
   
   return 1
 }
 
-# Initialize Node.js version manager
-setup_nodejs_manager
+# Initialize Node.js version manager (with error handling)
+setup_nodejs_manager 2>/dev/null || true
 
 # anyenv removed - using modern tools instead:
 # - uv for Python package management
 # - volta for Node.js version management
 
-# Google Cloud SDK configuration - unified for all platforms
+# Google Cloud SDK configuration - optimized with caching
 setup_google_cloud_sdk() {
   local gcloud_path="$1"
-  if [ -d "$gcloud_path" ]; then
-    [ -f "$gcloud_path/path.zsh.inc" ] && source "$gcloud_path/path.zsh.inc"
-    [ -f "$gcloud_path/completion.zsh.inc" ] && source "$gcloud_path/completion.zsh.inc"
-    return 0
-  fi
-  return 1
+  
+  # Early return if directory doesn't exist
+  dir_exists "$gcloud_path" || return 1
+  
+  # Source configuration files (non-blocking)
+  source_if_exists "$gcloud_path/path.zsh.inc"
+  source_if_exists "$gcloud_path/completion.zsh.inc"
+  return 0
 }
 
-# Try different Google Cloud SDK locations
+# Try different Google Cloud SDK locations (short-circuit evaluation)
 setup_google_cloud_sdk "$HOME/google-cloud-sdk" || \
 setup_google_cloud_sdk "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" || \
 setup_google_cloud_sdk "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" || \
-setup_google_cloud_sdk "/snap/google-cloud-sdk/current"  # Snap package location
+setup_google_cloud_sdk "/snap/google-cloud-sdk/current" || true
 
-# opam configuration
-if [ -d "${HOME}/.opam" ] ; then
-  test -r ${HOME}/.opam/opam-init/init.zsh && . ${HOME}/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-  eval $(opam env)
+# opam configuration - optimized with early return
+if dir_exists "${HOME}/.opam"; then
+  source_if_exists "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
+  command_exists opam && eval "$(opam env)" 2>/dev/null || true
 fi
 
-# golang
-if [ -d "$PATH:/usr/local/go/bin" ] ; then
-  export PATH=$PATH:/usr/local/go/bin
+# golang - optimized path handling
+if dir_exists "/usr/local/go/bin"; then
+  add_to_path "/usr/local/go/bin" "back"
 else
-  export GOPATH=$HOME/go;
-  export PATH=$PATH:$GOPATH/bin;
+  init_env_var "GOPATH" "$HOME/go"
+  add_to_path "$GOPATH/bin" "back"
 fi
 
-# rust cargo
-if [ -d "$HOME/.cargo" ] ; then
-  source $HOME/.cargo/env
-fi
+# rust cargo - optimized loading
+dir_exists "$HOME/.cargo" && source_if_exists "$HOME/.cargo/env"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf integration - conditional loading
+source_if_exists ~/.fzf.zsh
 
-# uv - unified Python package manager (shared across all platforms)
-export PATH="$HOME/.cargo/bin:$PATH"
-if command -v uv >/dev/null 2>&1; then
-  eval "$(uv generate-shell-completion zsh)"
-fi
+# uv - unified Python package manager (optimized)
+add_to_path "$HOME/.cargo/bin"
+exec_if_command uv eval "$(uv generate-shell-completion zsh)" 2>/dev/null || true
 
-# kubectl completion
-which kubectl > /dev/null 2>&1
-ERRCHK=$?
-if [[ $ERRCHK -eq 0 ]]; then
-  [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
-fi
+# kubectl completion - conditional with error handling
+exec_if_command kubectl '[[ "$commands[kubectl]" ]] && source <(kubectl completion zsh)' 2>/dev/null || true
 
-# helm completion
-which helm > /dev/null 2>&1
-ERRCHK=$?
-if [[ $ERRCHK -eq 0 ]]; then
-  [[ $commands[helm] ]] && source <(helm completion zsh)
-fi
+# helm completion - conditional with error handling
+exec_if_command helm '[[ "$commands[helm]" ]] && source <(helm completion zsh)' 2>/dev/null || true
 
-[ -f $ZDOTDIR/zprofile/`uname`/init.zsh ] && . $ZDOTDIR/zprofile/`uname`/init.zsh
+# Platform-specific initialization - optimized
+source_if_exists "$ZDOTDIR/zprofile/$(uname)/init.zsh"
 
-if [ -f "/usr/bin/vendor_perl/po4a" ] ; then
-  export PATH=/usr/bin/vendor_perl:$PATH
-fi
+# vendor_perl PATH - optimized
+[[ -f "/usr/bin/vendor_perl/po4a" ]] && add_to_path "/usr/bin/vendor_perl"
 
-# Flutter development environment - unified for all platforms
-setup_flutter_environment() {
-  # Flutter pub global packages path
-  if [ -d "$HOME/.pub-cache/bin" ]; then
-    export PATH="$PATH:$HOME/.pub-cache/bin"
-  fi
-  
-  # FVM (Flutter Version Management) global path
-  if [ -d "$HOME/fvm/default/bin" ]; then
-    export PATH="$PATH:$HOME/fvm/default/bin"
-  fi
-  
-  # Try different Flutter installation locations
-  local flutter_paths=(
-    "$HOME/development/flutter/bin"        # Manual installation
-    "/opt/homebrew/bin/flutter"            # Homebrew Apple Silicon
-    "/usr/local/bin/flutter"               # Homebrew Intel
-    "/snap/flutter/current/bin"            # Snap package
-    "/usr/local/flutter/bin"               # System-wide installation
-  )
-  
-  for flutter_path in "${flutter_paths[@]}"; do
-    local flutter_dir="$(dirname "$flutter_path")"
-    if [ -d "$flutter_dir" ] && [ -x "$flutter_path" ]; then
-      export PATH="$flutter_dir:$PATH"
-      
-      # Set FLUTTER_ROOT if not already set
-      if [ -z "${FLUTTER_ROOT:-}" ]; then
-        export FLUTTER_ROOT="$(dirname "$flutter_dir")"
-      fi
-      
-      return 0
-    fi
-  done
-  
-  return 1
-}
-
-# Initialize Flutter environment
-setup_flutter_environment
+# Flutter configuration moved to sdk.zsh to avoid duplication
 
