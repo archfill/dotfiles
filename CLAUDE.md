@@ -458,13 +458,14 @@ make neovim-unified-uninstall VERSION=all
 - nvim-treesitter (mainブランチ、最適化済み)
 - telescope.nvim (ファジーファインダー)
 - neo-tree.nvim (ファイルエクスプローラー) 
-- alpha-nvim (スタートスクリーン)
+- snacks.nvim (dashboard, notifier, indent - LazyVim移行完了)
 - possession.nvim (セッション管理)
 - telekasten.nvim (メモシステム)
-- nvim-notify (通知システム)
+- noice.nvim (現代的UI、snacks.notifier統合)
+- markview.nvim (マークダウンプレビュー、ハイブリッド編集)
 
-**一時的無効化**:
-- noice.nvim: 0.12.0-dev互換性問題
+**最新追加**: 
+- markview.nvim (2025年6月22日追加): マークダウン、HTML、LaTeX、Typst、YAML対応の高機能プレビュー
 
 ### 将来の解決策
 - Neovim安定版リリース待ち
@@ -561,6 +562,224 @@ make neovim-unified-uninstall VERSION=all
 #### Next Steps: Phase 3 (Future)
 - **snacks.explorer** vs **neo-tree.nvim**: Feature parity testing
 - **snacks.picker** vs **telescope.nvim**: Gradual migration evaluation
+
+## 🏗️ NEW MANDATORY RULES: LazyVim-Based Dotfiles Standards (2025年6月22日)
+
+### CRITICAL: These rules are MANDATORY for all future Neovim maintenance and configuration changes
+
+#### 📋 Rule 1: Plugin Organization Structure (REQUIRED)
+
+**REPLACE** Category A/B/C system with functional categorization:
+
+```
+lua/plugins/
+├── core/           # Priority 1000: Essential startup (colorschemes, fundamental UI)
+├── editor/         # Priority 500: Text editing (treesitter, autopairs, comments)  
+├── ui/             # Priority 800: Interface (statusline, bufferline, notifications)
+├── tools/          # Keys/Cmd: Development tools (telescope, neo-tree)
+├── lsp/            # Event: Language servers and completion
+├── lang/           # Filetype: Language-specific configurations
+├── coding/         # Event: Code assistance (formatting, linting, snippets)
+├── git/            # Tools: Git integration
+├── util/           # VeryLazy: Utility plugins
+└── optional/       # Extras: Optional features system
+```
+
+**ENFORCEMENT**: All new plugins MUST be categorized into appropriate directories. NO exceptions.
+
+#### 📋 Rule 2: Priority-Based Loading System (MANDATORY)
+
+**Loading Priority Order** (MUST follow exactly):
+```lua
+-- Priority 1000: Colorschemes (FIRST - no exceptions)
+{ "folke/tokyonight.nvim", priority = 1000, lazy = false }
+
+-- Priority 800: Core UI (SECOND - essential interface)
+{ "nvim-lualine/lualine.nvim", priority = 800, event = "VeryLazy" }
+
+-- Priority 500: Editor fundamentals (THIRD - basic editing)
+{ "nvim-treesitter/nvim-treesitter", priority = 500, event = "BufRead" }
+
+-- VeryLazy: Non-critical enhancements (FOURTH - optional)
+{ "folke/which-key.nvim", event = "VeryLazy" }
+
+-- Keys/Cmd: Tools (ON-DEMAND - performance critical)
+{ "nvim-telescope/telescope.nvim", keys = { "<leader>ff" } }
+
+-- Event: Context-dependent (SMART - when needed)
+{ "hrsh7th/nvim-cmp", event = "InsertEnter" }
+
+-- Filetype: Language-specific (TARGETED - specific languages)
+{ "simrat39/rust-tools.nvim", ft = "rust" }
+```
+
+**ENFORCEMENT**: NO plugin may be loaded without appropriate priority/event specification.
+
+#### 📋 Rule 3: Integrated Keymap Management (REQUIRED)
+
+**ELIMINATE** separate `keymap/plugins.lua` files. ALL keymaps MUST be defined within plugin specs:
+
+```lua
+-- ✅ CORRECT - Integrated approach
+return {
+  "nvim-telescope/telescope.nvim",
+  keys = {
+    { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+    { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
+  },
+  opts = { ... }
+}
+
+-- ❌ FORBIDDEN - Separate keymap files
+-- NO MORE separate keymap management files
+```
+
+**ENFORCEMENT**: All new plugins MUST include keymaps in plugin specs. Existing separated keymaps MUST be migrated.
+
+#### 📋 Rule 4: Configuration Pattern Standards (MANDATORY)
+
+**Configuration Method Selection** (MUST follow decision tree):
+
+```lua
+-- Simple settings → opts table
+opts = { theme = "tokyonight", enable_feature = true }
+
+-- Complex setup → config function
+config = function()
+  require("plugin").setup({ complex_logic = true })
+end
+
+-- Extending defaults → opts function
+opts = function(_, opts)
+  table.insert(opts.sources, { name = "new_source" })
+  return opts
+end
+
+-- Plugin merging → LazyVim merge rules
+dependencies = { "required-plugin" }  -- Extends list
+keys = { ... }  -- Extends list  
+opts = { ... }  -- Merges with defaults
+other_property = value  -- Overrides defaults
+```
+
+**ENFORCEMENT**: Configuration patterns MUST follow these exact rules. Random approaches forbidden.
+
+#### 📋 Rule 5: Extras System Implementation (REQUIRED)
+
+**Mandatory Optional Plugin Management**:
+
+```lua
+-- lua/plugins/optional/ai.lua
+return {
+  { "github/copilot.vim", enabled = false },
+  { "zbirenbaum/copilot.lua", enabled = false },
+}
+
+-- lua/plugins/optional/terminal-aesthetics.lua
+return {
+  { name = "figlet", enabled = false },
+  { name = "fortune", enabled = false },
+  { name = "neofetch", enabled = true },  -- Default choice
+}
+```
+
+**ENFORCEMENT**: ALL optional/experimental plugins MUST use extras system. NO direct inclusion in main configs.
+
+#### 📋 Rule 6: Performance Standards (NON-NEGOTIABLE)
+
+**Mandatory Performance Targets**:
+- **Startup Time**: <50ms (LazyVim standard)
+- **Memory Usage**: <30MB for core plugins
+- **Plugin Count**: Minimize while maintaining functionality
+- **True Lazy Loading**: NO unnecessary eager loading
+
+**Measurement Commands** (MUST run before commits):
+```bash
+# Startup time test
+nvim --startuptime startup.log +qall && grep -E "TOTAL|Sourcing" startup.log
+
+# Memory test  
+nvim -c "lua print(collectgarbage('count') .. ' KB')" -c "q"
+
+# Plugin count
+nvim -c "Lazy profile" -c "q"
+```
+
+**ENFORCEMENT**: Performance regressions are FORBIDDEN. All changes MUST be benchmarked.
+
+#### 📋 Rule 7: Terminal Aesthetics Standards (MANDATORY)
+
+**Approved Terminal Display Tools** (in priority order):
+1. **neofetch** - Most practical, system information
+2. **figlet** - Lightweight, industry standard  
+3. **fortune + cowsay** - LazyVim official pattern
+
+**Implementation Pattern** (MUST use safe fallbacks):
+```lua
+{
+  section = "terminal",
+  cmd = "if command -v neofetch >/dev/null; then neofetch --ascii_distro arch_small; else figlet -f small 'Ready to Code'; fi",
+  height = 8,
+  padding = 1,
+}
+```
+
+**ENFORCEMENT**: NO colorscript or experimental tools without fallbacks. Safety first.
+
+#### 📋 Rule 8: Dependency Management (MANDATORY)
+
+**Required Dependency Patterns**:
+```lua
+-- ✅ Explicit dependencies
+dependencies = {
+  "nvim-lua/plenary.nvim",
+  { "nvim-tree/nvim-web-devicons", opts = {} }
+}
+
+-- ✅ Load order with priority
+priority = 1000  -- Higher number = earlier loading
+
+-- ✅ Conflict prevention
+enabled = function()
+  return not require("lazy.core.config").plugins["conflicting-plugin"]
+end
+```
+
+**ENFORCEMENT**: ALL dependencies MUST be explicitly declared. NO implicit assumptions.
+
+#### 📋 Rule 9: Documentation Standards (REQUIRED)
+
+**Every Plugin Addition MUST Include**:
+1. Category justification
+2. Performance impact measurement
+3. Keymap documentation
+4. Dependency list
+5. Configuration rationale
+
+**ENFORCEMENT**: NO plugin additions without complete documentation.
+
+#### 📋 Rule 10: Migration Strategy (MANDATORY)
+
+**When Implementing These Rules**:
+1. **Phase 1**: Structure migration (core, editor, ui, tools, etc.)
+2. **Phase 2**: Priority-based loading implementation  
+3. **Phase 3**: Keymap integration into plugin specs
+4. **Phase 4**: Extras system for optional features
+
+**ENFORCEMENT**: Changes MUST follow phased approach. NO big-bang migrations.
+
+### 🚨 CRITICAL MAINTENANCE REMINDERS
+
+**BEFORE ANY Neovim Configuration Changes**:
+1. ✅ Check these rules compliance
+2. ✅ Measure performance impact
+3. ✅ Test startup time
+4. ✅ Verify plugin categorization
+5. ✅ Update documentation
+
+**VIOLATION OF THESE RULES IS FORBIDDEN**
+
+These standards ensure maintainable, performant, and LazyVim-compatible configuration management.
 
 ### blink.cmp大幅カスタマイズ完了 (2025年6月22日)
 
