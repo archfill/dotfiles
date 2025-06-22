@@ -2,12 +2,14 @@
 
 # AWS CLI completion (if available)
 if command -v aws_completer >/dev/null 2>&1; then
-  complete -C "$(command -v aws_completer)" aws
+  autoload -U compinit && compinit
+  compdef '_arguments "*::aws commands:_command_names"' aws
 fi
 
 # Terraform completion (if available)
 if command -v terraform >/dev/null 2>&1; then
-  complete -o nospace -C "$(command -v terraform)" terraform
+  autoload -U compinit && compinit
+  compdef '_arguments "*::terraform commands:_command_names"' terraform
 fi
 
 # Linux-specific aliases
