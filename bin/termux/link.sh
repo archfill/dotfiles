@@ -32,17 +32,24 @@ link ".vimrc"
 # link ".textlintrc"
 
 #tmux
-# TMUX_DIR="${HOME}/.tmux"
-# if [ ! -d $TMUX_DIR ]; then
-#   mkdir -p $TMUX_DIR
-# fi
-# link ".tmux/bin"
-# link ".tmux.conf"
-# link ".tmux-powerlinerc"
+TMUX_DIR="${HOME}/.tmux"
+if [ ! -d $TMUX_DIR ]; then
+  mkdir -p $TMUX_DIR
+fi
+link ".tmux/bin"
+# Special mapping: .config/tmux/tmux.conf → ~/.tmux.conf
+if [ -f "${HOME}/dotfiles/.config/tmux/tmux.conf" ]; then
+  ln -snf "${HOME}/dotfiles/.config/tmux/tmux.conf" "${HOME}/.tmux.conf"
+fi
+# link ".tmux-powerlinerc"  # Removed: not using tmux-powerline anymore
 
 # zsh
 if [ -f "${HOME}/.zshrc" ]; then rm -f ${HOME}/.zshrc; fi
 if [ -e "${HOME}/.zsh" ]; then rm -rf ${HOME}/.zsh; fi
 link ".config/zsh"
 link ".zshenv"
+
+# sheldon & starship (modern zsh setup)
+link ".config/sheldon"
+link ".config/starship.toml"
 
