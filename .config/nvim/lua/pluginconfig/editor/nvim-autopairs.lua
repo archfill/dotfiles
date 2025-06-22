@@ -31,9 +31,16 @@ npairs.setup({
 	map_c_w = false, -- Ctrl+w mapping無効
 })
 
--- nvim-cmpとの統合
+-- completion plugin integration - try blink.cmp first, fallback to nvim-cmp
+local blink_cmp_ok, blink_cmp = pcall(require, "blink.cmp")
 local cmp_status_ok, cmp = pcall(require, "cmp")
-if cmp_status_ok then
+
+if blink_cmp_ok then
+	-- blink.cmp integration (currently no direct integration, but blink.cmp handles auto-brackets)
+	-- blink.cmp has built-in auto-bracket support, so autopairs mainly handles non-completion scenarios
+	vim.notify("Using blink.cmp - autopairs works for non-completion scenarios", vim.log.levels.INFO)
+elseif cmp_status_ok then
+	-- nvim-cmp integration (fallback)
 	local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 	cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 end

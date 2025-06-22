@@ -84,20 +84,33 @@ local common_plugins = {
 	-- CATEGORY B: CONFIG FILE OPTIMIZATION (設定ファイルで管理)
 	-- ================================================================
 
-	-- nvim-cmp: 複雑な条件分岐とコンテキスト依存のため設定ファイルが最適
+	-- blink.cmp: Modern Rust-based completion plugin for better performance
 	{
-		"hrsh7th/nvim-cmp",
+		"saghen/blink.cmp",
+		version = "1.*", -- use release version for stability
 		event = { "InsertEnter", "CmdlineEnter" },
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
+			"rafamadriz/friendly-snippets", -- snippets collection
 		},
 		config = function()
-			require("pluginconfig.editor.nvim-cmp")
+			require("pluginconfig.editor.blink-cmp")
 		end,
 	},
+
+	-- nvim-cmp: MIGRATED to blink.cmp - keeping as reference for now
+	-- {
+	-- 	"hrsh7th/nvim-cmp",
+	-- 	event = { "InsertEnter", "CmdlineEnter" },
+	-- 	dependencies = {
+	-- 		"hrsh7th/cmp-nvim-lsp",
+	-- 		"hrsh7th/cmp-buffer",
+	-- 		"hrsh7th/cmp-path",
+	-- 		"hrsh7th/cmp-cmdline",
+	-- 	},
+	-- 	config = function()
+	-- 		require("pluginconfig.editor.nvim-cmp")
+	-- 	end,
+	-- },
 
 	-- nvim-treesitter: 初期化とハイライト設定が必要なため設定ファイルが最適
 	{
