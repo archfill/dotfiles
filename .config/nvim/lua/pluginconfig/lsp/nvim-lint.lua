@@ -12,6 +12,25 @@ lint.linters_by_ft = {
 	-- Python
 	python = { "pylint" },
 	
+	-- Rust
+	rust = { "clippy" },
+	
+	-- Go
+	go = { "golangci_lint" },
+	
+	-- C/C++
+	c = { "cppcheck" },
+	cpp = { "cppcheck" },
+	
+	-- Java
+	java = { "checkstyle" },
+	
+	-- YAML
+	yaml = { "yamllint" },
+	
+	-- Docker
+	dockerfile = { "hadolint" },
+	
 	-- Markdown/Text
 	markdown = { "textlint" },
 	text = { "textlint" },
@@ -21,8 +40,26 @@ lint.linters_by_ft = {
 	bash = { "shellcheck" },
 	zsh = { "shellcheck" },
 	
+	-- JSON
+	json = { "jsonlint" },
+	
+	-- Web開発品質向上
+	html = { "htmlhint" },
+	css = { "stylelint" },
+	
+	-- Tier1言語追加
+	php = { "phpstan" },
+	ruby = { "rubocop" },
+	sql = { "sqlfluff" },
+	terraform = { "tflint" },
+	hcl = { "tflint" },
+	kotlin = { "ktlint" },
+	
+	-- 外部依存言語
+	dart = { "dart_analyzer" },
+	
 	-- Lua (using selene if available)
-	-- lua = { "selene" },
+	lua = { "selene" },
 }
 
 -- Create autocommand for linting

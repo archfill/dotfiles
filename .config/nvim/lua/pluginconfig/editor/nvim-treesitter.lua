@@ -14,11 +14,25 @@ end
 
 -- Tree-sitter設定
 treesitter_configs.setup({
-	-- 基本的なパーサーを自動インストール
+	-- 主要言語パーサーを自動インストール
 	ensure_installed = {
-		"c", "lua", "vim", "vimdoc", "query", 
-		"javascript", "typescript", "python", 
-		"html", "css", "json", "yaml", "markdown"
+		-- 基本・必須
+		"c", "lua", "vim", "vimdoc", "query",
+		
+		-- Web開発
+		"javascript", "typescript", "html", "css", "json", "yaml",
+		
+		-- システム・アプリ開発
+		"python", "rust", "go", "cpp", "java",
+		
+		-- スクリプト・設定
+		"bash", "markdown", "dockerfile", "toml",
+		
+		-- Flutter/Dart（既存）
+		"dart",
+		
+		-- Tier1言語追加
+		"php", "ruby", "sql", "hcl", "kotlin",
 	},
 	
 	-- 自動インストールを無効化

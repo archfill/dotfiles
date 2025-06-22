@@ -26,9 +26,37 @@ conform.setup({
 		-- Dart/Flutter
 		dart = { "dart_format" },
 		
+		-- Rust
+		rust = { "rustfmt" },
+		
+		-- Go
+		go = { "gofmt", "goimports" },
+		
+		-- C/C++
+		c = { "clang_format" },
+		cpp = { "clang_format" },
+		
+		-- Java
+		java = { "google_java_format" },
+		
 		-- Shell (using beautysh as alternative to shfmt)
 		sh = { "beautysh" },
 		bash = { "beautysh" },
+		
+		-- Additional formats
+		toml = { "taplo" },
+		xml = { "xmlformat" },
+		
+		-- Tier1言語追加
+		php = { "php_cs_fixer" },
+		ruby = { "rubocop" },
+		sql = { "sql_formatter" },
+		terraform = { "terraform_fmt" },
+		hcl = { "terraform_fmt" },
+		kotlin = { "ktlint" },
+		
+		-- 既存言語不足対応
+		dockerfile = { "dockfmt" },
 	},
 	
 	-- Format on save
