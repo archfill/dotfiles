@@ -176,7 +176,7 @@ noice.setup({
 	
 	-- ===== 通知設定 =====
 	notify = {
-		enabled = true,
+		enabled = false, -- Disabled in favor of snacks.notifier
 		view = "notify",
 	},
 

@@ -110,15 +110,15 @@ local common_plugins = {
 		end,
 	},
 
-	-- Notify: 通知管理
-	{
-		"rcarriga/nvim-notify",
-		keys = plugin_keymaps.get_plugin_keys("nvim_notify"),
-		event = "VeryLazy",
-		config = function()
-			require("pluginconfig.tools.nvim-notify")
-		end,
-	},
+	-- Notify: 通知管理 - MIGRATED to snacks.notifier
+	-- {
+	-- 	"rcarriga/nvim-notify",
+	-- 	keys = plugin_keymaps.get_plugin_keys("nvim_notify"),
+	-- 	event = "VeryLazy",
+	-- 	config = function()
+	-- 		require("pluginconfig.tools.nvim-notify")
+	-- 	end,
+	-- },
 
 	-- Possession: セッション管理
 	{
@@ -274,6 +274,21 @@ local common_plugins = {
 	-- UI & VISUAL ENHANCEMENTS
 	-- ================================================================
 	
+	-- Snacks.nvim: Modern UI components collection
+	-- Replaces: alpha-nvim, nvim-notify, indent-blankline.nvim
+	{
+		"folke/snacks.nvim",
+		priority = 1000,
+		lazy = false,
+		keys = vim.list_extend(
+			plugin_keymaps.get_plugin_keys("snacks_notifier"),
+			plugin_keymaps.get_plugin_keys("snacks_dashboard")
+		),
+		config = function()
+			require("pluginconfig.ui.snacks")
+		end,
+	},
+	
 	-- Color scheme
 	{ "folke/tokyonight.nvim", lazy = false, priority = 1000 },
 
@@ -296,14 +311,14 @@ local common_plugins = {
 		end,
 	},
 
-	-- Start screen
-	{
-		"goolord/alpha-nvim",
-		event = "VimEnter",
-		config = function()
-			require("pluginconfig.ui.alpha")
-		end,
-	},
+	-- Start screen - MIGRATED to snacks.dashboard
+	-- {
+	-- 	"goolord/alpha-nvim",
+	-- 	event = "VimEnter",
+	-- 	config = function()
+	-- 		require("pluginconfig.ui.alpha")
+	-- 	end,
+	-- },
 
 	-- Modern UI for messages, cmdline, and popupmenu
 	{
@@ -314,7 +329,7 @@ local common_plugins = {
 		end,
 		dependencies = {
 			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
+			"folke/snacks.nvim", -- Using snacks.notifier instead of nvim-notify
 		},
 	},
 
@@ -322,14 +337,14 @@ local common_plugins = {
 	-- EDITOR ENHANCEMENTS
 	-- ================================================================
 
-	-- Perfect indent guides
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		event = "BufReadPost",
-		config = function()
-			require("pluginconfig.editor.ibl")
-		end,
-	},
+	-- Perfect indent guides - MIGRATED to snacks.indent
+	-- {
+	-- 	"lukas-reineke/indent-blankline.nvim",
+	-- 	event = "BufReadPost",
+	-- 	config = function()
+	-- 		require("pluginconfig.editor.ibl")
+	-- 	end,
+	-- },
 
 	-- High-performance color highlighting
 	{
