@@ -209,6 +209,31 @@ local common_plugins = {
 		end,
 	},
 
+	-- lspsaga: 美しいLSP UI拡張（Category A - keys最適化）
+	{
+		"nvimdev/lspsaga.nvim",
+		keys = plugin_keymaps.get_plugin_keys("lspsaga"),
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-tree/nvim-web-devicons",
+		},
+		config = function()
+			require("pluginconfig.lsp.lspsaga")
+		end,
+	},
+
+	-- nvim-lint: 軽量リンティング
+	{
+		"mfussenegger/nvim-lint",
+		keys = {
+			{ "<leader>l", function() require("lint").try_lint() end, desc = "Trigger linting" },
+		},
+		event = { "BufWritePost", "BufReadPost", "InsertLeave" },
+		config = function()
+			require("pluginconfig.lsp.nvim-lint")
+		end,
+	},
+
 	-- nvim-cokeline: 基本バッファ操作は keys、複雑な表示設定は初期化後
 	{
 		"willothy/nvim-cokeline",
@@ -345,6 +370,56 @@ local common_plugins = {
 
 	-- denops
 	{ "vim-denops/denops.vim", event = "VeryLazy" },
+
+	-- ================================================================
+	-- FLUTTER & DART DEVELOPMENT
+	-- ================================================================
+
+	-- Flutter統合開発ツール
+	{
+		"akinsho/flutter-tools.nvim",
+		ft = { "dart" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"stevearc/dressing.nvim",
+		},
+		config = function()
+			require("pluginconfig.language.flutter-tools")
+		end,
+	},
+
+	-- Dart基本サポート
+	{
+		"dart-lang/dart-vim-plugin",
+		ft = { "dart" },
+		config = function()
+			require("pluginconfig.language.dart-vim")
+		end,
+	},
+
+	-- pubspec.yaml管理
+	{
+		"akinsho/pubspec.nvim",
+		ft = { "yaml" },
+		config = function()
+			require("pluginconfig.language.pubspec")
+		end,
+	},
+
+	-- デバッグアダプター（Category A - keys最適化）
+	{
+		"mfussenegger/nvim-dap",
+		keys = plugin_keymaps.get_plugin_keys("nvim_dap"),
+		dependencies = {
+			-- デバッグUI
+			"rcarriga/nvim-dap-ui",
+			-- 仮想テキスト
+			"theHamsta/nvim-dap-virtual-text",
+		},
+		config = function()
+			require("pluginconfig.debug.nvim-dap")
+		end,
+	},
 }
 
 return common_plugins

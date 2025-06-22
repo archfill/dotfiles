@@ -83,7 +83,7 @@ M.telescope = {
 	-- ===== TELESCOPE META =====
 	{ "<leader>fT", "<cmd>Telescope builtin<cr>", desc = "Telescope Builtins" },
 
-	-- ===== FLUTTER (if available) =====
+	-- ===== FLUTTER DEVELOPMENT =====
 	{ "<leader>flc", "<cmd>Telescope flutter commands<cr>", desc = "Flutter Commands" },
 	{ "<leader>flv", "<cmd>Telescope flutter fvm<cr>", desc = "Flutter FVM" },
 }
@@ -151,29 +151,138 @@ M.telekasten = {
 -- → pluginconfig/editor/Comment.lua で管理
 
 -- ================================================================
+-- FLUTTER & DART DEVELOPMENT KEYMAPS
+-- ================================================================
+
+-- Flutter統合開発キーマップ（Dartファイルタイプで有効）
+M.flutter_tools = {
+	-- ===== FLUTTER CORE OPERATIONS =====
+	{ "<leader>Fr", "<cmd>FlutterRun<cr>", desc = "Flutter Run", ft = "dart" },
+	{ "<leader>Fh", "<cmd>FlutterReload<cr>", desc = "Flutter Hot Reload", ft = "dart" },
+	{ "<leader>FR", "<cmd>FlutterRestart<cr>", desc = "Flutter Restart", ft = "dart" },
+	{ "<leader>Fq", "<cmd>FlutterQuit<cr>", desc = "Flutter Quit", ft = "dart" },
+	{ "<leader>Fd", "<cmd>FlutterDebug<cr>", desc = "Flutter Debug", ft = "dart" },
+	
+	-- ===== FLUTTER UI & TOOLS =====
+	{ "<leader>Fo", "<cmd>FlutterOutlineToggle<cr>", desc = "Flutter Outline", ft = "dart" },
+	{ "<leader>Fw", "<cmd>FlutterReloadWidgets<cr>", desc = "Flutter Reload Widgets", ft = "dart" },
+	{ "<leader>Ft", "<cmd>FlutterDevTools<cr>", desc = "Flutter DevTools", ft = "dart" },
+	{ "<leader>Fc", "<cmd>FlutterLogClear<cr>", desc = "Flutter Clear Logs", ft = "dart" },
+	
+	-- ===== FLUTTER DEVICE MANAGEMENT =====
+	{ "<leader>Fv", "<cmd>FlutterDevices<cr>", desc = "Flutter Devices", ft = "dart" },
+	{ "<leader>Fe", "<cmd>FlutterEmulators<cr>", desc = "Flutter Emulators", ft = "dart" },
+}
+
+-- Dart言語キーマップ
+M.dart_vim = {
+	-- ===== DART OPERATIONS =====
+	{ "<leader>Dr", function() vim.cmd('terminal dart run ' .. vim.fn.expand('%:p')) end, desc = "Run Dart File", ft = "dart" },
+	{ "<leader>Da", "<cmd>terminal dart analyze<cr>", desc = "Dart Analyze", ft = "dart" },
+	{ "<leader>Df", function() 
+		vim.cmd('!dart format ' .. vim.fn.expand('%:p'))
+		vim.cmd('edit!')
+	end, desc = "Format Dart File", ft = "dart" },
+	{ "<leader>Dt", "<cmd>terminal dart test<cr>", desc = "Run Dart Tests", ft = "dart" },
+	{ "<leader>Dp", "<cmd>terminal dart pub get<cr>", desc = "Dart Pub Get", ft = "dart" },
+}
+
+-- pubspec.yamlキーマップ
+M.pubspec = {
+	-- ===== PUBSPEC OPERATIONS =====
+	{ "<leader>Pp", function() require("pubspec").show_package_info() end, desc = "Show Package Info", ft = "yaml" },
+	{ "<leader>Pu", function() require("pubspec").check_updates() end, desc = "Check Updates", ft = "yaml" },
+	{ "<leader>Pa", function() require("pubspec").add_dependency() end, desc = "Add Dependency", ft = "yaml" },
+	{ "<leader>Pr", function() require("pubspec").remove_dependency() end, desc = "Remove Dependency", ft = "yaml" },
+	{ "<leader>Ps", function() require("pubspec").search_packages() end, desc = "Search Packages", ft = "yaml" },
+	{ "<leader>Pl", "<cmd>terminal flutter pub get<cr>", desc = "Flutter Pub Get", ft = "yaml" },
+	{ "<leader>Pt", "<cmd>terminal flutter pub deps<cr>", desc = "Dependency Tree", ft = "yaml" },
+	{ "<leader>Po", "<cmd>terminal flutter pub outdated<cr>", desc = "Outdated Packages", ft = "yaml" },
+}
+
+-- デバッグキーマップ
+M.nvim_dap = {
+	-- ===== DEBUG CONTROLS =====
+	{ "<leader>dc", function() require("dap").continue() end, desc = "Debug Continue" },
+	{ "<leader>dn", function() require("dap").step_over() end, desc = "Debug Step Over" },
+	{ "<leader>di", function() require("dap").step_into() end, desc = "Debug Step Into" },
+	{ "<leader>do", function() require("dap").step_out() end, desc = "Debug Step Out" },
+	
+	-- ===== BREAKPOINTS =====
+	{ "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
+	{ "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Conditional Breakpoint" },
+	{ "<leader>dl", function() require("dap").set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, desc = "Log Point" },
+	{ "<leader>dC", function() require("dap").clear_breakpoints() end, desc = "Clear All Breakpoints" },
+	
+	-- ===== SESSION MANAGEMENT =====
+	{ "<leader>dq", function() require("dap").terminate() end, desc = "Debug Quit" },
+	{ "<leader>dr", function() require("dap").restart() end, desc = "Debug Restart" },
+	{ "<leader>d.", function() require("dap").run_last() end, desc = "Debug Run Last" },
+	
+	-- ===== UI CONTROLS =====
+	{ "<leader>du", function() require("dapui").toggle() end, desc = "Debug Toggle UI" },
+	{ "<leader>dR", function() require("dap").repl.toggle() end, desc = "Debug Toggle REPL" },
+	{ "<leader>dh", function() require("dapui").eval() end, desc = "Debug Hover/Eval" },
+	{ "<leader>dw", function() require("dapui").eval() end, mode = "v", desc = "Debug Watch Expression" },
+	
+	-- ===== FLUTTER SPECIFIC =====
+	{ "<leader>Fd", function()
+		require("dap").run({
+			type = 'dart',
+			request = 'launch',
+			name = 'Flutter Debug',
+			program = '${workspaceFolder}/lib/main.dart',
+			cwd = '${workspaceFolder}',
+			flutterMode = 'debug',
+		})
+	end, desc = "Flutter Debug", ft = "dart" },
+}
+
+-- ================================================================
 -- CATEGORY C: HYBRID OPTIMIZATION (ハイブリッド)
 -- ================================================================
 
--- LSP: 基本操作は keys、複雑な設定は初期化後
+-- LSP: 基本操作は keys、lspsagaを優先使用
 M.lspconfig_basic = {
-	-- Navigation (即座に動作すべき基本操作)
+	-- Navigation (lspsagaで拡張されたもの以外)
 	{ "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", desc = "Go to Definition" },
 	{ "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", desc = "Go to Declaration" },
 	{ "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", desc = "Go to Implementation" },
 	{ "gr", "<cmd>lua vim.lsp.buf.references()<cr>", desc = "Show References" },
 
-	-- Diagnostics (競合解決済み: eからdに変更)
-	{ "<leader>d", "<cmd>lua vim.diagnostic.open_float()<cr>", desc = "Show Diagnostics" },
+	-- Diagnostics (lspsagaで美しく表示 - native LSPからコメントアウト)
+	-- { "<leader>d", "<cmd>lua vim.diagnostic.open_float()<cr>", desc = "Show Diagnostics" },
 	{ "<leader>dl", "<cmd>lua vim.diagnostic.setloclist()<cr>", desc = "Diagnostics to LocList" },
-	{ "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", desc = "Previous Diagnostic" },
-	{ "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", desc = "Next Diagnostic" },
+	-- { "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", desc = "Previous Diagnostic" },
+	-- { "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", desc = "Next Diagnostic" },
 
-	-- Actions
-	{ "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },
-	{ "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename Symbol" },
+	-- Actions (lspsagaで美しく表示 - native LSPからコメントアウト)
+	-- { "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },
+	-- { "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename Symbol" },
 	{ "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>", mode = "i", desc = "Signature Help" },
 }
 -- 複雑なLSP設定は pluginconfig/lsp/nvim-lspconfig.lua で管理
+
+-- lspsaga: 美しいLSP UI拡張（Category A - keys最適化）
+M.lspsaga = {
+	-- コードアクション
+	{ "gx", "<cmd>Lspsaga code_action<cr>", desc = "Code Action" },
+	{ "gx", ":<c-u>Lspsaga range_code_action<cr>", mode = "x", desc = "Range Code Action" },
+	
+	-- LSP機能
+	{ "<leader>rn", "<cmd>Lspsaga rename<cr>", desc = "LSP Rename" },
+	{ "K", "<cmd>Lspsaga hover_doc<cr>", desc = "Hover Documentation" },
+	
+	-- 診断機能
+	{ "go", "<cmd>Lspsaga show_line_diagnostics<cr>", desc = "Line Diagnostics" },
+	{ "gj", "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = "Next Diagnostic" },
+	{ "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = "Previous Diagnostic" },
+	
+	-- 拡張機能
+	{ "<C-u>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1, '<c-u>')<cr>", desc = "Smart Scroll Up" },
+	{ "<C-d>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1, '<c-d>')<cr>", desc = "Smart Scroll Down" },
+	{ "<leader>o", "<cmd>Lspsaga outline<CR>", desc = "Code Outline" },
+}
 
 -- nvim-cokeline: 基本バッファ操作は keys、複雑な表示設定は初期化後
 M.nvim_cokeline_basic = {
@@ -309,6 +418,12 @@ function M.get_stats()
 		category_a = 0, -- keys設定
 		category_b = 0, -- 設定ファイル管理
 		category_c = 0, -- ハイブリッド
+		flutter_dart = 0, -- Flutter/Dart開発
+	}
+
+	-- Flutter/Dart プラグイン
+	local flutter_plugins = {
+		"flutter_tools", "dart_vim", "pubspec", "nvim_dap"
 	}
 
 	for plugin, keymaps in pairs(M) do
@@ -322,7 +437,9 @@ function M.get_stats()
 			stats.total_keymaps = stats.total_keymaps + #keymaps
 
 			-- カテゴリ分類
-			if plugin:match("_basic$") then
+			if vim.tbl_contains(flutter_plugins, plugin) then
+				stats.flutter_dart = stats.flutter_dart + 1
+			elseif plugin:match("_basic$") then
 				stats.category_c = stats.category_c + 1
 			elseif plugin == "nvim_cmp" or plugin == "nvim_treesitter" or plugin == "comment_nvim" then
 				stats.category_b = stats.category_b + 1
