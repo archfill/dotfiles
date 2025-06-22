@@ -19,23 +19,73 @@ M.neo_tree = {
 	{ "<leader>e", "<cmd>Neotree position=float reveal toggle<cr>", desc = "Toggle Neo-tree (float)" },
 }
 
--- Telescope: ファジーファインダー
+-- Telescope: ファジーファインダー + 高性能拡張
 -- 高頻度使用、即座に動作すべきため keys が最適
 M.telescope = {
-	-- File operations
+	-- ===== CORE FILE OPERATIONS =====
 	{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-	{ "<leader>fd", "<cmd>Telescope find_files hidden=true<cr>", desc = "Find Files (including hidden)" },
 	{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
 	{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
 	{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
-	{ "<leader>fm", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
+	{ "<leader>fm", function() require("telescope.builtin").oldfiles() end, desc = "Recent Files" },
+	{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old Files" },
+
+	-- ===== ADVANCED FILE OPERATIONS =====
+	{ "<leader>fd", function() require("pluginconfig.tools.telescope").find_dotfiles() end, desc = "Find Dotfiles" },
+	{ "<leader>fn", function() require("pluginconfig.tools.telescope").find_nvim_config() end, desc = "Find Neovim Config" },
+	{ "<leader>ft", function() require("pluginconfig.tools.telescope").find_project_todos() end, desc = "Find TODOs" },
+	{ "<leader>fG", "<cmd>Telescope git_files<cr>", desc = "Git Files" },
+
+	-- ===== CORE EXTENSIONS =====
+	{ "<leader>fB", function() require("telescope").extensions.file_browser.file_browser({ path = "%:p:h", select_buffer = true }) end, desc = "File Browser" },
+	{ "<leader>fp", function() require("telescope").extensions.project.project({}) end, desc = "Projects" },
+	{ "<leader>fs", function() require("telescope").extensions.symbols.symbols() end, desc = "Symbols & Emoji" },
+	{ "<leader>fu", function() require("telescope").extensions.undo.undo() end, desc = "Undo Tree" },
+	{ "<leader>fH", function() require("telescope").extensions.heading.heading() end, desc = "Document Headings" },
+
+	-- ===== HIGH PRIORITY EXTENSIONS =====
+	{ "<leader>fF", function() require("telescope").extensions.frecency.frecency() end, desc = "Frecency Files (Smart)" },
+	{ "<leader>fy", function() require("telescope").extensions.yanky.history() end, desc = "Yank History" },
+	{ "<leader>fM", function() require("telescope").extensions.media_files.media_files() end, desc = "Media Files" },
+	{ "<leader>gx", function() require("telescope").extensions.git_conflicts.conflicts() end, desc = "Git Conflicts" },
+	{ "<leader>fX", function() require("telescope").extensions.tabs.list() end, desc = "Tabs" },
+	{ "<leader>fC", function() require("telescope").extensions.cmdline.cmdline() end, desc = "Command Line" },
+	{ "<leader>fS", function() require("telescope").extensions.session.session() end, desc = "Sessions" },
+
+	-- ===== UTILITY SEARCHES =====
+	{ "<leader>fr", "<cmd>Telescope registers<cr>", desc = "Registers" },
+	{ "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Keymaps" },
+	{ "<leader>fc", "<cmd>Telescope colorscheme<cr>", desc = "Colorschemes" },
+	{ "<leader>fj", "<cmd>Telescope jumplist<cr>", desc = "Jump List" },
+	{ "<leader>fl", "<cmd>Telescope loclist<cr>", desc = "Location List" },
+	{ "<leader>fq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
+
+	-- ===== COMMAND OPERATIONS =====
+	{ "<leader>f:", "<cmd>Telescope commands<cr>", desc = "Commands" },
+	{ "<leader>f;", "<cmd>Telescope command_history<cr>", desc = "Command History" },
+	{ "<leader>f/", "<cmd>Telescope search_history<cr>", desc = "Search History" },
+	{ "<leader>f?", function() require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({})) end, desc = "Buffer Fuzzy Find" },
 	{ "<leader>-", "<cmd>Telescope command_history<cr>", desc = "Command History" },
 
-	-- Git operations
+	-- ===== LSP OPERATIONS =====
+	{ "<leader>ld", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+	{ "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "LSP References" },
+	{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
+	{ "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<cr>", desc = "Workspace Symbols" },
+
+	-- ===== GIT OPERATIONS =====
 	{ "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git Status" },
 	{ "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Git Commits" },
 	{ "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "Git Buffer Commits" },
-	{ "<leader>gv", "<cmd>Telescope git_branches<cr>", desc = "Git Branches" },
+	{ "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Git Branches" },
+	{ "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "Git Stash" },
+
+	-- ===== TELESCOPE META =====
+	{ "<leader>fT", "<cmd>Telescope builtin<cr>", desc = "Telescope Builtins" },
+
+	-- ===== FLUTTER (if available) =====
+	{ "<leader>flc", "<cmd>Telescope flutter commands<cr>", desc = "Flutter Commands" },
+	{ "<leader>flv", "<cmd>Telescope flutter fvm<cr>", desc = "Flutter FVM" },
 }
 
 -- Conform: フォーマッター
