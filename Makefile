@@ -441,15 +441,15 @@ all-sdks: core-sdks web-sdks devops-sdks ## Install all supported SDKs and tools
 # SDK status and management
 sdk-status: ## Check all SDK installation status
 	@echo "Checking SDK installation status..."
-	@bash -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_status'
+	@zsh -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_status'
 
 sdk-versions: ## Show installed SDK versions in compact format
 	@echo "Showing installed SDK versions..."
-	@bash -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_versions'
+	@zsh -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_versions'
 
 sdk-paths: ## Show SDK environment variables and paths
 	@echo "SDK environment variables:"
-	@bash -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_paths'
+	@zsh -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_paths'
 
 # Quick environment setup
 dev-environment: init all-sdks ## Complete development environment setup (dotfiles + all SDKs)

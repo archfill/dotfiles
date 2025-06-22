@@ -576,6 +576,91 @@ make neovim-unified-uninstall VERSION=all
 - カスタムスニペットの追加
 - キーマップのユーザビリティ改善
 
+## Mason 2.0 LSP管理システム (2025年6月22日完了)
+
+### 🚨 CRITICAL: Mason 2.0への完全移行済み
+
+**重要**: このプロジェクトはMason 2.0とmason-lspconfig 2.0を使用しています。古いAPI情報を参照しないでください。
+
+#### Mason 2.0の破壊的変更
+**廃止されたAPI** (絶対に使用禁止):
+- `setup_handlers()` - **完全削除済み**
+- `automatic_installation` - **automatic_enableに変更**
+- handlers パターン全般
+
+**新しいAPI** (必須使用):
+```lua
+require("mason-lspconfig").setup({
+    ensure_installed = { "lua_ls", "pyright", ... },
+    automatic_enable = true,  -- New API
+})
+
+-- サーバー設定は直接実行
+require('lspconfig').lua_ls.setup({ settings = {...} })
+```
+
+#### 現在の実装詳細
+
+**設定ファイル構成**:
+- **mason.lua**: Mason UI、パッケージ管理設定
+- **mason-lspconfig.lua**: モダンな直接設定方式（402行、19言語サーバー対応）
+- **nvim-lspconfig.lua**: LSP基本設定とキーマップ
+
+**対応言語サーバー**: 19言語完全対応
+- **基本**: lua_ls, pyright, jsonls
+- **開発スタック**: tsserver, rust_analyzer, gopls, clangd
+- **ウェブ**: yamlls, bashls, html, cssls
+- **Tier1**: intelephense, solargraph, sqls, terraformls, kotlin_language_server, marksman, dockerls
+- **条件付き**: jdtls (Java), dartls (Dart/Flutter)
+
+**高度な設定保持**:
+- **TypeScript**: インレイヒント、ESLint統合
+- **Rust**: Cargo機能、clippy、proc macros最適化
+- **Go**: analyses、staticcheck、gofumpt統合
+- **C/C++**: clangd最適化（background-index、clang-tidy）
+- **Java**: 環境検出、ワークスペース管理
+- **Flutter**: SDK検出、Flutter特化最適化
+
+**エラーハンドリング**:
+- `setup_server_safe()`: 全サーバー設定の安全な実行
+- 条件付きロジック: Java/Flutter環境の智的検出
+- 詳細な通知システム: 設定失敗時の具体的なエラー表示
+
+#### 🔧 改修時の注意事項
+
+**情報収集時**:
+- **必須**: Context7やMCP toolsで最新情報を確認
+- **禁止**: mason-lspconfig 1.x系のドキュメント参照
+- **確認**: APIバージョンと破壊的変更履歴の検証
+
+**設定変更時**:
+- **パターン**: 直接`lspconfig.server.setup()`呼び出し
+- **禁止**: `setup_handlers`パターン
+- **必須**: `setup_server_safe()`関数使用でエラーハンドリング
+
+**新言語追加時**:
+1. `ensure_installed`配列に追加
+2. `setup_server_safe()`で設定定義
+3. 言語固有の最適化設定実装
+4. 条件付きロジック（必要時）実装
+
+#### 参考実装例
+```lua
+-- ✅ 正しい実装
+setup_server_safe("new_server", {
+    settings = {
+        newServer = {
+            feature = { enable = true }
+        }
+    }
+})
+
+-- ❌ 廃止されたパターン（使用禁止）
+mason_lspconfig.setup_handlers({
+    ["new_server"] = function() ... end
+})
+```
+
 ### API Changes and Fixes
 - **`vim.hl` module removed**: Create compatibility layer using `rawset(vim, 'hl', {get = function() return {} end, set = function() end})`
 - **`winborder` option deprecated**: Avoid direct access, use proper border configuration in plugin settings

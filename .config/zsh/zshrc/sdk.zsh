@@ -22,7 +22,7 @@ if ! command -v command_exists &>/dev/null; then
       fi
     }
     source_if_exists() { [[ -f "$1" ]] && source "$1"; }
-    init_env_var() { [[ -z "${(P)1}" ]] && export "$1"="$2"; }
+    init_env_var() { [[ -z "$(eval echo \$${1})" ]] && export "$1"="$2"; }
     exec_if_command() {
       local cmd="$1"
       shift
@@ -36,7 +36,7 @@ fi
 if source_if_exists "$HOME/.sdkman/bin/sdkman-init.sh"; then
   # Auto-set JAVA_HOME if available (with error handling)
   if command_exists sdk; then
-    local java_home_path="$(sdk home java current 2>/dev/null || echo '')"
+    java_home_path="$(sdk home java current 2>/dev/null || echo '')"
     [[ -n "$java_home_path" ]] && dir_exists "$java_home_path" && \
       init_env_var "JAVA_HOME" "$java_home_path"
   fi
@@ -45,7 +45,7 @@ fi
 # Fallback JAVA_HOME detection for manual installations - Optimized
 if [[ -z "${JAVA_HOME:-}" ]]; then
   # Platform-specific Java detection with early returns
-  local java_paths=()
+  java_paths=()
   case "$(uname)" in
     Darwin)
       # macOS - Check common Homebrew locations
@@ -130,9 +130,20 @@ init_env_var "PHPENV_ROOT" "$HOME/.phpenv"
 # Initialize phpenv if available (optimized)
 if dir_exists "$PHPENV_ROOT"; then
   add_to_path "$PHPENV_ROOT/bin"
+  add_to_path "$PHPENV_ROOT/shims"
   
   # Initialize phpenv (with error handling)
   exec_if_command phpenv eval "$(phpenv init -)" 2>/dev/null || true
+  
+  # Ensure Composer global packages are in PATH
+  if command_exists phpenv && command_exists php; then
+    local composer_bin_path="$(php -r 'echo $_SERVER["HOME"];' 2>/dev/null)/.composer/vendor/bin"
+    [[ -d "$composer_bin_path" ]] && add_to_path "$composer_bin_path"
+    
+    # Alternative Composer global path
+    local composer_global_path="$HOME/.config/composer/vendor/bin"
+    [[ -d "$composer_global_path" ]] && add_to_path "$composer_global_path"
+  fi
 fi
 
 # ===== Ruby (rbenv) - Optimized =====
@@ -141,9 +152,16 @@ init_env_var "RBENV_ROOT" "$HOME/.rbenv"
 # Initialize rbenv if available (optimized)
 if dir_exists "$RBENV_ROOT"; then
   add_to_path "$RBENV_ROOT/bin"
+  add_to_path "$RBENV_ROOT/shims"
   
   # Initialize rbenv (with error handling)
   exec_if_command rbenv eval "$(rbenv init -)" 2>/dev/null || true
+  
+  # Ensure gems are in PATH
+  if command_exists rbenv && command_exists ruby; then
+    local gem_bin_path="$(ruby -e 'puts Gem.user_dir' 2>/dev/null)/bin"
+    [[ -d "$gem_bin_path" ]] && add_to_path "$gem_bin_path"
+  fi
 fi
 
 # ===== Node.js (volta - already configured) =====
@@ -201,17 +219,45 @@ fi
 # tfenv (Terraform version manager) if available (optimized)
 add_to_path "$HOME/.tfenv/bin"
 
+# Initialize tfenv if available
+if dir_exists "$HOME/.tfenv" && command_exists tfenv; then
+  # Set up tfenv environment
+  export TFENV_ROOT="$HOME/.tfenv"
+fi
+
+# Terraform workspace and cache directories
+init_env_var "TF_DATA_DIR" "$HOME/.terraform.d"
+init_env_var "TF_PLUGIN_CACHE_DIR" "$HOME/.terraform.d/plugin-cache"
+
+# Create plugin cache directory if it doesn't exist
+[[ ! -d "${TF_PLUGIN_CACHE_DIR}" ]] && mkdir -p "${TF_PLUGIN_CACHE_DIR}" 2>/dev/null || true
+
 # ===== Docker - Optimized =====
 # Docker environment (mostly handled by Docker Desktop/system)
 # Add common Docker tool locations to PATH (optimized)
-local docker_paths=(
+docker_paths=(
   "$HOME/.docker/bin"
   "/usr/local/bin"
+  "/usr/bin"
 )
 
 for docker_path in "${docker_paths[@]}"; do
   add_to_path "$docker_path"
 done
+
+# Docker Compose plugin detection and setup
+if command_exists docker; then
+  # Docker BuildKit environment variables for better build performance
+  init_env_var "DOCKER_BUILDKIT" "1"
+  init_env_var "COMPOSE_DOCKER_CLI_BUILD" "1"
+  
+  # Docker configuration directory
+  init_env_var "DOCKER_CONFIG" "$HOME/.docker"
+fi
+
+# Container-related tools paths
+add_to_path "$HOME/.local/share/containers/bin" # Podman tools
+add_to_path "$HOME/.local/bin" # General container tools
 
 # ===== Development Tools PATH Management - Optimized =====
 # Ensure ~/.local/bin is in PATH (for user-installed tools)
@@ -269,6 +315,7 @@ function sdk_status() {
   if command_exists php; then
     echo "✅ PHP: $(php --version | head -1)"
     command_exists phpenv && echo "   Manager: phpenv $(phpenv --version)"
+    command_exists composer && echo "   Composer: $(composer --version --no-ansi | head -1)"
   else
     echo "❌ PHP: Not installed"
   fi
@@ -277,6 +324,8 @@ function sdk_status() {
   if command_exists ruby; then
     echo "✅ Ruby: $(ruby --version)"
     command_exists rbenv && echo "   Manager: rbenv $(rbenv --version)"
+    command_exists gem && echo "   Gem: $(gem --version)"
+    command_exists bundler && echo "   Bundler: $(bundler --version)"
   else
     echo "❌ Ruby: Not installed"
   fi
@@ -292,6 +341,8 @@ function sdk_status() {
   # Terraform (optimized)
   if command_exists terraform; then
     echo "✅ Terraform: $(terraform version | head -1)"
+    command_exists tfenv && echo "   Manager: tfenv"
+    echo "   Plugin Cache: ${TF_PLUGIN_CACHE_DIR:-'Not set'}"
   else
     echo "❌ Terraform: Not installed"
   fi
@@ -299,6 +350,12 @@ function sdk_status() {
   # Docker (optimized)
   if command_exists docker; then
     echo "✅ Docker: $(docker --version)"
+    if command_exists docker-compose; then
+      echo "   Docker Compose: $(docker-compose --version)"
+    elif docker compose version >/dev/null 2>&1; then
+      echo "   Docker Compose (plugin): $(docker compose version)"
+    fi
+    echo "   BuildKit: ${DOCKER_BUILDKIT:-'Not set'}"
   else
     echo "❌ Docker: Not installed"
   fi
@@ -324,8 +381,10 @@ function sdk_versions() {
   command_exists php && versions+=("PHP:$(php --version | head -1 | awk '{print $2}')")
   command_exists ruby && versions+=("Ruby:$(ruby --version | awk '{print $2}')")
   command_exists flutter && versions+=("Flutter:$(flutter --version | head -1 | awk '{print $2}')")
-  command_exists terraform && versions+=("Terraform:$(terraform version | head -1 | awk '{print $2}')")
+  command_exists terraform && versions+=("Terraform:$(terraform version | head -1 | awk '{print $2}' | sed 's/v//')")
   command_exists docker && versions+=("Docker:$(docker --version | awk '{print $3}' | sed 's/,//')")
+  command_exists composer && versions+=("Composer:$(composer --version --no-ansi | awk '{print $3}')")
+  command_exists bundler && versions+=("Bundler:$(bundler --version | awk '{print $3}')")
   
   # Print versions in columns
   printf "%-12s %-12s %-12s\n" "${versions[@]}"
@@ -335,7 +394,7 @@ function sdk_versions() {
 # SDK management aliases
 alias sdk-status='sdk_status'
 alias sdk-versions='sdk_versions'
-alias sdk-paths='echo "JAVA_HOME: ${JAVA_HOME:-Not set}"; echo "CARGO_HOME: ${CARGO_HOME:-Not set}"; echo "GOPATH: ${GOPATH:-Not set}"; echo "GOROOT: ${GOROOT:-Not set}"; echo "FLUTTER_ROOT: ${FLUTTER_ROOT:-Not set}"'
+alias sdk-paths='echo "JAVA_HOME: ${JAVA_HOME:-Not set}"; echo "CARGO_HOME: ${CARGO_HOME:-Not set}"; echo "GOPATH: ${GOPATH:-Not set}"; echo "GOROOT: ${GOROOT:-Not set}"; echo "FLUTTER_ROOT: ${FLUTTER_ROOT:-Not set}"; echo "RBENV_ROOT: ${RBENV_ROOT:-Not set}"; echo "PHPENV_ROOT: ${PHPENV_ROOT:-Not set}"; echo "TF_PLUGIN_CACHE_DIR: ${TF_PLUGIN_CACHE_DIR:-Not set}"; echo "DOCKER_CONFIG: ${DOCKER_CONFIG:-Not set}"'
 
 # Performance optimization aliases
 alias perf-cache-clear='clear_performance_cache'
