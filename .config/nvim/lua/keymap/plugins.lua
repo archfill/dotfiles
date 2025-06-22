@@ -101,15 +101,33 @@ M.conform = {
 	},
 }
 
--- Notify: 通知管理
--- 通知管理、シンプルなため keys が最適
-M.nvim_notify = {
+-- Notify: 通知管理 - MIGRATED to snacks.notifier
+-- Keeping compatible keymaps with snacks.nvim
+M.snacks_notifier = {
 	{
 		"<leader>nc",
 		function()
-			require("notify").dismiss({ silent = true, pending = true })
+			require("snacks").notifier.hide()
 		end,
 		desc = "Clear notifications",
+	},
+	{
+		"<BS>",
+		function()
+			require("snacks").notifier.hide()
+		end,
+		desc = "Dismiss notifications",
+	},
+}
+
+-- Snacks Dashboard
+M.snacks_dashboard = {
+	{
+		"<leader>D",
+		function()
+			require("snacks").dashboard()
+		end,
+		desc = "Toggle Dashboard",
 	},
 }
 
