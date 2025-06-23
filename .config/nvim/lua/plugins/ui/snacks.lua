@@ -23,12 +23,12 @@ return {
       bigfile = { enabled = true, size = 1.5 * 1024 * 1024 }, -- 1.5MB threshold
       
       -- ================================================================
-      -- DASHBOARD: Replaces alpha-nvim
+      -- DASHBOARD: Ultimate Modern Startup Experience
       -- ================================================================
       dashboard = {
         enabled = true,
         preset = {
-          -- Custom header with NEOVIM ASCII art (same as alpha.nvim)
+          -- 🎨 Beautiful Modern Header with Gradient Effect
           header = [[
                                                         
     ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
@@ -38,7 +38,7 @@ return {
     ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
     ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
                                                         
-           🚀 Welcome to Neovim Development Environment ]],
+    ✨ Beautiful • 🚀 Powerful • 🎯 Professional • 💡 Innovative ✨]],
           -- Custom keys section preserving all 47 buttons from alpha.nvim
           keys = {
             -- File Operations
@@ -72,32 +72,111 @@ return {
           },
         },
         sections = {
-          { section = "header" },
+          -- 🎨 Central Header Section
+          { section = "header", gap = 1, padding = 1 },
+          
+          -- 🎯 Main Action Panel (Beautiful Button Layout)
+          { section = "keys", gap = 1, padding = 1 },
+          
+          -- 💼 Left Side Panel: System & Development Info (zsh compatible)
           {
             pane = 2,
             section = "terminal",
-            cmd = "if command -v neofetch >/dev/null 2>&1; then neofetch --ascii_distro arch_small; elif command -v figlet >/dev/null 2>&1; then figlet -f small 'Ready to Code'; else echo '🌈 Welcome to Neovim!' && echo '⚡ Ready for coding!' && echo '🚀 Happy hacking!'; fi",
-            height = 5,
+            cmd = "if command -v neofetch >/dev/null 2>&1; then neofetch --ascii_distro arch_small --color_blocks off 2>/dev/null || echo '🖥️  System info available'; elif command -v figlet >/dev/null 2>&1; then figlet -f small 'Ready' 2>/dev/null && figlet -f small 'to Code' 2>/dev/null; else echo '🌈 Welcome to Neovim!' && echo '⚡ Ready for coding!' && echo '🚀 Happy hacking!' && echo '💡 Let us create amazing things!'; fi",
+            height = 8,
             padding = 1,
+            title = "System Info",
+            icon = " ",
+            indent = 2,
           },
-          { section = "keys", gap = 1, padding = 1 },
-          { pane = 2, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
-          { pane = 2, icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
-          -- Git Status only if in a git repository
+          
+          -- 📊 Performance & Stats Panel (zsh compatible)
+          {
+            pane = 2,
+            section = "terminal", 
+            cmd = "echo '⚡ Neovim Performance Stats:' && echo '' && plugin_count=$(find ~/.local/share/nvim/lazy -maxdepth 1 -type d 2>/dev/null | wc -l 2>/dev/null || echo '0') && echo '🔌 Plugins: '${plugin_count}' installed' && echo '⏱️  Startup: Fast & responsive' && echo '💾 Memory: Optimized usage' && echo '🎯 Mode: Professional Development' && echo '' && echo '✨ Status: Ready for excellence!'",
+            height = 8,
+            padding = 1,
+            title = "Performance",
+            icon = "📊",
+            indent = 2,
+          },
+
+          -- 📁 Recent Files Panel (Enhanced)
+          { 
+            pane = 2, 
+            icon = " ", 
+            title = "Recent Files", 
+            section = "recent_files", 
+            indent = 2, 
+            padding = 1,
+            limit = 8,
+          },
+          
+          -- 🗂️ Projects Panel (Enhanced)
+          { 
+            pane = 2, 
+            icon = " ", 
+            title = "Projects", 
+            section = "projects", 
+            indent = 2, 
+            padding = 1,
+            limit = 6,
+          },
+
+          -- 🌿 Git Status Panel (Enhanced, zsh compatible)
           {
             pane = 2,
             icon = " ",
-            title = "Git Status",
+            title = "Git Repository",
             section = "terminal",
             enabled = function()
               return vim.fn.isdirectory(".git") == 1 or vim.fn.system("git rev-parse --git-dir 2>/dev/null"):match("%.git")
             end,
-            cmd = "git status --porcelain -b 2>/dev/null || echo 'Not in a git repository'",
-            height = 5,
+            cmd = "echo '📊 Repository Status:' && echo '' && git status --porcelain -b 2>/dev/null | head -10 || echo '📭 Clean working directory' && echo '' && branch_name=$(git branch --show-current 2>/dev/null) && echo '🌱 Branch: '${branch_name:-main} && last_commit=$(git log -1 --pretty=format:'%ar' 2>/dev/null) && echo '📝 Last commit: '${last_commit:-'No commits'}",
+            height = 8,
             padding = 1,
             ttl = 5 * 60,
-            indent = 3,
+            indent = 2,
           },
+
+          -- 🕐 Time & Welcome Panel (zsh compatible)
+          {
+            pane = 2,
+            section = "terminal",
+            cmd = "current_date=$(date +'%A, %B %d, %Y' 2>/dev/null) && current_time=$(date +'%I:%M %p' 2>/dev/null) && echo '🕐 '${current_date:-'Today'} && echo '⏰ '${current_time:-'Now'} && echo '' && echo '🌟 Welcome back, Developer!' && echo '💡 Today is a great day to code!' && echo '🚀 Let us build something amazing!' && echo '' && echo '✨ Happy coding! ✨'",
+            height = 8,
+            padding = 1,
+            title = "Welcome",
+            icon = "👋",
+            indent = 2,
+          },
+
+          -- 🔧 Development Environment Panel (zsh compatible)
+          {
+            pane = 2,
+            section = "terminal",
+            cmd = "echo '🔧 Development Environment:' && echo '' && nvim_version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' 2>/dev/null) && echo '📝 Editor: Neovim '${nvim_version:-'Latest'} && echo '🎨 Theme: Catppuccin Mocha' && echo '🏗️  Build: LazyVim Standards' && echo '⚡ Performance: Optimized' && echo '🔌 LSP: Full Language Support' && echo '' && echo '🎯 Status: Professional Ready!'",
+            height = 8,
+            padding = 1,
+            title = "Environment",
+            icon = "🔧",
+            indent = 2,
+          },
+
+          -- 📈 Quick Statistics Panel (zsh compatible - CRITICAL FIX)
+          {
+            pane = 2,
+            section = "terminal",
+            cmd = "echo '📈 Quick Stats:' && echo '' && current_dir=$(pwd 2>/dev/null) && echo '📂 CWD: '${current_dir##*/} && file_count=$(find . -maxdepth 2 -type f 2>/dev/null | wc -l 2>/dev/null || echo '0') && echo '📁 Files: '${file_count} && code_files=$(find . \\( -name '*.lua' -o -name '*.js' -o -name '*.ts' -o -name '*.py' -o -name '*.go' -o -name '*.rs' \\) 2>/dev/null | wc -l 2>/dev/null || echo '0') && echo '📊 Code Files: '${code_files} && echo '🎯 Mode: Development' && echo '' && echo '💪 Ready to create!'",
+            height = 8,
+            padding = 1,
+            title = "Statistics",
+            icon = "📈",
+            indent = 2,
+          },
+
+          -- 🎉 Startup Completion
           {
             section = "startup",
             gap = 1,

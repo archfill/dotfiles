@@ -12,7 +12,9 @@ return {
         "x",
         function()
           local current_buf = vim.api.nvim_get_current_buf()
-          vim.cmd("bdelete " .. current_buf)
+          if vim.api.nvim_buf_is_valid(current_buf) then
+            vim.cmd("bdelete " .. current_buf)
+          end
         end,
         desc = "Close current buffer",
       },
@@ -22,7 +24,9 @@ return {
         "<leader>bd",
         function()
           local current_buf = vim.api.nvim_get_current_buf()
-          vim.cmd("bdelete " .. current_buf)
+          if vim.api.nvim_buf_is_valid(current_buf) then
+            vim.cmd("bdelete " .. current_buf)
+          end
         end,
         desc = "Delete buffer",
       },
@@ -56,58 +60,173 @@ return {
       "nvim-tree/nvim-web-devicons",
     },
     opts = {
+      -- 🎨 Beautiful Catppuccin Integration
       default_hl = {
         fg = function(buffer)
-          return buffer.is_focused and "#a9b1d6" or "#565f89"
+          return buffer.is_focused and "#cdd6f4" or "#9399b2" -- Text / Subtext0
         end,
         bg = function(buffer)
-          return buffer.is_focused and "#1a1b26" or "#16161e"
+          return buffer.is_focused and "#1e1e2e" or "#181825" -- Base / Mantle
         end,
       },
+      
+      -- 🔧 Modern Tab Components with Enhanced Visual Feedback
       components = {
+        -- Left padding with beautiful separator
         {
-          text = function(buffer) return " " .. buffer.devicon.icon end,
-          fg = function(buffer) return buffer.devicon.color end,
+          text = function(buffer)
+            return buffer.index == 1 and " " or ""
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
         },
+        
+        -- Devicon with enhanced colors
         {
-          text = function(buffer) return buffer.filename .. " " end,
+          text = function(buffer) 
+            return " " .. buffer.devicon.icon 
+          end,
+          fg = function(buffer) 
+            return buffer.is_focused and buffer.devicon.color or "#6c7086" -- Surface2 when unfocused
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
+        },
+        
+        -- Filename with smart styling
+        {
+          text = function(buffer) 
+            return " " .. buffer.filename 
+          end,
+          fg = function(buffer)
+            if buffer.is_focused then
+              return buffer.is_modified and "#f9e2af" or "#cdd6f4" -- Yellow if modified, Text if normal
+            else
+              return buffer.is_modified and "#fab387" or "#9399b2" -- Peach if modified, Subtext0 if normal
+            end
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
           style = function(buffer)
             return buffer.is_focused and "bold" or nil
           end,
         },
+        
+        -- Modified indicator with beautiful styling
         {
           text = function(buffer)
-            return buffer.is_modified and "● " or ""
+            return buffer.is_modified and " ●" or ""
           end,
-          fg = "#f7768e",
+          fg = function(buffer)
+            return buffer.is_focused and "#f9e2af" or "#fab387" -- Yellow / Peach
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
         },
+        
+        -- Readonly indicator
         {
           text = function(buffer)
-            return buffer.is_readonly and " " or ""
+            return buffer.is_readonly and "  " or ""
           end,
-          fg = "#bb9af7",
+          fg = "#f38ba8", -- Red for readonly
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
+        },
+        
+        -- Beautiful close button (only on focused buffer)
+        {
+          text = function(buffer)
+            return buffer.is_focused and "  󰅖 " or " "
+          end,
+          fg = function(buffer)
+            return buffer.is_focused and "#f38ba8" or "#181825" -- Red close button or match background
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
+          on_click = function(_, _, _, _, buffer)
+            if buffer and buffer.number and vim.api.nvim_buf_is_valid(buffer.number) then
+              vim.api.nvim_buf_delete(buffer.number, {})
+            end
+          end,
+        },
+        
+        -- Right separator (Safe Implementation)
+        {
+          text = function(buffer, buffers)
+            -- buffers が nil の場合の安全な処理
+            if not buffers then
+              return " " -- デフォルト区切り文字
+            end
+            -- buffer.index 存在チェック
+            if not buffer or not buffer.index then
+              return " "
+            end
+            -- 安全な配列長チェック
+            local buffer_count = type(buffers) == "table" and #buffers or 0
+            return buffer.index < buffer_count and " " or " "
+          end,
+          bg = function(buffer)
+            return buffer.is_focused and "#1e1e2e" or "#181825"
+          end,
         },
       },
+      
+      -- 🌲 Enhanced Sidebar for Neo-tree
       sidebar = {
         filetype = "neo-tree",
         components = {
           {
-            text = "  Neo-tree",
-            fg = "#7aa2f7",
-            bg = "#1a1b26",
+            text = "   Neo-tree",
+            fg = "#89b4fa", -- Blue
+            bg = "#1e1e2e", -- Base
             style = "bold",
           },
         }
       },
+      
+      -- 🔢 Beautiful Tab Numbers (Safe Implementation)
       tabs = {
         placement = "right",
         components = {
           {
             text = function(tabpage)
+              -- tabpage 存在チェック
+              if not tabpage or not tabpage.number then
+                return " ? "
+              end
               return " " .. tabpage.number .. " "
             end,
+            fg = "#cdd6f4", -- Text
+            bg = "#313244", -- Surface0
+            style = "bold",
           },
         },
+      },
+      
+      -- 🎯 Enhanced Pick Letter Display
+      pick = {
+        use_filename = true,
+        letters = "etovxqpdwfghjklmnprbciuaoszuy1234567890",
+      },
+      
+      -- 🎨 Additional Styling Options (Enhanced Safety)
+      show_if_buffers_are_at_least = 2,
+      buffers = {
+        filter_valid = function(buffer)
+          -- より厳密なバッファ検証
+          return buffer 
+            and buffer.type ~= "terminal" 
+            and buffer.number 
+            and vim.api.nvim_buf_is_valid(buffer.number)
+        end,
+        new_buffers_position = "next", -- Insert new buffers next to current
       },
     },
   },
