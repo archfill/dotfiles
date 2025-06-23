@@ -210,6 +210,17 @@ return {
         git_status = {
           window = {
             position = "float",
+            popup = {
+              position = { col = "50%", row = "50%" },
+              size = function(state)
+                local root_name = vim.fn.fnamemodify(state.path, ":~")
+                local root_len = string.len(root_name) + 4
+                return {
+                  width = math.max(root_len, 50),
+                  height = vim.o.lines - 6
+                }
+              end
+            },
             mappings = {
               ["A"]  = "git_add_all",
               ["gu"] = "git_unstage_file",

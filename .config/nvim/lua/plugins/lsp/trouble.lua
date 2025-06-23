@@ -19,13 +19,25 @@ return {
     },
     cmd = { "Trouble" },
     opts = {
-      position = "bottom", -- position of the list can be: bottom, top, left, right
-      height = 10, -- height of the trouble list when position is top or bottom
-      width = 50, -- width of the list when position is left or right
-      icons = false, -- use devicons for filenames
       mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
-      fold_open = "", -- icon used for open folds
-      fold_closed = "", -- icon used for closed folds
+      win = {
+        type = "float",
+        relative = "editor",
+        border = "rounded",
+        title = "Trouble",
+        title_pos = "center",
+        position = { 0.5, 0.5 },
+        size = { width = 0.8, height = 0.8 },
+        zindex = 200,
+      },
+      icons = {
+        indent = {
+          fold_open = "",
+          fold_closed = "",
+        },
+        folder_closed = "",
+        folder_open = "",
+      },
       group = true, -- group results by file
       padding = true, -- add an extra new line on top of the list
       action_keys = { -- key mappings for actions in the trouble list

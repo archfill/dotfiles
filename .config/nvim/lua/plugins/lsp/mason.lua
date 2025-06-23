@@ -28,7 +28,11 @@ return {
     event = "VeryLazy",
     opts = {
       ui = {
-        border = "single",
+        border = "rounded",
+        size = {
+          width = 0.8,
+          height = 0.8,
+        },
         icons = {
           package_installed = "✓",
           package_pending = "➜",
@@ -47,10 +51,25 @@ return {
       { "gr", vim.lsp.buf.references, desc = "Go to References" },
       { "gi", vim.lsp.buf.implementation, desc = "Go to Implementation" },
       { "gt", vim.lsp.buf.type_definition, desc = "Go to Type Definition" },
-      { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
+      { "K", function() 
+          vim.lsp.buf.hover({
+            border = "rounded",
+            focusable = false,
+            source = "always",
+          })
+        end, desc = "Hover Documentation" },
       { "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" },
-      { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action" },
+      { "<leader>ca", function()
+          vim.lsp.buf.code_action({
+            float = {
+              border = "rounded",
+              focusable = false,
+              title = "Code Actions",
+            }
+          })
+        end, desc = "Code Action" },
       { "<leader>dl", "<cmd>lua vim.diagnostic.setloclist()<cr>", desc = "Diagnostics to Location List" },
+      { "<leader>df", function() vim.diagnostic.open_float() end, desc = "Show Diagnostic in Float" },
       { "[d", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
       { "]d", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
     },
@@ -61,6 +80,35 @@ return {
     },
     config = function()
       -- pluginconfigから完全移行 - 401行の企業レベル設定を統合
+      
+      -- ===== FLOATING WINDOW CONFIGURATION =====
+      -- Diagnostics floating window設定
+      vim.diagnostic.config({
+        float = {
+          border = "rounded",
+          source = "always",
+          header = "",
+          prefix = "",
+          focusable = false,
+        },
+        virtual_text = {
+          prefix = "●",
+          spacing = 4,
+        },
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
+      })
+      
+      -- Signature help floating window設定
+      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+        vim.lsp.handlers.signature_help, {
+          border = "rounded",
+          focusable = false,
+          title = "Signature Help",
+        }
+      )
       
       -- 安全なrequire
       local mason_lspconfig_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
