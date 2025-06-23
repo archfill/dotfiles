@@ -69,35 +69,21 @@ return {
     ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
                                                         
     ✨ Beautiful • 🚀 Powerful • 🎯 Professional • 💡 Innovative ✨]],
-          -- Custom keys section preserving all 47 buttons from alpha.nvim
+          -- Essential Actions - Clean & Focused
           keys = {
-            -- File Operations
+            -- 📁 Core Operations (Essential)
             { icon = "📁", key = "f", desc = "Find File", action = ":Telescope find_files" },
             { icon = "🔍", key = "g", desc = "Live Grep", action = ":Telescope live_grep" },
             { icon = "📄", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
-            { icon = "✏️ ", key = "n", desc = "New File", action = ":ene | startinsert" },
             { icon = "📂", key = "e", desc = "File Explorer", action = ":Neotree" },
+            { icon = "✏️ ", key = "n", desc = "New File", action = ":ene | startinsert" },
             
-            -- Session Management
-            { icon = "💾", key = "S", desc = "Save Session", action = ":PossessionSave" },
-            { icon = "🔄", key = "R", desc = "Load Session", action = ":PossessionLoad" },
-            { icon = "🗑️ ", key = "D", desc = "Delete Session", action = ":PossessionDelete" },
-            { icon = "📋", key = "T", desc = "Show Sessions", action = ":PossessionShow" },
-            
-            -- Configuration
+            -- ⚙️ Essentials
             { icon = "⚙️ ", key = "c", desc = "Edit Config", action = ":edit ~/.config/nvim/init.lua" },
-            { icon = "🔌", key = "p", desc = "Edit Plugins", action = ":edit ~/.config/nvim/lua/plugins.lua" },
-            
-            -- Lazy.nvim Plugin Management
             { icon = "💤", key = "l", desc = "Lazy Home", action = ":Lazy" },
-            { icon = "🔄", key = "s", desc = "Sync Plugins", action = ":Lazy sync" },
-            { icon = "⬆️ ", key = "u", desc = "Update Plugins", action = ":Lazy update" },
-            { icon = "⬇️ ", key = "i", desc = "Install Plugins", action = ":Lazy install" },
-            { icon = "🧹", key = "x", desc = "Clean Plugins", action = ":Lazy clean" },
-            { icon = "📊", key = "P", desc = "Plugin Profile", action = ":Lazy profile" },
-            { icon = "📜", key = "L", desc = "Plugin Log", action = ":Lazy log" },
+            { icon = "💾", key = "s", desc = "Save Session", action = ":PossessionSave" },
             
-            -- Exit
+            -- 🚪 Exit
             { icon = "🚪", key = "q", desc = "Quit Neovim", action = ":qa" },
           },
         },
@@ -105,34 +91,12 @@ return {
           -- 🎨 Central Header Section
           { section = "header", gap = 1, padding = 1 },
           
-          -- 🎯 Main Action Panel (Beautiful Button Layout)
+          -- 🎯 Main Action Panel - Clean & Focused
           { section = "keys", gap = 1, padding = 1 },
           
-          -- 💼 Left Side Panel: System & Development Info (zsh compatible)
-          {
-            pane = 2,
-            section = "terminal",
-            cmd = "if command -v neofetch >/dev/null 2>&1; then neofetch --ascii_distro arch_small --color_blocks off 2>/dev/null || echo '🖥️  System info available'; elif command -v figlet >/dev/null 2>&1; then figlet -f small 'Ready' 2>/dev/null && figlet -f small 'to Code' 2>/dev/null; else echo '🌈 Welcome to Neovim!' && echo '⚡ Ready for coding!' && echo '🚀 Happy hacking!' && echo '💡 Let us create amazing things!'; fi",
-            height = 8,
-            padding = 1,
-            title = "System Info",
-            icon = " ",
-            indent = 2,
-          },
+          -- ===== RIGHT SIDEBAR: Essential Information Only =====
           
-          -- 📊 Performance & Stats Panel (zsh compatible)
-          {
-            pane = 2,
-            section = "terminal", 
-            cmd = "echo '⚡ Neovim Performance Stats:' && echo '' && plugin_count=$(find ~/.local/share/nvim/lazy -maxdepth 1 -type d 2>/dev/null | wc -l 2>/dev/null || echo '0') && echo '🔌 Plugins: '${plugin_count}' installed' && echo '⏱️  Startup: Fast & responsive' && echo '💾 Memory: Optimized usage' && echo '🎯 Mode: Professional Development' && echo '' && echo '✨ Status: Ready for excellence!'",
-            height = 8,
-            padding = 1,
-            title = "Performance",
-            icon = "📊",
-            indent = 2,
-          },
-
-          -- 📁 Recent Files Panel (Enhanced)
+          -- 📁 Recent Files - Essential for workflow
           { 
             pane = 2, 
             icon = " ", 
@@ -140,10 +104,10 @@ return {
             section = "recent_files", 
             indent = 2, 
             padding = 1,
-            limit = 8,
+            limit = 6, -- Reduced from 8 for cleaner look
           },
           
-          -- 🗂️ Projects Panel (Enhanced)
+          -- 🗂️ Projects - Essential for development
           { 
             pane = 2, 
             icon = " ", 
@@ -151,62 +115,38 @@ return {
             section = "projects", 
             indent = 2, 
             padding = 1,
-            limit = 6,
+            limit = 4, -- Reduced from 6 for cleaner look
           },
 
-          -- 🌿 Git Status Panel (Enhanced, zsh compatible)
+          -- 🌿 Git Status - Simplified & Essential
           {
             pane = 2,
             icon = " ",
-            title = "Git Repository",
+            title = "Git Status",
             section = "terminal",
             enabled = function()
               return vim.fn.isdirectory(".git") == 1 or vim.fn.system("git rev-parse --git-dir 2>/dev/null"):match("%.git")
             end,
-            cmd = "echo '📊 Repository Status:' && echo '' && git status --porcelain -b 2>/dev/null | head -10 || echo '📭 Clean working directory' && echo '' && branch_name=$(git branch --show-current 2>/dev/null) && echo '🌱 Branch: '${branch_name:-main} && last_commit=$(git log -1 --pretty=format:'%ar' 2>/dev/null) && echo '📝 Last commit: '${last_commit:-'No commits'}",
-            height = 8,
+            cmd = "branch_name=$(git branch --show-current 2>/dev/null) && echo '🌱 '${branch_name:-main} && echo '' && git status --porcelain 2>/dev/null | head -3 || echo '✨ Clean working directory'",
+            height = 5, -- Reduced height for cleaner look
             padding = 1,
             ttl = 5 * 60,
             indent = 2,
           },
 
-          -- 🕐 Time & Welcome Panel (zsh compatible)
+          -- ⚡ Quick Info - Unified essential info
           {
             pane = 2,
+            icon = "⚡",
+            title = "System Info",
             section = "terminal",
-            cmd = "current_date=$(date +'%A, %B %d, %Y' 2>/dev/null) && current_time=$(date +'%I:%M %p' 2>/dev/null) && echo '🕐 '${current_date:-'Today'} && echo '⏰ '${current_time:-'Now'} && echo '' && echo '🌟 Welcome back, Developer!' && echo '💡 Today is a great day to code!' && echo '🚀 Let us build something amazing!' && echo '' && echo '✨ Happy coding! ✨'",
-            height = 8,
+            cmd = "nvim_version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' 2>/dev/null) && plugin_count=$(find ~/.local/share/nvim/lazy -maxdepth 1 -type d 2>/dev/null | wc -l 2>/dev/null || echo '0') && current_time=$(date +'%H:%M' 2>/dev/null) && echo '📝 Neovim '${nvim_version:-'Latest'} && echo '🔌 '${plugin_count}' plugins' && echo '🕐 '${current_time:-'Now'} && echo '✨ Ready to code!'",
+            height = 5, -- Compact unified info
             padding = 1,
-            title = "Welcome",
-            icon = "👋",
             indent = 2,
           },
 
-          -- 🔧 Development Environment Panel (zsh compatible)
-          {
-            pane = 2,
-            section = "terminal",
-            cmd = "echo '🔧 Development Environment:' && echo '' && nvim_version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' 2>/dev/null) && echo '📝 Editor: Neovim '${nvim_version:-'Latest'} && echo '🎨 Theme: Catppuccin Mocha' && echo '🏗️  Build: LazyVim Standards' && echo '⚡ Performance: Optimized' && echo '🔌 LSP: Full Language Support' && echo '' && echo '🎯 Status: Professional Ready!'",
-            height = 8,
-            padding = 1,
-            title = "Environment",
-            icon = "🔧",
-            indent = 2,
-          },
-
-          -- 📈 Quick Statistics Panel (zsh compatible - CRITICAL FIX)
-          {
-            pane = 2,
-            section = "terminal",
-            cmd = "echo '📈 Quick Stats:' && echo '' && current_dir=$(pwd 2>/dev/null) && echo '📂 CWD: '${current_dir##*/} && file_count=$(find . -maxdepth 2 -type f 2>/dev/null | wc -l 2>/dev/null || echo '0') && echo '📁 Files: '${file_count} && code_files=$(find . \\( -name '*.lua' -o -name '*.js' -o -name '*.ts' -o -name '*.py' -o -name '*.go' -o -name '*.rs' \\) 2>/dev/null | wc -l 2>/dev/null || echo '0') && echo '📊 Code Files: '${code_files} && echo '🎯 Mode: Development' && echo '' && echo '💪 Ready to create!'",
-            height = 8,
-            padding = 1,
-            title = "Statistics",
-            icon = "📈",
-            indent = 2,
-          },
-
-          -- 🎉 Startup Completion
+          -- 🎉 Startup Completion - Clean finish
           {
             section = "startup",
             gap = 1,
@@ -560,6 +500,23 @@ return {
           require("snacks").toggle.treesitter():map("<leader>uT")
           require("snacks").toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub")
           require("snacks").toggle.inlay_hints():map("<leader>uh")
+          
+          -- Satellite scrollbar toggle
+          local satellite_enabled = true
+          require("snacks").toggle({
+            name = "Satellite Scrollbar",
+            get = function() 
+              return satellite_enabled 
+            end,
+            set = function(state)
+              satellite_enabled = state
+              if state then
+                vim.cmd("SatelliteEnable")
+              else
+                vim.cmd("SatelliteDisable")
+              end
+            end,
+          }):map("<leader>us")
         end,
       })
     end,
