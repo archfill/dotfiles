@@ -88,6 +88,7 @@ return {
         { "<leader>s", group = "Search" },
         { "<leader>t", group = "Toggle" },
         { "<leader>u", group = "UI" },
+        { "<leader>us", desc = "Toggle Scrollbar" },
         { "<leader>x", group = "Diagnostics" },
         { "<leader>z", group = "Zettelkasten" },
       })

@@ -146,6 +146,17 @@ return {
             "node_modules/*", ".git/*", "%.class", "%.pdf", "%.mkv", "%.mp4", "%.zip",
             "target/*", "build/*", "dist/*",
           },
+          -- Ensure ripgrep path is accessible
+          vimgrep_arguments = {
+            "rg",
+            "--color=never",
+            "--no-heading", 
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--hidden",
+          },
           
           -- Unified Floating Layout Configuration
           layout_strategy = "horizontal", -- Default to horizontal floating
@@ -171,7 +182,7 @@ return {
               prompt_position = "top",
             },
             -- Global floating settings
-            center_gravity = true,
+            mirror = false,
           },
           
           -- Enhanced Floating Window Styling
@@ -319,7 +330,6 @@ return {
           },
           project = {
             base_dirs = {
-              { "~/Projects", max_depth = 3 },
               { "~/dotfiles", max_depth = 2 },
               { vim.fn.getcwd(), max_depth = 1 },
             },

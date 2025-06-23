@@ -1,0 +1,155 @@
+-- ================================================================
+-- UI: Satellite.nvim - Decorated Scrollbar - Priority 700
+-- ================================================================
+-- Modern scrollbar with cursor, search, diagnostics, and git visualization
+-- Unified design with existing floating window system
+
+return {
+  {
+    "lewis6991/satellite.nvim",
+    priority = 700, -- UI category priority
+    event = "VeryLazy", -- Load after essential UI components
+    opts = {
+      -- ================================================================
+      -- UNIFIED FLOATING DESIGN INTEGRATION
+      -- ================================================================
+      -- Transparency matching telescope.nvim and snacks.nvim
+      winblend = 5, -- Subtle transparency for modern floating feel
+      
+      -- Visual configuration
+      current_only = false, -- Show scrollbars for all windows
+      width = 2, -- Scrollbar width (thin but visible)
+      
+      -- ================================================================
+      -- HANDLERS: Enhanced Visual Information
+      -- ================================================================
+      handlers = {
+        -- Cursor position indicator
+        cursor = {
+          enabled = true,
+          symbols = { '⎺', '⎻', '⎼', '⎽' }, -- Clean cursor indicators
+          overlap = true,
+        },
+        
+        -- Search results highlighting
+        search = {
+          enabled = true,
+          symbols = { '━', '━', '━', '━' }, -- Bold search indicators
+          overlap = true,
+        },
+        
+        -- Diagnostic information (errors, warnings, etc.)
+        diagnostic = {
+          enabled = true,
+          signs = { '-', '=', '≡' }, -- Clean diagnostic indicators
+          min_severity = vim.diagnostic.severity.HINT,
+          overlap = true,
+        },
+        
+        -- Git hunks (requires gitsigns.nvim)
+        gitsigns = {
+          enabled = true,
+          signs = { -- git modification indicators
+            add = "│",
+            change = "│", 
+            delete = "▸",
+          },
+          overlap = false, -- Don't overlap with other handlers
+        },
+        
+        -- Marks visualization
+        marks = {
+          enabled = true,
+          key = "m", -- Show marks when 'm' is pressed
+          show_builtins = false, -- Only show user marks
+          overlap = true,
+        },
+        
+        -- Quickfix and location list
+        quickfix = {
+          enabled = true,
+          signs = { '-', '=', '≡' },
+          overlap = true,
+        }
+      },
+      
+      -- ================================================================
+      -- EXCLUDED FILE TYPES (Performance optimization)
+      -- ================================================================
+      excluded_filetypes = {
+        "prompt",
+        "TelescopePrompt",
+        "TelescopeResults", 
+        "TelescopePreview",
+        "noice",
+        "notify",
+        "neo-tree",
+        "dashboard", 
+        "alpha",
+        "startify",
+        "lazy",
+        "mason",
+        "help",
+        "trouble",
+        "lspinfo",
+        "man",
+        "gitcommit",
+        "gitrebase",
+        "lspsagafinder",
+        "",
+      },
+      
+      -- ================================================================
+      -- MOUSE INTERACTION
+      -- ================================================================
+      -- Enable mouse click to jump to positions
+      mouse = {
+        enabled = true,
+      },
+      
+      -- ================================================================
+      -- INTEGRATION SETTINGS
+      -- ================================================================
+      -- Fold information display
+      folds = {
+        enabled = true,
+        symbols = { '▞', '▚' }, -- Fold indicators
+        overlap = false,
+      },
+    },
+    
+    -- ================================================================
+    -- INITIALIZATION AND COMMANDS
+    -- ================================================================
+    config = function(_, opts)
+      -- Setup satellite with options
+      require("satellite").setup(opts)
+      
+      -- ⚡ Performance: Minimal refresh strategy
+      -- Only refresh on essential events
+      vim.api.nvim_create_autocmd({ "BufRead", "VimResized" }, {
+        pattern = "*",
+        callback = function()
+          local filetype = vim.bo.filetype
+          if not vim.tbl_contains(opts.excluded_filetypes, filetype) then
+            vim.defer_fn(function()
+              require("satellite").refresh()
+            end, 100)
+          end
+        end,
+        desc = "Deferred satellite scrollbar refresh"
+      })
+      
+      -- Success notification
+      vim.notify("📊 Satellite scrollbar ready!", vim.log.levels.INFO)
+    end,
+    
+    -- ================================================================
+    -- DEPENDENCIES
+    -- ================================================================
+    dependencies = {
+      -- Optional integration with gitsigns
+      { "lewis6991/gitsigns.nvim", optional = true },
+    },
+  },
+}
