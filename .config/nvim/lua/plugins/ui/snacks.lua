@@ -511,9 +511,9 @@ return {
             set = function(state)
               satellite_enabled = state
               if state then
-                vim.cmd("SatelliteEnable")
+                pcall(vim.cmd, "SatelliteEnable")
               else
-                vim.cmd("SatelliteDisable")
+                pcall(vim.cmd, "SatelliteDisable")
               end
             end,
           }):map("<leader>us")

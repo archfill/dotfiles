@@ -8,7 +8,7 @@ return {
   {
     "lewis6991/satellite.nvim",
     priority = 700, -- UI category priority
-    event = "VeryLazy", -- Load after essential UI components
+    lazy = false, -- UI category requires priority-based loading
     opts = {
       -- ================================================================
       -- UNIFIED FLOATING DESIGN INTEGRATION
@@ -46,29 +46,20 @@ return {
           overlap = true,
         },
         
-        -- Git hunks (requires gitsigns.nvim)
+        -- Git hunks (requires gitsigns.nvim) - Simplified
         gitsigns = {
           enabled = true,
-          signs = { -- git modification indicators
-            add = "│",
-            change = "│", 
-            delete = "▸",
-          },
-          overlap = false, -- Don't overlap with other handlers
+          overlap = false,
         },
         
-        -- Marks visualization
+        -- Marks visualization - Simplified
         marks = {
-          enabled = true,
-          key = "m", -- Show marks when 'm' is pressed
-          show_builtins = false, -- Only show user marks
-          overlap = true,
+          enabled = false, -- Disable for performance
         },
         
-        -- Quickfix and location list
+        -- Quickfix and location list - Simplified
         quickfix = {
           enabled = true,
-          signs = { '-', '=', '≡' },
           overlap = true,
         }
       },
@@ -124,21 +115,6 @@ return {
     config = function(_, opts)
       -- Setup satellite with options
       require("satellite").setup(opts)
-      
-      -- ⚡ Performance: Minimal refresh strategy
-      -- Only refresh on essential events
-      vim.api.nvim_create_autocmd({ "BufRead", "VimResized" }, {
-        pattern = "*",
-        callback = function()
-          local filetype = vim.bo.filetype
-          if not vim.tbl_contains(opts.excluded_filetypes, filetype) then
-            vim.defer_fn(function()
-              require("satellite").refresh()
-            end, 100)
-          end
-        end,
-        desc = "Deferred satellite scrollbar refresh"
-      })
       
       -- Success notification
       vim.notify("📊 Satellite scrollbar ready!", vim.log.levels.INFO)
