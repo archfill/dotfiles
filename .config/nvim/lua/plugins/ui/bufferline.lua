@@ -217,7 +217,7 @@ return {
       },
       
       -- 🎨 Additional Styling Options (Enhanced Safety)
-      show_if_buffers_are_at_least = 2,
+      show_if_buffers_are_at_least = 1, -- 単一ファイルでもタブ表示
       buffers = {
         filter_valid = function(buffer)
           -- より厳密なバッファ検証
