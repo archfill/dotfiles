@@ -19,10 +19,7 @@
 -- ================================================================
 vim.g.mapleader = " "
 
--- custom leader key
--- vim.keymap.set("n", ",", "<Nop>", { noremap = true, silent = true })
--- vim.keymap.set("n", "[_Lsp]", "<Nop>", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("n", ",", "[_Lsp]", {})
+-- Custom leader keys for legacy compatibility
 LK_LSP = ","
 LK_COMMENT = ","
 

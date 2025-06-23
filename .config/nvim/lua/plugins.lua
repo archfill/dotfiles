@@ -16,27 +16,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
--- 共通プラグインを読み込み
-local common_plugins = require("plugins_base")
-
--- バージョン固有プラグインを読み込み
-local function load_version_plugins()
-	-- Neovim バージョン検出（簡素化）
-	local version = vim.version()
-	if version.prerelease and version.prerelease ~= vim.NIL then
-		-- Nightly版
-		local ok, nightly_plugins = pcall(require, "plugins_nightly")
-		return ok and nightly_plugins or {}
-	else
-		-- Stable版
-		local ok, stable_plugins = pcall(require, "plugins_stable")
-		return ok and stable_plugins or {}
-	end
-end
-
--- プラグインリストを統合
-local version_plugins = load_version_plugins()
-local final_plugins = vim.tbl_extend("force", common_plugins, version_plugins)
+-- LazyVim-Based Dotfiles Standards準拠システム
+local final_plugins = require("plugins.init")
 
 -- lockfileパスをバージョンに応じて動的に設定
 local function get_lockfile_path()
