@@ -1,0 +1,701 @@
+-- ================================================================
+-- TOOLS: Telescope - Fuzzy Finder
+-- ================================================================
+
+return {
+  -- Telescope: ファジーファインダー + 高性能拡張
+  {
+    "nvim-telescope/telescope.nvim",
+    keys = {
+      -- ===== CORE FILE OPERATIONS =====
+      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
+      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
+      { "<leader>fm", function() require("telescope.builtin").oldfiles() end, desc = "Recent Files" },
+      { "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old Files" },
+
+      -- ===== ADVANCED FILE OPERATIONS =====
+      { "<leader>fd", function() require("telescope.builtin").find_files({ cwd = "~/.dotfiles" }) end, desc = "Find Dotfiles" },
+      { "<leader>fn", function() require("telescope.builtin").find_files({ cwd = "~/.config/nvim" }) end, desc = "Find Neovim Config" },
+      { "<leader>ft", function() require("telescope.builtin").live_grep({ default_text = "TODO\\|FIXME\\|HACK\\|BUG" }) end, desc = "Find TODOs" },
+
+      -- ===== CORE EXTENSIONS =====
+      { "<leader>fB", function() require("telescope").extensions.file_browser.file_browser({ path = "%:p:h", select_buffer = true }) end, desc = "File Browser" },
+      { "<leader>fp", function() require("telescope").extensions.project.project({}) end, desc = "Projects" },
+      { "<leader>fs", function() require("telescope").extensions.symbols.symbols() end, desc = "Symbols & Emoji" },
+      { "<leader>fu", function() require("telescope").extensions.undo.undo() end, desc = "Undo Tree" },
+      { "<leader>fH", function() require("telescope").extensions.heading.heading() end, desc = "Document Headings" },
+
+      -- ===== HIGH PRIORITY EXTENSIONS =====
+      { "<leader>fF", function() require("telescope").extensions.frecency.frecency() end, desc = "Frecency Files (Smart)" },
+      { "<leader>fy", function() require("telescope").extensions.yanky.history() end, desc = "Yank History" },
+      { "<leader>fM", function() require("telescope").extensions.media_files.media_files() end, desc = "Media Files" },
+      { "<leader>fX", function() require("telescope").extensions.tabs.list() end, desc = "Tabs" },
+      { "<leader>fC", function() require("telescope").extensions.cmdline.cmdline() end, desc = "Command Line" },
+      { "<leader>fS", function() require("telescope").extensions.session.session() end, desc = "Sessions" },
+
+      -- ===== UTILITY SEARCHES =====
+      { "<leader>fr", "<cmd>Telescope registers<cr>", desc = "Registers" },
+      { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Keymaps" },
+      { "<leader>fc", "<cmd>Telescope colorscheme<cr>", desc = "Colorschemes" },
+      { "<leader>fj", "<cmd>Telescope jumplist<cr>", desc = "Jump List" },
+      { "<leader>fl", "<cmd>Telescope loclist<cr>", desc = "Location List" },
+      { "<leader>fq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
+
+      -- ===== COMMAND OPERATIONS =====
+      { "<leader>f:", "<cmd>Telescope commands<cr>", desc = "Commands" },
+      { "<leader>f;", "<cmd>Telescope command_history<cr>", desc = "Command History" },
+      { "<leader>f/", "<cmd>Telescope search_history<cr>", desc = "Search History" },
+      { "<leader>f?", function() require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({})) end, desc = "Buffer Fuzzy Find" },
+      { "<leader>-", "<cmd>Telescope command_history<cr>", desc = "Command History" },
+
+      -- ===== LSP OPERATIONS =====
+      { "<leader>ld", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+      { "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "LSP References" },
+      { "<leader>ls", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
+      { "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<cr>", desc = "Workspace Symbols" },
+
+
+      -- ===== TELESCOPE META =====
+      { "<leader>fT", "<cmd>Telescope builtin<cr>", desc = "Telescope Builtins" },
+
+      -- ===== FLUTTER DEVELOPMENT =====
+      { "<leader>flc", "<cmd>Telescope flutter commands<cr>", desc = "Flutter Commands" },
+      { "<leader>flv", "<cmd>Telescope flutter fvm<cr>", desc = "Flutter FVM" },
+    },
+    cmd = { "Telescope" },
+    dependencies = { 
+      "nvim-lua/plenary.nvim",
+      -- ===== CORE EXTENSIONS =====
+      -- 高性能ソーター拡張
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = "make",
+        cond = function()
+          return vim.fn.executable "make" == 1
+        end,
+      },
+      -- ファイルブラウザー拡張
+      "nvim-telescope/telescope-file-browser.nvim",
+      -- UI統合拡張
+      "nvim-telescope/telescope-ui-select.nvim",
+      -- 記号・絵文字検索
+      "nvim-telescope/telescope-symbols.nvim",
+      -- プロジェクト管理
+      {
+        "nvim-telescope/telescope-project.nvim",
+        dependencies = { "nvim-telescope/telescope-file-browser.nvim" },
+      },
+      -- 最近使用ファイル
+      "smartpde/telescope-recent-files",
+      -- アンドゥツリー
+      "debugloop/telescope-undo.nvim",
+      -- 見出し検索
+      "crispgm/telescope-heading.nvim",
+      -- セッション管理
+      "HUAHUAI23/telescope-session.nvim",
+
+      -- ===== HIGH PRIORITY ADDITIONS =====
+      -- Frecency: 学習機能付きファイル検索
+      {
+        "nvim-telescope/telescope-frecency.nvim",
+        dependencies = {
+          { "kkharji/sqlite.lua" },
+        },
+      },
+      -- Yanky: ヤンク履歴管理
+      {
+        "gbprod/yanky.nvim",
+        opts = {},
+      },
+      -- Media Files: 画像・PDF・動画プレビュー
+      {
+        "nvim-telescope/telescope-media-files.nvim",
+        dependencies = {
+          "nvim-lua/popup.nvim",
+        },
+      },
+      -- Tabs: タブ管理強化
+      "LukasPietzschmann/telescope-tabs",
+      -- Command Line: フローティングコマンドライン
+      "jonarrien/telescope-cmdline.nvim",
+    },
+    opts = {
+      defaults = {
+        file_ignore_patterns = {
+          "node_modules/*", ".git/*", "%.class", "%.pdf", "%.mkv", "%.mp4", "%.zip",
+          "target/*", "build/*", "dist/*",
+        },
+        layout_strategy = "flex",
+        layout_config = {
+          horizontal = { width = 0.9, height = 0.8, preview_width = 0.6 },
+          vertical = { width = 0.9, height = 0.95, preview_height = 0.5 },
+        },
+        mappings = {
+          i = {
+            ["<C-j>"] = "move_selection_next",
+            ["<C-k>"] = "move_selection_previous",
+            ["<C-q>"] = "send_selected_to_qflist + open_qflist",
+          },
+        },
+      },
+      extensions = {
+        fzf = {
+          fuzzy = true,
+          override_generic_sorter = true,
+          override_file_sorter = true,
+        },
+      },
+    },
+    config = function()
+      -- pluginconfigから完全移行 - 551行の詳細設定を統合
+      local telescope = require("telescope")
+      local actions = require("telescope.actions")
+      local action_layout = require("telescope.actions.layout")
+      local utils = require("telescope.utils")
+      local builtin = require("telescope.builtin")
+      local themes = require("telescope.themes")
+      local Path = require("plenary.path")
+      
+      -- ===== EXTENSION LOADING SYSTEM =====
+      -- 安全な拡張機能読み込みシステム
+      local function safe_load_extension(extension_name)
+        local ok, _ = pcall(telescope.load_extension, extension_name)
+        if not ok then
+          -- 警告レベル以下の通知は表示しない（静寂モード）
+          -- vim.notify("Telescope extension '" .. extension_name .. "' not available", vim.log.levels.WARN)
+        end
+        -- 成功時の通知も無効化（静寂モード）
+        -- vim.notify("Loaded telescope extension: " .. extension_name, vim.log.levels.INFO)
+        return ok
+      end
+      
+      -- 必須拡張機能の読み込み
+      local extensions_loaded = {
+        -- Core extensions
+        fzf = safe_load_extension("fzf"),
+        file_browser = safe_load_extension("file_browser"),
+        ui_select = safe_load_extension("ui-select"),
+        symbols = safe_load_extension("symbols"),
+        project = safe_load_extension("project"),
+        recent_files = safe_load_extension("recent_files"),
+        undo = safe_load_extension("undo"),
+        heading = safe_load_extension("heading"),
+        flutter = safe_load_extension("flutter"),
+        
+        -- High priority additions
+        frecency = safe_load_extension("frecency"),
+        yanky = safe_load_extension("yanky"),
+        media_files = safe_load_extension("media_files"),
+        conflicts = safe_load_extension("conflicts"),
+        tabs = safe_load_extension("tabs"),
+        cmdline = safe_load_extension("cmdline"),
+        xray23 = safe_load_extension("xray23"),
+      }
+      
+      -- ===== PERFORMANCE-OPTIMIZED DEFAULTS =====
+      local telescope_opts = {
+        defaults = {
+          -- 高速ソーター設定
+          file_sorter = extensions_loaded.fzf and telescope.extensions.fzf.native_fzf_sorter() or nil,
+          generic_sorter = extensions_loaded.fzf and telescope.extensions.fzf.native_fzf_sorter() or nil,
+      
+          -- パフォーマンス最適化
+          cache_picker = {
+            num_pickers = 10,
+            limit_entries = 1000,
+          },
+      
+          -- ファイル除外パターン
+          file_ignore_patterns = {
+            "node_modules/*",
+            ".git/*",
+            "%.class",
+            "%.pdf",
+            "%.mkv",
+            "%.mp4",
+            "%.zip",
+            "target/*",
+            "build/*",
+            "dist/*",
+          },
+      
+          -- 美しいUI設定
+          borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+          color_devicons = true,
+          use_less = true,
+          set_env = { ["COLORTERM"] = "truecolor" },
+      
+          -- プレビュー最適化
+          preview = {
+            timeout = 250,
+            highlight_limit = 1, -- 1MB以上はハイライト無し
+            treesitter = true,
+            hide_on_startup = false,
+          },
+      
+          -- パス表示最適化
+          path_display = {
+            "truncate", -- 長いパスは省略
+            shorten = {
+              len = 3,
+              exclude = { 1, -1 }, -- 最初と最後のディレクトリは省略しない
+            },
+          },
+      
+          -- レイアウト設定
+          layout_strategy = "flex",
+          layout_config = {
+            flex = {
+              flip_columns = 120,
+            },
+            horizontal = {
+              width = 0.9,
+              height = 0.8,
+              preview_width = 0.6,
+            },
+            vertical = {
+              width = 0.9,
+              height = 0.95,
+              preview_height = 0.5,
+            },
+          },
+      
+          -- 高度なキーマップ
+          mappings = {
+            i = {
+              -- 移動系
+              ["<C-j>"] = actions.move_selection_next,
+              ["<C-k>"] = actions.move_selection_previous,
+              ["<C-n>"] = actions.cycle_history_next,
+              ["<C-p>"] = actions.cycle_history_prev,
+      
+              -- セレクション系
+              ["<Tab>"] = actions.toggle_selection + actions.move_selection_next,
+              ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_previous,
+              ["<C-a>"] = actions.select_all,
+              ["<C-l>"] = actions.complete_tag,
+      
+              -- quickfix系
+              ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+              ["<M-q>"] = actions.send_to_qflist + actions.open_qflist,
+      
+              -- レイアウト系
+              ["<C-t>"] = action_layout.toggle_preview,
+              ["<C-h>"] = action_layout.toggle_prompt_position,
+              ["<C-s>"] = actions.select_horizontal,
+              ["<C-v>"] = actions.select_vertical,
+      
+              -- スクロール系
+              ["<C-u>"] = actions.preview_scrolling_up,
+              ["<C-d>"] = actions.preview_scrolling_down,
+              ["<C-f>"] = actions.results_scrolling_up,
+              ["<C-b>"] = actions.results_scrolling_down,
+            },
+            n = {
+              -- 基本移動
+              ["j"] = actions.move_selection_next,
+              ["k"] = actions.move_selection_previous,
+              ["H"] = actions.move_to_top,
+              ["M"] = actions.move_to_middle,
+              ["L"] = actions.move_to_bottom,
+      
+              -- セレクション
+              ["<Tab>"] = actions.toggle_selection + actions.move_selection_next,
+              ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_previous,
+      
+              -- quickfix
+              ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+              ["<M-q>"] = actions.send_to_qflist + actions.open_qflist,
+      
+              -- レイアウト
+              ["<C-t>"] = action_layout.toggle_preview,
+              ["<C-h>"] = action_layout.toggle_prompt_position,
+      
+              -- 閉じる
+              ["q"] = actions.close,
+              ["<Esc>"] = actions.close,
+            },
+          },
+        },
+        -- ===== BUILTIN PICKERS OPTIMIZATION =====
+        pickers = {
+          -- ファイル検索最適化
+          find_files = {
+            theme = "ivy",
+            hidden = true,
+            no_ignore = false,
+            follow = true,
+            layout_config = {
+              height = 0.4,
+              preview_cutoff = 120,
+            },
+          },
+      
+          -- ライブgrep最適化
+          live_grep = {
+            theme = "ivy",
+            additional_args = function()
+              return { "--hidden", "--glob", "!.git" }
+            end,
+            layout_config = {
+              height = 0.4,
+            },
+          },
+      
+          -- バッファ検索最適化
+          buffers = {
+            theme = "dropdown",
+            sort_mru = true,
+            select_current = false,
+            layout_config = {
+              width = 0.7,
+              height = 0.6,
+            },
+          },
+      
+          -- ヘルプ検索最適化
+          help_tags = {
+            theme = "ivy",
+            lang = "ja",
+            fallback = true,
+          },
+      
+          -- 旧ファイル検索
+          oldfiles = {
+            theme = "ivy",
+            only_cwd = true,
+            layout_config = {
+              height = 0.4,
+            },
+          },
+      
+          -- コマンド履歴
+          command_history = {
+            theme = "cursor",
+            layout_config = {
+              width = 0.6,
+              height = 0.4,
+            },
+          },
+      
+          -- Gitファイル
+          git_files = {
+            theme = "ivy",
+            show_untracked = true,
+            recurse_submodules = false,
+          },
+      
+          -- Gitコミット
+          git_commits = {
+            theme = "ivy",
+            layout_config = {
+              height = 0.6,
+              preview_height = 0.5,
+            },
+          },
+      
+          -- Gitステータス
+          git_status = {
+            theme = "ivy",
+            layout_config = {
+              height = 0.5,
+            },
+          },
+      
+          -- カラースキーム
+          colorscheme = {
+            theme = "dropdown",
+            enable_preview = true,
+            layout_config = {
+              width = 0.5,
+              height = 0.6,
+            },
+          },
+      
+          -- レジスタ
+          registers = {
+            theme = "cursor",
+            layout_config = {
+              width = 0.5,
+              height = 0.4,
+            },
+          },
+      
+          -- キーマップ
+          keymaps = {
+            theme = "ivy",
+            layout_config = {
+              height = 0.5,
+            },
+          },
+        },
+        -- ===== EXTENSIONS CONFIGURATION =====
+        extensions = {
+          -- FZFネイティブソーター
+          fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+            case_mode = "smart_case",
+          },
+      
+          -- ファイルブラウザー
+          file_browser = {
+            theme = "ivy",
+            hijack_netrw = true,
+            mappings = {
+              ["i"] = {
+                ["<C-n>"] = require("telescope._extensions.file_browser.actions").create,
+                ["<C-r>"] = require("telescope._extensions.file_browser.actions").rename,
+                ["<C-d>"] = require("telescope._extensions.file_browser.actions").remove,
+                ["<C-m>"] = require("telescope._extensions.file_browser.actions").move,
+                ["<C-y>"] = require("telescope._extensions.file_browser.actions").copy,
+                ["<C-h>"] = require("telescope._extensions.file_browser.actions").toggle_hidden,
+              },
+              ["n"] = {
+                ["n"] = require("telescope._extensions.file_browser.actions").create,
+                ["r"] = require("telescope._extensions.file_browser.actions").rename,
+                ["d"] = require("telescope._extensions.file_browser.actions").remove,
+                ["m"] = require("telescope._extensions.file_browser.actions").move,
+                ["y"] = require("telescope._extensions.file_browser.actions").copy,
+                ["h"] = require("telescope._extensions.file_browser.actions").toggle_hidden,
+              },
+            },
+          },
+      
+          -- UI選択統合
+          ["ui-select"] = {
+            themes.get_dropdown({
+              winblend = 10,
+              width = 0.5,
+              height = 0.4,
+              border = true,
+              borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+            }),
+          },
+      
+          -- 記号・絵文字検索
+          symbols = {
+            sources = { "emoji", "kaomoji", "gitmoji", "julia", "math" },
+          },
+      
+          -- プロジェクト管理
+          project = {
+            base_dirs = (function()
+              local dirs = {}
+              local function file_exists(fname)
+                local stat = vim.loop.fs_stat(vim.fn.expand(fname))
+                return (stat and stat.type) or false
+              end
+      
+              -- 一般的な開発ディレクトリ
+              local common_dirs = {
+                { "~/.ghq", max_depth = 5 },
+                { "~/Workspace", max_depth = 3 },
+                { "~/Projects", max_depth = 3 },
+                { "~/src", max_depth = 3 },
+                { "~/dev", max_depth = 3 },
+                { "~/dotfiles", max_depth = 2 },
+              }
+      
+              for _, dir_config in ipairs(common_dirs) do
+                if file_exists(dir_config[1]) then
+                  dirs[#dirs + 1] = dir_config
+                end
+              end
+      
+              -- フォールバック: カレントディレクトリ
+              if #dirs == 0 then
+                dirs[#dirs + 1] = { vim.fn.getcwd(), max_depth = 1 }
+              end
+      
+              return dirs
+            end)(),
+            hidden_files = true,
+            theme = "dropdown",
+            order_by = "recent",
+            search_by = "title",
+          },
+      
+          -- 最近使用ファイル
+          recent_files = {
+            only_cwd = false,
+            show_current_file = false,
+          },
+      
+          -- アンドゥツリー
+          undo = {
+            use_delta = true,
+            use_custom_command = nil,
+            side_by_side = false,
+            layout_strategy = "vertical",
+            layout_config = {
+              preview_height = 0.8,
+            },
+            mappings = {
+              i = {
+                ["<C-cr>"] = require("telescope-undo.actions").yank_additions,
+                ["<S-cr>"] = require("telescope-undo.actions").yank_deletions,
+                ["<C-r>"] = require("telescope-undo.actions").restore,
+              },
+              n = {
+                ["y"] = require("telescope-undo.actions").yank_additions,
+                ["Y"] = require("telescope-undo.actions").yank_deletions,
+                ["u"] = require("telescope-undo.actions").restore,
+              },
+            },
+          },
+      
+          -- 見出し検索
+          heading = {
+            treesitter = true,
+          },
+      
+          -- ===== HIGH PRIORITY EXTENSIONS =====
+          -- Frecency: 学習機能付きファイル検索
+          frecency = {
+            show_scores = false,
+            show_unindexed = true,
+            ignore_patterns = { "*.git/*", "*/tmp/*" },
+            disable_devicons = false,
+            workspaces = {
+              ["config"] = vim.fn.expand("~/.config"),
+              ["nvim"] = vim.fn.stdpath("config"),
+              ["data"] = vim.fn.stdpath("data"),
+              ["projects"] = vim.fn.expand("~/Projects"),
+              ["dotfiles"] = vim.fn.expand("~/dotfiles"),
+            },
+          },
+      
+          -- Yanky: ヤンク履歴管理
+          yanky = {
+            ring = {
+              history_length = 100,
+              storage = "sqlite",
+            },
+            picker = {
+              select = {
+                action = nil,
+              },
+              telescope = {
+                mappings = nil,
+                use_default_mappings = true,
+              },
+            },
+            system_clipboard = {
+              sync_with_ring = true,
+            },
+          },
+      
+          -- Media Files: メディアプレビュー
+          media_files = {
+            filetypes = { "png", "webp", "jpg", "jpeg", "gif", "pdf", "mp4", "webm" },
+            find_cmd = "rg",
+          },
+      
+          -- Git Conflicts: Git競合解決
+          conflicts = {
+            layout_strategy = "horizontal",
+            layout_config = {
+              height = 0.7,
+              width = 0.9,
+              preview_width = 0.6,
+            },
+          },
+      
+          -- Tabs: タブ管理
+          tabs = {
+            theme = "dropdown",
+            layout_config = {
+              width = 0.8,
+              height = 0.6,
+            },
+            show_preview = true,
+            close_tab_shortcut_i = "<C-d>",
+            close_tab_shortcut_n = "d",
+          },
+      
+          -- Command Line: フローティングコマンドライン
+          cmdline = {
+            picker = {
+              layout_config = {
+                width = 120,
+                height = 25,
+              },
+            },
+            mappings = {
+              complete = "<Tab>",
+              run_selection = "<C-CR>",
+              run_input = "<CR>",
+            },
+          },
+      
+          -- Session: セッション管理 (xray23)
+          xray23 = {
+            prompt_title = "Sessions",
+            layout_config = {
+              width = 0.6,
+              height = 0.5,
+            },
+            sessionDir = vim.fn.stdpath("data") .. "/vimSession",
+          },
+        },
+      }
+      
+      -- ===== TELESCOPE SETUP =====
+      telescope.setup(telescope_opts)
+      
+      -- ===== CUSTOM PICKERS =====
+      -- カスタムピッカー関数を定義
+      local M = {}
+      
+      -- Dotfiles専用ピッカー
+      function M.find_dotfiles()
+        local dotfiles_path = vim.fn.expand("~/.config")
+        builtin.find_files({
+          prompt_title = "< Dotfiles >",
+          cwd = dotfiles_path,
+          hidden = true,
+          follow = true,
+          file_ignore_patterns = { ".git/", "node_modules/" },
+        })
+      end
+      
+      -- Neovim設定専用ピッカー
+      function M.find_nvim_config()
+        local nvim_config = vim.fn.stdpath("config")
+        builtin.find_files({
+          prompt_title = "< Neovim Config >",
+          cwd = nvim_config,
+          follow = true,
+          file_ignore_patterns = { "lazy-lock.json" },
+        })
+      end
+      
+      -- プロジェクトTODO検索
+      function M.find_project_todos()
+        builtin.live_grep({
+          prompt_title = "< Project TODOs >",
+          default_text = "TODO|FIXME|BUG|HACK|NOTE",
+          additional_args = function()
+            return { "--hidden", "--glob", "!.git", "--ignore-case" }
+          end,
+        })
+      end
+      
+      -- 最近のファイルとoldfiles統合
+      function M.find_recent_files()
+        if extensions_loaded.recent_files then
+          telescope.extensions.recent_files.pick()
+        else
+          builtin.oldfiles()
+        end
+      end
+      
+      -- カスタムピッカーをグローバルに設定
+      _G.telescope_custom = M
+    end,
+  },
+}
