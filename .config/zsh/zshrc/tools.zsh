@@ -20,7 +20,7 @@ fi
 if command -v bat &> /dev/null; then
   alias cat='bat --style=auto'
   alias bathelp='bat --help'
-  export BAT_THEME="tokyonight_night"
+  export BAT_THEME="Dracula"
 fi
 
 # fzf-tab configuration
