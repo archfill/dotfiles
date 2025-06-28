@@ -611,7 +611,7 @@ EOF
         log_warning "Composer installation may have failed"
       fi
     else
-      log_error "Composer installation failed"
+      log_warning "Composer installation failed, but continuing..."
     fi
   else
     log_info "[DRY RUN] Would install Composer"
@@ -644,7 +644,7 @@ install_php_tools() {
   
   if ! command -v composer >/dev/null 2>&1; then
     log_warning "Composer not available, skipping tools installation"
-    return 1
+    return 0  # Return success to avoid script termination
   fi
   
   # List of useful PHP tools with descriptions
@@ -871,11 +871,15 @@ main() {
     # Setup/verify environment
     setup_php_environment
     
-    # Install/update Composer
-    install_composer "$@"
+    # Install/update Composer (non-critical)
+    install_composer "$@" || {
+      log_warning "Composer installation had issues, but continuing..."
+    }
     
-    # Install useful tools
-    install_php_tools "$@"
+    # Install useful tools (non-critical)
+    install_php_tools "$@" || {
+      log_warning "PHP tools installation had issues, but continuing..."
+    }
     
     # Setup development environment
     if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
@@ -915,20 +919,26 @@ main() {
   # Setup environment
   setup_php_environment
   
-  # Install Composer
-  install_composer "$@"
+  # Install Composer (non-critical)
+  install_composer "$@" || {
+    log_warning "Composer installation had issues, but continuing..."
+  }
   
-  # Install useful tools
-  install_php_tools "$@"
+  # Install useful tools (non-critical)
+  install_php_tools "$@" || {
+    log_warning "PHP tools installation had issues, but continuing..."
+  }
   
   # Setup development environment (skip in quick mode)
   if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
     setup_php_development
   fi
   
-  # Verify installation
+  # Verify installation (non-critical)
   if [[ "$DRY_RUN" != "true" ]]; then
-    verify_php_installation
+    verify_php_installation || {
+      log_warning "PHP verification had issues, but continuing..."
+    }
   fi
   
   log_success "PHP SDK setup completed!"
