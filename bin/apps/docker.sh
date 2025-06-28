@@ -191,9 +191,12 @@ setup_docker_permissions() {
   
   log_info "Setting up Docker user permissions..."
   
+  # Get current user safely
+  local current_user="${USER:-$(whoami)}"
+  
   # Add current user to docker group
-  if ! groups "$USER" | grep -q docker; then
-    sudo usermod -aG docker "$USER"
+  if ! groups "$current_user" | grep -q docker; then
+    sudo usermod -aG docker "$current_user"
     log_success "User added to docker group"
     log_info "Please log out and log back in for group membership to take effect"
   else
