@@ -405,17 +405,17 @@ install_linux_ruby_deps() {
       if ! sudo pacman -Syu --needed --noconfirm \
         base-devel \
         openssl readline zlib \
-        yaml libxml2 libxslt \
+        libyaml libxml2 libxslt \
         libffi autoconf bison; then
-        log_error "Failed to install Ruby dependencies"
-        return 1
+        log_warning "Failed to install Ruby dependencies, but continuing..."
+        return 0  # Return success to avoid script termination
       fi
       ;;
     fedora|centos|rhel)
       log_info "Installing development tools..."
       if ! sudo yum groupinstall -y "Development Tools"; then
-        log_error "Failed to install development tools"
-        return 1
+        log_warning "Failed to install development tools, but continuing..."
+        return 0
       fi
       
       log_info "Installing Ruby build dependencies for RHEL/Fedora..."
@@ -424,14 +424,14 @@ install_linux_ruby_deps() {
         openssl-devel readline-devel zlib-devel \
         libyaml-devel libxml2-devel libxslt-devel \
         libffi-devel autoconf bison; then
-        log_error "Failed to install Ruby dependencies"
-        return 1
+        log_warning "Failed to install Ruby dependencies, but continuing..."
+        return 0
       fi
       ;;
     *)
       log_warning "Unknown Linux distribution: $distro"
       log_info "Please install Ruby build dependencies manually"
-      log_info "Required packages: git, curl, build tools, openssl, readline, zlib, yaml, libxml2, libxslt, libffi, autoconf, bison"
+      log_info "Required packages: git, curl, build tools, openssl, readline, zlib, libyaml, libxml2, libxslt, libffi, autoconf, bison"
       return 1
       ;;
   esac
