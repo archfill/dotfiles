@@ -8,6 +8,37 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 source "${SCRIPT_DIR}/config_loader.sh"
 
+# アーカイブ展開の共通関数（unzip代替対応）
+extract_archive() {
+    local archive_file="$1"
+    local extract_dir="$2"
+    
+    # unzipが利用可能な場合
+    if command -v unzip >/dev/null 2>&1; then
+        log_info "Extracting with unzip: $archive_file"
+        unzip -q "$archive_file" -d "$extract_dir"
+        return $?
+    fi
+    
+    # 7zipが利用可能な場合
+    if command -v 7z >/dev/null 2>&1; then
+        log_info "Extracting with 7z: $archive_file"
+        7z x "$archive_file" -o"$extract_dir" -y >/dev/null
+        return $?
+    fi
+    
+    # p7zipのコマンドが利用可能な場合
+    if command -v 7za >/dev/null 2>&1; then
+        log_info "Extracting with 7za: $archive_file"
+        7za x "$archive_file" -o"$extract_dir" -y >/dev/null
+        return $?
+    fi
+    
+    log_error "No suitable archive extraction tool found (unzip, 7z, 7za)"
+    log_error "Please install unzip or p7zip package"
+    return 1
+}
+
 # フォント設定の構造体風定義
 declare -A FONT_CONFIGS
 
@@ -269,7 +300,7 @@ download_hackgen() {
     
     if curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
        cd "$temp_dir" && \
-       unzip -q "$zip_name" && \
+       extract_archive "$zip_name" "." && \
        find . -name "HackGen*.ttf" -exec cp {} "$font_dir/" \;; then
         return 0
     else
@@ -287,7 +318,7 @@ download_plemoljp() {
     
     if curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
        cd "$temp_dir" && \
-       unzip -q "$zip_name" && \
+       extract_archive "$zip_name" "." && \
        find . -name "PlemolJP*.ttf" -exec cp {} "$font_dir/" \;; then
         return 0
     else
@@ -315,7 +346,7 @@ download_udev_gothic() {
         
         if curl -fL -o "${temp_dir}/${zip_name}" "$download_urls" && \
            cd "$temp_dir" && \
-           unzip -q "$zip_name" && \
+           extract_archive "$zip_name" "." && \
            find . -name "UDEV*.ttf" -exec cp {} "$font_dir/" \;; then
             return 0
         fi
@@ -333,7 +364,7 @@ download_cica() {
     
     if curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
        cd "$temp_dir" && \
-       unzip -q "$zip_name" && \
+       extract_archive "$zip_name" "." && \
        find . -name "Cica*.ttf" -exec cp {} "$font_dir/" \;; then
         return 0
     else
@@ -358,7 +389,7 @@ download_generic_font() {
         
         if curl -fL -o "${temp_dir}/${pattern}" "$download_url" && \
            cd "$temp_dir" && \
-           unzip -q "$pattern" && \
+           extract_archive "$pattern" "." && \
            find . -name "*.ttf" -o -name "*.otf" | head -10 | xargs -I {} cp {} "$font_dir/"; then
             return 0
         fi

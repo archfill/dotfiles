@@ -29,7 +29,9 @@ install_common_packages_debian() {
       silversearcher-ag \
       ripgrep \
       fontconfig \
-      curl
+      curl \
+      unzip \
+      p7zip-full
 
     # Install uv using common library
     install_uv
@@ -50,6 +52,7 @@ install_common_packages_arch() {
       ripgrep \
       wget \
       unzip \
+      p7zip \
       curl \
       fontconfig \
       neomutt \

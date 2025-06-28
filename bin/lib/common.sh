@@ -78,7 +78,23 @@ detect_architecture() {
 get_os_distribution() {
     local distri_name="unknown"
 
-    if [[ -e /etc/lsb-release ]]; then
+    # 優先的に /etc/os-release を使用（Dockerコンテナ対応）
+    if [[ -e /etc/os-release ]]; then
+        local os_id
+        os_id="$(grep -E '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+        case "$os_id" in
+            arch)           distri_name="arch" ;;
+            ubuntu)         distri_name="ubuntu" ;;
+            debian)         distri_name="debian" ;;
+            fedora)         distri_name="fedora" ;;
+            centos|rhel)    distri_name="redhat" ;;
+            opensuse*)      distri_name="suse" ;;
+            gentoo)         distri_name="gentoo" ;;
+            alpine)         distri_name="alpine" ;;
+            *)              distri_name="$os_id" ;;
+        esac
+    # フォールバック: 従来の検出方法
+    elif [[ -e /etc/lsb-release ]]; then
         distri_name="ubuntu"
     elif [[ -e /etc/debian_version || -e /etc/debian_release ]]; then
         distri_name="debian"
