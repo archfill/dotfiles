@@ -55,10 +55,12 @@ install_ghq_binary_linux() {
     local download_url
     local install_dir="$HOME/.local/bin"
     
-    # Get latest version from GitHub API
+    # Get latest version and assets from GitHub API
     log_info "Fetching latest ghq version from GitHub..."
-    ghq_version=$(curl -s --connect-timeout 10 "https://api.github.com/repos/x-motemen/ghq/releases/latest" 2>/dev/null | \
-        grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
+    local api_response
+    api_response=$(curl -s --connect-timeout 10 "https://api.github.com/repos/x-motemen/ghq/releases/latest" 2>/dev/null)
+    
+    ghq_version=$(echo "$api_response" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
     
     if [[ -z "$ghq_version" ]]; then
         # Fallback to known version
@@ -91,7 +93,27 @@ install_ghq_binary_linux() {
             ;;
     esac
     
-    download_url="https://github.com/x-motemen/ghq/releases/download/${ghq_version}/ghq_${os}_${arch}.tar.gz"
+    # Find the correct asset name from the API response
+    local asset_name
+    if [[ -n "$api_response" ]]; then
+        # Try to find the correct asset name from the release
+        asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.tar\.gz"' | cut -d'"' -f4 | head -1)
+        
+        if [[ -z "$asset_name" ]]; then
+            # Try alternative patterns
+            asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*"' | grep '\.tar\.gz' | cut -d'"' -f4 | head -1)
+        fi
+    fi
+    
+    if [[ -z "$asset_name" ]]; then
+        # Use fallback naming pattern
+        asset_name="ghq_${os}_${arch}.tar.gz"
+        log_info "Could not find asset name in API response, using pattern: $asset_name"
+    else
+        log_info "Found asset name: $asset_name"
+    fi
+    
+    download_url="https://github.com/x-motemen/ghq/releases/download/${ghq_version}/${asset_name}"
     
     log_info "Downloading ghq from: $download_url"
     
@@ -102,7 +124,34 @@ install_ghq_binary_linux() {
     local temp_file
     temp_file=$(mktemp)
     
-    if curl -fsSL "$download_url" -o "$temp_file"; then
+    # Try multiple download patterns if the first one fails
+    local download_success=false
+    local alternative_patterns=(
+        "ghq_${os}_${arch}.tar.gz"
+        "ghq-${ghq_version}-${os}-${arch}.tar.gz"
+        "ghq_${ghq_version}_${os}_${arch}.tar.gz"
+    )
+    
+    # Try the discovered asset name first
+    if curl -fsSL "$download_url" -o "$temp_file" 2>/dev/null; then
+        download_success=true
+    else
+        log_info "Primary download failed, trying alternative patterns..."
+        
+        # Try alternative patterns
+        for pattern in "${alternative_patterns[@]}"; do
+            local alt_url="https://github.com/x-motemen/ghq/releases/download/${ghq_version}/${pattern}"
+            log_info "Trying: $alt_url"
+            
+            if curl -fsSL "$alt_url" -o "$temp_file" 2>/dev/null; then
+                download_success=true
+                download_url="$alt_url"
+                break
+            fi
+        done
+    fi
+    
+    if [[ "$download_success" == "true" ]]; then
         # Verify the downloaded file
         if file "$temp_file" | grep -q "gzip compressed"; then
             # Extract ghq binary
@@ -137,7 +186,12 @@ install_ghq_binary_linux() {
             exit 1
         fi
     else
-        log_error "Failed to download ghq from: $download_url"
+        log_error "Failed to download ghq from all attempted URLs"
+        log_info "Attempted URLs:"
+        log_info "  $download_url"
+        for pattern in "${alternative_patterns[@]}"; do
+            log_info "  https://github.com/x-motemen/ghq/releases/download/${ghq_version}/${pattern}"
+        done
         exit 1
     fi
     
