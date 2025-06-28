@@ -198,6 +198,7 @@ install_php_version() {
   if phpenv versions | grep -q "$php_version"; then
     log_success "PHP $php_version is already installed"
     phpenv global "$php_version"
+    phpenv rehash
     return 0
   fi
   
@@ -243,10 +244,21 @@ install_php_version() {
 install_composer() {
   log_info "Installing Composer..."
   
+  # Setup phpenv environment first
+  setup_php_environment
+  
   # Check if Composer is already installed
   if command -v composer >/dev/null 2>&1; then
     log_success "Composer is already installed: $(composer --version)"
     return 0
+  fi
+  
+  # Verify PHP is available
+  if ! command -v php >/dev/null 2>&1; then
+    log_error "PHP command not found. phpenv may not be properly initialized."
+    log_info "Available PHP versions:"
+    phpenv versions 2>/dev/null || log_info "phpenv versions command failed"
+    return 1
   fi
   
   # Download and install Composer
@@ -318,6 +330,11 @@ setup_php_environment() {
   # Add phpenv to PATH and init for current session
   export PATH="$HOME/.phpenv/bin:$PATH"
   eval "$(phpenv init -)"
+  
+  # Rehash to ensure shims are updated
+  if command -v phpenv >/dev/null 2>&1; then
+    phpenv rehash
+  fi
   
   # Add Composer global bin to PATH
   local composer_bin_dir="$HOME/.composer/vendor/bin"
@@ -439,11 +456,11 @@ main() {
   # Install PHP version
   install_php_version "$php_version"
   
-  # Install Composer
-  install_composer
-  
   # Setup environment
   setup_php_environment
+  
+  # Install Composer
+  install_composer
   
   # Install useful tools
   install_php_tools
