@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -17,6 +18,247 @@ setup_error_handling
 load_config
 
 log_info "Starting Ruby SDK setup via rbenv..."
+
+# =============================================================================
+# Enhanced Ruby/Gem Management and Checking Functions
+# =============================================================================
+
+# Check rbenv installation and configuration
+check_rbenv_environment() {
+    log_info "Checking rbenv environment..."
+    
+    local all_checks_passed=true
+    
+    # Check rbenv command availability
+    if ! is_command_available "rbenv" "--version"; then
+        log_info "rbenv not available"
+        all_checks_passed=false
+    else
+        # Check rbenv configuration
+        if [[ ":$PATH:" != *":$HOME/.rbenv/bin:"* ]]; then
+            log_warning "rbenv not in PATH, may need shell profile update"
+        fi
+        
+        # Check rbenv root
+        local rbenv_root="${RBENV_ROOT:-$HOME/.rbenv}"
+        if [[ ! -d "$rbenv_root" ]]; then
+            log_warning "rbenv root directory not found: $rbenv_root"
+            all_checks_passed=false
+        fi
+        
+        # Check ruby-build plugin
+        if [[ ! -d "$rbenv_root/plugins/ruby-build" ]]; then
+            log_warning "ruby-build plugin not found"
+            all_checks_passed=false
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "rbenv environment checks passed"
+        return 0
+    else
+        log_info "rbenv environment checks failed"
+        return 1
+    fi
+}
+
+# Check Ruby version requirements
+check_ruby_version_requirements() {
+    local required_version="${RUBY_VERSION:-3.3.0}"
+    
+    # Handle 'lts' version specification
+    if [[ "$required_version" == "lts" ]]; then
+        required_version=$(get_ruby_lts_version)
+    fi
+    
+    log_info "Checking Ruby version requirements (>= $required_version)..."
+    
+    if ! command -v ruby >/dev/null 2>&1; then
+        log_info "Ruby command not available"
+        return 1
+    fi
+    
+    # Ruby version output format: "ruby 3.3.6 (2024-11-05 revision abc123) [x86_64-linux]"
+    local current_version
+    current_version=$(ruby --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    
+    if [[ -z "$current_version" ]]; then
+        log_warning "Could not determine Ruby version"
+        return 1
+    fi
+    
+    compare_versions "$current_version" "$required_version"
+    local result=$?
+    
+    case $result in
+        0|2)  # current >= required
+            log_success "Ruby version satisfied: $current_version >= $required_version"
+            return 0
+            ;;
+        1)    # current < required
+            log_info "Ruby version insufficient: $current_version < $required_version"
+            return 1
+            ;;
+        *)
+            log_warning "Version comparison failed for Ruby"
+            return 1
+            ;;
+    esac
+}
+
+# Check essential gem availability and versions
+check_essential_gems() {
+    log_info "Checking essential Ruby gems..."
+    
+    if ! command -v gem >/dev/null 2>&1; then
+        log_info "gem command not available"
+        return 1
+    fi
+    
+    local essential_gems=(
+        "bundler:2.0.0"
+        "rake:13.0.0"
+        "rubocop:1.0.0"
+    )
+    
+    local all_gems_satisfied=true
+    
+    for gem_spec in "${essential_gems[@]}"; do
+        local gem_name=$(echo "$gem_spec" | cut -d: -f1)
+        local min_version=$(echo "$gem_spec" | cut -d: -f2)
+        
+        if gem list "$gem_name" -i >/dev/null 2>&1; then
+            local current_version
+            current_version=$(gem list "$gem_name" --exact 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+            
+            if [[ -n "$current_version" ]]; then
+                compare_versions "$current_version" "$min_version"
+                case $? in
+                    0|2)  # current >= required
+                        log_info "Gem $gem_name satisfied: $current_version >= $min_version"
+                        ;;
+                    1)    # current < required
+                        log_info "Gem $gem_name needs update: $current_version < $min_version"
+                        all_gems_satisfied=false
+                        ;;
+                    *)
+                        log_warning "Version comparison failed for gem $gem_name"
+                        all_gems_satisfied=false
+                        ;;
+                esac
+            else
+                log_info "Gem $gem_name version could not be determined"
+                all_gems_satisfied=false
+            fi
+        else
+            log_info "Essential gem not installed: $gem_name"
+            all_gems_satisfied=false
+        fi
+    done
+    
+    if [[ "$all_gems_satisfied" == "true" ]]; then
+        log_success "All essential gems are available and up to date"
+        return 0
+    else
+        log_info "Some essential gems need installation or updates"
+        return 1
+    fi
+}
+
+# Check Ruby project and dependency management
+check_ruby_project_management() {
+    log_info "Checking Ruby project management capabilities..."
+    
+    # Check bundler functionality
+    if command -v bundle >/dev/null 2>&1; then
+        log_info "Bundler version: $(bundle --version 2>/dev/null || echo 'unknown')"
+        
+        # Test bundler in a temporary environment
+        local temp_dir
+        temp_dir=$(mktemp -d)
+        cd "$temp_dir"
+        
+        cat > Gemfile << 'EOF'
+source 'https://rubygems.org'
+gem 'json'
+EOF
+        
+        if bundle check --dry-run >/dev/null 2>&1; then
+            log_success "Bundler dependency resolution working"
+        else
+            log_info "Bundler needs gem installation for dependency resolution"
+        fi
+        
+        cd - >/dev/null
+        rm -rf "$temp_dir"
+    else
+        log_warning "Bundler not available"
+        return 1
+    fi
+    
+    # Check rbenv functionality
+    if command -v rbenv >/dev/null 2>&1; then
+        local available_versions
+        available_versions=$(rbenv versions 2>/dev/null | wc -l || echo 0)
+        log_info "Available Ruby versions via rbenv: $available_versions"
+        
+        local global_version
+        global_version=$(rbenv global 2>/dev/null || echo "not set")
+        log_info "Global Ruby version: $global_version"
+    fi
+    
+    log_success "Ruby project management check completed"
+    return 0
+}
+
+# Comprehensive Ruby environment check
+check_ruby_environment() {
+    log_info "Performing comprehensive Ruby environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check rbenv environment
+    if ! check_rbenv_environment; then
+        all_checks_passed=false
+    fi
+    
+    # Check Ruby version requirements
+    if ! check_ruby_version_requirements; then
+        all_checks_passed=false
+    fi
+    
+    # Check essential gems
+    if ! check_essential_gems; then
+        log_info "Essential gems need installation or updates"
+        all_checks_passed=false
+    fi
+    
+    # Check project management capabilities
+    check_ruby_project_management
+    
+    # Check PATH configuration
+    if ! command -v ruby >/dev/null 2>&1; then
+        log_warning "Ruby not found in PATH"
+        all_checks_passed=false
+        
+        # Check if Ruby exists in rbenv directories
+        local rbenv_root="${RBENV_ROOT:-$HOME/.rbenv}"
+        if [[ -d "$rbenv_root/shims" ]]; then
+            log_info "Found rbenv shims directory: $rbenv_root/shims"
+            if [[ -x "$rbenv_root/shims/ruby" ]]; then
+                log_info "Ruby shim found at: $rbenv_root/shims/ruby"
+            fi
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All Ruby environment checks passed"
+        return 0
+    else
+        log_info "Some Ruby environment checks failed"
+        return 1
+    fi
+}
 
 # Check and setup sudo access for dependency installation
 check_sudo_access() {
@@ -303,9 +545,12 @@ install_ruby_version() {
   fi
 }
 
-# Install essential Ruby gems
+# Enhanced function to install essential Ruby gems
 install_ruby_tools() {
   log_info "Installing essential Ruby gems..."
+  
+  # Parse command line options
+  parse_install_options "$@"
   
   # Ensure rbenv environment is properly set up
   export PATH="$HOME/.rbenv/bin:$PATH"
@@ -333,32 +578,74 @@ install_ruby_tools() {
   log_info "Ruby location: $(which ruby)"
   log_info "Gem location: $(which gem)"
   
-  # List of essential gems
-  local gems=(
-    "bundler"          # Dependency management
-    "rake"             # Build automation
-    "rubocop"          # Code linter and formatter
-    "solargraph"       # Language server for IDE support
-    "pry"              # Interactive debugging console
+  # List of essential gems with minimum versions
+  local gems_info=(
+    "bundler:2.0.0:Dependency management for Ruby projects"
+    "rake:13.0.0:Build automation tool for Ruby"
+    "rubocop:1.0.0:Code linter and formatter"
+    "solargraph:0.40.0:Language server for IDE support"
+    "pry:0.13.0:Interactive debugging console"
   )
   
-  for gem in "${gems[@]}"; do
-    if ! gem list "$gem" -i >/dev/null 2>&1; then
-      log_info "Installing gem: $gem"
-      if gem install "$gem" --no-document; then
-        log_success "Successfully installed gem: $gem"
-      else
-        log_error "Failed to install gem: $gem"
-        return 1
+  local installed_count=0
+  local skipped_count=0
+  local failed_count=0
+  
+  for gem_info in "${gems_info[@]}"; do
+    local gem_name=$(echo "$gem_info" | cut -d: -f1)
+    local min_version=$(echo "$gem_info" | cut -d: -f2)
+    local gem_desc=$(echo "$gem_info" | cut -d: -f3)
+    
+    # Skip if gem meets version requirements and not forcing reinstall
+    if [[ "$FORCE_INSTALL" != "true" ]] && gem list "$gem_name" -i >/dev/null 2>&1; then
+      local current_version
+      current_version=$(gem list "$gem_name" --exact 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+      
+      if [[ -n "$current_version" ]]; then
+        compare_versions "$current_version" "$min_version"
+        case $? in
+          0|2)  # current >= required
+            log_skip_reason "$gem_name" "Already installed with sufficient version: $current_version >= $min_version"
+            ((skipped_count++))
+            continue
+            ;;
+        esac
       fi
+    fi
+    
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+      log_info "QUICK: Would install gem $gem_name ($gem_desc)"
+      continue
+    fi
+    
+    # Install the gem
+    log_info "Installing gem: $gem_name ($gem_desc)"
+    
+    if [[ "$DRY_RUN" == "true" ]]; then
+      log_info "[DRY RUN] Would execute: gem install $gem_name --no-document"
+      ((installed_count++))
     else
-      log_info "Gem $gem is already installed"
+      if gem install "$gem_name" --no-document; then
+        log_success "Successfully installed gem: $gem_name"
+        ((installed_count++))
+      else
+        log_error "Failed to install gem: $gem_name"
+        ((failed_count++))
+      fi
     fi
   done
   
+  # Log summary
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+  fi
+  
   # Rehash after gem installation to update shims
-  log_info "Updating rbenv shims..."
-  rbenv rehash
+  if [[ "$DRY_RUN" != "true" && "$installed_count" -gt 0 ]]; then
+    log_info "Updating rbenv shims..."
+    rbenv rehash
+  fi
   
   log_success "Essential Ruby gems installation completed"
 }
@@ -471,6 +758,58 @@ EOF
   fi
 }
 
+# Add Ruby project management optimization
+optimize_ruby_project_management() {
+  log_info "Optimizing Ruby project management..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would optimize Ruby project management"
+    return 0
+  fi
+  
+  if ! command -v rbenv >/dev/null 2>&1; then
+    log_info "rbenv not available, skipping Ruby optimization"
+    return 0
+  fi
+  
+  # Update gem sources and optimize gem installation
+  if command -v gem >/dev/null 2>&1 && [[ "$DRY_RUN" != "true" ]]; then
+    log_info "Updating RubyGems system..."
+    gem update --system --no-document >/dev/null 2>&1 || log_warning "Failed to update RubyGems"
+    
+    # Set gem defaults for faster installation
+    local gem_config_dir="$HOME/.gem"
+    mkdir -p "$gem_config_dir"
+    
+    if [[ ! -f "$gem_config_dir/gemrc" ]]; then
+      cat > "$gem_config_dir/gemrc" << 'EOF'
+install: --no-document
+update: --no-document
+gem: --no-document
+EOF
+      log_info "Created gem configuration for faster installations"
+    fi
+  fi
+  
+  # Check for outdated gems and suggest updates
+  if command -v bundle >/dev/null 2>&1 && [[ "$DRY_RUN" != "true" ]]; then
+    log_info "Checking for outdated gems..."
+    local outdated_gems
+    outdated_gems=$(gem outdated 2>/dev/null | wc -l || echo 0)
+    
+    if (( outdated_gems > 0 )); then
+      log_info "Found $outdated_gems outdated gems. Consider running 'gem update' to update them."
+    else
+      log_success "All gems are up to date"
+    fi
+  fi
+  
+  log_success "Ruby project management optimization completed"
+}
+
 # Main installation function
 main() {
   log_info "Ruby SDK Setup via rbenv"
@@ -479,12 +818,36 @@ main() {
   # Setup cleanup trap
   trap cleanup_sudo_keeper EXIT
   
-  # Check sudo access for dependency installation
-  check_sudo_access
+  # Parse command line options
+  parse_install_options "$@"
   
   # Get target Ruby version
   local ruby_version
   ruby_version=$(get_ruby_lts_version)
+  
+  # Check if Ruby installation should be skipped
+  if should_skip_installation_advanced "Ruby" "ruby" "$ruby_version" "--version"; then
+    # Even if Ruby is installed, check and update environment
+    log_info "Ruby is installed, checking environment and gems..."
+    
+    # Perform comprehensive environment check
+    check_ruby_environment
+    
+    # Setup/verify environment
+    setup_ruby_environment
+    
+    # Install/update essential gems
+    install_ruby_tools "$@"
+    
+    # Ruby project management optimization
+    if [[ "$QUICK_CHECK" != "true" ]]; then
+      optimize_ruby_project_management "$@"
+    fi
+    
+    verify_ruby_installation
+    cleanup_sudo_keeper
+    return 0
+  fi
   
   log_info "Determining Ruby version..."
   if [[ "${RUBY_VERSION:-}" == "lts" ]]; then
@@ -493,33 +856,42 @@ main() {
     log_info "Using specified Ruby version: $ruby_version"
   fi
   
-  # Install platform dependencies
-  install_ruby_dependencies
+  # Check sudo access for dependency installation
+  if [[ "$SKIP_DEPS" != "true" ]]; then
+    check_sudo_access
+    # Install platform dependencies
+    execute_if_not_dry_run "Install Ruby build dependencies" install_ruby_dependencies
+  fi
   
   # Install rbenv
-  install_rbenv
+  execute_if_not_dry_run "Install rbenv" install_rbenv
   
   # Install ruby-build plugin
-  install_ruby_build
+  execute_if_not_dry_run "Install ruby-build plugin" install_ruby_build
   
   # Install Ruby version
-  install_ruby_version "$ruby_version"
+  execute_if_not_dry_run "Install Ruby $ruby_version" install_ruby_version "$ruby_version"
   
   # Setup environment after Ruby installation
   setup_ruby_environment
   
-  # Install essential gems (with error handling)
-  if ! install_ruby_tools; then
-    log_error "Failed to install essential Ruby gems"
-    cleanup_sudo_keeper
-    exit 1
+  # Install essential gems
+  install_ruby_tools "$@"
+  
+  # Ruby project management optimization (skip in quick mode)
+  if [[ "$QUICK_CHECK" != "true" ]]; then
+    optimize_ruby_project_management "$@"
   fi
   
   # Setup development environment
-  setup_ruby_development
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    setup_ruby_development
+  fi
   
   # Verify installation
-  verify_ruby_installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_ruby_installation
+  fi
   
   # Cleanup sudo keeper
   cleanup_sudo_keeper
@@ -539,6 +911,24 @@ main() {
   log_info "  bundle install          # Install project dependencies"
   log_info "  rubocop                 # Code linter and formatter"
   log_info "  pry                     # Interactive debugging console"
+  log_info ""
+  log_info "Gem management:"
+  log_info "  gem update              # Update all gems"
+  log_info "  gem outdated            # Show outdated gems"
+  log_info "  gem cleanup             # Remove old gem versions"
+  log_info ""
+  log_info "Project management:"
+  log_info "  bundle init             # Create new Gemfile"
+  log_info "  bundle exec <command>   # Run command with bundler"
+  log_info "  bundle config --list    # Show bundler configuration"
+  log_info ""
+  if [[ "$DRY_RUN" != "true" ]]; then
+    log_info "Current configuration:"
+    log_info "  Ruby version: $(ruby --version 2>/dev/null || echo 'not available')"
+    log_info "  rbenv root: $(rbenv root 2>/dev/null || echo 'not available')"
+    log_info "  Global Ruby: $(rbenv global 2>/dev/null || echo 'not set')"
+    log_info "  Gem directory: $(gem env gemdir 2>/dev/null || echo 'not available')"
+  fi
   log_info ""
   log_info "Environment setup:"
   log_info "  Add to your shell profile (~/.zshrc or ~/.bashrc):"

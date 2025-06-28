@@ -1,11 +1,181 @@
 #!/usr/bin/env bash
 
-# Load shared library
-source "$(dirname "$0")/../lib/common.sh"
+# Git repository management tool (ghq) installation and configuration script
+# This script installs ghq and sets up comprehensive repository management
 
+# Load shared libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+source "$DOTFILES_DIR/bin/lib/common.sh"
+source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
+
+# Setup error handling
 setup_error_handling
 
-log_info "Installing ghq (Git repository management tool)..."
+# Load configuration
+load_config
+
+log_info "Starting ghq (Git repository management tool) setup..."
+
+# =============================================================================
+# Enhanced Configuration and Version Checking Functions
+# =============================================================================
+
+# Check ghq git configuration
+check_ghq_git_config() {
+    log_info "Checking ghq git configuration..."
+    
+    local ghq_root_configured
+    ghq_root_configured=$(git config --global ghq.root 2>/dev/null || echo "")
+    
+    if [[ -n "$ghq_root_configured" ]]; then
+        log_info "ghq.root configured: $ghq_root_configured"
+        
+        # Verify the directory exists
+        if [[ -d "$ghq_root_configured" ]]; then
+            log_success "ghq root directory exists: $ghq_root_configured"
+            return 0
+        else
+            log_warning "ghq root directory does not exist: $ghq_root_configured"
+            return 1
+        fi
+    else
+        log_info "ghq.root not configured"
+        return 1
+    fi
+}
+
+# Check ghq version requirements
+check_ghq_version_requirements() {
+    local command_name="ghq"
+    local required_version="${GHQ_VERSION:-1.3.0}"
+    
+    log_info "Checking ghq version requirements (>= $required_version)..."
+    
+    if ! is_command_available "$command_name" "--version"; then
+        return 1
+    fi
+    
+    # ghq version output format: "ghq version 1.4.2 (rev:abc123)"
+    local current_version
+    current_version=$(ghq --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    
+    if [[ -z "$current_version" ]]; then
+        log_warning "Could not determine ghq version"
+        return 1
+    fi
+    
+    compare_versions "$current_version" "$required_version"
+    local result=$?
+    
+    case $result in
+        0|2)  # current >= required
+            log_success "ghq version satisfied: $current_version >= $required_version"
+            return 0
+            ;;
+        1)    # current < required
+            log_info "ghq version insufficient: $current_version < $required_version"
+            return 1
+            ;;
+        *)
+            log_warning "Version comparison failed for ghq"
+            return 1
+            ;;
+    esac
+}
+
+# Check repository management status
+check_repository_management_status() {
+    log_info "Checking repository management status..."
+    
+    local ghq_root
+    ghq_root=$(git config --global ghq.root 2>/dev/null || echo "$HOME/git")
+    
+    if [[ ! -d "$ghq_root" ]]; then
+        log_info "Repository root does not exist: $ghq_root"
+        return 1
+    fi
+    
+    # Count managed repositories
+    local repo_count=0
+    if command -v ghq >/dev/null 2>&1; then
+        repo_count=$(ghq list 2>/dev/null | wc -l || echo 0)
+        log_info "Managed repositories: $repo_count"
+        
+        if (( repo_count > 0 )); then
+            log_info "Recent repositories:"
+            ghq list 2>/dev/null | head -5 || true
+        fi
+    fi
+    
+    # Check for Git repositories in root that might not be managed by ghq
+    local unmanaged_repos=0
+    if [[ -d "$ghq_root" ]]; then
+        # Find .git directories and count them
+        unmanaged_repos=$(find "$ghq_root" -name ".git" -type d 2>/dev/null | wc -l || echo 0)
+        
+        if (( unmanaged_repos > repo_count )); then
+            local diff=$((unmanaged_repos - repo_count))
+            log_info "Potential unmanaged repositories: $diff"
+        fi
+    fi
+    
+    log_success "Repository management status check completed"
+    return 0
+}
+
+# Comprehensive ghq environment check
+check_ghq_environment() {
+    log_info "Performing comprehensive ghq environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check command availability and version
+    if ! check_ghq_version_requirements; then
+        all_checks_passed=false
+    fi
+    
+    # Check git configuration
+    if ! check_ghq_git_config; then
+        log_info "ghq git configuration needs setup"
+        all_checks_passed=false
+    fi
+    
+    # Check repository management status
+    check_repository_management_status
+    
+    # Check PATH configuration
+    local ghq_in_path=true
+    if ! command -v ghq >/dev/null 2>&1; then
+        ghq_in_path=false
+        all_checks_passed=false
+        log_warning "ghq not found in PATH"
+        
+        # Check if ghq exists in common locations
+        local common_locations=(
+            "$HOME/.local/bin/ghq"
+            "/usr/local/bin/ghq"
+            "$(go env GOPATH 2>/dev/null)/bin/ghq"
+        )
+        
+        for location in "${common_locations[@]}"; do
+            if [[ -n "$location" && -x "$location" ]]; then
+                log_info "Found ghq at: $location"
+                break
+            fi
+        done
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All ghq environment checks passed"
+        return 0
+    else
+        log_info "Some ghq environment checks failed"
+        return 1
+    fi
+}
 
 # Function to install ghq on different platforms
 install_ghq() {
@@ -384,27 +554,64 @@ extract_to_temp_and_find() {
     fi
 }
 
-# Function to setup ghq configuration
+# Enhanced function to setup ghq configuration
 setup_ghq_config() {
-    local ghq_root="$HOME/git"
-    
     log_info "Setting up ghq configuration..."
     
+    # Parse command line options
+    parse_install_options "$@"
+    
+    # Get ghq root from configuration or use default
+    local ghq_root="${GHQ_ROOT:-$HOME/git}"
+    
+    # Check if configuration is already up to date
+    if [[ "$FORCE_INSTALL" != "true" ]] && check_ghq_git_config; then
+        local current_root
+        current_root=$(git config --global ghq.root 2>/dev/null)
+        if [[ "$current_root" == "$ghq_root" ]]; then
+            log_skip_reason "ghq configuration" "Already configured with correct root: $current_root"
+            return 0
+        fi
+    fi
+    
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would configure ghq.root to $ghq_root"
+        return 0
+    fi
+    
     # Create ghq root directory
-    mkdir -p "$ghq_root"
+    execute_if_not_dry_run "Create ghq root directory" mkdir -p "$ghq_root"
     
     # Set git config for ghq
     log_info "Setting ghq.root to $ghq_root"
-    git config --global ghq.root "$ghq_root"
+    execute_if_not_dry_run "Configure ghq.root" git config --global ghq.root "$ghq_root"
+    
+    # Setup additional ghq configurations
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Set default import strategy
+        git config --global ghq.shallow true
+        log_info "Configured ghq.shallow=true for faster clones"
+        
+        # Set lookup depth (optional)
+        git config --global ghq.look.depth 1
+        log_info "Configured ghq.look.depth=1 for better performance"
+    fi
     
     # Verify configuration
-    local configured_root
-    configured_root=$(git config --global ghq.root)
-    if [[ "$configured_root" == "$ghq_root" ]]; then
-        log_success "ghq.root configured successfully: $configured_root"
-    else
-        log_error "Failed to configure ghq.root"
-        exit 1
+    if [[ "$DRY_RUN" != "true" ]]; then
+        local configured_root
+        configured_root=$(git config --global ghq.root)
+        if [[ "$configured_root" == "$ghq_root" ]]; then
+            log_success "ghq.root configured successfully: $configured_root"
+            
+            # Show all ghq-related git configs
+            log_info "Current ghq git configurations:"
+            git config --global --get-regexp '^ghq\.' || log_info "  No additional ghq configurations found"
+        else
+            log_error "Failed to configure ghq.root"
+            return 1
+        fi
     fi
 }
 
@@ -461,26 +668,136 @@ verify_ghq_installation() {
     fi
 }
 
-# Main execution
+# Main installation and setup function
 main() {
-    # Check if ghq is already installed
-    if command -v ghq >/dev/null 2>&1; then
-        log_success "ghq is already installed: $(ghq --version)"
-        setup_ghq_config
+    log_info "ghq (Git Repository Management Tool) Setup"
+    log_info "=========================================="
+    
+    # Parse command line options
+    parse_install_options "$@"
+    
+    # Check if ghq installation should be skipped
+    local required_version="${GHQ_VERSION:-1.3.0}"
+    if should_skip_installation_advanced "ghq" "ghq" "$required_version" "--version"; then
+        # Even if ghq is installed, check and update configuration
+        log_info "ghq is installed, checking configuration and environment..."
+        
+        # Perform comprehensive environment check
+        check_ghq_environment
+        
+        # Setup/verify configuration
+        setup_ghq_config "$@"
+        
+        # Repository management optimization
+        if [[ "$QUICK_CHECK" != "true" ]]; then
+            optimize_repository_management "$@"
+        fi
+        
         verify_ghq_installation
         return 0
     fi
     
     # Install ghq
-    install_ghq
+    execute_if_not_dry_run "Install ghq via package manager" install_ghq
     
     # Setup configuration
-    setup_ghq_config
+    setup_ghq_config "$@"
+    
+    # Setup environment
+    setup_ghq_environment
+    
+    # Repository management optimization (skip in quick mode)
+    if [[ "$QUICK_CHECK" != "true" ]]; then
+        optimize_repository_management "$@"
+    fi
     
     # Verify installation
-    verify_ghq_installation
+    if [[ "$DRY_RUN" != "true" ]]; then
+        verify_ghq_installation
+    fi
     
-    log_success "ghq setup completed successfully"
+    log_success "ghq setup completed successfully!"
+    log_info ""
+    log_info "Available ghq commands:"
+    log_info "  ghq get <repo>           # Clone repository to managed location"
+    log_info "  ghq list                 # List all managed repositories"
+    log_info "  ghq look <repo>          # Navigate to repository directory"
+    log_info "  ghq root                 # Show root directory"
+    log_info "  ghq import <service>     # Import repositories from service"
+    log_info ""
+    log_info "Configuration:"
+    if [[ "$DRY_RUN" != "true" ]]; then
+        log_info "  ghq.root: $(git config --global ghq.root 2>/dev/null || echo 'not configured')"
+        log_info "  ghq.shallow: $(git config --global ghq.shallow 2>/dev/null || echo 'not configured')"
+        log_info "  ghq.look.depth: $(git config --global ghq.look.depth 2>/dev/null || echo 'not configured')"
+    fi
+    log_info ""
+    log_info "Getting started:"
+    log_info "  ghq get github.com/user/repo    # Clone a repository"
+    log_info "  ghq list | head -5               # Show managed repositories"
+    log_info "  g                                # Interactive repository selection (if configured)"
+    log_info ""
+    log_info "Note: Repository management commands will be available in new shell sessions"
+}
+
+# Enhanced environment setup
+setup_ghq_environment() {
+    log_info "Setting up ghq environment..."
+    
+    # Add .local/bin to PATH for current session if needed
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+        export PATH="$HOME/.local/bin:$PATH"
+        log_info "Added $HOME/.local/bin to PATH for current session"
+    fi
+    
+    # Set environment variables for ghq
+    local ghq_root="${GHQ_ROOT:-$HOME/git}"
+    export GHQ_ROOT="$ghq_root"
+    
+    log_success "ghq environment setup completed"
+}
+
+# Repository management optimization
+optimize_repository_management() {
+    log_info "Optimizing repository management..."
+    
+    # Parse command line options
+    parse_install_options "$@"
+    
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would optimize repository management"
+        return 0
+    fi
+    
+    if ! command -v ghq >/dev/null 2>&1; then
+        log_info "ghq not available, skipping repository optimization"
+        return 0
+    fi
+    
+    local ghq_root
+    ghq_root=$(git config --global ghq.root 2>/dev/null || echo "$HOME/git")
+    
+    if [[ ! -d "$ghq_root" ]]; then
+        log_info "Repository root does not exist, creating: $ghq_root"
+        execute_if_not_dry_run "Create repository root" mkdir -p "$ghq_root"
+    fi
+    
+    # Check for orphaned repositories (optional cleanup)
+    if [[ "$DRY_RUN" != "true" && -d "$ghq_root" ]]; then
+        local managed_count
+        managed_count=$(ghq list 2>/dev/null | wc -l || echo 0)
+        
+        local total_repos
+        total_repos=$(find "$ghq_root" -name ".git" -type d 2>/dev/null | wc -l || echo 0)
+        
+        if (( total_repos > managed_count )); then
+            local unmanaged=$((total_repos - managed_count))
+            log_info "Found $unmanaged potentially unmanaged repositories"
+            log_info "Consider running 'ghq import' to manage existing repositories"
+        fi
+        
+        log_success "Repository management optimization completed"
+    fi
 }
 
 # Run main function

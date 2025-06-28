@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -18,9 +19,190 @@ load_config
 
 log_info "Starting PHP SDK setup via phpenv..."
 
+# =============================================================================
+# Enhanced PHP Environment Checking and Management Functions
+# =============================================================================
+
+# Check phpenv installation and environment
+check_phpenv_environment() {
+    log_info "Checking phpenv environment..."
+    
+    local all_checks_passed=true
+    
+    # Check phpenv command availability
+    if ! is_command_available "phpenv" "--version"; then
+        log_info "phpenv not available"
+        all_checks_passed=false
+    else
+        # Check phpenv home directory
+        local phpenv_home="${PHPENV_ROOT:-$HOME/.phpenv}"
+        if [[ ! -d "$phpenv_home" ]]; then
+            log_warning "phpenv home directory not found: $phpenv_home"
+            all_checks_passed=false
+        else
+            log_info "phpenv home: $phpenv_home"
+        fi
+        
+        # Check phpenv PATH configuration
+        if [[ ":$PATH:" != *":$phpenv_home/bin:"* ]]; then
+            log_warning "phpenv not in PATH, may need shell profile update"
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "phpenv environment checks passed"
+        return 0
+    else
+        log_info "phpenv environment checks failed"
+        return 1
+    fi
+}
+
+# Check phpenv version requirements
+check_phpenv_version_requirements() {
+    log_info "Checking phpenv version requirements..."
+    
+    if ! command -v phpenv >/dev/null 2>&1; then
+        log_info "phpenv command not available"
+        return 1
+    fi
+    
+    # phpenv version output format: "phpenv 20160814"
+    local current_version
+    current_version=$(phpenv --version 2>/dev/null | head -1 || echo "unknown")
+    
+    if [[ -z "$current_version" ]]; then
+        log_warning "Could not determine phpenv version"
+        return 1
+    fi
+    
+    log_success "phpenv version: $current_version"
+    return 0
+}
+
+# Check PHP installation status
+check_php_status() {
+    log_info "Checking PHP installation status..."
+    
+    if ! command -v phpenv >/dev/null 2>&1; then
+        log_info "phpenv not available"
+        return 1
+    fi
+    
+    # Check PHP availability
+    if ! command -v php >/dev/null 2>&1; then
+        log_info "PHP not installed via phpenv"
+        return 1
+    fi
+    
+    # Get PHP version information
+    local php_version
+    php_version=$(php --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
+    log_info "PHP version: $php_version"
+    
+    # Check Composer availability
+    if command -v composer >/dev/null 2>&1; then
+        local composer_version
+        composer_version=$(composer --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
+        log_info "Composer version: $composer_version"
+    else
+        log_warning "Composer not available"
+    fi
+    
+    # Check phpenv versions
+    if phpenv versions >/dev/null 2>&1; then
+        local version_count
+        version_count=$(phpenv versions 2>/dev/null | grep -c "^[[:space:]]*[0-9]" || echo 0)
+        log_info "phpenv managed versions: $version_count"
+    fi
+    
+    log_success "PHP status check completed"
+    return 0
+}
+
+# Check PHP development tools status
+check_php_tools_status() {
+    log_info "Checking PHP development tools status..."
+    
+    if ! command -v composer >/dev/null 2>&1; then
+        log_info "Composer not available"
+        return 1
+    fi
+    
+    # Check global packages
+    local global_packages
+    global_packages=$(composer global show --quiet 2>/dev/null | wc -l || echo 0)
+    log_info "Global Composer packages: $global_packages"
+    
+    # Check for common development tools
+    local common_tools=(
+        "phpunit:Testing framework"
+        "phpcs:Code standards checker"
+        "php-cs-fixer:Code formatter"
+        "phpstan:Static analysis tool"
+        "psalm:Static analysis tool"
+    )
+    
+    local installed_tools=0
+    for tool_info in "${common_tools[@]}"; do
+        local tool_name=$(echo "$tool_info" | cut -d: -f1)
+        
+        if command -v "$tool_name" >/dev/null 2>&1; then
+            ((installed_tools++))
+        fi
+    done
+    
+    log_info "Common development tools installed: $installed_tools/${#common_tools[@]}"
+    
+    log_success "PHP development tools check completed"
+    return 0
+}
+
+# Comprehensive phpenv environment check
+check_phpenv_comprehensive_environment() {
+    log_info "Performing comprehensive phpenv environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check phpenv installation
+    if ! check_phpenv_environment; then
+        all_checks_passed=false
+    fi
+    
+    # Check version requirements
+    if ! check_phpenv_version_requirements; then
+        all_checks_passed=false
+    fi
+    
+    # Check PHP status
+    if ! check_php_status; then
+        log_info "PHP needs installation or update"
+        all_checks_passed=false
+    fi
+    
+    # Check development tools
+    check_php_tools_status
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All phpenv environment checks passed"
+        return 0
+    else
+        log_info "Some phpenv environment checks failed"
+        return 1
+    fi
+}
+
 # Install platform-specific PHP build dependencies
 install_php_dependencies() {
   log_info "Installing PHP build dependencies..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install PHP build dependencies"
+    return 0
+  fi
   
   local platform
   platform=$(detect_platform)
@@ -104,25 +286,38 @@ install_macos_php_deps() {
   log_success "macOS PHP dependencies installed"
 }
 
-# Install phpenv
+# Install phpenv with enhanced options
 install_phpenv() {
   log_info "Installing phpenv..."
   
-  # Check if phpenv is already installed
-  if command -v phpenv >/dev/null 2>&1; then
-    log_success "phpenv is already installed: $(phpenv --version)"
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if phpenv should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v phpenv >/dev/null 2>&1; then
+    log_skip_reason "phpenv" "Already installed: $(phpenv --version 2>/dev/null || echo 'version unknown')"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install phpenv"
     return 0
   fi
   
   # Install phpenv via git
   local phpenv_dir="$HOME/.phpenv"
   
-  if [[ -d "$phpenv_dir" ]]; then
-    log_info "phpenv directory exists, updating..."
-    cd "$phpenv_dir" && git pull
+  if [[ "$DRY_RUN" != "true" ]]; then
+    if [[ -d "$phpenv_dir" ]]; then
+      log_info "phpenv directory exists, updating..."
+      cd "$phpenv_dir" && git pull
+    else
+      log_info "Cloning phpenv..."
+      git clone https://github.com/phpenv/phpenv.git "$phpenv_dir"
+    fi
   else
-    log_info "Cloning phpenv..."
-    git clone https://github.com/phpenv/phpenv.git "$phpenv_dir"
+    log_info "[DRY RUN] Would install phpenv to $phpenv_dir"
   fi
   
   # Add phpenv to PATH for current session
@@ -139,18 +334,37 @@ install_phpenv() {
   fi
 }
 
-# Install php-build plugin
+# Install php-build plugin with enhanced options
 install_php_build() {
   log_info "Installing php-build plugin..."
   
+  # Parse command line options
+  parse_install_options "$@"
+  
   local php_build_dir="$HOME/.phpenv/plugins/php-build"
   
-  if [[ -d "$php_build_dir" ]]; then
-    log_info "php-build already exists, updating..."
-    cd "$php_build_dir" && git pull
+  # Check if php-build should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && [[ -d "$php_build_dir" ]]; then
+    log_skip_reason "php-build" "Already installed at $php_build_dir"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install php-build plugin"
+    return 0
+  fi
+  
+  if [[ "$DRY_RUN" != "true" ]]; then
+    if [[ -d "$php_build_dir" ]]; then
+      log_info "php-build already exists, updating..."
+      cd "$php_build_dir" && git pull
+    else
+      log_info "Cloning php-build..."
+      git clone https://github.com/php-build/php-build.git "$php_build_dir"
+    fi
   else
-    log_info "Cloning php-build..."
-    git clone https://github.com/php-build/php-build.git "$php_build_dir"
+    log_info "[DRY RUN] Would install php-build to $php_build_dir"
   fi
   
   log_success "php-build plugin installed"
@@ -182,11 +396,20 @@ get_php_version() {
   echo "$fallback_version"
 }
 
-# Install specified PHP version
+# Install specified PHP version with enhanced options
 install_php_version() {
   local php_version="$1"
   
   log_info "Installing PHP $php_version..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install PHP $php_version"
+    return 0
+  fi
   
   # Ensure phpenv is available
   export PHPENV_ROOT="${PHPENV_ROOT:-$HOME/.phpenv}"
@@ -201,8 +424,8 @@ install_php_version() {
   eval "$(phpenv init -)"
   
   # Check if this version is already installed
-  if phpenv versions | grep -q "$php_version"; then
-    log_success "PHP $php_version is already installed"
+  if [[ "$FORCE_INSTALL" != "true" ]] && phpenv versions | grep -q "$php_version"; then
+    log_skip_reason "PHP $php_version" "Already installed"
     phpenv global "$php_version"
     phpenv rehash
     return 0
@@ -230,32 +453,45 @@ install_php_version() {
   fi
   
   # Install PHP version
-  log_info "This may take several minutes..."
-  if phpenv install "$php_version"; then
-    log_success "PHP $php_version installed successfully"
-    
-    # Set as global version
-    phpenv global "$php_version"
-    
-    # Rehash to update shims
-    phpenv rehash
+  if [[ "$DRY_RUN" != "true" ]]; then
+    log_info "This may take several minutes..."
+    if phpenv install "$php_version"; then
+      log_success "PHP $php_version installed successfully"
+      
+      # Set as global version
+      phpenv global "$php_version"
+      
+      # Rehash to update shims
+      phpenv rehash
+    else
+      log_error "PHP $php_version installation failed"
+      log_info "Check build dependencies and try again"
+      return 1
+    fi
   else
-    log_error "PHP $php_version installation failed"
-    log_info "Check build dependencies and try again"
-    exit 1
+    log_info "[DRY RUN] Would install PHP $php_version"
   fi
 }
 
-# Install Composer (PHP dependency manager)
+# Install Composer (PHP dependency manager) with enhanced options
 install_composer() {
   log_info "Installing Composer..."
+  
+  # Parse command line options
+  parse_install_options "$@"
   
   # Setup phpenv environment first
   setup_php_environment
   
-  # Check if Composer is already installed
-  if command -v composer >/dev/null 2>&1; then
-    log_success "Composer is already installed: $(composer --version)"
+  # Check if Composer should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v composer >/dev/null 2>&1; then
+    log_skip_reason "Composer" "Already installed: $(composer --version 2>/dev/null | head -1)"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Composer"
     return 0
   fi
   
@@ -354,31 +590,44 @@ EOF
   fi
   
   # Download and install Composer
-  local expected_checksum="$(curl -s https://composer.github.io/installer.sig)"
-  curl -s https://getcomposer.org/installer | php -- --quiet
-  
-  if [[ -f "composer.phar" ]]; then
-    # Make Composer globally available
-    mkdir -p "$HOME/.local/bin"
-    mv composer.phar "$HOME/.local/bin/composer"
-    chmod +x "$HOME/.local/bin/composer"
+  if [[ "$DRY_RUN" != "true" ]]; then
+    local expected_checksum="$(curl -s https://composer.github.io/installer.sig)"
+    curl -s https://getcomposer.org/installer | php -- --quiet
     
-    # Add to PATH for current session
-    export PATH="$HOME/.local/bin:$PATH"
-    
-    if command -v composer >/dev/null 2>&1; then
-      log_success "Composer installed successfully"
+    if [[ -f "composer.phar" ]]; then
+      # Make Composer globally available
+      mkdir -p "$HOME/.local/bin"
+      mv composer.phar "$HOME/.local/bin/composer"
+      chmod +x "$HOME/.local/bin/composer"
+      
+      # Add to PATH for current session
+      export PATH="$HOME/.local/bin:$PATH"
+      
+      if command -v composer >/dev/null 2>&1; then
+        log_success "Composer installed successfully"
+      else
+        log_warning "Composer installation may have failed"
+      fi
     else
-      log_warning "Composer installation may have failed"
+      log_error "Composer installation failed"
     fi
   else
-    log_error "Composer installation failed"
+    log_info "[DRY RUN] Would install Composer"
   fi
 }
 
-# Install useful PHP tools
+# Install useful PHP tools with enhanced options
 install_php_tools() {
   log_info "Installing useful PHP tools..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install useful PHP tools"
+    return 0
+  fi
   
   # Ensure PHP and Composer are available
   if ! command -v php >/dev/null 2>&1; then
@@ -391,20 +640,56 @@ install_php_tools() {
     export PATH="$HOME/.local/bin:$PATH"
   fi
   
-  # List of useful PHP tools
-  local tools=(
-    "phpunit/phpunit"               # Testing framework
-    "squizlabs/php_codesniffer"     # Code standards checker
-    "friendsofphp/php-cs-fixer"     # Code formatter
-    "phpstan/phpstan"               # Static analysis tool
-    "psalm/phar"                    # Static analysis tool
+  if ! command -v composer >/dev/null 2>&1; then
+    log_warning "Composer not available, skipping tools installation"
+    return 1
+  fi
+  
+  # List of useful PHP tools with descriptions
+  local tools_info=(
+    "phpunit/phpunit:Testing framework"
+    "squizlabs/php_codesniffer:Code standards checker"
+    "friendsofphp/php-cs-fixer:Code formatter"
+    "phpstan/phpstan:Static analysis tool"
+    "psalm/phar:Static analysis tool"
   )
   
-  for tool in "${tools[@]}"; do
-    local tool_name=$(basename "$tool")
-    log_info "Installing $tool_name via Composer..."
-    composer global require "$tool" --quiet --no-interaction || log_warning "Failed to install $tool"
+  local installed_count=0
+  local skipped_count=0
+  local failed_count=0
+  
+  for tool_info in "${tools_info[@]}"; do
+    local tool_package=$(echo "$tool_info" | cut -d: -f1)
+    local tool_desc=$(echo "$tool_info" | cut -d: -f2)
+    local tool_name=$(basename "$tool_package")
+    
+    # Skip if tool is already available and not forcing reinstall
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
+      log_skip_reason "$tool_name" "Already installed"
+      ((skipped_count++))
+      continue
+    fi
+    
+    log_info "Installing $tool_name ($tool_desc) via Composer..."
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+      if composer global require "$tool_package" --quiet --no-interaction; then
+        log_success "$tool_name installed successfully"
+        ((installed_count++))
+      else
+        log_warning "Failed to install $tool_name"
+        ((failed_count++))
+      fi
+    else
+      log_info "[DRY RUN] Would install $tool_name"
+      ((installed_count++))
+    fi
   done
+  
+  # Log summary
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+  fi
   
   # Ensure Composer global bin is in PATH
   local composer_bin_dir="$HOME/.composer/vendor/bin"
@@ -560,14 +845,8 @@ main() {
   log_info "PHP SDK Setup via phpenv"
   log_info "========================="
   
-  # Install platform dependencies
-  install_php_dependencies
-  
-  # Install phpenv
-  install_phpenv
-  
-  # Install php-build plugin
-  install_php_build
+  # Parse command line options
+  parse_install_options "$@"
   
   # Get target PHP version
   local php_version
@@ -579,25 +858,68 @@ main() {
     php_version="8.3.22"
   fi
   
+  # Check if PHP installation should be skipped
+  if should_skip_installation_advanced "PHP" "php" "$php_version" "--version"; then
+    # Even if PHP is installed, check and update environment
+    log_info "PHP is installed, checking phpenv environment and tools..."
+    
+    # Perform comprehensive environment check
+    check_phpenv_comprehensive_environment
+    
+    # Setup/verify environment
+    setup_php_environment
+    
+    # Install/update Composer
+    install_composer "$@"
+    
+    # Install useful tools
+    install_php_tools "$@"
+    
+    # Setup development environment
+    if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+      setup_php_development
+    fi
+    
+    # Verify installation
+    if [[ "$DRY_RUN" != "true" ]]; then
+      verify_php_installation
+    fi
+    
+    return 0
+  fi
+  
   log_info "Target PHP version: $php_version"
   
+  # Install platform dependencies
+  install_php_dependencies "$@"
+  
+  # Install phpenv
+  install_phpenv "$@"
+  
+  # Install php-build plugin
+  install_php_build "$@"
+  
   # Install PHP version
-  install_php_version "$php_version"
+  install_php_version "$php_version" "$@"
   
   # Setup environment
   setup_php_environment
   
   # Install Composer
-  install_composer
+  install_composer "$@"
   
   # Install useful tools
-  install_php_tools
+  install_php_tools "$@"
   
-  # Setup development environment
-  setup_php_development
+  # Setup development environment (skip in quick mode)
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    setup_php_development
+  fi
   
   # Verify installation
-  verify_php_installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_php_installation
+  fi
   
   log_success "PHP SDK setup completed!"
   log_info ""
