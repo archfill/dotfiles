@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -18,52 +19,216 @@ load_config
 
 log_info "Starting Go SDK setup via g (Go version manager)..."
 
-# Install g (Go version manager)
+# =============================================================================
+# Enhanced Go Environment Checking and Management Functions
+# =============================================================================
+
+# Check g (Go version manager) installation and environment
+check_g_environment() {
+    log_info "Checking g (Go version manager) environment..."
+    
+    local all_checks_passed=true
+    
+    # Check g command availability
+    if ! is_command_available "g" "--version"; then
+        log_info "g not available"
+        all_checks_passed=false
+    else
+        # Check g installation directory
+        local g_dir="$HOME/.g"
+        if [[ ! -d "$g_dir" ]]; then
+            log_warning "g directory not found: $g_dir"
+        else
+            log_info "g directory: $g_dir"
+        fi
+        
+        # Check g environment file
+        if [[ -f "$HOME/.g/env" ]]; then
+            log_info "g environment file found"
+        else
+            log_warning "g environment file not found"
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "g environment checks passed"
+        return 0
+    else
+        log_info "g environment checks failed"
+        return 1
+    fi
+}
+
+# Check Go installation status
+check_go_status() {
+    log_info "Checking Go installation status..."
+    
+    # Check Go command availability
+    if ! command -v go >/dev/null 2>&1; then
+        log_info "Go not installed"
+        return 1
+    fi
+    
+    # Get Go version information
+    local go_version
+    go_version=$(go version 2>/dev/null | awk '{print $3}' | sed 's/go//' || echo "unknown")
+    log_info "Go version: $go_version"
+    
+    # Check Go environment
+    if go env GOROOT >/dev/null 2>&1; then
+        local goroot
+        goroot=$(go env GOROOT 2>/dev/null || echo "unknown")
+        log_info "GOROOT: $goroot"
+        
+        local gopath
+        gopath=$(go env GOPATH 2>/dev/null || echo "unknown")
+        log_info "GOPATH: $gopath"
+    fi
+    
+    # Check if Go version is recent
+    local major_minor
+    major_minor=$(echo "$go_version" | cut -d. -f1,2)
+    if [[ "$major_minor" > "1.20" ]]; then
+        log_success "Go version is recent: $go_version"
+    else
+        log_warning "Go version may be outdated: $go_version"
+    fi
+    
+    log_success "Go status check completed"
+    return 0
+}
+
+# Check Go tools status
+check_go_tools_status() {
+    log_info "Checking Go tools status..."
+    
+    if ! command -v go >/dev/null 2>&1; then
+        log_info "Go not available"
+        return 1
+    fi
+    
+    # Check for common Go tools
+    local tools_info=(
+        "goimports:Import management tool"
+        "golangci-lint:Comprehensive linter"
+        "staticcheck:Static analysis tool"
+        "dlv:Go debugger"
+    )
+    
+    local installed_tools=0
+    for tool_info in "${tools_info[@]}"; do
+        local tool_name=$(echo "$tool_info" | cut -d: -f1)
+        
+        if command -v "$tool_name" >/dev/null 2>&1; then
+            ((installed_tools++))
+        fi
+    done
+    
+    log_info "Installed Go tools: $installed_tools/${#tools_info[@]}"
+    
+    log_success "Go tools status check completed"
+    return 0
+}
+
+# Comprehensive Go environment check
+check_go_comprehensive_environment() {
+    log_info "Performing comprehensive Go environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check g installation
+    if ! check_g_environment; then
+        log_info "g needs installation or update"
+        all_checks_passed=false
+    fi
+    
+    # Check Go status
+    if ! check_go_status; then
+        log_info "Go needs installation or update"
+        all_checks_passed=false
+    fi
+    
+    # Check tools status
+    check_go_tools_status
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All Go environment checks passed"
+        return 0
+    else
+        log_info "Some Go environment checks failed"
+        return 1
+    fi
+}
+
+# Install g (Go version manager) with enhanced options
 install_g() {
   log_info "Installing g (Go version manager)..."
   
-  # Check if g is already installed
-  if command -v g >/dev/null 2>&1; then
-    log_success "g is already installed: $(g --version 2>/dev/null || echo 'version unknown')"
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if g should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v g >/dev/null 2>&1; then
+    log_skip_reason "g" "Already installed: $(g --version 2>/dev/null || echo 'version unknown')"
     return 0
   fi
   
-  # Install g via curl
-  local install_dir="$HOME/.g"
-  local bin_dir="$HOME/.local/bin"
-  
-  # Create directories
-  mkdir -p "$install_dir" "$bin_dir"
-  
-  # Download g
-  log_info "Downloading g..."
-  
-  # Set required environment variables to avoid unbound variable errors
-  export USER="${USER:-$(whoami)}"
-  export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
-  
-  # Install g with proper environment
-  if curl -sSL https://git.io/g-install | USER="$USER" HOME="$HOME" SHELL="$SHELL" bash -s -- -y 2>/dev/null; then
-    # Add to PATH for current session
-    export PATH="$bin_dir:$PATH"
-    
-    if command -v g >/dev/null 2>&1; then
-      log_success "g installed successfully"
-      return 0
-    else
-      log_warning "g installation script completed but g command not found"
-    fi
-  else
-    log_warning "g installation script failed"
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install g (Go version manager)"
+    return 0
   fi
   
-  log_error "g installation failed"
-  return 1
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Install g via curl
+    local install_dir="$HOME/.g"
+    local bin_dir="$HOME/.local/bin"
+    
+    # Create directories
+    mkdir -p "$install_dir" "$bin_dir"
+    
+    # Download g
+    log_info "Downloading g..."
+    
+    # Set required environment variables to avoid unbound variable errors
+    export USER="${USER:-$(whoami)}"
+    export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
+    
+    # Install g with proper environment
+    if curl -sSL https://git.io/g-install | USER="$USER" HOME="$HOME" SHELL="$SHELL" bash -s -- -y 2>/dev/null; then
+      # Add to PATH for current session
+      export PATH="$bin_dir:$PATH"
+      
+      if command -v g >/dev/null 2>&1; then
+        log_success "g installed successfully"
+        return 0
+      else
+        log_warning "g installation script completed but g command not found"
+      fi
+    else
+      log_warning "g installation script failed"
+    fi
+    
+    log_error "g installation failed"
+    return 1
+  else
+    log_info "[DRY RUN] Would install g (Go version manager)"
+    return 0
+  fi
 }
 
-# Install latest stable Go version
+# Install latest stable Go version with enhanced options
 install_go_latest() {
   log_info "Installing latest stable Go version..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install latest stable Go version"
+    return 0
+  fi
   
   # Ensure g is available
   if ! command -v g >/dev/null 2>&1; then
@@ -74,19 +239,19 @@ install_go_latest() {
     
     if ! command -v g >/dev/null 2>&1; then
       log_error "g not found in PATH"
-      exit 1
+      return 1
     fi
   fi
   
   # Check if Go is already installed
-  if command -v go >/dev/null 2>&1; then
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v go >/dev/null 2>&1; then
     local current_version=$(go version | awk '{print $3}' | sed 's/go//')
     log_info "Current Go version: $current_version"
     
     # Check if it's a recent version (1.21 or higher)
     local major_minor=$(echo "$current_version" | cut -d. -f1,2)
     if [[ "$major_minor" > "1.20" ]]; then
-      log_success "Go $current_version is already installed and up to date"
+      log_skip_reason "Go $current_version" "Already installed and up to date"
       setup_go_environment
       return 0
     fi
@@ -101,11 +266,15 @@ install_go_latest() {
     latest_version="1.21.5"
   fi
   
-  log_info "Installing Go $latest_version..."
-  g install "$latest_version"
-  
-  # Set as current version
-  g "$latest_version"
+  if [[ "$DRY_RUN" != "true" ]]; then
+    log_info "Installing Go $latest_version..."
+    g install "$latest_version"
+    
+    # Set as current version
+    g "$latest_version"
+  else
+    log_info "[DRY RUN] Would install Go $latest_version"
+  fi
   
   # Verify installation
   verify_go_installation
@@ -140,14 +309,23 @@ setup_go_environment() {
   fi
 }
 
-# Install useful Go tools
+# Install useful Go tools with enhanced options
 install_go_tools() {
   log_info "Installing useful Go tools..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install useful Go tools"
+    return 0
+  fi
   
   # Ensure Go is available
   if ! command -v go >/dev/null 2>&1; then
     log_warning "Go not found in PATH, skipping tools installation"
-    return 0
+    return 1
   fi
   
   # Ensure GOBIN is in PATH for current session
@@ -170,24 +348,47 @@ install_go_tools() {
     return 0
   fi
   
-  # List of essential Go tools only
-  local tools=(
-    "golang.org/x/tools/cmd/goimports@latest"    # goimports for import management
+  # List of essential Go tools with descriptions
+  local tools_info=(
+    "golang.org/x/tools/cmd/goimports@latest:Import management tool"
   )
   
-  for tool in "${tools[@]}"; do
-    local tool_name=$(basename "${tool%@*}")
-    if ! command -v "$tool_name" >/dev/null 2>&1; then
-      log_info "Installing $tool_name..."
-      if go install "$tool" >/dev/null 2>&1; then
-        log_info "$tool_name installed successfully"
+  local installed_count=0
+  local skipped_count=0
+  local failed_count=0
+  
+  for tool_info in "${tools_info[@]}"; do
+    local tool_package=$(echo "$tool_info" | cut -d: -f1)
+    local tool_desc=$(echo "$tool_info" | cut -d: -f2)
+    local tool_name=$(basename "${tool_package%@*}")
+    
+    # Skip if tool is already available and not forcing reinstall
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
+      log_skip_reason "$tool_name" "Already installed"
+      ((skipped_count++))
+      continue
+    fi
+    
+    log_info "Installing $tool_name ($tool_desc)..."
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+      if go install "$tool_package" >/dev/null 2>&1; then
+        log_success "$tool_name installed successfully"
+        ((installed_count++))
       else
-        log_warning "Failed to install $tool (this is not critical)"
+        log_warning "Failed to install $tool_name (this is not critical)"
+        ((failed_count++))
       fi
     else
-      log_info "$tool_name is already installed"
+      log_info "[DRY RUN] Would install $tool_name"
+      ((installed_count++))
     fi
   done
+  
+  # Log summary
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+  fi
   
   # Return to original directory and clean up
   cd "$original_dir"
@@ -309,10 +510,43 @@ main() {
   log_info "Go SDK Setup via g (Go Version Manager)"
   log_info "======================================="
   
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Get target Go version (use latest stable)
+  local go_version="latest"
+  
+  # Check if Go installation should be skipped
+  if should_skip_installation_advanced "Go" "go" "$go_version" "version"; then
+    # Even if Go is installed, check and update environment
+    log_info "Go is installed, checking g environment and tools..."
+    
+    # Perform comprehensive environment check
+    check_go_comprehensive_environment
+    
+    # Setup/verify environment
+    setup_go_environment
+    
+    # Setup workspace
+    if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+      setup_go_workspace
+    fi
+    
+    # Install useful tools
+    install_go_tools "$@"
+    
+    # Verify installation
+    if [[ "$DRY_RUN" != "true" ]]; then
+      verify_go_installation
+    fi
+    
+    return 0
+  fi
+  
   # Try to install g first
-  if install_g; then
+  if install_g "$@"; then
     # Install latest Go via g
-    install_go_latest
+    install_go_latest "$@"
   else
     log_warning "g installation failed, trying official binary..."
     install_go_official
@@ -322,10 +556,17 @@ main() {
   setup_go_environment
   
   # Setup workspace
-  setup_go_workspace
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    setup_go_workspace
+  fi
   
   # Install useful tools
-  install_go_tools
+  install_go_tools "$@"
+  
+  # Verify installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_go_installation
+  fi
   
   log_success "Go SDK setup completed!"
   log_info ""

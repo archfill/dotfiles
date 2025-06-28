@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -18,17 +19,133 @@ load_config
 
 log_info "Starting Flutter setup..."
 
-# Platform-specific Flutter installation
+# =============================================================================
+# Enhanced Flutter Environment Checking and Management Functions
+# =============================================================================
+
+# Check Flutter installation and environment
+check_flutter_environment() {
+    log_info "Checking Flutter environment..."
+    
+    local all_checks_passed=true
+    
+    # Check Flutter command availability
+    if ! command -v flutter >/dev/null 2>&1; then
+        log_info "Flutter not available"
+        all_checks_passed=false
+    else
+        # Check Flutter version and status
+        local flutter_version
+        flutter_version=$(flutter --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+        log_info "Flutter version: $flutter_version"
+        
+        # Check Flutter doctor status (quick check)
+        if flutter doctor >/dev/null 2>&1; then
+            log_info "Flutter doctor check passed"
+        else
+            log_warning "Flutter doctor found issues (this may be normal)"
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "Flutter environment checks passed"
+        return 0
+    else
+        log_info "Flutter environment checks failed"
+        return 1
+    fi
+}
+
+# Check FVM (Flutter Version Management) status
+check_fvm_environment() {
+    log_info "Checking FVM environment..."
+    
+    # Check FVM command availability
+    if ! command -v fvm >/dev/null 2>&1; then
+        log_info "FVM not available"
+        return 1
+    fi
+    
+    # Check FVM installation directory
+    local fvm_dir="$HOME/fvm"
+    if [[ ! -d "$fvm_dir" ]]; then
+        log_warning "FVM directory not found: $fvm_dir"
+    else
+        log_info "FVM directory: $fvm_dir"
+    fi
+    
+    # Check installed Flutter versions
+    local installed_versions
+    if installed_versions=$(fvm list 2>/dev/null | grep -c "Flutter" || echo 0); then
+        log_info "FVM managed Flutter versions: $installed_versions"
+    fi
+    
+    log_success "FVM environment check completed"
+    return 0
+}
+
+# Check Dart SDK status
+check_dart_environment() {
+    log_info "Checking Dart environment..."
+    
+    if ! command -v dart >/dev/null 2>&1; then
+        log_info "Dart SDK not available"
+        return 1
+    fi
+    
+    local dart_version
+    dart_version=$(dart --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+    log_info "Dart version: $dart_version"
+    
+    # Check pub cache directory
+    if [[ -d "$HOME/.pub-cache" ]]; then
+        log_info "Dart pub cache: $HOME/.pub-cache"
+    fi
+    
+    log_success "Dart environment check completed"
+    return 0
+}
+
+# Comprehensive Flutter environment check
+check_flutter_comprehensive_environment() {
+    log_info "Performing comprehensive Flutter environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check Flutter installation
+    if ! check_flutter_environment; then
+        all_checks_passed=false
+    fi
+    
+    # Check FVM status
+    check_fvm_environment
+    
+    # Check Dart status
+    check_dart_environment
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All Flutter environment checks passed"
+        return 0
+    else
+        log_info "Some Flutter environment checks failed"
+        return 1
+    fi
+}
+
+# Platform-specific Flutter installation with enhanced options
 install_flutter() {
+  # Parse command line options
+  parse_install_options "$@"
+  
   local platform
   platform=$(detect_platform)
   
   case "$platform" in
     macos)
-      install_flutter_macos
+      install_flutter_macos "$@"
       ;;
     linux)
-      install_flutter_linux
+      install_flutter_linux "$@"
       ;;
     *)
       log_error "Unsupported platform: $platform"
@@ -37,76 +154,122 @@ install_flutter() {
   esac
 }
 
-# Install Flutter on macOS
+# Install Flutter on macOS with enhanced options
 install_flutter_macos() {
   log_info "Installing Flutter on macOS..."
+  
+  # Parse command line options
+  parse_install_options "$@"
   
   # Check if Flutter is already installed via FVM
   if command -v fvm >/dev/null 2>&1; then
     log_info "FVM detected, using FVM for Flutter management"
-    install_flutter_via_fvm
+    install_flutter_via_fvm "$@"
     return 0
   fi
   
   # Check if Flutter is already installed directly
-  if command -v flutter >/dev/null 2>&1; then
-    log_success "Flutter is already installed: $(flutter --version | head -1)"
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v flutter >/dev/null 2>&1; then
+    log_skip_reason "Flutter" "Already installed: $(flutter --version | head -1)"
     log_info "Consider using FVM for better version management"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Flutter on macOS"
     return 0
   fi
   
   # Try FVM first, then fall back to Homebrew or manual installation
-  if install_fvm_first; then
-    install_flutter_via_fvm
-  elif command -v brew >/dev/null 2>&1; then
+  if install_fvm_first "$@"; then
+    install_flutter_via_fvm "$@"
+  elif [[ "$DRY_RUN" != "true" ]] && command -v brew >/dev/null 2>&1; then
     log_info "FVM installation failed, trying Homebrew..."
     brew install --cask flutter
-  else
+  elif [[ "$DRY_RUN" != "true" ]]; then
     log_info "Neither FVM nor Homebrew available, falling back to manual installation"
-    install_flutter_manual_macos
+    install_flutter_manual_macos "$@"
+  else
+    log_info "[DRY RUN] Would install Flutter via FVM or Homebrew"
   fi
   
   # Verify installation
-  verify_flutter_installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_flutter_installation
+  fi
 }
 
-# Install Flutter on Linux
+# Install Flutter on Linux with enhanced options
 install_flutter_linux() {
   log_info "Installing Flutter on Linux..."
+  
+  # Parse command line options
+  parse_install_options "$@"
   
   # Check if Flutter is already installed via FVM
   if command -v fvm >/dev/null 2>&1; then
     log_info "FVM detected, using FVM for Flutter management"
-    install_flutter_via_fvm
+    install_flutter_via_fvm "$@"
     return 0
   fi
   
   # Check if Flutter is already installed directly
-  if command -v flutter >/dev/null 2>&1; then
-    log_success "Flutter is already installed: $(flutter --version | head -1)"
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v flutter >/dev/null 2>&1; then
+    log_skip_reason "Flutter" "Already installed: $(flutter --version | head -1)"
     log_info "Consider using FVM for better version management"
     return 0
   fi
   
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Flutter on Linux"
+    return 0
+  fi
+  
   # Try FVM first, then fall back to manual installation
-  if install_fvm_first; then
-    install_flutter_via_fvm
-  else
+  if install_fvm_first "$@"; then
+    install_flutter_via_fvm "$@"
+  elif [[ "$DRY_RUN" != "true" ]]; then
     log_info "FVM installation failed, falling back to manual Flutter installation"
-    install_flutter_manual_linux
+    install_flutter_manual_linux "$@"
+  else
+    log_info "[DRY RUN] Would install Flutter via FVM or manual installation"
   fi
   
   # Verify installation
-  verify_flutter_installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_flutter_installation
+  fi
 }
 
-# Manual Flutter installation for macOS
+# Manual Flutter installation for macOS with enhanced options
 install_flutter_manual_macos() {
+  # Parse command line options
+  parse_install_options "$@"
+  
   local flutter_version="${FLUTTER_VERSION:-stable}"
   local install_dir="$HOME/development"
   local flutter_dir="$install_dir/flutter"
   
   log_info "Installing Flutter manually for macOS..."
+  
+  # Skip if already installed and not forcing
+  if [[ "$FORCE_INSTALL" != "true" ]] && [[ -d "$flutter_dir" ]]; then
+    log_skip_reason "Flutter (manual)" "Already installed in $flutter_dir"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Flutter manually for macOS"
+    return 0
+  fi
+  
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_info "[DRY RUN] Would install Flutter manually to $flutter_dir"
+    return 0
+  fi
   
   # Create installation directory
   mkdir -p "$install_dir"
@@ -157,13 +320,33 @@ install_flutter_manual_macos() {
   log_success "Flutter installed to: $flutter_dir"
 }
 
-# Manual Flutter installation for Linux
+# Manual Flutter installation for Linux with enhanced options
 install_flutter_manual_linux() {
+  # Parse command line options
+  parse_install_options "$@"
+  
   local flutter_version="${FLUTTER_VERSION:-stable}"
   local install_dir="$HOME/development"
   local flutter_dir="$install_dir/flutter"
   
   log_info "Installing Flutter manually for Linux..."
+  
+  # Skip if already installed and not forcing
+  if [[ "$FORCE_INSTALL" != "true" ]] && [[ -d "$flutter_dir" ]]; then
+    log_skip_reason "Flutter (manual)" "Already installed in $flutter_dir"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Flutter manually for Linux"
+    return 0
+  fi
+  
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_info "[DRY RUN] Would install Flutter manually to $flutter_dir"
+    return 0
+  fi
   
   # Create installation directory
   mkdir -p "$install_dir"
@@ -236,45 +419,79 @@ install_flutter_manual_linux() {
   log_success "Flutter installed to: $flutter_dir"
 }
 
-# Install FVM first (before Flutter)
+# Install FVM first (before Flutter) with enhanced options
 install_fvm_first() {
   log_info "Installing FVM (Flutter Version Management)..."
   
-  # Check if FVM is already installed
-  if command -v fvm >/dev/null 2>&1; then
-    log_success "FVM is already installed: $(fvm --version)"
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if FVM should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v fvm >/dev/null 2>&1; then
+    log_skip_reason "FVM" "Already installed: $(fvm --version 2>/dev/null || echo 'version unknown')"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install FVM (Flutter Version Management)"
     return 0
   fi
   
   # Try to install Dart first if not available
   if ! command -v dart >/dev/null 2>&1; then
     log_info "Installing Dart SDK for FVM..."
-    install_dart_sdk
+    install_dart_sdk "$@"
   fi
   
-  # Install FVM via pub global
-  if command -v dart >/dev/null 2>&1; then
-    dart pub global activate fvm
-    
-    # Add pub cache to PATH for current session
-    export PATH="$HOME/.pub-cache/bin:$PATH"
-    
-    if command -v fvm >/dev/null 2>&1; then
-      log_success "FVM installed successfully: $(fvm --version)"
-      return 0
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Install FVM via pub global
+    if command -v dart >/dev/null 2>&1; then
+      dart pub global activate fvm
+      
+      # Add pub cache to PATH for current session
+      export PATH="$HOME/.pub-cache/bin:$PATH"
+      
+      if command -v fvm >/dev/null 2>&1; then
+        log_success "FVM installed successfully: $(fvm --version)"
+        return 0
+      else
+        log_warning "FVM installation may have failed"
+        return 1
+      fi
     else
-      log_warning "FVM installation may have failed"
+      log_warning "Dart not available, cannot install FVM"
       return 1
     fi
   else
-    log_warning "Dart not available, cannot install FVM"
-    return 1
+    log_info "[DRY RUN] Would install FVM (Flutter Version Management)"
+    return 0
   fi
 }
 
-# Install Flutter via FVM
+# Install Flutter via FVM with enhanced options
 install_flutter_via_fvm() {
   log_info "Installing Flutter via FVM..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Flutter via FVM"
+    return 0
+  fi
+  
+  # Check if Flutter stable is already installed via FVM
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v fvm >/dev/null 2>&1; then
+    if fvm list 2>/dev/null | grep -q "stable"; then
+      log_skip_reason "Flutter (via FVM)" "Stable version already installed"
+      # Ensure it's set as global
+      fvm global stable 2>/dev/null || true
+      export PATH="$HOME/fvm/default/bin:$PATH"
+      return 0
+    fi
+  fi
   
   # Get latest stable Flutter version from GitHub releases
   local flutter_version
@@ -282,27 +499,47 @@ install_flutter_via_fvm() {
   
   log_info "Installing Flutter $flutter_version via FVM..."
   
-  # Install Flutter stable via FVM
-  if fvm install stable; then
-    log_success "Flutter stable installed via FVM"
-    
-    # Set global Flutter version
-    fvm global stable
-    log_info "Set Flutter stable as global version"
-    
-    # Add FVM Flutter to PATH
-    export PATH="$HOME/fvm/default/bin:$PATH"
-    
-    return 0
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Install Flutter stable via FVM
+    if fvm install stable; then
+      log_success "Flutter stable installed via FVM"
+      
+      # Set global Flutter version
+      fvm global stable
+      log_info "Set Flutter stable as global version"
+      
+      # Add FVM Flutter to PATH
+      export PATH="$HOME/fvm/default/bin:$PATH"
+      
+      return 0
+    else
+      log_error "Failed to install Flutter via FVM"
+      return 1
+    fi
   else
-    log_error "Failed to install Flutter via FVM"
-    return 1
+    log_info "[DRY RUN] Would install Flutter $flutter_version via FVM"
+    return 0
   fi
 }
 
-# Install Dart SDK
+# Install Dart SDK with enhanced options
 install_dart_sdk() {
   log_info "Installing Dart SDK..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if Dart should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v dart >/dev/null 2>&1; then
+    log_skip_reason "Dart SDK" "Already installed: $(dart --version 2>&1 | head -1)"
+    return 0
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Dart SDK"
+    return 0
+  fi
   
   local platform
   platform=$(detect_platform)
@@ -341,12 +578,17 @@ install_dart_sdk() {
       ;;
   esac
   
-  if command -v dart >/dev/null 2>&1; then
-    log_success "Dart SDK installed successfully: $(dart --version)"
-    return 0
+  if [[ "$DRY_RUN" != "true" ]]; then
+    if command -v dart >/dev/null 2>&1; then
+      log_success "Dart SDK installed successfully: $(dart --version)"
+      return 0
+    else
+      log_error "Dart SDK installation failed"
+      return 1
+    fi
   else
-    log_error "Dart SDK installation failed"
-    return 1
+    log_info "[DRY RUN] Would install Dart SDK"
+    return 0
   fi
 }
 
@@ -411,78 +653,105 @@ verify_flutter_installation() {
   fi
 }
 
-# Setup Flutter development dependencies
+# Setup Flutter development dependencies with enhanced options
 setup_flutter_dependencies() {
   log_info "Setting up Flutter development dependencies..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would setup Flutter development dependencies"
+    return 0
+  fi
   
   local platform
   platform=$(detect_platform)
   
   case "$platform" in
     macos)
-      setup_flutter_dependencies_macos
+      setup_flutter_dependencies_macos "$@"
       ;;
     linux)
-      setup_flutter_dependencies_linux
+      setup_flutter_dependencies_linux "$@"
       ;;
   esac
 }
 
-# Setup Flutter dependencies on macOS
+# Setup Flutter dependencies on macOS with enhanced options
 setup_flutter_dependencies_macos() {
   log_info "Setting up Flutter dependencies for macOS..."
   
-  # Install Xcode Command Line Tools if not installed
-  if ! xcode-select -p >/dev/null 2>&1; then
-    log_info "Installing Xcode Command Line Tools..."
-    xcode-select --install || log_warning "Xcode Command Line Tools installation may have failed"
-  fi
+  # Parse command line options
+  parse_install_options "$@"
   
-  # Install CocoaPods if available via Homebrew
-  if command -v brew >/dev/null 2>&1; then
-    if ! command -v pod >/dev/null 2>&1; then
-      log_info "Installing CocoaPods..."
-      brew install cocoapods
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Install Xcode Command Line Tools if not installed
+    if ! xcode-select -p >/dev/null 2>&1; then
+      log_info "Installing Xcode Command Line Tools..."
+      xcode-select --install || log_warning "Xcode Command Line Tools installation may have failed"
+    else
+      log_info "Xcode Command Line Tools already installed"
     fi
+    
+    # Install CocoaPods if available via Homebrew
+    if command -v brew >/dev/null 2>&1; then
+      if [[ "$FORCE_INSTALL" != "true" ]] && command -v pod >/dev/null 2>&1; then
+        log_skip_reason "CocoaPods" "Already installed: $(pod --version 2>/dev/null || echo 'version unknown')"
+      else
+        log_info "Installing CocoaPods..."
+        brew install cocoapods
+      fi
+    fi
+  else
+    log_info "[DRY RUN] Would setup Xcode Command Line Tools and CocoaPods"
   fi
 }
 
-# Setup Flutter dependencies on Linux
+# Setup Flutter dependencies on Linux with enhanced options
 setup_flutter_dependencies_linux() {
   log_info "Setting up Flutter dependencies for Linux..."
   
-  # Install required packages
-  local packages=(
-    "curl"
-    "git"
-    "unzip"
-    "xz-utils"
-    "zip"
-    "libglu1-mesa"
-  )
+  # Parse command line options
+  parse_install_options "$@"
   
-  local pkg_manager
-  pkg_manager=$(detect_package_manager)
-  
-  case "$pkg_manager" in
-    apt)
-      log_info "Installing dependencies via apt..."
-      sudo apt-get update
-      sudo apt-get install -y "${packages[@]}"
-      ;;
-    yum|dnf)
-      log_info "Installing dependencies via $pkg_manager..."
-      sudo "$pkg_manager" install -y curl git unzip xz zip mesa-libGLU
-      ;;
-    pacman)
-      log_info "Installing dependencies via pacman..."
-      sudo pacman -S --noconfirm curl git unzip xz zip glu
-      ;;
-    *)
-      log_warning "Unknown package manager: $pkg_manager"
-      log_info "Please install the following packages manually: ${packages[*]}"
-      ;;
-  esac
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Install required packages
+    local packages=(
+      "curl"
+      "git"
+      "unzip"
+      "xz-utils"
+      "zip"
+      "libglu1-mesa"
+    )
+    
+    local pkg_manager
+    pkg_manager=$(detect_package_manager)
+    
+    case "$pkg_manager" in
+      apt)
+        log_info "Installing dependencies via apt..."
+        sudo apt-get update
+        sudo apt-get install -y "${packages[@]}"
+        ;;
+      yum|dnf)
+        log_info "Installing dependencies via $pkg_manager..."
+        sudo "$pkg_manager" install -y curl git unzip xz zip mesa-libGLU
+        ;;
+      pacman)
+        log_info "Installing dependencies via pacman..."
+        sudo pacman -S --noconfirm curl git unzip xz zip glu
+        ;;
+      *)
+        log_warning "Unknown package manager: $pkg_manager"
+        log_info "Please install the following packages manually: ${packages[*]}"
+        ;;
+    esac
+  else
+    log_info "[DRY RUN] Would install Flutter dependencies via package manager"
+  fi
 }
 
 # Main installation function
@@ -490,19 +759,59 @@ main() {
   log_info "Flutter Setup Script"
   log_info "===================="
   
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Get target Flutter version
+  local flutter_version="${FLUTTER_VERSION:-stable}"
+  
+  # Check if Flutter installation should be skipped
+  if should_skip_installation_advanced "Flutter" "flutter" "$flutter_version" "--version"; then
+    # Even if Flutter is installed, check and update environment
+    log_info "Flutter is installed, checking environment and tools..."
+    
+    # Perform comprehensive environment check
+    check_flutter_comprehensive_environment
+    
+    # Setup/verify environment
+    setup_flutter_environment
+    
+    # Show helpful information
+    if [[ "$DRY_RUN" != "true" ]]; then
+      show_flutter_info
+    fi
+    
+    return 0
+  fi
+  
   # Setup dependencies first
-  setup_flutter_dependencies
+  setup_flutter_dependencies "$@"
   
   # Install Flutter (FVM-first approach)
-  install_flutter
+  install_flutter "$@"
   
   # Setup Flutter environment
   setup_flutter_environment
   
   # Show helpful information
-  show_flutter_info
+  if [[ "$DRY_RUN" != "true" ]]; then
+    show_flutter_info
+  fi
   
   log_success "Flutter setup completed!"
+  log_info ""
+  log_info "Available Flutter commands:"
+  log_info "  flutter --version       # Show Flutter version"
+  log_info "  flutter doctor          # Check Flutter installation"
+  log_info "  flutter create <name>   # Create new Flutter project"
+  log_info ""
+  log_info "Available FVM commands (if installed):"
+  log_info "  fvm list                # List installed Flutter versions"
+  log_info "  fvm install <version>   # Install specific Flutter version"
+  log_info "  fvm use <version>       # Use version for current project"
+  log_info "  fvm global <version>    # Set global Flutter version"
+  log_info ""
+  log_info "Note: You may need to restart your shell or run 'source ~/.zshrc' to update environment"
 }
 
 # Setup Flutter environment
