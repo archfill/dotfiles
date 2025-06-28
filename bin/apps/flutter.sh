@@ -89,10 +89,27 @@ install_flutter_manual_macos() {
   mkdir -p "$install_dir"
   cd "$install_dir"
   
-  # Download Flutter
-  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_stable.zip"
+  # Get the latest stable Flutter release URL for macOS
+  log_info "Fetching latest Flutter stable release information..."
+  local flutter_releases_api="https://api.github.com/repos/flutter/flutter/releases/latest"
+  local flutter_version
+  
+  # Try to get the latest version from GitHub API
+  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_api" 2>/dev/null | \
+    grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
+  
+  if [[ -z "$flutter_version" ]]; then
+    # Fallback to a known stable version
+    flutter_version="3.24.3"
+    log_info "API fetch failed, using fallback version: $flutter_version"
+  else
+    log_info "Latest Flutter version: $flutter_version"
+  fi
+  
+  # Construct download URL based on architecture
+  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_${flutter_version}-stable.zip"
   if [[ "$(uname -m)" == "x86_64" ]]; then
-    download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_stable.zip"
+    download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_${flutter_version}-stable.zip"
   fi
   
   log_info "Downloading Flutter from: $download_url"
@@ -129,8 +146,25 @@ install_flutter_manual_linux() {
   mkdir -p "$install_dir"
   cd "$install_dir"
   
-  # Download Flutter
-  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_stable.tar.xz"
+  # Get the latest stable Flutter release URL for Linux
+  log_info "Fetching latest Flutter stable release information..."
+  local flutter_releases_api="https://api.github.com/repos/flutter/flutter/releases/latest"
+  local flutter_version
+  
+  # Try to get the latest version from GitHub API
+  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_api" 2>/dev/null | \
+    grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
+  
+  if [[ -z "$flutter_version" ]]; then
+    # Fallback to a known stable version
+    flutter_version="3.24.3"
+    log_info "API fetch failed, using fallback version: $flutter_version"
+  else
+    log_info "Latest Flutter version: $flutter_version"
+  fi
+  
+  # Construct download URL
+  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${flutter_version}-stable.tar.xz"
   
   log_info "Downloading Flutter from: $download_url"
   if ! curl -L -o flutter.tar.xz "$download_url"; then
