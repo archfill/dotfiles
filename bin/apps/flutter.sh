@@ -152,15 +152,22 @@ install_flutter_manual_linux() {
   local flutter_version
   
   # Try to get the latest stable version from Flutter's releases API
-  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_json" 2>/dev/null | \
-    grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4 2>/dev/null)
+  local api_response
+  api_response=$(curl -s --connect-timeout 10 "$flutter_releases_json" 2>/dev/null)
   
-  if [[ -z "$flutter_version" ]]; then
-    # Fallback to a known stable version
+  if [[ $? -ne 0 ]] || [[ -z "$api_response" ]]; then
+    log_info "Failed to fetch Flutter releases API, using fallback version"
     flutter_version="3.24.3"
-    log_info "API fetch failed, using fallback version: $flutter_version"
   else
-    log_info "Latest Flutter stable version: $flutter_version"
+    # Parse version from API response
+    flutter_version=$(echo "$api_response" | grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4 2>/dev/null)
+    
+    if [[ -z "$flutter_version" ]]; then
+      log_info "Failed to parse version from API response, using fallback version"
+      flutter_version="3.24.3"
+    else
+      log_info "Latest Flutter stable version: $flutter_version"
+    fi
   fi
   
   # Construct download URL
@@ -168,7 +175,14 @@ install_flutter_manual_linux() {
   
   log_info "Downloading Flutter from: $download_url"
   if ! curl -L -o flutter.tar.xz "$download_url"; then
-    log_error "Failed to download Flutter"
+    log_error "Failed to download Flutter from: $download_url"
+    return 1
+  fi
+  
+  # Check if file was downloaded successfully
+  if [[ ! -f flutter.tar.xz ]] || [[ ! -s flutter.tar.xz ]]; then
+    log_error "Downloaded file is empty or does not exist"
+    rm -f flutter.tar.xz
     return 1
   fi
   
@@ -182,7 +196,13 @@ install_flutter_manual_linux() {
   fi
   
   # Extract Flutter
-  tar xf flutter.tar.xz
+  log_info "Extracting Flutter archive..."
+  if ! tar xf flutter.tar.xz; then
+    log_error "Failed to extract Flutter archive"
+    rm -f flutter.tar.xz
+    return 1
+  fi
+  
   rm flutter.tar.xz
   
   log_success "Flutter installed to: $flutter_dir"
