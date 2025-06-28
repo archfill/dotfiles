@@ -11,7 +11,7 @@ log_info "Installing Deno..."
 
 # Denoの自動インストール（プロンプトなし）
 export DENO_INSTALL_MODIFY_PATH=n
-yes n | curl -fsSL https://deno.land/install.sh | sh
+curl -fsSL https://deno.land/install.sh | sh -s -- -y
 
 if [[ $? -eq 0 ]]; then
     log_success "Deno installation completed"
