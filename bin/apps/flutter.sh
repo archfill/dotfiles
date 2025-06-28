@@ -90,13 +90,25 @@ install_flutter_manual_macos() {
   cd "$install_dir"
   
   # Download Flutter
-  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_${flutter_version}.zip"
+  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_stable.zip"
   if [[ "$(uname -m)" == "x86_64" ]]; then
-    download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_${flutter_version}.zip"
+    download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_stable.zip"
   fi
   
   log_info "Downloading Flutter from: $download_url"
-  curl -L -o flutter.zip "$download_url"
+  if ! curl -L -o flutter.zip "$download_url"; then
+    log_error "Failed to download Flutter"
+    return 1
+  fi
+  
+  # Verify the downloaded file is a valid zip archive
+  if ! file flutter.zip | grep -q "Zip archive data"; then
+    log_error "Downloaded file is not a valid ZIP archive"
+    log_info "File content preview:"
+    head -n 5 flutter.zip
+    rm -f flutter.zip
+    return 1
+  fi
   
   # Extract Flutter
   unzip -q flutter.zip
@@ -118,10 +130,22 @@ install_flutter_manual_linux() {
   cd "$install_dir"
   
   # Download Flutter
-  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${flutter_version}.tar.xz"
+  local download_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_stable.tar.xz"
   
   log_info "Downloading Flutter from: $download_url"
-  curl -L -o flutter.tar.xz "$download_url"
+  if ! curl -L -o flutter.tar.xz "$download_url"; then
+    log_error "Failed to download Flutter"
+    return 1
+  fi
+  
+  # Verify the downloaded file is a valid tar archive
+  if ! file flutter.tar.xz | grep -q "XZ compressed data"; then
+    log_error "Downloaded file is not a valid XZ archive"
+    log_info "File content preview:"
+    head -n 5 flutter.tar.xz
+    rm -f flutter.tar.xz
+    return 1
+  fi
   
   # Extract Flutter
   tar xf flutter.tar.xz
