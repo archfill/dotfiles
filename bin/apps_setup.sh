@@ -17,7 +17,7 @@ for filepath in $files; do
     log_info "Running app setup: $script_name"
     
     # Skip certain scripts in CI environment
-    if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]] && [[ "$script_name" == "ghq.sh" ]]; then
+    if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]] && [[ "$script_name" == "ghq.sh" ]]; then
       log_info "Skipping $script_name in CI environment"
       continue
     fi
