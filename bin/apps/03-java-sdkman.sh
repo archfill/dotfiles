@@ -230,7 +230,7 @@ install_sdkman() {
     log_success "SDKMAN! installed successfully"
   else
     log_error "SDKMAN! installation failed"
-    exit 1
+    return 1
   fi
 }
 
@@ -345,7 +345,7 @@ verify_java_installation() {
   else
     log_error "Java installation verification failed"
     log_info "Please restart your shell and try again"
-    exit 1
+    return 1
   fi
 }
 
