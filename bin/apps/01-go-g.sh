@@ -134,25 +134,31 @@ check_go_tools_status() {
 check_go_comprehensive_environment() {
     log_info "Performing comprehensive Go environment check..."
     
-    local all_checks_passed=true
+    local go_status_passed=true
+    local g_status_passed=true
     
-    # Check g installation
+    # Check g installation (non-critical if Go is already working)
     if ! check_g_environment; then
         log_info "g needs installation or update"
-        all_checks_passed=false
+        g_status_passed=false
     fi
     
-    # Check Go status
+    # Check Go status (critical)
     if ! check_go_status; then
         log_info "Go needs installation or update"
-        all_checks_passed=false
+        go_status_passed=false
     fi
     
     # Check tools status
     check_go_tools_status
     
-    if [[ "$all_checks_passed" == "true" ]]; then
-        log_success "All Go environment checks passed"
+    # If Go is working, g environment failure is not critical
+    if [[ "$go_status_passed" == "true" ]]; then
+        if [[ "$g_status_passed" == "true" ]]; then
+            log_success "All Go environment checks passed"
+        else
+            log_success "Go is working (g environment checks failed but this is non-critical)"
+        fi
         return 0
     else
         log_info "Some Go environment checks failed"
@@ -215,6 +221,111 @@ install_g() {
     log_info "[DRY RUN] Would install g (Go version manager)"
     return 0
   fi
+}
+
+# Migrate existing Go installation to g management
+migrate_go_to_g_management() {
+    log_info "Migrating existing Go installation to g management..."
+    
+    # Parse command line options
+    parse_install_options "$@"
+    
+    # Get current Go version
+    local current_go_version
+    if command -v go >/dev/null 2>&1; then
+        current_go_version=$(go version 2>/dev/null | grep -o 'go[0-9][0-9.]*' | head -1 | sed 's/go//')
+        if [[ -z "$current_go_version" ]]; then
+            log_warning "Could not detect current Go version"
+            return 1
+        fi
+        log_info "Detected existing Go version: $current_go_version"
+    else
+        log_error "Go command not found, cannot migrate"
+        return 1
+    fi
+    
+    # Backup current Go environment info
+    local backup_info="$HOME/.go_migration_backup_$(date +%Y%m%d_%H%M%S).txt"
+    log_info "Creating backup of current Go environment: $backup_info"
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+        {
+            echo "Go Migration Backup - $(date)"
+            echo "======================="
+            echo "Go Version: $(go version 2>/dev/null || echo 'unknown')"
+            echo "GOROOT: ${GOROOT:-$(go env GOROOT 2>/dev/null)}"
+            echo "GOPATH: ${GOPATH:-$(go env GOPATH 2>/dev/null)}"
+            echo "GOBIN: ${GOBIN:-$(go env GOBIN 2>/dev/null)}"
+            echo "Go Location: $(which go 2>/dev/null || echo 'unknown')"
+            echo "PATH: $PATH"
+        } > "$backup_info"
+        log_success "Backup created: $backup_info"
+    fi
+    
+    # Install g if not already installed
+    if ! command -v g >/dev/null 2>&1; then
+        log_info "Installing g (Go version manager)..."
+        if ! install_g "$@"; then
+            log_warning "g installation failed, keeping existing Go installation"
+            return 1
+        fi
+    fi
+    
+    # Install Go via g to match existing version
+    log_info "Installing Go $current_go_version via g to match existing installation..."
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Source g environment to ensure it's available
+        if [[ -f "$HOME/.g/env" ]]; then
+            source "$HOME/.g/env"
+        fi
+        
+        # Install specific version via g
+        if g install "$current_go_version" >/dev/null 2>&1; then
+            log_success "Go $current_go_version installed via g"
+            
+            # Set as default version
+            if g use "$current_go_version" >/dev/null 2>&1; then
+                log_success "Go $current_go_version set as default via g"
+            fi
+            
+            # Update environment to use g-managed Go
+            setup_go_environment
+            
+            # Verify the migration
+            local new_go_version
+            new_go_version=$(go version 2>/dev/null | grep -o 'go[0-9][0-9.]*' | head -1 | sed 's/go//')
+            
+            if [[ "$new_go_version" == "$current_go_version" ]]; then
+                log_success "Migration to g management completed successfully"
+                log_info "Go is now managed by g version manager"
+                log_info "Use 'g list' to see available versions"
+                log_info "Use 'g install <version>' to install new versions"
+                log_info "Use 'g use <version>' to switch versions"
+                return 0
+            else
+                log_warning "Version mismatch after migration (expected: $current_go_version, got: $new_go_version)"
+                log_info "Migration may have succeeded but with a different version"
+                return 0
+            fi
+        else
+            log_warning "Failed to install Go $current_go_version via g"
+            log_info "Trying to install latest stable version via g..."
+            
+            if g install stable >/dev/null 2>&1; then
+                log_success "Latest stable Go installed via g"
+                setup_go_environment
+                return 0
+            else
+                log_warning "Failed to install Go via g, keeping existing installation"
+                return 1
+            fi
+        fi
+    else
+        log_info "[DRY RUN] Would install Go $current_go_version via g"
+        log_info "[DRY RUN] Would setup g-managed environment"
+        return 0
+    fi
 }
 
 # Install latest stable Go version with enhanced options
@@ -284,28 +395,45 @@ install_go_latest() {
 setup_go_environment() {
   log_info "Setting up Go environment..."
   
-  # Set Go environment variables
+  # Source g environment first if available (g takes priority)
+  if [[ -f "$HOME/.g/env" ]]; then
+    log_info "Loading g (Go version manager) environment..."
+    source "$HOME/.g/env"
+  fi
+  
+  # Set Go environment variables (use g-managed paths if available)
   export GOPATH="${GOPATH:-$HOME/go}"
   export GOBIN="$GOPATH/bin"
   
   # Create Go workspace directories
   mkdir -p "$GOPATH/src" "$GOPATH/pkg" "$GOBIN"
   
-  # Add Go binaries to PATH
+  # Add Go binaries to PATH (GOBIN should come before g-managed Go)
   if [[ ":$PATH:" != *":$GOBIN:"* ]]; then
     export PATH="$GOBIN:$PATH"
   fi
   
-  # Source g environment if available
-  if [[ -f "$HOME/.g/env" ]]; then
-    source "$HOME/.g/env"
+  # Add g-managed Go to PATH if available and not already present
+  if command -v g >/dev/null 2>&1; then
+    local g_go_bin="$HOME/.g/go/bin"
+    if [[ -d "$g_go_bin" && ":$PATH:" != *":$g_go_bin:"* ]]; then
+      export PATH="$g_go_bin:$PATH"
+    fi
   fi
   
   log_info "GOPATH: $GOPATH"
   log_info "GOBIN: $GOBIN"
   
   if command -v go >/dev/null 2>&1; then
-    log_info "GOROOT: $(go env GOROOT)"
+    local go_root=$(go env GOROOT 2>/dev/null)
+    local go_location=$(which go 2>/dev/null)
+    log_info "GOROOT: $go_root"
+    log_info "Go location: $go_location"
+    
+    # Check if Go is managed by g
+    if [[ "$go_location" == *"/.g/"* ]]; then
+      log_info "Go is managed by g version manager"
+    fi
   fi
 }
 
@@ -520,6 +648,16 @@ main() {
   if should_skip_installation_advanced "Go" "go" "$go_version" "version"; then
     # Even if Go is installed, check and update environment
     log_info "Go is installed, checking g environment and tools..."
+    
+    # Check if g is installed, if not, migrate existing Go to g management
+    if ! command -v g >/dev/null 2>&1; then
+        log_info "g (Go version manager) not found, installing for better Go management..."
+        if migrate_go_to_g_management "$@"; then
+            log_success "Successfully migrated existing Go installation to g management"
+        else
+            log_info "Migration to g management failed, continuing with existing Go installation"
+        fi
+    fi
     
     # Perform comprehensive environment check
     check_go_comprehensive_environment
