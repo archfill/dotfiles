@@ -412,6 +412,29 @@ setup_ghq_config() {
 verify_ghq_installation() {
     log_info "Verifying ghq installation..."
     
+    # Add .local/bin to PATH for current session if not already present
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+        export PATH="$HOME/.local/bin:$PATH"
+        log_info "Added $HOME/.local/bin to PATH for current session"
+    fi
+    
+    # Check if ghq binary exists
+    local ghq_path="$HOME/.local/bin/ghq"
+    if [[ -f "$ghq_path" ]]; then
+        log_info "ghq binary found at: $ghq_path"
+        
+        # Make sure it's executable
+        if [[ -x "$ghq_path" ]]; then
+            log_info "ghq binary is executable"
+        else
+            log_warning "ghq binary is not executable, fixing permissions..."
+            chmod +x "$ghq_path"
+        fi
+    else
+        log_error "ghq binary not found at expected location: $ghq_path"
+        return 1
+    fi
+    
     if command -v ghq >/dev/null 2>&1; then
         local version
         version=$(ghq --version)
@@ -428,9 +451,12 @@ verify_ghq_installation() {
         echo "  ghq root                         # Show root directory"
         echo "  g                                # Interactive project selection (zsh function)"
         
+        log_info "Note: ghq will be available in new shell sessions via dotfiles configuration"
+        
         return 0
     else
-        log_error "ghq verification failed - command not found"
+        log_error "ghq verification failed - command not found in PATH"
+        log_info "ghq will be available after dotfiles setup completes"
         return 1
     fi
 }
