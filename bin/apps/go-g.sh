@@ -37,17 +37,28 @@ install_g() {
   
   # Download g
   log_info "Downloading g..."
-  curl -sSL https://git.io/g-install | SHELL="$SHELL" bash -s -- -y
   
-  # Add to PATH for current session
-  export PATH="$bin_dir:$PATH"
+  # Set required environment variables to avoid unbound variable errors
+  export USER="${USER:-$(whoami)}"
+  export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
   
-  if command -v g >/dev/null 2>&1; then
-    log_success "g installed successfully"
+  # Install g with proper environment
+  if curl -sSL https://git.io/g-install | USER="$USER" HOME="$HOME" SHELL="$SHELL" bash -s -- -y 2>/dev/null; then
+    # Add to PATH for current session
+    export PATH="$bin_dir:$PATH"
+    
+    if command -v g >/dev/null 2>&1; then
+      log_success "g installed successfully"
+      return 0
+    else
+      log_warning "g installation script completed but g command not found"
+    fi
   else
-    log_error "g installation failed"
-    exit 1
+    log_warning "g installation script failed"
   fi
+  
+  log_error "g installation failed"
+  return 1
 }
 
 # Install latest stable Go version
