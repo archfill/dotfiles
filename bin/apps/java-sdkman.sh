@@ -31,8 +31,14 @@ install_sdkman() {
   # Download and install SDKMAN!
   curl -s "https://get.sdkman.io" | bash
   
-  # Source SDKMAN! for immediate use
-  source "$HOME/.sdkman/bin/sdkman-init.sh"
+  # Source SDKMAN! for immediate use with safe environment
+  if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+    # Set required environment variables before sourcing
+    export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
+    export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+    
+    source "$HOME/.sdkman/bin/sdkman-init.sh"
+  fi
   
   if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
     log_success "SDKMAN! installed successfully"
@@ -49,6 +55,10 @@ install_java_lts() {
   # Source SDKMAN! if not already sourced
   if ! command -v sdk >/dev/null 2>&1; then
     if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+      # Set required environment variables before sourcing
+      export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
+      export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+      
       source "$HOME/.sdkman/bin/sdkman-init.sh"
     else
       log_error "SDKMAN! not found"
@@ -86,6 +96,10 @@ verify_java_installation() {
   
   # Source SDKMAN! to ensure java command is available
   if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+    # Set required environment variables before sourcing
+    export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
+    export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+    
     source "$HOME/.sdkman/bin/sdkman-init.sh"
   fi
   
@@ -115,6 +129,10 @@ setup_java_environment() {
   
   # Source SDKMAN! in current shell
   if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+    # Set required environment variables before sourcing
+    export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
+    export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+    
     source "$HOME/.sdkman/bin/sdkman-init.sh"
     log_success "SDKMAN! environment loaded"
   fi

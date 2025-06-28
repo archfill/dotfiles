@@ -150,6 +150,14 @@ install_go_tools() {
     return 1
   fi
   
+  # Create a temporary directory for installing tools
+  local temp_dir
+  temp_dir=$(mktemp -d)
+  cd "$temp_dir"
+  
+  # Initialize a temporary module to avoid directory issues
+  go mod init temp-install >/dev/null 2>&1
+  
   # List of useful Go tools
   local tools=(
     "golang.org/x/tools/cmd/goimports@latest"    # goimports for import management
@@ -162,11 +170,19 @@ install_go_tools() {
     local tool_name=$(basename "${tool%@*}")
     if ! command -v "$tool_name" >/dev/null 2>&1; then
       log_info "Installing $tool_name..."
-      go install "$tool" || log_warning "Failed to install $tool"
+      if go install "$tool" 2>/dev/null; then
+        log_info "$tool_name installed successfully"
+      else
+        log_warning "Failed to install $tool"
+      fi
     else
       log_info "$tool_name is already installed"
     fi
   done
+  
+  # Clean up temporary directory
+  cd - >/dev/null
+  rm -rf "$temp_dir"
   
   log_success "Go tools installation completed"
 }
