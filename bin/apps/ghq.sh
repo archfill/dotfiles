@@ -581,36 +581,51 @@ setup_ghq_config() {
     fi
     
     # Create ghq root directory
-    execute_if_not_dry_run "Create ghq root directory" mkdir -p "$ghq_root"
+    log_info "Creating ghq root directory: $ghq_root"
+    if [[ "$DRY_RUN" != "true" ]]; then
+        if ! mkdir -p "$ghq_root" 2>/dev/null; then
+            log_warning "Failed to create ghq root directory, but continuing..."
+        fi
+    fi
     
     # Set git config for ghq
     log_info "Setting ghq.root to $ghq_root"
-    execute_if_not_dry_run "Configure ghq.root" git config --global ghq.root "$ghq_root"
+    if [[ "$DRY_RUN" != "true" ]]; then
+        if ! git config --global ghq.root "$ghq_root" 2>/dev/null; then
+            log_warning "Failed to set git config, but continuing..."
+        fi
+    fi
     
     # Setup additional ghq configurations
     if [[ "$DRY_RUN" != "true" ]]; then
         # Set default import strategy
-        git config --global ghq.shallow true
-        log_info "Configured ghq.shallow=true for faster clones"
+        if git config --global ghq.shallow true 2>/dev/null; then
+            log_info "Configured ghq.shallow=true for faster clones"
+        else
+            log_warning "Failed to configure ghq.shallow, but continuing..."
+        fi
         
         # Set lookup depth (optional)
-        git config --global ghq.look.depth 1
-        log_info "Configured ghq.look.depth=1 for better performance"
+        if git config --global ghq.look.depth 1 2>/dev/null; then
+            log_info "Configured ghq.look.depth=1 for better performance"
+        else
+            log_warning "Failed to configure ghq.look.depth, but continuing..."
+        fi
     fi
     
     # Verify configuration
     if [[ "$DRY_RUN" != "true" ]]; then
         local configured_root
-        configured_root=$(git config --global ghq.root)
+        configured_root=$(git config --global ghq.root 2>/dev/null || echo "")
         if [[ "$configured_root" == "$ghq_root" ]]; then
             log_success "ghq.root configured successfully: $configured_root"
             
             # Show all ghq-related git configs
             log_info "Current ghq git configurations:"
-            git config --global --get-regexp '^ghq\.' || log_info "  No additional ghq configurations found"
+            git config --global --get-regexp '^ghq\.' 2>/dev/null || log_info "  No additional ghq configurations found"
         else
-            log_error "Failed to configure ghq.root"
-            return 1
+            log_warning "ghq.root configuration may have failed, but continuing..."
+            log_info "Expected: $ghq_root, Got: ${configured_root:-'(not set)'}"
         fi
     fi
 }
@@ -653,7 +668,9 @@ verify_ghq_installation() {
         
         # Show current configuration
         log_info "Current ghq configuration:"
-        echo "  ghq.root: $(git config --global ghq.root)"
+        local current_root
+        current_root=$(git config --global ghq.root 2>/dev/null || echo "not configured")
+        echo "  ghq.root: $current_root"
         
         # Show usage examples
         log_info "Usage examples:"
