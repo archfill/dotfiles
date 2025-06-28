@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -17,6 +18,329 @@ setup_error_handling
 load_config
 
 log_info "Starting Terraform setup via tfenv..."
+
+# =============================================================================
+# Enhanced Terraform Provider Checking and Management Functions
+# =============================================================================
+
+# Check tfenv installation and configuration
+check_tfenv_environment() {
+    log_info "Checking tfenv environment..."
+    
+    local all_checks_passed=true
+    
+    # Check tfenv command availability
+    if ! is_command_available "tfenv" "--version"; then
+        log_info "tfenv not available"
+        all_checks_passed=false
+    else
+        # Check tfenv configuration
+        if [[ ":$PATH:" != *":$HOME/.tfenv/bin:"* ]]; then
+            log_warning "tfenv not in PATH, may need shell profile update"
+        fi
+        
+        # Check tfenv root
+        local tfenv_root="${TFENV_ROOT:-$HOME/.tfenv}"
+        if [[ ! -d "$tfenv_root" ]]; then
+            log_warning "tfenv root directory not found: $tfenv_root"
+            all_checks_passed=false
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "tfenv environment checks passed"
+        return 0
+    else
+        log_info "tfenv environment checks failed"
+        return 1
+    fi
+}
+
+# Check Terraform version requirements
+check_terraform_version_requirements() {
+    local required_version="${TERRAFORM_VERSION:-1.6.0}"
+    
+    # Handle 'latest' version specification
+    if [[ "$required_version" == "latest" ]]; then
+        required_version=$(get_terraform_version)
+    fi
+    
+    log_info "Checking Terraform version requirements (>= $required_version)..."
+    
+    if ! command -v terraform >/dev/null 2>&1; then
+        log_info "Terraform command not available"
+        return 1
+    fi
+    
+    # Terraform version output format: "Terraform v1.6.6"
+    local current_version
+    current_version=$(terraform --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    
+    if [[ -z "$current_version" ]]; then
+        log_warning "Could not determine Terraform version"
+        return 1
+    fi
+    
+    compare_versions "$current_version" "$required_version"
+    local result=$?
+    
+    case $result in
+        0|2)  # current >= required
+            log_success "Terraform version satisfied: $current_version >= $required_version"
+            return 0
+            ;;
+        1)    # current < required
+            log_info "Terraform version insufficient: $current_version < $required_version"
+            return 1
+            ;;
+        *)
+            log_warning "Version comparison failed for Terraform"
+            return 1
+            ;;
+    esac
+}
+
+# Check Terraform provider configuration and availability
+check_terraform_providers() {
+    log_info "Checking Terraform provider configuration..."
+    
+    if ! command -v terraform >/dev/null 2>&1; then
+        log_info "Terraform command not available"
+        return 1
+    fi
+    
+    # Create temporary directory for provider testing
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    cd "$temp_dir"
+    
+    # Create a basic provider configuration
+    cat > providers.tf << 'EOF'
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
+}
+EOF
+    
+    # Test provider initialization
+    log_info "Testing Terraform provider initialization..."
+    if terraform init >/dev/null 2>&1; then
+        log_success "Terraform provider initialization successful"
+        
+        # Check installed providers
+        if [[ -f ".terraform.lock.hcl" ]]; then
+            local provider_count
+            provider_count=$(grep -c "provider.*{" .terraform.lock.hcl || echo 0)
+            log_info "Detected $provider_count providers in lock file"
+        fi
+        
+        cd - >/dev/null
+        rm -rf "$temp_dir"
+        return 0
+    else
+        log_warning "Terraform provider initialization failed"
+        cd - >/dev/null
+        rm -rf "$temp_dir"
+        return 1
+    fi
+}
+
+# Check Terraform workspace and state management
+check_terraform_workspace_management() {
+    log_info "Checking Terraform workspace management capabilities..."
+    
+    if ! command -v terraform >/dev/null 2>&1; then
+        log_info "Terraform command not available"
+        return 1
+    fi
+    
+    # Create temporary directory for workspace testing
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    cd "$temp_dir"
+    
+    # Create minimal configuration
+    cat > main.tf << 'EOF'
+terraform {
+  required_version = ">= 1.0"
+}
+
+variable "workspace_name" {
+  description = "Current workspace name"
+  type        = string
+  default     = "default"
+}
+
+output "current_workspace" {
+  value = terraform.workspace
+}
+EOF
+    
+    # Test workspace functionality
+    if terraform init >/dev/null 2>&1; then
+        # Check default workspace
+        local current_workspace
+        current_workspace=$(terraform workspace show 2>/dev/null || echo "unknown")
+        log_info "Current workspace: $current_workspace"
+        
+        # Test workspace creation and switching
+        if terraform workspace new test-workspace >/dev/null 2>&1; then
+            log_info "Workspace creation test successful"
+            terraform workspace select default >/dev/null 2>&1
+            terraform workspace delete test-workspace >/dev/null 2>&1
+        fi
+        
+        log_success "Terraform workspace management working"
+        cd - >/dev/null
+        rm -rf "$temp_dir"
+        return 0
+    else
+        log_warning "Terraform workspace test failed"
+        cd - >/dev/null
+        rm -rf "$temp_dir"
+        return 1
+    fi
+}
+
+# Check Terraform project configuration validation
+check_terraform_configuration_validation() {
+    log_info "Checking Terraform configuration validation capabilities..."
+    
+    if ! command -v terraform >/dev/null 2>&1; then
+        log_info "Terraform command not available"
+        return 1
+    fi
+    
+    # Create temporary directory for validation testing
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    cd "$temp_dir"
+    
+    # Create test configuration with various Terraform features
+    cat > main.tf << 'EOF'
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+  }
+}
+
+variable "test_content" {
+  description = "Test content for validation"
+  type        = string
+  default     = "Terraform validation test"
+}
+
+locals {
+  timestamp = formatdate("YYYY-MM-DD'T'hh:mm:ss'Z'", timestamp())
+}
+
+resource "local_file" "validation_test" {
+  content  = "${var.test_content} - ${local.timestamp}"
+  filename = "validation-test.txt"
+}
+
+output "test_file_content" {
+  value = local_file.validation_test.content
+}
+EOF
+    
+    # Test configuration validation
+    if terraform init >/dev/null 2>&1; then
+        if terraform validate >/dev/null 2>&1; then
+            log_success "Terraform configuration validation successful"
+            
+            # Test formatting
+            if terraform fmt -check >/dev/null 2>&1; then
+                log_info "Terraform configuration formatting is correct"
+            else
+                log_info "Terraform configuration formatting can be improved"
+            fi
+            
+            cd - >/dev/null
+            rm -rf "$temp_dir"
+            return 0
+        else
+            log_warning "Terraform configuration validation failed"
+            cd - >/dev/null
+            rm -rf "$temp_dir"
+            return 1
+        fi
+    else
+        log_warning "Terraform configuration validation test setup failed"
+        cd - >/dev/null
+        rm -rf "$temp_dir"
+        return 1
+    fi
+}
+
+# Comprehensive Terraform environment check
+check_terraform_environment() {
+    log_info "Performing comprehensive Terraform environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check tfenv environment
+    if ! check_tfenv_environment; then
+        all_checks_passed=false
+    fi
+    
+    # Check Terraform version requirements
+    if ! check_terraform_version_requirements; then
+        all_checks_passed=false
+    fi
+    
+    # Check provider functionality
+    if ! check_terraform_providers; then
+        log_info "Terraform provider functionality needs setup"
+        all_checks_passed=false
+    fi
+    
+    # Check workspace management
+    check_terraform_workspace_management
+    
+    # Check configuration validation
+    check_terraform_configuration_validation
+    
+    # Check PATH configuration
+    if ! command -v terraform >/dev/null 2>&1; then
+        log_warning "Terraform not found in PATH"
+        all_checks_passed=false
+        
+        # Check if Terraform exists in tfenv directories
+        local tfenv_root="${TFENV_ROOT:-$HOME/.tfenv}"
+        if [[ -d "$tfenv_root/bin" ]]; then
+            log_info "Found tfenv bin directory: $tfenv_root/bin"
+            if [[ -x "$tfenv_root/bin/terraform" ]]; then
+                log_info "Terraform found at: $tfenv_root/bin/terraform"
+            fi
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All Terraform environment checks passed"
+        return 0
+    else
+        log_info "Some Terraform environment checks failed"
+        return 1
+    fi
+}
 
 # Get Terraform version with automatic detection
 get_terraform_version() {
@@ -118,45 +442,90 @@ setup_terraform_completion() {
   log_success "Terraform autocompletion setup completed"
 }
 
-# Install useful Terraform tools
+# Enhanced function to install useful Terraform tools
 install_terraform_tools() {
   log_info "Installing useful Terraform tools..."
   
-  # List of useful tools
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # List of useful tools with versions and descriptions
   local tools_info=(
-    "tflint:github.com/terraform-linters/tflint:Terraform linter"
-    "terraform-docs:github.com/terraform-docs/terraform-docs:Documentation generator"
-    "terragrunt:github.com/gruntwork-io/terragrunt:Terraform wrapper"
-    "tfsec:github.com/aquasecurity/tfsec:Security scanner"
+    "tflint:github.com/terraform-linters/tflint:Terraform linter:latest"
+    "terraform-docs:github.com/terraform-docs/terraform-docs:Documentation generator:latest"
+    "terragrunt:github.com/gruntwork-io/terragrunt:Terraform wrapper:latest"
+    "tfsec:github.com/aquasecurity/tfsec:Security scanner:latest"
+    "terrascan:github.com/tenable/terrascan:Static analysis scanner:latest"
   )
+  
+  local installed_count=0
+  local skipped_count=0
+  local failed_count=0
   
   for tool_info in "${tools_info[@]}"; do
     local tool_name=$(echo "$tool_info" | cut -d: -f1)
     local tool_source=$(echo "$tool_info" | cut -d: -f2)
     local tool_desc=$(echo "$tool_info" | cut -d: -f3)
+    local tool_version=$(echo "$tool_info" | cut -d: -f4)
     
-    if ! command -v "$tool_name" >/dev/null 2>&1; then
-      log_info "Installing $tool_name ($tool_desc)..."
-      
-      case "$tool_source" in
-        github.com/*)
-          # Install via go install if available
-          if command -v go >/dev/null 2>&1; then
-            go install "$tool_source@latest" || log_warning "Failed to install $tool_name"
-          else
-            log_warning "Go not available, skipping $tool_name"
-          fi
-          ;;
-        *)
-          log_warning "Unknown installation method for $tool_name"
-          ;;
-      esac
-    else
-      log_info "$tool_name is already installed"
+    # Skip if tool is already available and not forcing reinstall
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
+      log_skip_reason "$tool_name" "Already installed"
+      ((skipped_count++))
+      continue
     fi
+    
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+      log_info "QUICK: Would install $tool_name ($tool_desc)"
+      continue
+    fi
+    
+    # Install the tool
+    log_info "Installing $tool_name ($tool_desc)..."
+    
+    case "$tool_source" in
+      github.com/*)
+        if execute_if_not_dry_run "Install $tool_name via go install" install_go_terraform_tool "$tool_source" "$tool_version"; then
+          ((installed_count++))
+        else
+          ((failed_count++))
+        fi
+        ;;
+      *)
+        log_warning "Unknown installation method for $tool_name"
+        ((failed_count++))
+        ;;
+    esac
   done
   
+  # Log summary
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+  fi
+  
   log_success "Terraform tools installation completed"
+}
+
+# Helper function to install Go-based Terraform tools
+install_go_terraform_tool() {
+  local tool_source="$1"
+  local tool_version="$2"
+  local tool_name=$(basename "$tool_source")
+  
+  if ! command -v go >/dev/null 2>&1; then
+    log_warning "Go not available, skipping $tool_name"
+    return 1
+  fi
+  
+  # Install the tool
+  if go install "${tool_source}@${tool_version}" >/dev/null 2>&1; then
+    log_success "$tool_name installed successfully"
+    return 0
+  else
+    log_warning "Failed to install $tool_name"
+    return 1
+  fi
 }
 
 # Setup Terraform environment
@@ -289,28 +658,103 @@ install_terraform_versions() {
   log_success "Common Terraform versions installation completed"
 }
 
+# Add Terraform project management optimization
+optimize_terraform_project_management() {
+  log_info "Optimizing Terraform project management..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would optimize Terraform project management"
+    return 0
+  fi
+  
+  if ! command -v terraform >/dev/null 2>&1; then
+    log_info "Terraform not available, skipping optimization"
+    return 0
+  fi
+  
+  # Configure Terraform CLI settings
+  local tf_config_file="${TF_CLI_CONFIG_FILE:-$HOME/.terraformrc}"
+  
+  if [[ "$DRY_RUN" != "true" ]] && [[ ! -f "$tf_config_file" ]]; then
+    log_info "Creating Terraform CLI configuration..."
+    cat > "$tf_config_file" << 'EOF'
+# Terraform CLI Configuration
+
+plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"
+
+provider_installation {
+  filesystem_mirror {
+    path    = "/usr/share/terraform/providers"
+    include = ["registry.terraform.io/*/*"]
+  }
+  direct {
+    exclude = ["registry.terraform.io/*/*"]
+  }
+}
+EOF
+    
+    # Create plugin cache directory
+    mkdir -p "$HOME/.terraform.d/plugin-cache"
+    log_info "Created Terraform CLI configuration and plugin cache directory"
+  fi
+  
+  # Check for common Terraform project patterns
+  if [[ "$DRY_RUN" != "true" ]]; then
+    log_info "Checking Terraform project optimization opportunities..."
+    
+    # Check if user has existing Terraform projects
+    local terraform_projects
+    terraform_projects=$(find "$HOME" -name "*.tf" -type f 2>/dev/null | head -5 | wc -l || echo 0)
+    
+    if (( terraform_projects > 0 )); then
+      log_info "Found $terraform_projects Terraform configuration files"
+      log_info "Consider using 'terraform fmt -recursive .' to format all configurations"
+    fi
+  fi
+  
+  log_success "Terraform project management optimization completed"
+}
+
 # Main installation function
 main() {
   log_info "Terraform Setup via tfenv"
   log_info "=========================="
   
-  # Check if Terraform is already managed by tfenv
-  if command -v tfenv >/dev/null 2>&1 && command -v terraform >/dev/null 2>&1; then
-    local current_version=$(terraform --version | head -1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-    log_success "Terraform is already managed by tfenv: $current_version"
-    
-    # Setup environment and verify
-    setup_terraform_environment
-    setup_terraform_completion
-    install_terraform_tools
-    setup_terraform_development
-    verify_terraform_installation
-    return 0
-  fi
+  # Parse command line options
+  parse_install_options "$@"
   
   # Get target Terraform version
   local terraform_version
   terraform_version=$(get_terraform_version)
+  
+  # Check if Terraform installation should be skipped
+  if should_skip_installation_advanced "Terraform" "terraform" "$terraform_version" "--version"; then
+    # Even if Terraform is installed, check and update environment
+    log_info "Terraform is installed, checking environment and providers..."
+    
+    # Perform comprehensive environment check
+    check_terraform_environment
+    
+    # Setup/verify environment
+    setup_terraform_environment
+    
+    # Setup autocompletion
+    setup_terraform_completion
+    
+    # Install/update tools
+    install_terraform_tools "$@"
+    
+    # Terraform project management optimization
+    if [[ "$QUICK_CHECK" != "true" ]]; then
+      optimize_terraform_project_management "$@"
+    fi
+    
+    verify_terraform_installation
+    return 0
+  fi
   
   log_info "Determining Terraform version..."
   if [[ "${TERRAFORM_VERSION:-}" == "latest" ]]; then
@@ -320,10 +764,10 @@ main() {
   fi
   
   # Install tfenv
-  install_tfenv
+  execute_if_not_dry_run "Install tfenv" install_tfenv
   
   # Install target Terraform version
-  install_terraform_version "$terraform_version"
+  execute_if_not_dry_run "Install Terraform $terraform_version" install_terraform_version "$terraform_version"
   
   # Setup environment
   setup_terraform_environment
@@ -332,16 +776,27 @@ main() {
   setup_terraform_completion
   
   # Install useful tools
-  install_terraform_tools
+  install_terraform_tools "$@"
   
-  # Install common versions for compatibility testing
-  install_terraform_versions
+  # Install common versions for compatibility testing (skip in quick mode)
+  if [[ "$QUICK_CHECK" != "true" ]]; then
+    execute_if_not_dry_run "Install common Terraform versions" install_terraform_versions
+  fi
   
-  # Setup development environment
-  setup_terraform_development
+  # Terraform project management optimization
+  if [[ "$QUICK_CHECK" != "true" ]]; then
+    optimize_terraform_project_management "$@"
+  fi
+  
+  # Setup development environment (skip in quick mode)
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    setup_terraform_development
+  fi
   
   # Verify installation
-  verify_terraform_installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_terraform_installation
+  fi
   
   log_success "Terraform setup via tfenv completed!"
   log_info ""
@@ -361,6 +816,12 @@ main() {
   log_info "  terraform validate      # Validate configuration"
   log_info "  terraform fmt           # Format configuration files"
   log_info ""
+  log_info "Provider and workspace management:"
+  log_info "  terraform providers     # Show provider requirements"
+  log_info "  terraform workspace list # List workspaces"
+  log_info "  terraform workspace new <name> # Create new workspace"
+  log_info "  terraform workspace select <name> # Switch workspace"
+  log_info ""
   log_info "Project-level version management:"
   log_info "  Create .terraform-version file in your project"
   log_info "  tfenv will automatically use the specified version"
@@ -370,6 +831,22 @@ main() {
   log_info "  terraform-docs          # Generate documentation"
   log_info "  terragrunt              # Terraform wrapper for DRY configurations"
   log_info "  tfsec                   # Security scanner"
+  log_info "  terrascan               # Static analysis scanner"
+  log_info ""
+  log_info "Security and best practices:"
+  log_info "  tfsec .                 # Scan for security issues"
+  log_info "  terraform fmt -recursive . # Format all configurations"
+  log_info "  terraform validate      # Validate configuration syntax"
+  log_info ""
+  if [[ "$DRY_RUN" != "true" ]]; then
+    log_info "Current configuration:"
+    log_info "  Terraform version: $(terraform --version 2>/dev/null | head -1 || echo 'not available')"
+    log_info "  tfenv root: $(echo "${TFENV_ROOT:-$HOME/.tfenv}")"
+    if command -v tfenv >/dev/null 2>&1; then
+      log_info "  Available versions: $(tfenv list 2>/dev/null | wc -l || echo 0) installed"
+    fi
+    log_info "  CLI config: $(echo "${TF_CLI_CONFIG_FILE:-$HOME/.terraformrc}")"
+  fi
   log_info ""
   log_info "Environment setup:"
   log_info "  Add to your shell profile (~/.zshrc or ~/.bashrc):"

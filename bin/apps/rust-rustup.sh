@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -18,36 +19,154 @@ load_config
 
 log_info "Starting Rust toolchain setup via rustup..."
 
-# Install rustup
+# =============================================================================
+# Enhanced Rust Environment Checking and Management Functions
+# =============================================================================
+
+# Check rustup installation and environment
+check_rustup_environment() {
+    log_info "Checking rustup environment..."
+    
+    local all_checks_passed=true
+    
+    # Check rustup command availability
+    if ! is_command_available "rustup" "--version"; then
+        log_info "rustup not available"
+        all_checks_passed=false
+    else
+        # Check Rust toolchain
+        if ! command -v rustc >/dev/null 2>&1; then
+            log_warning "Rust compiler not available"
+        else
+            local rust_version
+            rust_version=$(rustc --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
+            log_info "Rust version: $rust_version"
+        fi
+        
+        # Check cargo availability
+        if ! command -v cargo >/dev/null 2>&1; then
+            log_warning "Cargo not available"
+        else
+            local cargo_version
+            cargo_version=$(cargo --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
+            log_info "Cargo version: $cargo_version"
+        fi
+    fi
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "rustup environment checks passed"
+        return 0
+    else
+        log_info "rustup environment checks failed"
+        return 1
+    fi
+}
+
+# Check Rust toolchain status
+check_rust_toolchain_status() {
+    log_info "Checking Rust toolchain status..."
+    
+    if ! command -v rustup >/dev/null 2>&1; then
+        log_info "rustup not available"
+        return 1
+    fi
+    
+    # Check installed toolchains
+    local toolchain_count
+    toolchain_count=$(rustup toolchain list 2>/dev/null | wc -l || echo 0)
+    log_info "Installed toolchains: $toolchain_count"
+    
+    # Check default toolchain
+    local default_toolchain
+    default_toolchain=$(rustup default 2>/dev/null || echo "none")
+    log_info "Default toolchain: $default_toolchain"
+    
+    # Check installed components
+    if rustup component list --installed >/dev/null 2>&1; then
+        local component_count
+        component_count=$(rustup component list --installed 2>/dev/null | wc -l || echo 0)
+        log_info "Installed components: $component_count"
+    fi
+    
+    log_success "Rust toolchain status check completed"
+    return 0
+}
+
+# Comprehensive rustup environment check
+check_rustup_comprehensive_environment() {
+    log_info "Performing comprehensive rustup environment check..."
+    
+    local all_checks_passed=true
+    
+    # Check rustup installation
+    if ! check_rustup_environment; then
+        all_checks_passed=false
+    fi
+    
+    # Check toolchain status
+    check_rust_toolchain_status
+    
+    if [[ "$all_checks_passed" == "true" ]]; then
+        log_success "All rustup environment checks passed"
+        return 0
+    else
+        log_info "Some rustup environment checks failed"
+        return 1
+    fi
+}
+
+# Install rustup with enhanced options
 install_rustup() {
   log_info "Installing rustup..."
   
-  # Check if rustup is already installed
-  if command -v rustup >/dev/null 2>&1; then
-    log_success "rustup is already installed: $(rustup --version)"
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if rustup should be skipped
+  if [[ "$FORCE_INSTALL" != "true" ]] && command -v rustup >/dev/null 2>&1; then
+    log_skip_reason "rustup" "Already installed: $(rustup --version 2>/dev/null | head -1)"
     return 0
   fi
   
-  # Set environment variables for non-interactive installation
-  export RUSTUP_INIT_SKIP_PATH_CHECK=yes
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install rustup"
+    return 0
+  fi
   
-  # Download and install rustup
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
-  
-  # Source Rust environment
-  source "$HOME/.cargo/env"
-  
-  if command -v rustup >/dev/null 2>&1; then
-    log_success "rustup installed successfully"
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Set environment variables for non-interactive installation
+    export RUSTUP_INIT_SKIP_PATH_CHECK=yes
+    
+    # Download and install rustup
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+    
+    # Source Rust environment
+    source "$HOME/.cargo/env"
+    
+    if command -v rustup >/dev/null 2>&1; then
+      log_success "rustup installed successfully"
+    else
+      log_error "rustup installation failed"
+      return 1
+    fi
   else
-    log_error "rustup installation failed"
-    exit 1
+    log_info "[DRY RUN] Would install rustup with stable toolchain"
   fi
 }
 
-# Install and setup Rust stable toolchain
+# Install and setup Rust stable toolchain with enhanced options
 setup_rust_toolchain() {
   log_info "Setting up Rust stable toolchain..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would setup Rust stable toolchain"
+    return 0
+  fi
   
   # Ensure rustup is available
   if ! command -v rustup >/dev/null 2>&1; then
@@ -55,86 +174,149 @@ setup_rust_toolchain() {
       source "$HOME/.cargo/env"
     else
       log_error "rustup not found"
-      exit 1
+      return 1
     fi
   fi
   
-  # Update rustup
-  log_info "Updating rustup..."
-  rustup self update
-  
-  # Install stable toolchain (if not already default)
-  log_info "Installing Rust stable toolchain..."
-  rustup toolchain install stable
-  
-  # Set stable as default
-  rustup default stable
-  
-  # Update stable toolchain
-  log_info "Updating Rust stable toolchain..."
-  rustup update stable
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Update rustup
+    log_info "Updating rustup..."
+    rustup self update
+    
+    # Install stable toolchain (if not already default)
+    log_info "Installing Rust stable toolchain..."
+    rustup toolchain install stable
+    
+    # Set stable as default
+    rustup default stable
+    
+    # Update stable toolchain
+    log_info "Updating Rust stable toolchain..."
+    rustup update stable
+  else
+    log_info "[DRY RUN] Would setup Rust stable toolchain"
+  fi
   
   # Verify installation
   verify_rust_installation
 }
 
-# Install essential Rust components
+# Install essential Rust components with enhanced options
 install_rust_components() {
   log_info "Installing essential Rust components..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install essential Rust components"
+    return 0
+  fi
   
   # Ensure rustup is available
   if ! command -v rustup >/dev/null 2>&1; then
     source "$HOME/.cargo/env"
   fi
   
-  # Install clippy (linter)
-  log_info "Installing clippy..."
-  rustup component add clippy
-  
-  # Install rustfmt (formatter)
-  log_info "Installing rustfmt..."
-  rustup component add rustfmt
-  
-  # Install rust-analyzer (LSP server) via rustup if available
-  log_info "Installing rust-analyzer..."
-  if rustup component list | grep -q "rust-analyzer"; then
-    rustup component add rust-analyzer
-  else
-    log_info "rust-analyzer not available via rustup, will be installed via Mason"
+  if ! command -v rustup >/dev/null 2>&1; then
+    log_warning "rustup not available, skipping components installation"
+    return 1
   fi
   
-  # Install rust-src for better IDE support
-  log_info "Installing rust-src..."
-  rustup component add rust-src
+  if [[ "$DRY_RUN" != "true" ]]; then
+    # Install clippy (linter)
+    log_info "Installing clippy..."
+    rustup component add clippy
+    
+    # Install rustfmt (formatter)
+    log_info "Installing rustfmt..."
+    rustup component add rustfmt
+    
+    # Install rust-analyzer (LSP server) via rustup if available
+    log_info "Installing rust-analyzer..."
+    if rustup component list | grep -q "rust-analyzer"; then
+      rustup component add rust-analyzer
+    else
+      log_info "rust-analyzer not available via rustup, will be installed via Mason"
+    fi
+    
+    # Install rust-src for better IDE support
+    log_info "Installing rust-src..."
+    rustup component add rust-src
+  else
+    log_info "[DRY RUN] Would install essential Rust components"
+  fi
   
   log_success "Essential Rust components installed"
 }
 
-# Install useful Rust tools
+# Install useful Rust tools with enhanced options
 install_rust_tools() {
   log_info "Installing useful Rust tools..."
+  
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install useful Rust tools"
+    return 0
+  fi
   
   # Ensure cargo is available
   if ! command -v cargo >/dev/null 2>&1; then
     source "$HOME/.cargo/env"
   fi
   
-  # List of useful Rust tools
-  local tools=(
-    "cargo-edit"        # cargo add, cargo rm commands
-    "cargo-watch"       # cargo watch for auto-recompilation
-    "cargo-outdated"    # Check for outdated dependencies
-    "cargo-audit"       # Security audit for dependencies
+  if ! command -v cargo >/dev/null 2>&1; then
+    log_warning "cargo not available, skipping tools installation"
+    return 1
+  fi
+  
+  # List of useful Rust tools with descriptions
+  local tools_info=(
+    "cargo-edit:cargo add, cargo rm commands"
+    "cargo-watch:cargo watch for auto-recompilation"
+    "cargo-outdated:Check for outdated dependencies"
+    "cargo-audit:Security audit for dependencies"
   )
   
-  for tool in "${tools[@]}"; do
-    if ! cargo install --list | grep -q "^$tool"; then
-      log_info "Installing $tool..."
-      cargo install "$tool" || log_warning "Failed to install $tool"
+  local installed_count=0
+  local skipped_count=0
+  local failed_count=0
+  
+  for tool_info in "${tools_info[@]}"; do
+    local tool_name=$(echo "$tool_info" | cut -d: -f1)
+    local tool_desc=$(echo "$tool_info" | cut -d: -f2)
+    
+    # Skip if tool is already available and not forcing reinstall
+    if [[ "$FORCE_INSTALL" != "true" ]] && cargo install --list | grep -q "^$tool_name"; then
+      log_skip_reason "$tool_name" "Already installed"
+      ((skipped_count++))
+      continue
+    fi
+    
+    log_info "Installing $tool_name ($tool_desc)..."
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+      if cargo install "$tool_name"; then
+        log_success "$tool_name installed successfully"
+        ((installed_count++))
+      else
+        log_warning "Failed to install $tool_name"
+        ((failed_count++))
+      fi
     else
-      log_info "$tool is already installed"
+      log_info "[DRY RUN] Would install $tool_name"
+      ((installed_count++))
     fi
   done
+  
+  # Log summary
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+  fi
   
   log_success "Rust tools installation completed"
 }
@@ -222,23 +404,66 @@ main() {
   log_info "Rust Toolchain Setup via rustup"
   log_info "==============================="
   
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Get target Rust version (use default stable)
+  local rust_version="stable"
+  
+  # Check if Rust installation should be skipped
+  if should_skip_installation_advanced "Rust" "rustc" "$rust_version" "--version"; then
+    # Even if Rust is installed, check and update environment
+    log_info "Rust is installed, checking rustup environment and tools..."
+    
+    # Perform comprehensive environment check
+    check_rustup_comprehensive_environment
+    
+    # Setup/verify environment
+    setup_rust_environment
+    
+    # Install/update components
+    install_rust_components "$@"
+    
+    # Install useful tools
+    install_rust_tools "$@"
+    
+    # Install additional targets (skip in quick mode)
+    if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+      install_additional_targets
+    fi
+    
+    # Verify installation
+    if [[ "$DRY_RUN" != "true" ]]; then
+      verify_rust_installation
+    fi
+    
+    return 0
+  fi
+  
   # Install rustup
-  install_rustup
+  install_rustup "$@"
   
   # Setup Rust toolchain
-  setup_rust_toolchain
+  setup_rust_toolchain "$@"
   
   # Install essential components
-  install_rust_components
+  install_rust_components "$@"
   
   # Setup environment
   setup_rust_environment
   
   # Install useful tools
-  install_rust_tools
+  install_rust_tools "$@"
   
-  # Install additional targets
-  install_additional_targets
+  # Install additional targets (skip in quick mode)
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    install_additional_targets
+  fi
+  
+  # Verify installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_rust_installation
+  fi
   
   log_success "Rust toolchain setup completed!"
   log_info ""

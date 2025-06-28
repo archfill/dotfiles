@@ -9,6 +9,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/config_loader.sh"
+source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 # Setup error handling
 setup_error_handling
@@ -208,9 +209,25 @@ setup_docker_permissions() {
 install_docker_compose() {
   log_info "Setting up Docker Compose..."
   
-  # Check if Docker Compose is already available
-  if command -v docker-compose >/dev/null 2>&1 || docker compose version >/dev/null 2>&1; then
-    log_success "Docker Compose is already available"
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if Docker Compose is already available (skip if not forcing)
+  if [[ "$FORCE_INSTALL" != "true" ]]; then
+    if command -v docker-compose >/dev/null 2>&1; then
+      local compose_version=$(docker-compose --version 2>/dev/null | head -1)
+      log_skip_reason "Docker Compose" "Already installed: $compose_version"
+      return 0
+    elif docker compose version >/dev/null 2>&1; then
+      local compose_version=$(docker compose version 2>/dev/null | head -1)
+      log_skip_reason "Docker Compose" "Already available via Docker CLI: $compose_version"
+      return 0
+    fi
+  fi
+  
+  # Quick check mode
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Docker Compose"
     return 0
   fi
   
@@ -339,40 +356,84 @@ verify_docker_installation() {
 install_docker_tools() {
   log_info "Installing useful Docker tools..."
   
-  # List of useful tools
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # List of useful tools with installation methods
   local tools_info=(
-    "dive:github.com/wagoodman/dive:Docker image analyzer"
-    "hadolint:github.com/hadolint/hadolint:Dockerfile linter"
-    "ctop:github.com/bcicen/ctop:Container monitoring"
+    "dive:github.com/wagoodman/dive:Docker image analyzer:latest"
+    "hadolint:github.com/hadolint/hadolint:Dockerfile linter:latest"
+    "ctop:github.com/bcicen/ctop:Container monitoring:latest"
   )
+  
+  local installed_count=0
+  local skipped_count=0
+  local failed_count=0
   
   for tool_info in "${tools_info[@]}"; do
     local tool_name=$(echo "$tool_info" | cut -d: -f1)
     local tool_source=$(echo "$tool_info" | cut -d: -f2)
     local tool_desc=$(echo "$tool_info" | cut -d: -f3)
+    local tool_version=$(echo "$tool_info" | cut -d: -f4)
     
-    if ! command -v "$tool_name" >/dev/null 2>&1; then
-      log_info "Installing $tool_name ($tool_desc)..."
-      
-      case "$tool_source" in
-        github.com/*)
-          # Try to install via go install if available
-          if command -v go >/dev/null 2>&1; then
-            go install "$tool_source@latest" || log_warning "Failed to install $tool_name"
-          else
-            log_warning "Go not available, skipping $tool_name"
-          fi
-          ;;
-        *)
-          log_warning "Unknown installation method for $tool_name"
-          ;;
-      esac
-    else
-      log_info "$tool_name is already installed"
+    # Skip if tool is already available and not forcing reinstall
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
+      log_skip_reason "$tool_name" "Already installed"
+      ((skipped_count++))
+      continue
     fi
+    
+    # Quick check mode - skip actual installation
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+      log_info "QUICK: Would install $tool_name ($tool_desc)"
+      continue
+    fi
+    
+    # Install the tool
+    log_info "Installing $tool_name ($tool_desc)..."
+    
+    case "$tool_source" in
+      github.com/*)
+        if execute_if_not_dry_run "Install $tool_name via go install" install_go_tool "$tool_source" "$tool_version"; then
+          ((installed_count++))
+        else
+          ((failed_count++))
+        fi
+        ;;
+      *)
+        log_warning "Unknown installation method for $tool_name"
+        ((failed_count++))
+        ;;
+    esac
   done
   
+  # Log summary
+  if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+  fi
+  
   log_success "Docker tools installation completed"
+}
+
+# Helper function to install Go tools
+install_go_tool() {
+  local tool_source="$1"
+  local tool_version="$2"
+  local tool_name=$(basename "$tool_source")
+  
+  if ! command -v go >/dev/null 2>&1; then
+    log_warning "Go not available, skipping $tool_name"
+    return 1
+  fi
+  
+  # Install the tool
+  if go install "${tool_source}@${tool_version}" >/dev/null 2>&1; then
+    log_success "$tool_name installed successfully"
+    return 0
+  else
+    log_warning "Failed to install $tool_name"
+    return 1
+  fi
 }
 
 # Setup Docker development environment
@@ -418,40 +479,53 @@ main() {
   log_info "Docker Setup"
   log_info "============"
   
-  # Check if Docker is already installed
-  if command -v docker >/dev/null 2>&1; then
-    log_success "Docker is already installed: $(docker --version)"
+  # Parse command line options
+  parse_install_options "$@"
+  
+  # Check if Docker should be skipped
+  if should_skip_installation_advanced "Docker" "docker" "" "--version"; then
+    # Even if Docker is installed, check components
+    log_info "Docker is installed, checking components..."
     
-    # Setup environment and verify
+    # Setup environment and verify components
     setup_docker_environment
-    setup_docker_permissions
-    install_docker_compose
-    install_docker_tools
-    setup_docker_development
+    setup_docker_permissions "$@"
+    install_docker_compose "$@"
+    install_docker_tools "$@"
+    
+    # Skip development setup if quick mode
+    if [[ "$QUICK_CHECK" != "true" ]]; then
+      setup_docker_development
+    fi
+    
     verify_docker_installation
     return 0
   fi
   
   # Install Docker
-  install_docker_via_package_manager
+  execute_if_not_dry_run "Install Docker via package manager" install_docker_via_package_manager
   
   # Setup user permissions (Linux only)
-  setup_docker_permissions
+  setup_docker_permissions "$@"
   
   # Install Docker Compose
-  install_docker_compose
+  install_docker_compose "$@"
   
   # Setup environment
   setup_docker_environment
   
   # Install useful tools
-  install_docker_tools
+  install_docker_tools "$@"
   
-  # Setup development environment
-  setup_docker_development
+  # Setup development environment (skip in quick mode)
+  if [[ "$QUICK_CHECK" != "true" ]]; then
+    setup_docker_development
+  fi
   
   # Verify installation
-  verify_docker_installation
+  if [[ "$DRY_RUN" != "true" ]]; then
+    verify_docker_installation
+  fi
   
   log_success "Docker setup completed!"
   log_info ""
