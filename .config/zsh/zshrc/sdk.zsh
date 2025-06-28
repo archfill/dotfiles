@@ -32,15 +32,26 @@ if ! command -v command_exists &>/dev/null; then
   fi
 fi
 
-# ===== SDKMAN! (Java, Maven, Gradle) - Optimized =====
-if source_if_exists "$HOME/.sdkman/bin/sdkman-init.sh"; then
-  # Auto-set JAVA_HOME if available (with error handling)
-  if command_exists sdk; then
+# ===== SDKMAN! (Java, Maven, Gradle) - Configuration =====
+# Note: SDKMAN initialization is handled in .zshrc (not here) because:
+# - SDKMAN is primarily an interactive tool with zsh-specific features
+# - Avoids duplicate loading and improves performance
+#
+# JAVA_HOME auto-detection for SDKMAN (runs after SDKMAN initialization)
+setup_sdkman_java_home() {
+  # Only run if SDKMAN is available and JAVA_HOME is not already set by SDKMAN
+  if command_exists sdk && [[ -z "${JAVA_HOME:-}" ]]; then
+    local java_home_path
     java_home_path="$(sdk home java current 2>/dev/null || echo '')"
-    [[ -n "$java_home_path" ]] && dir_exists "$java_home_path" && \
-      init_env_var "JAVA_HOME" "$java_home_path"
+    if [[ -n "$java_home_path" ]] && dir_exists "$java_home_path"; then
+      export JAVA_HOME="$java_home_path"
+      # Optional: echo "JAVA_HOME set via SDKMAN: $JAVA_HOME" (disabled for performance)
+    fi
   fi
-fi
+}
+
+# Run JAVA_HOME setup (conditional, non-blocking)
+setup_sdkman_java_home 2>/dev/null || true
 
 # Fallback JAVA_HOME detection for manual installations - Optimized
 if [[ -z "${JAVA_HOME:-}" ]]; then
@@ -84,45 +95,13 @@ fi
 # Add JAVA_HOME to PATH if set (optimized)
 [[ -n "${JAVA_HOME:-}" ]] && add_to_path "$JAVA_HOME/bin"
 
-# ===== Rust (rustup + Cargo) - Optimized =====
-# Rust environment variables (with defaults)
-init_env_var "RUSTUP_HOME" "$HOME/.rustup"
-init_env_var "CARGO_HOME" "$HOME/.cargo"
+# ===== Rust (rustup + Cargo) - Already configured in zprofile =====
+# Note: Rust environment variables and PATH are now configured in ~/.config/zsh/.zprofile
+# This ensures they are available in both interactive and non-interactive shells
 
-# Source Rust environment if available (optimized)
-source_if_exists "$CARGO_HOME/env"
-
-# Add Cargo bin to PATH (optimized)
-add_to_path "$CARGO_HOME/bin"
-
-# ===== Go (g version manager + official) - Optimized =====
-# Go environment variables (with defaults)
-init_env_var "GOPATH" "$HOME/go"
-init_env_var "GOBIN" "$GOPATH/bin"
-
-# Source g environment if available (optimized)
-source_if_exists "$HOME/.g/env"
-
-# Add Go binaries to PATH (optimized)
-add_to_path "$GOBIN"
-
-# Fallback GOROOT detection for manual installations - Optimized
-if [[ -z "${GOROOT:-}" ]]; then
-  local go_paths=(
-    "$HOME/.local/go"
-    "/usr/local/go"
-    "/opt/homebrew/opt/go/libexec"
-    "/usr/lib/go"
-  )
-  
-  for go_path in "${go_paths[@]}"; do
-    if dir_exists "$go_path" && [[ -x "$go_path/bin/go" ]]; then
-      init_env_var "GOROOT" "$go_path"
-      add_to_path "$GOROOT/bin"
-      break
-    fi
-  done
-fi
+# ===== Go (g version manager + official) - Already configured in zprofile =====
+# Note: Go environment variables and PATH are now configured in ~/.config/zsh/.zprofile
+# This ensures they are available in both interactive and non-interactive shells
 
 # ===== PHP (phpenv) - Optimized =====
 init_env_var "PHPENV_ROOT" "$HOME/.phpenv"

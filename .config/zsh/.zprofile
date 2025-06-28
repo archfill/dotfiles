@@ -105,22 +105,57 @@ if dir_exists "${HOME}/.opam"; then
   command_exists opam && eval "$(opam env)" 2>/dev/null || true
 fi
 
-# golang - optimized path handling
-if dir_exists "/usr/local/go/bin"; then
-  add_to_path "/usr/local/go/bin" "back"
-else
-  init_env_var "GOPATH" "$HOME/go"
-  add_to_path "$GOPATH/bin" "back"
+# ===== Go (g version manager + official) - Environment Setup =====
+# Note: Moved from sdk.zsh to ensure environment variables are available
+# in both interactive and non-interactive shells (login shells)
+
+# Go environment variables (with defaults)
+init_env_var "GOPATH" "$HOME/go"
+init_env_var "GOBIN" "$GOPATH/bin"
+
+# Source g environment if available (highest priority for version management)
+source_if_exists "$HOME/.g/env"
+
+# Add Go binaries to PATH
+add_to_path "$GOBIN"
+
+# Fallback GOROOT detection for manual installations
+if [[ -z "${GOROOT:-}" ]]; then
+  local go_paths=(
+    "$HOME/.local/go"
+    "/usr/local/go"
+    "/opt/homebrew/opt/go/libexec"
+    "/usr/lib/go"
+  )
+  
+  for go_path in "${go_paths[@]}"; do
+    if dir_exists "$go_path" && [[ -x "$go_path/bin/go" ]]; then
+      init_env_var "GOROOT" "$go_path"
+      add_to_path "$GOROOT/bin"
+      break
+    fi
+  done
 fi
 
-# rust cargo - optimized loading
-dir_exists "$HOME/.cargo" && source_if_exists "$HOME/.cargo/env"
+# ===== Rust (rustup + Cargo) - Environment Setup =====
+# Note: Moved from sdk.zsh to ensure environment variables are available
+# in both interactive and non-interactive shells (login shells)
+
+# Rust environment variables (with defaults)
+init_env_var "RUSTUP_HOME" "$HOME/.rustup"
+init_env_var "CARGO_HOME" "$HOME/.cargo"
+
+# Source Rust environment if available
+source_if_exists "$CARGO_HOME/env"
+
+# Add Cargo bin to PATH
+add_to_path "$CARGO_HOME/bin"
 
 # fzf integration - conditional loading
 source_if_exists ~/.fzf.zsh
 
 # uv - unified Python package manager (optimized)
-add_to_path "$HOME/.cargo/bin"
+# Note: Cargo bin path is already added above in rust configuration
 exec_if_command uv eval "$(uv generate-shell-completion zsh)" 2>/dev/null || true
 
 # kubectl completion - conditional with error handling

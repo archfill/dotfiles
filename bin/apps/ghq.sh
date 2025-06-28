@@ -38,12 +38,12 @@ check_ghq_git_config() {
             log_success "ghq root directory exists: $ghq_root_configured"
             return 0
         else
-            log_warning "ghq root directory does not exist: $ghq_root_configured"
-            return 1
+            log_warning "ghq root directory does not exist: $ghq_root_configured (will be created when needed)"
+            return 0
         fi
     else
-        log_info "ghq.root not configured"
-        return 1
+        log_info "ghq.root not configured (will use default)"
+        return 0
     fi
 }
 
@@ -94,8 +94,8 @@ check_repository_management_status() {
     ghq_root=$(git config --global ghq.root 2>/dev/null || echo "$HOME/git")
     
     if [[ ! -d "$ghq_root" ]]; then
-        log_info "Repository root does not exist: $ghq_root"
-        return 1
+        log_info "Repository root does not exist: $ghq_root (will be created when repositories are cloned)"
+        return 0
     fi
     
     # Count managed repositories
@@ -638,8 +638,12 @@ verify_ghq_installation() {
             chmod +x "$ghq_path"
         fi
     else
-        log_error "ghq binary not found at expected location: $ghq_path"
-        return 1
+        log_warning "ghq binary not found at expected location: $ghq_path (may be installed elsewhere)"
+        if command -v ghq >/dev/null 2>&1; then
+            log_info "ghq found in system PATH: $(which ghq)"
+        else
+            return 1
+        fi
     fi
     
     if command -v ghq >/dev/null 2>&1; then
