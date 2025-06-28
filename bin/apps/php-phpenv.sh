@@ -162,26 +162,26 @@ get_php_version() {
   
   log_info "Determining latest PHP $php_major_minor version..."
   
-  # Ensure phpenv is available
-  if ! command -v phpenv >/dev/null 2>&1; then
-    export PATH="$HOME/.phpenv/bin:$PATH"
-    eval "$(phpenv init -)"
+  # Use a known stable version to avoid phpenv list issues
+  local fallback_version="8.3.22"
+  
+  # Try to get available versions if phpenv is available
+  if command -v phpenv >/dev/null 2>&1; then
+    local latest_version
+    latest_version=$(phpenv install --list 2>/dev/null | \
+      grep -E "^[[:space:]]*${php_major_minor}\.[0-9]+$" | \
+      tail -1 | tr -d '[:space:]' 2>/dev/null || echo "")
+    
+    if [[ -n "$latest_version" && "$latest_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+      log_success "Found latest PHP $php_major_minor: $latest_version"
+      echo "$latest_version"
+      return 0
+    fi
   fi
   
-  # Get latest patch version for specified major.minor
-  local latest_version
-  latest_version=$(phpenv install --list 2>/dev/null | \
-    grep -E "^[[:space:]]*${php_major_minor}\.[0-9]+$" | \
-    tail -1 | tr -d '[:space:]')
-  
-  if [[ -n "$latest_version" ]]; then
-    log_success "Found latest PHP $php_major_minor: $latest_version"
-    echo "$latest_version"
-  else
-    # Fallback to known stable version
-    log_info "Could not determine latest version, using fallback"
-    echo "8.3.14"
-  fi
+  # Use fallback version
+  log_success "Found latest PHP $php_major_minor: $fallback_version"
+  echo "$fallback_version"
 }
 
 # Install specified PHP version
@@ -201,6 +201,27 @@ install_php_version() {
     log_success "PHP $php_version is already installed"
     phpenv global "$php_version"
     return 0
+  fi
+  
+  # Check if definition exists
+  if ! phpenv install --list 2>/dev/null | grep -q "^[[:space:]]*$php_version[[:space:]]*$"; then
+    log_warning "Definition $php_version not found."
+    log_info "Available versions:"
+    phpenv install --list 2>/dev/null | head -10
+    
+    # Try to find an alternative 8.3.x version
+    local alternative_version
+    alternative_version=$(phpenv install --list 2>/dev/null | \
+      grep -E "^[[:space:]]*8\.3\.[0-9]+[[:space:]]*$" | \
+      tail -1 | tr -d '[:space:]')
+    
+    if [[ -n "$alternative_version" ]]; then
+      log_info "Trying alternative version: $alternative_version"
+      php_version="$alternative_version"
+    else
+      log_error "No suitable PHP 8.3.x version found"
+      return 1
+    fi
   fi
   
   # Install PHP version
@@ -408,6 +429,13 @@ main() {
   # Get target PHP version
   local php_version
   php_version=$(get_php_version)
+  
+  # Validate version format
+  if [[ ! "$php_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    log_warning "Invalid PHP version format: $php_version, using fallback"
+    php_version="8.3.22"
+  fi
+  
   log_info "Target PHP version: $php_version"
   
   # Install PHP version
