@@ -39,7 +39,10 @@ install_sdkman() {
     export ZSH_VERSION="${ZSH_VERSION:-}"
     export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
     
+    # Disable unbound variable checking for SDKMAN initialization
+    set +u
     source "$HOME/.sdkman/bin/sdkman-init.sh"
+    set -u
   fi
   
   if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
@@ -54,16 +57,19 @@ install_sdkman() {
 install_java_lts() {
   log_info "Installing Java 21 LTS..."
   
-  # Source SDKMAN! if not already sourced
+  # Source SDKMAN! with safe initialization
   if ! command -v sdk >/dev/null 2>&1; then
     if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
-      # Set required environment variables before sourcing
+      # Set all required environment variables before sourcing
       export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
       export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
       export ZSH_VERSION="${ZSH_VERSION:-}"
       export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
       
+      # Set script debugging to false to avoid unbound variable errors
+      set +u
       source "$HOME/.sdkman/bin/sdkman-init.sh"
+      set -u
     else
       log_error "SDKMAN! not found"
       exit 1
@@ -106,7 +112,10 @@ verify_java_installation() {
     export ZSH_VERSION="${ZSH_VERSION:-}"
     export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
     
+    # Disable unbound variable checking for SDKMAN initialization
+    set +u
     source "$HOME/.sdkman/bin/sdkman-init.sh"
+    set -u
   fi
   
   if command -v java >/dev/null 2>&1; then
@@ -141,7 +150,10 @@ setup_java_environment() {
     export ZSH_VERSION="${ZSH_VERSION:-}"
     export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
     
+    # Disable unbound variable checking for SDKMAN initialization
+    set +u
     source "$HOME/.sdkman/bin/sdkman-init.sh"
+    set -u
     log_success "SDKMAN! environment loaded"
   fi
   
