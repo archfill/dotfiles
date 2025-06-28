@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
 
-# deno (プロンプトなしでインストール)
-DENO_INSTALL_MODIFY_PATH=n curl -fsSL https://deno.land/install.sh | sh
+# 共通ライブラリをインポート
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
+# エラーハンドリングを設定
+setup_error_handling
+
+log_info "Installing Deno..."
+
+# Denoの自動インストール（プロンプトなし）
+export DENO_INSTALL_MODIFY_PATH=n
+echo "n" | curl -fsSL https://deno.land/install.sh | sh
+
+if [[ $? -eq 0 ]]; then
+    log_success "Deno installation completed"
+else
+    log_error "Deno installation failed"
+    exit 1
+fi
