@@ -39,3 +39,14 @@ source-safe "$ZRCDIR/$CURRENT_PLATFORM/bindkey.zsh"
 
 # 11. Load user-specific overrides (highest priority)
 source-safe "$HOME/zshrc_local.zsh"
+
+# ===== SDKMAN! (Java SDK Manager) =====
+# Note: SDKMAN configuration belongs in .zshrc (NOT .zprofile) because:
+# 1. SDKMAN is primarily an interactive tool (sdk install, sdk use, etc.)
+# 2. It defines interactive functions and zsh completions
+# 3. It uses chpwd_functions for auto-environment switching
+# 4. Official SDKMAN installer places configuration here
+#
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
