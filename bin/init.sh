@@ -37,8 +37,10 @@ case "$OS_NAME" in
       DOTFILES_INSTALL_MODE="$install_mode" run "bin/mac/brew.sh"
       
       # Install fonts for essential and full modes
-      if [[ "$install_mode" != "minimal" ]]; then
+      if [[ "$install_mode" != "minimal" ]] && [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
         run "bin/mac/fonts_setup.sh"
+      elif [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then
+        log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
       fi
     else
       log_info "Skipping package installation (CI environment)"
@@ -50,7 +52,11 @@ case "$OS_NAME" in
   Linux)
     log_info "Linux setup starting"
     run "bin/linux/install_linux.sh"
-    run "bin/linux/apps/fonts_setup.sh"
+    if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
+      run "bin/linux/apps/fonts_setup.sh"
+    else
+      log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
+    fi
     run "bin/linux/apps/deno_install.sh"
     ;;
 
