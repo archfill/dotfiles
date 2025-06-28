@@ -16,7 +16,21 @@ setup_error_handling
 # Load configuration
 load_config
 
+# Detect container environment
+detect_container_environment() {
+  # Check if running inside a container
+  if [[ -f /.dockerenv ]] || [[ -f /run/.containerenv ]] || grep -q container /proc/1/cgroup 2>/dev/null; then
+    return 0  # Running in container
+  fi
+  return 1    # Not in container
+}
+
 log_info "Starting Docker setup..."
+
+# Check if running in container environment
+if detect_container_environment; then
+  log_info "Container environment detected - systemd operations will be skipped"
+fi
 
 # Install Docker via package manager
 install_docker_via_package_manager() {
@@ -105,9 +119,13 @@ install_docker_arch() {
   # Install Docker from official repositories
   sudo pacman -Syu --needed --noconfirm docker docker-compose
   
-  # Enable and start Docker service
-  sudo systemctl enable docker.service
-  sudo systemctl start docker.service
+  # Enable and start Docker service (skip in containers)
+  if systemctl is-system-running >/dev/null 2>&1; then
+    sudo systemctl enable docker.service
+    sudo systemctl start docker.service
+  else
+    log_info "Systemd not available (container environment), skipping service management"
+  fi
   
   log_success "Docker installed on Arch Linux"
 }
@@ -128,9 +146,13 @@ install_docker_rhel_fedora() {
   # Install Docker Engine
   sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   
-  # Enable and start Docker service
-  sudo systemctl enable docker
-  sudo systemctl start docker
+  # Enable and start Docker service (skip in containers)
+  if systemctl is-system-running >/dev/null 2>&1; then
+    sudo systemctl enable docker
+    sudo systemctl start docker
+  else
+    log_info "Systemd not available (container environment), skipping service management"
+  fi
   
   log_success "Docker installed on RHEL/Fedora/CentOS"
 }
