@@ -146,43 +146,52 @@ install_go_tools() {
   
   # Ensure Go is available
   if ! command -v go >/dev/null 2>&1; then
-    log_error "Go not found in PATH"
-    return 1
+    log_warning "Go not found in PATH, skipping tools installation"
+    return 0
   fi
   
-  # Create a temporary directory for installing tools
-  local temp_dir
-  temp_dir=$(mktemp -d)
-  cd "$temp_dir"
+  # Ensure GOBIN is in PATH for current session
+  if [[ -n "${GOBIN:-}" ]] && [[ ":$PATH:" != *":$GOBIN:"* ]]; then
+    export PATH="$GOBIN:$PATH"
+    log_info "Added GOBIN to PATH: $GOBIN"
+  fi
   
-  # Initialize a temporary module to avoid directory issues
-  go mod init temp-install >/dev/null 2>&1
+  # Create a safe workspace for tools
+  local tools_workspace="$HOME/tmp/go-tools-install"
+  mkdir -p "$tools_workspace"
+  local original_dir="$PWD"
+  cd "$tools_workspace"
   
-  # List of useful Go tools
+  # Initialize module in tools workspace
+  if ! go mod init go-tools-install >/dev/null 2>&1; then
+    log_warning "Failed to initialize Go module for tools installation"
+    cd "$original_dir"
+    rm -rf "$tools_workspace"
+    return 0
+  fi
+  
+  # List of essential Go tools only
   local tools=(
     "golang.org/x/tools/cmd/goimports@latest"    # goimports for import management
-    "github.com/golangci/golangci-lint/cmd/golangci-lint@latest"  # Comprehensive linter
-    "honnef.co/go/tools/cmd/staticcheck@latest"  # Static analysis tool
-    "github.com/go-delve/delve/cmd/dlv@latest"   # Go debugger
   )
   
   for tool in "${tools[@]}"; do
     local tool_name=$(basename "${tool%@*}")
     if ! command -v "$tool_name" >/dev/null 2>&1; then
       log_info "Installing $tool_name..."
-      if go install "$tool" 2>/dev/null; then
+      if go install "$tool" >/dev/null 2>&1; then
         log_info "$tool_name installed successfully"
       else
-        log_warning "Failed to install $tool"
+        log_warning "Failed to install $tool (this is not critical)"
       fi
     else
       log_info "$tool_name is already installed"
     fi
   done
   
-  # Clean up temporary directory
-  cd - >/dev/null
-  rm -rf "$temp_dir"
+  # Return to original directory and clean up
+  cd "$original_dir"
+  rm -rf "$tools_workspace"
   
   log_success "Go tools installation completed"
 }
