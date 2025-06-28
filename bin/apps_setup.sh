@@ -22,7 +22,11 @@ for filepath in $files; do
       continue
     fi
     
-    bash "${filepath}"
+    if ! bash "${filepath}"; then
+      log_error "Script failed: $script_name"
+      log_error "Script path: $filepath"
+      exit 1
+    fi
   fi
 done
 
