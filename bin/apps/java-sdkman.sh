@@ -93,14 +93,25 @@ install_java_lts() {
   log_info "Fetching available Java 21 LTS versions..."
   
   # Install latest Java 21 LTS (Temurin/Eclipse Adoptium)
-  local java_version="21.0.1-tem"
+  local java_version="21.0.5-tem"
   
   log_info "Installing Java $java_version..."
-  sdk install java "$java_version"
+  # Use SDKMAN_AUTO_ANSWER=true for non-interactive installation and disable unbound variable checking
+  set +u
+  SDKMAN_AUTO_ANSWER=true sdk install java "$java_version" || {
+    log_error "Failed to install Java $java_version"
+    set -u
+    return 1
+  }
+  set -u
   
   # Set as default
   log_info "Setting Java $java_version as default..."
-  sdk default java "$java_version"
+  set +u
+  SDKMAN_AUTO_ANSWER=true sdk default java "$java_version" || {
+    log_warning "Failed to set Java $java_version as default"
+  }
+  set -u
   
   # Verify installation
   verify_java_installation
@@ -208,7 +219,9 @@ install_maven() {
   fi
   
   # Install latest Maven
-  sdk install maven
+  set +u
+  SDKMAN_AUTO_ANSWER=true sdk install maven
+  set -u
   
   if command -v mvn >/dev/null 2>&1; then
     log_success "Maven installed successfully: $(mvn -version | head -1)"
@@ -247,7 +260,9 @@ install_gradle() {
   fi
   
   # Install latest Gradle
-  sdk install gradle
+  set +u
+  SDKMAN_AUTO_ANSWER=true sdk install gradle
+  set -u
   
   if command -v gradle >/dev/null 2>&1; then
     log_success "Gradle installed successfully: $(gradle -version | grep 'Gradle')"
