@@ -282,7 +282,41 @@ extract_archive_zip() {
         exit 1
     fi
     
-    extract_to_temp_and_find "$archive_file" "$install_dir" "unzip -q"
+    log_info "Extracting ZIP archive..."
+    
+    # Create temporary directory for extraction
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    
+    # Extract ZIP file
+    if unzip -q "$archive_file" -d "$temp_dir" 2>/dev/null; then
+        log_info "ZIP archive extracted to temporary directory"
+        
+        # Find ghq binary
+        local ghq_binary
+        ghq_binary=$(find "$temp_dir" -name "ghq" -type f | head -1)
+        
+        if [[ -n "$ghq_binary" ]]; then
+            log_info "Found ghq binary at: $ghq_binary"
+            cp "$ghq_binary" "$install_dir/ghq"
+            chmod +x "$install_dir/ghq"
+            log_success "ghq binary installed to $install_dir/ghq"
+            rm -rf "$temp_dir"
+            return 0
+        else
+            log_error "ghq binary not found in ZIP archive"
+            log_info "Archive contents:"
+            find "$temp_dir" -type f | head -10
+            rm -rf "$temp_dir"
+            exit 1
+        fi
+    else
+        log_error "Failed to extract ZIP archive"
+        log_info "Trying with verbose unzip for debugging..."
+        unzip -l "$archive_file"
+        rm -rf "$temp_dir"
+        exit 1
+    fi
 }
 
 # Extract tar.xz archive
@@ -310,7 +344,19 @@ extract_to_temp_and_find() {
     local temp_dir
     temp_dir=$(mktemp -d)
     
-    if $extract_cmd "$archive_file" -C "$temp_dir" 2>/dev/null; then
+    # Handle different extraction commands
+    local success=false
+    if [[ "$extract_cmd" == "unzip -q" ]]; then
+        if unzip -q "$archive_file" -d "$temp_dir" 2>/dev/null; then
+            success=true
+        fi
+    else
+        if $extract_cmd "$archive_file" -C "$temp_dir" 2>/dev/null; then
+            success=true
+        fi
+    fi
+    
+    if [[ "$success" == "true" ]]; then
         log_info "Archive extracted to temporary directory"
         
         # Find ghq binary
@@ -332,7 +378,7 @@ extract_to_temp_and_find() {
             exit 1
         fi
     else
-        log_error "Failed to extract archive"
+        log_error "Failed to extract archive with command: $extract_cmd"
         rm -rf "$temp_dir"
         exit 1
     fi
