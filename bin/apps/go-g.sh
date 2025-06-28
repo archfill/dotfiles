@@ -235,19 +235,29 @@ setup_go_workspace() {
     log_info "Go workspace created at: $GOPATH"
   fi
   
-  # Create a sample go.mod for testing
-  local test_dir="$HOME/tmp/go-test"
-  if [[ ! -d "$test_dir" ]]; then
+  # Test Go modules functionality
+  if command -v go >/dev/null 2>&1; then
+    local original_dir="$PWD"
+    local test_dir="$HOME/tmp/go-test"
+    
+    # Clean up any existing test directory first
+    rm -rf "$test_dir"
+    
+    # Create and test Go module
     mkdir -p "$test_dir"
     cd "$test_dir"
     
-    if command -v go >/dev/null 2>&1; then
-      go mod init test-module >/dev/null 2>&1
-      if [[ -f "go.mod" ]]; then
-        log_success "Go modules working correctly"
-        rm -rf "$test_dir"
-      fi
+    if go mod init test-module >/dev/null 2>&1 && [[ -f "go.mod" ]]; then
+      log_success "Go modules working correctly"
+    else
+      log_warning "Go modules test failed (not critical)"
     fi
+    
+    # Return to original directory before cleanup
+    cd "$original_dir"
+    rm -rf "$test_dir"
+  else
+    log_warning "Go not available for modules test"
   fi
 }
 
