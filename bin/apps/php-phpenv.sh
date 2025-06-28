@@ -661,36 +661,44 @@ install_php_tools() {
   local failed_count=0
   
   for tool_info in "${tools_info[@]}"; do
-    local tool_package=$(echo "$tool_info" | cut -d: -f1)
-    local tool_desc=$(echo "$tool_info" | cut -d: -f2)
-    local tool_name=$(basename "$tool_package")
-    
-    # Skip if tool is already available and not forcing reinstall
-    if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
-      log_skip_reason "$tool_name" "Already installed"
-      ((skipped_count++))
-      continue
-    fi
-    
-    log_info "Installing $tool_name ($tool_desc) via Composer..."
-    
-    if [[ "$DRY_RUN" != "true" ]]; then
-      if composer global require "$tool_package" --quiet --no-interaction; then
-        log_success "$tool_name installed successfully"
-        ((installed_count++))
-      else
-        log_warning "Failed to install $tool_name"
-        ((failed_count++))
+    {
+      local tool_package=$(echo "$tool_info" | cut -d: -f1)
+      local tool_desc=$(echo "$tool_info" | cut -d: -f2)
+      local tool_name=$(basename "$tool_package")
+      
+      # Skip if tool is already available and not forcing reinstall
+      if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
+        log_skip_reason "$tool_name" "Already installed"
+        ((skipped_count++))
+        continue
       fi
-    else
-      log_info "[DRY RUN] Would install $tool_name"
-      ((installed_count++))
-    fi
+      
+      log_info "Installing $tool_name ($tool_desc) via Composer..."
+      
+      if [[ "$DRY_RUN" != "true" ]]; then
+        # Use timeout and comprehensive error suppression for composer install
+        if timeout 120 composer global require "$tool_package" --quiet --no-interaction --no-progress --no-suggest 2>/dev/null >/dev/null; then
+          log_success "$tool_name installed successfully"
+          ((installed_count++))
+        else
+          log_warning "Failed to install $tool_name, but continuing..."
+          ((failed_count++))
+          # Ensure composer is still working after a failed install
+          composer global show >/dev/null 2>&1 || true
+        fi
+      else
+        log_info "[DRY RUN] Would install $tool_name"
+        ((installed_count++))
+      fi
+    } 2>/dev/null || {
+      log_warning "Error processing tool $tool_info, but continuing..."
+      ((failed_count++))
+    }
   done
   
-  # Log summary
+  # Log summary (non-critical)
   if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
-    log_install_summary "$installed_count" "$skipped_count" "$failed_count"
+    log_install_summary "$installed_count" "$skipped_count" "$failed_count" 2>/dev/null || true
   fi
   
   # Ensure Composer global bin is in PATH
@@ -700,6 +708,7 @@ install_php_tools() {
   fi
   
   log_success "PHP tools installation completed"
+  return 0  # Ensure success return code
 }
 
 # Setup PHP environment
@@ -877,7 +886,7 @@ main() {
     }
     
     # Install useful tools (non-critical)
-    install_php_tools "$@" || {
+    install_php_tools "$@" 2>/dev/null || {
       log_warning "PHP tools installation had issues, but continuing..."
     }
     
@@ -925,7 +934,7 @@ main() {
   }
   
   # Install useful tools (non-critical)
-  install_php_tools "$@" || {
+  install_php_tools "$@" 2>/dev/null || {
     log_warning "PHP tools installation had issues, but continuing..."
   }
   
