@@ -93,9 +93,16 @@ install_ghq_binary_linux() {
             ;;
     esac
     
+    # Debug: Show detected platform info
+    log_info "Detected OS: $os, Architecture: $arch"
+    
     # Find the correct asset name from the API response
     local asset_name
     if [[ -n "$api_response" ]]; then
+        # Debug: Show available assets
+        log_info "Available assets in release:"
+        echo "$api_response" | grep -o '"name": "[^"]*\.tar\.gz"' | cut -d'"' -f4 | head -10 || log_info "No tar.gz assets found"
+        
         # Try to find the correct asset name from the release
         asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.tar\.gz"' | cut -d'"' -f4 | head -1)
         
@@ -103,6 +110,8 @@ install_ghq_binary_linux() {
             # Try alternative patterns
             asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*"' | grep '\.tar\.gz' | cut -d'"' -f4 | head -1)
         fi
+    else
+        log_warning "No API response available for asset detection"
     fi
     
     if [[ -z "$asset_name" ]]; then
@@ -133,8 +142,10 @@ install_ghq_binary_linux() {
     )
     
     # Try the discovered asset name first
-    if curl -fsSL "$download_url" -o "$temp_file" 2>/dev/null; then
+    log_info "Attempting primary download from: $download_url"
+    if curl -fsSL "$download_url" -o "$temp_file" 2>/dev/null && [[ -s "$temp_file" ]]; then
         download_success=true
+        log_info "Primary download successful"
     else
         log_info "Primary download failed, trying alternative patterns..."
         
@@ -143,42 +154,60 @@ install_ghq_binary_linux() {
             local alt_url="https://github.com/x-motemen/ghq/releases/download/${ghq_version}/${pattern}"
             log_info "Trying: $alt_url"
             
-            if curl -fsSL "$alt_url" -o "$temp_file" 2>/dev/null; then
+            if curl -fsSL "$alt_url" -o "$temp_file" 2>/dev/null && [[ -s "$temp_file" ]]; then
                 download_success=true
                 download_url="$alt_url"
+                log_info "Alternative download successful: $pattern"
                 break
+            else
+                log_info "Failed: $pattern"
             fi
         done
     fi
     
     if [[ "$download_success" == "true" ]]; then
+        log_info "Verifying downloaded file..."
+        
         # Verify the downloaded file
         if file "$temp_file" | grep -q "gzip compressed"; then
+            log_info "File verification passed, extracting..."
+            
             # Extract ghq binary
             if tar -xzf "$temp_file" -C "$install_dir" --strip-components=1 --wildcards "*/ghq" 2>/dev/null; then
                 chmod +x "$install_dir/ghq"
                 log_success "ghq binary installed to $install_dir/ghq"
             else
+                log_info "Standard extraction failed, trying alternative method..."
+                
                 # Try alternative extraction method
                 local temp_dir
                 temp_dir=$(mktemp -d)
-                tar -xzf "$temp_file" -C "$temp_dir"
                 
-                # Find ghq binary
-                local ghq_binary
-                ghq_binary=$(find "$temp_dir" -name "ghq" -type f | head -1)
-                
-                if [[ -n "$ghq_binary" ]]; then
-                    cp "$ghq_binary" "$install_dir/ghq"
-                    chmod +x "$install_dir/ghq"
-                    log_success "ghq binary installed to $install_dir/ghq"
-                else
-                    log_error "ghq binary not found in archive"
+                if tar -xzf "$temp_file" -C "$temp_dir" 2>/dev/null; then
+                    log_info "Archive extracted to temporary directory"
+                    
+                    # Find ghq binary
+                    local ghq_binary
+                    ghq_binary=$(find "$temp_dir" -name "ghq" -type f | head -1)
+                    
+                    if [[ -n "$ghq_binary" ]]; then
+                        log_info "Found ghq binary at: $ghq_binary"
+                        cp "$ghq_binary" "$install_dir/ghq"
+                        chmod +x "$install_dir/ghq"
+                        log_success "ghq binary installed to $install_dir/ghq"
+                    else
+                        log_error "ghq binary not found in archive"
+                        log_info "Archive contents:"
+                        find "$temp_dir" -type f | head -10
+                        rm -rf "$temp_dir"
+                        exit 1
+                    fi
+                    
                     rm -rf "$temp_dir"
+                else
+                    log_error "Failed to extract archive with tar"
                     exit 1
                 fi
-                
-                rm -rf "$temp_dir"
             fi
         else
             log_error "Downloaded file is not a valid gzip archive"
