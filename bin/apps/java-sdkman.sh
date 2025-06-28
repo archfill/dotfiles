@@ -38,6 +38,9 @@ install_sdkman() {
     export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
     export ZSH_VERSION="${ZSH_VERSION:-}"
     export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
+    export SDKMAN_OFFLINE_MODE="${SDKMAN_OFFLINE_MODE:-false}"
+    export SDKMAN_AUTO_ANSWER="${SDKMAN_AUTO_ANSWER:-false}"
+    export SDKMAN_AUTO_SELFUPDATE="${SDKMAN_AUTO_SELFUPDATE:-false}"
     
     # Disable unbound variable checking for SDKMAN initialization
     set +u
@@ -65,6 +68,9 @@ install_java_lts() {
       export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
       export ZSH_VERSION="${ZSH_VERSION:-}"
       export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
+      export SDKMAN_OFFLINE_MODE="${SDKMAN_OFFLINE_MODE:-false}"
+      export SDKMAN_AUTO_ANSWER="${SDKMAN_AUTO_ANSWER:-false}"
+      export SDKMAN_AUTO_SELFUPDATE="${SDKMAN_AUTO_SELFUPDATE:-false}"
       
       # Set script debugging to false to avoid unbound variable errors
       set +u
@@ -111,6 +117,9 @@ verify_java_installation() {
     export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
     export ZSH_VERSION="${ZSH_VERSION:-}"
     export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
+    export SDKMAN_OFFLINE_MODE="${SDKMAN_OFFLINE_MODE:-false}"
+    export SDKMAN_AUTO_ANSWER="${SDKMAN_AUTO_ANSWER:-false}"
+    export SDKMAN_AUTO_SELFUPDATE="${SDKMAN_AUTO_SELFUPDATE:-false}"
     
     # Disable unbound variable checking for SDKMAN initialization
     set +u
@@ -149,6 +158,9 @@ setup_java_environment() {
     export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
     export ZSH_VERSION="${ZSH_VERSION:-}"
     export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
+    export SDKMAN_OFFLINE_MODE="${SDKMAN_OFFLINE_MODE:-false}"
+    export SDKMAN_AUTO_ANSWER="${SDKMAN_AUTO_ANSWER:-false}"
+    export SDKMAN_AUTO_SELFUPDATE="${SDKMAN_AUTO_SELFUPDATE:-false}"
     
     # Disable unbound variable checking for SDKMAN initialization
     set +u
@@ -173,7 +185,19 @@ install_maven() {
   # Source SDKMAN! if not already sourced
   if ! command -v sdk >/dev/null 2>&1; then
     if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+      # Set required environment variables before sourcing
+      export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
+      export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+      export ZSH_VERSION="${ZSH_VERSION:-}"
+      export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
+      export SDKMAN_OFFLINE_MODE="${SDKMAN_OFFLINE_MODE:-false}"
+      export SDKMAN_AUTO_ANSWER="${SDKMAN_AUTO_ANSWER:-false}"
+      export SDKMAN_AUTO_SELFUPDATE="${SDKMAN_AUTO_SELFUPDATE:-false}"
+      
+      # Disable unbound variable checking for SDKMAN initialization
+      set +u
       source "$HOME/.sdkman/bin/sdkman-init.sh"
+      set -u
     fi
   fi
   
@@ -200,7 +224,19 @@ install_gradle() {
   # Source SDKMAN! if not already sourced
   if ! command -v sdk >/dev/null 2>&1; then
     if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+      # Set required environment variables before sourcing
+      export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
+      export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+      export ZSH_VERSION="${ZSH_VERSION:-}"
+      export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
+      export SDKMAN_OFFLINE_MODE="${SDKMAN_OFFLINE_MODE:-false}"
+      export SDKMAN_AUTO_ANSWER="${SDKMAN_AUTO_ANSWER:-false}"
+      export SDKMAN_AUTO_SELFUPDATE="${SDKMAN_AUTO_SELFUPDATE:-false}"
+      
+      # Disable unbound variable checking for SDKMAN initialization
+      set +u
       source "$HOME/.sdkman/bin/sdkman-init.sh"
+      set -u
     fi
   fi
   
