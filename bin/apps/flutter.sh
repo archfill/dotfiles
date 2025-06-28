@@ -89,21 +89,21 @@ install_flutter_manual_macos() {
   mkdir -p "$install_dir"
   cd "$install_dir"
   
-  # Get the latest stable Flutter release URL for macOS
+  # Use Flutter's releases.json to get the latest stable version
   log_info "Fetching latest Flutter stable release information..."
-  local flutter_releases_api="https://api.github.com/repos/flutter/flutter/releases/latest"
+  local flutter_releases_json="https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json"
   local flutter_version
   
-  # Try to get the latest version from GitHub API
-  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_api" 2>/dev/null | \
-    grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
+  # Try to get the latest stable version from Flutter's releases API
+  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_json" 2>/dev/null | \
+    grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4 2>/dev/null)
   
   if [[ -z "$flutter_version" ]]; then
     # Fallback to a known stable version
     flutter_version="3.24.3"
     log_info "API fetch failed, using fallback version: $flutter_version"
   else
-    log_info "Latest Flutter version: $flutter_version"
+    log_info "Latest Flutter stable version: $flutter_version"
   fi
   
   # Construct download URL based on architecture
@@ -146,21 +146,21 @@ install_flutter_manual_linux() {
   mkdir -p "$install_dir"
   cd "$install_dir"
   
-  # Get the latest stable Flutter release URL for Linux
+  # Use Flutter's releases.json to get the latest stable version
   log_info "Fetching latest Flutter stable release information..."
-  local flutter_releases_api="https://api.github.com/repos/flutter/flutter/releases/latest"
+  local flutter_releases_json="https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json"
   local flutter_version
   
-  # Try to get the latest version from GitHub API
-  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_api" 2>/dev/null | \
-    grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
+  # Try to get the latest stable version from Flutter's releases API
+  flutter_version=$(curl -s --connect-timeout 10 "$flutter_releases_json" 2>/dev/null | \
+    grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4 2>/dev/null)
   
   if [[ -z "$flutter_version" ]]; then
     # Fallback to a known stable version
     flutter_version="3.24.3"
     log_info "API fetch failed, using fallback version: $flutter_version"
   else
-    log_info "Latest Flutter version: $flutter_version"
+    log_info "Latest Flutter stable version: $flutter_version"
   fi
   
   # Construct download URL
