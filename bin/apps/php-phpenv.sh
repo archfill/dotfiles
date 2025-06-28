@@ -189,10 +189,16 @@ install_php_version() {
   log_info "Installing PHP $php_version..."
   
   # Ensure phpenv is available
+  export PHPENV_ROOT="${PHPENV_ROOT:-$HOME/.phpenv}"
+  export PATH="$HOME/.phpenv/bin:$PATH"
+  export PATH="$HOME/.phpenv/shims:$PATH"
+  
   if ! command -v phpenv >/dev/null 2>&1; then
-    export PATH="$HOME/.phpenv/bin:$PATH"
-    eval "$(phpenv init -)"
+    log_error "phpenv not found even after PATH setup"
+    return 1
   fi
+  
+  eval "$(phpenv init -)"
   
   # Check if this version is already installed
   if phpenv versions | grep -q "$php_version"; then
@@ -255,10 +261,39 @@ install_composer() {
   
   # Verify PHP is available
   if ! command -v php >/dev/null 2>&1; then
-    log_error "PHP command not found. phpenv may not be properly initialized."
-    log_info "Available PHP versions:"
-    phpenv versions 2>/dev/null || log_info "phpenv versions command failed"
-    return 1
+    log_warning "PHP command not found via normal PATH, trying to fix..."
+    
+    # Try to manually create the shim
+    if [[ -d "$HOME/.phpenv/versions" ]]; then
+      local php_binary
+      php_binary=$(find "$HOME/.phpenv/versions" -name "php" -type f | head -1)
+      if [[ -n "$php_binary" ]]; then
+        log_info "Found PHP binary at: $php_binary"
+        # Create shim directory if missing
+        mkdir -p "$HOME/.phpenv/shims"
+        # Create a simple shim if missing
+        if [[ ! -f "$HOME/.phpenv/shims/php" ]]; then
+          cat > "$HOME/.phpenv/shims/php" << EOF
+#!/usr/bin/env bash
+exec "$php_binary" "\$@"
+EOF
+          chmod +x "$HOME/.phpenv/shims/php"
+          log_info "Created PHP shim manually"
+        fi
+        # Update PATH
+        export PATH="$HOME/.phpenv/shims:$PATH"
+      fi
+    fi
+    
+    # Final check
+    if ! command -v php >/dev/null 2>&1; then
+      log_error "PHP command still not found after manual shim creation."
+      log_info "Available PHP versions:"
+      phpenv versions 2>/dev/null || log_info "phpenv versions command failed"
+      return 1
+    else
+      log_success "PHP command now available via manual shim"
+    fi
   fi
   
   # Download and install Composer
@@ -327,13 +362,21 @@ install_php_tools() {
 setup_php_environment() {
   log_info "Setting up PHP environment..."
   
+  # Set PHPENV_ROOT first
+  export PHPENV_ROOT="${PHPENV_ROOT:-$HOME/.phpenv}"
+  
   # Add phpenv to PATH and init for current session
   export PATH="$HOME/.phpenv/bin:$PATH"
-  eval "$(phpenv init -)"
   
-  # Rehash to ensure shims are updated
+  # Add shims directory to PATH manually
+  export PATH="$HOME/.phpenv/shims:$PATH"
+  
+  # Initialize phpenv
   if command -v phpenv >/dev/null 2>&1; then
+    eval "$(phpenv init -)"
     phpenv rehash
+  else
+    log_warning "phpenv command not found in PATH"
   fi
   
   # Add Composer global bin to PATH
@@ -342,15 +385,34 @@ setup_php_environment() {
     export PATH="$composer_bin_dir:$PATH"
   fi
   
-  # Set environment variables
-  export PHPENV_ROOT="${PHPENV_ROOT:-$HOME/.phpenv}"
-  
   log_info "PHPENV_ROOT: $PHPENV_ROOT"
+  log_info "Current PATH: $PATH"
+  
+  # Debug phpenv status
+  if command -v phpenv >/dev/null 2>&1; then
+    log_info "phpenv location: $(which phpenv)"
+    log_info "phpenv versions:"
+    phpenv versions 2>/dev/null
+    log_info "phpenv global version: $(phpenv global 2>/dev/null || echo 'none')"
+  else
+    log_warning "phpenv command not available"
+  fi
+  
+  # Check shims directory
+  if [[ -d "$HOME/.phpenv/shims" ]]; then
+    log_info "Shims directory exists: $HOME/.phpenv/shims"
+    log_info "PHP shim exists: $(ls -la $HOME/.phpenv/shims/php 2>/dev/null || echo 'not found')"
+  else
+    log_warning "Shims directory not found: $HOME/.phpenv/shims"
+  fi
   
   if command -v php >/dev/null 2>&1; then
     log_info "Current PHP: $(php --version | head -1)"
     log_info "PHP location: $(which php)"
     log_info "PHP configuration: $(php --ini | grep 'Loaded Configuration File' | cut -d: -f2 | tr -d ' ')"
+  else
+    log_warning "PHP command not found in PATH"
+    log_info "Checking for PHP directly: $(ls -la $HOME/.phpenv/versions/*/bin/php 2>/dev/null || echo 'not found')"
   fi
 }
 
