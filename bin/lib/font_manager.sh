@@ -43,6 +43,9 @@ extract_archive() {
 # フォント設定の構造体風定義
 declare -A FONT_CONFIGS
 
+# FONT_CONFIGSの初期化状態を管理
+FONT_CONFIGS_INITIALIZED="false"
+
 # =============================================================================
 # フォント統一スキップロジック関数
 # =============================================================================
@@ -79,6 +82,16 @@ should_skip_font_install() {
 # 特定フォントのインストール状態をチェック
 check_font_installed() {
     local font_key="$1"
+    
+    # フォント設定の初期化
+    init_font_configs
+    
+    # フォント設定の検証
+    if [[ -z "${FONT_CONFIGS[$font_key]:-}" ]]; then
+        log_warning "Unknown font key: $font_key"
+        return 1
+    fi
+    
     local font_info="${FONT_CONFIGS[$font_key]}"
     local font_name=$(echo "$font_info" | cut -d'|' -f1)
     
@@ -186,6 +199,9 @@ init_font_configs() {
     # クラシック（後方互換性用）
     FONT_CONFIGS["source-code-pro"]="Source Code Pro|adobe-fonts/source-code-pro|font-source-code-pro|SourceCodePro"
     FONT_CONFIGS["fira-code"]="Fira Code|tonsky/FiraCode|font-fira-code|FiraCode"
+    
+    # 初期化完了フラグを設定
+    FONT_CONFIGS_INITIALIZED="true"
 }
 
 # フォント情報の解析
@@ -603,6 +619,9 @@ install_recommended_fonts() {
     local font_profile="${1:-developer}"
     
     log_info "Installing recommended fonts for profile: $font_profile"
+    
+    # フォント設定の初期化
+    init_font_configs
     
     case "$font_profile" in
         "developer"|"dev")
