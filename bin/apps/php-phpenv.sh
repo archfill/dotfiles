@@ -264,13 +264,24 @@ install_composer() {
     log_warning "PHP command not found via normal PATH, trying to fix..."
     
     # Try to manually create the shim
+    log_info "Searching for PHP binaries..."
+    log_info "Versions directory contents: $(ls -la $HOME/.phpenv/versions/ 2>/dev/null || echo 'not found')"
+    
     if [[ -d "$HOME/.phpenv/versions" ]]; then
       local php_binary
-      php_binary=$(find "$HOME/.phpenv/versions" -name "php" -type f | head -1)
-      if [[ -n "$php_binary" ]]; then
+      # More comprehensive search for PHP binary
+      php_binary=$(find "$HOME/.phpenv/versions" -path "*/bin/php" -type f 2>/dev/null | head -1)
+      
+      if [[ -n "$php_binary" && -x "$php_binary" ]]; then
         log_info "Found PHP binary at: $php_binary"
+        log_info "PHP binary info: $(ls -la "$php_binary")"
+        
+        # Test the PHP binary directly
+        log_info "Testing PHP binary: $($php_binary --version 2>/dev/null | head -1 || echo 'failed')"
+        
         # Create shim directory if missing
         mkdir -p "$HOME/.phpenv/shims"
+        
         # Create a simple shim if missing
         if [[ ! -f "$HOME/.phpenv/shims/php" ]]; then
           cat > "$HOME/.phpenv/shims/php" << EOF
@@ -279,9 +290,25 @@ exec "$php_binary" "\$@"
 EOF
           chmod +x "$HOME/.phpenv/shims/php"
           log_info "Created PHP shim manually"
+          log_info "Shim info: $(ls -la $HOME/.phpenv/shims/php)"
         fi
-        # Update PATH
-        export PATH="$HOME/.phpenv/shims:$PATH"
+        
+        # Force phpenv rehash
+        if command -v phpenv >/dev/null 2>&1; then
+          phpenv rehash
+          log_info "Executed phpenv rehash"
+        fi
+      else
+        log_error "No executable PHP binary found in phpenv versions"
+        log_info "Checking version directory structure:"
+        find "$HOME/.phpenv/versions" -name "php" -type f 2>/dev/null | head -5 || echo "No PHP files found"
+        
+        # Check if PHP installation was incomplete
+        local version_dir="$HOME/.phpenv/versions/8.3.22"
+        if [[ -d "$version_dir" ]]; then
+          log_info "Version 8.3.22 directory exists: $(ls -la "$version_dir" 2>/dev/null)"
+          log_info "Bin directory: $(ls -la "$version_dir/bin" 2>/dev/null || echo 'bin directory not found')"
+        fi
       fi
     fi
     
@@ -290,6 +317,36 @@ EOF
       log_error "PHP command still not found after manual shim creation."
       log_info "Available PHP versions:"
       phpenv versions 2>/dev/null || log_info "phpenv versions command failed"
+      
+      # If PHP 8.3.22 shows as installed but binary doesn't exist, try reinstall
+      local version_dir="$HOME/.phpenv/versions/8.3.22"
+      if [[ -d "$version_dir" ]] && [[ ! -f "$version_dir/bin/php" ]]; then
+        log_warning "PHP 8.3.22 directory exists but binary missing. Installation may be incomplete."
+        log_info "Attempting to remove and reinstall PHP 8.3.22..."
+        
+        if command -v phpenv >/dev/null 2>&1; then
+          # Remove the broken installation
+          rm -rf "$version_dir"
+          log_info "Removed incomplete PHP 8.3.22 installation"
+          
+          # Try to reinstall
+          log_info "Reinstalling PHP 8.3.22..."
+          if phpenv install 8.3.22; then
+            phpenv global 8.3.22
+            phpenv rehash
+            log_success "PHP 8.3.22 reinstalled successfully"
+            
+            # Check again
+            if command -v php >/dev/null 2>&1; then
+              log_success "PHP command now available after reinstall"
+              return 0
+            fi
+          else
+            log_error "PHP 8.3.22 reinstallation failed"
+          fi
+        fi
+      fi
+      
       return 1
     else
       log_success "PHP command now available via manual shim"
@@ -365,11 +422,20 @@ setup_php_environment() {
   # Set PHPENV_ROOT first
   export PHPENV_ROOT="${PHPENV_ROOT:-$HOME/.phpenv}"
   
-  # Add phpenv to PATH and init for current session
-  export PATH="$HOME/.phpenv/bin:$PATH"
+  # Clean PATH to avoid duplicates
+  local clean_path=""
+  local phpenv_bin="$HOME/.phpenv/bin"
+  local phpenv_shims="$HOME/.phpenv/shims"
   
-  # Add shims directory to PATH manually
-  export PATH="$HOME/.phpenv/shims:$PATH"
+  # Remove existing phpenv paths from PATH
+  local temp_path="$PATH"
+  temp_path="${temp_path//:$phpenv_shims/}"
+  temp_path="${temp_path//:$phpenv_bin/}"
+  temp_path="${temp_path//^$phpenv_shims:/}"
+  temp_path="${temp_path//^$phpenv_bin:/}"
+  
+  # Add phpenv paths to the beginning
+  export PATH="$phpenv_shims:$phpenv_bin:$temp_path"
   
   # Initialize phpenv
   if command -v phpenv >/dev/null 2>&1; then
