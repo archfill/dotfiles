@@ -6,7 +6,7 @@ source "$(dirname "$0")/lib/common.sh"
 setup_error_handling
 
 # Use DOTFILES_DIR environment variable
-if [[ -z "$DOTFILES_DIR" ]]; then
+if [[ -z "${DOTFILES_DIR:-}" ]]; then
     DOTFILES_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
 fi
 
