@@ -111,22 +111,48 @@ install_ghq_binary_linux() {
             echo "$api_response" | grep -o '"name": "[^"]*"' | cut -d'"' -f4 | head -10
         fi
         
-        # Try to find the correct asset name from the release (tar.gz first)
-        asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.tar\.gz"' | cut -d'"' -f4 | head -1)
+        # Debug: Show what we're looking for
+        log_info "Looking for assets matching OS='$os' and ARCH='$arch'"
         
-        if [[ -z "$asset_name" ]]; then
-            # Try ZIP files
-            asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.zip"' | cut -d'"' -f4 | head -1)
-        fi
+        # Try to find the correct asset name from the release (more flexible patterns)
+        # First try exact pattern: ghq_linux_amd64.zip
+        log_info "Trying pattern: ghq_${os}_${arch}.zip"
+        asset_name=$(echo "$api_response" | grep -o '"name": "ghq_'"${os}"'_'"${arch}"'\.zip"' | cut -d'"' -f4 | head -1)
         
-        if [[ -z "$asset_name" ]]; then
-            # Try tar.xz files
-            asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.tar\.xz"' | cut -d'"' -f4 | head -1)
-        fi
-        
-        if [[ -z "$asset_name" ]]; then
-            # Try any archive with os and arch in name
-            asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*"' | grep -E '\.(tar\.gz|zip|tar\.xz)$' | cut -d'"' -f4 | head -1)
+        if [[ -n "$asset_name" ]]; then
+            log_info "Matched exact ZIP pattern: $asset_name"
+        else
+            log_info "No match for exact ZIP pattern, trying tar.gz..."
+            # Try tar.gz with same pattern
+            asset_name=$(echo "$api_response" | grep -o '"name": "ghq_'"${os}"'_'"${arch}"'\.tar\.gz"' | cut -d'"' -f4 | head -1)
+            
+            if [[ -n "$asset_name" ]]; then
+                log_info "Matched exact tar.gz pattern: $asset_name"
+            else
+                log_info "No match for exact tar.gz pattern, trying dash pattern..."
+                # Try with dashes: ghq-linux-amd64.zip
+                asset_name=$(echo "$api_response" | grep -o '"name": "ghq-'"${os}"'-'"${arch}"'\.zip"' | cut -d'"' -f4 | head -1)
+                
+                if [[ -n "$asset_name" ]]; then
+                    log_info "Matched dash ZIP pattern: $asset_name"
+                else
+                    log_info "No match for dash pattern, trying flexible pattern..."
+                    # Try any pattern with os and arch
+                    asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.zip"' | cut -d'"' -f4 | head -1)
+                    
+                    if [[ -n "$asset_name" ]]; then
+                        log_info "Matched flexible ZIP pattern: $asset_name"
+                    else
+                        log_info "No ZIP match, trying tar.gz flexible pattern..."
+                        # Try tar.gz versions
+                        asset_name=$(echo "$api_response" | grep -o '"name": "[^"]*'"${os}"'[^"]*'"${arch}"'[^"]*\.tar\.gz"' | cut -d'"' -f4 | head -1)
+                        
+                        if [[ -n "$asset_name" ]]; then
+                            log_info "Matched flexible tar.gz pattern: $asset_name"
+                        fi
+                    fi
+                fi
+            fi
         fi
     else
         log_warning "No API response available for asset detection"
