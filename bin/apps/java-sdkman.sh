@@ -36,6 +36,8 @@ install_sdkman() {
     # Set required environment variables before sourcing
     export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
     export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+    export ZSH_VERSION="${ZSH_VERSION:-}"
+    export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
     
     source "$HOME/.sdkman/bin/sdkman-init.sh"
   fi
@@ -58,6 +60,8 @@ install_java_lts() {
       # Set required environment variables before sourcing
       export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
       export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+      export ZSH_VERSION="${ZSH_VERSION:-}"
+      export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
       
       source "$HOME/.sdkman/bin/sdkman-init.sh"
     else
@@ -99,6 +103,8 @@ verify_java_installation() {
     # Set required environment variables before sourcing
     export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
     export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+    export ZSH_VERSION="${ZSH_VERSION:-}"
+    export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
     
     source "$HOME/.sdkman/bin/sdkman-init.sh"
   fi
@@ -132,6 +138,8 @@ setup_java_environment() {
     # Set required environment variables before sourcing
     export SDKMAN_CANDIDATES_API="${SDKMAN_CANDIDATES_API:-https://api.sdkman.io/2}"
     export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+    export ZSH_VERSION="${ZSH_VERSION:-}"
+    export BASH_VERSION="${BASH_VERSION:-$BASH_VERSION}"
     
     source "$HOME/.sdkman/bin/sdkman-init.sh"
     log_success "SDKMAN! environment loaded"
