@@ -7,6 +7,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 source "${SCRIPT_DIR}/config_loader.sh"
+source "${SCRIPT_DIR}/install_checker.sh"
 
 # アーカイブ展開の共通関数（unzip代替対応）
 extract_archive() {
@@ -42,7 +43,135 @@ extract_archive() {
 # フォント設定の構造体風定義
 declare -A FONT_CONFIGS
 
+# =============================================================================
+# フォント統一スキップロジック関数
+# =============================================================================
+
+# フォントインストールをスキップすべきか判定
+should_skip_font_install() {
+    # SKIP_FONT_INSTALL環境変数のチェック
+    if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then
+        log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
+        return 0
+    fi
+    
+    # 既存のSKIP_PACKAGE_INSTALLパターンとの互換性
+    if [[ "${SKIP_PACKAGE_INSTALL:-0}" == "1" ]]; then
+        log_info "Skipping font installation (SKIP_PACKAGE_INSTALL=1)"
+        return 0
+    fi
+    
+    # CI環境の自動検出
+    if [[ "${CI:-}" == "true" ]] || [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
+        log_info "Skipping font installation (CI environment detected)"
+        return 0
+    fi
+    
+    # QUICK_CHECKモードのチェック
+    if [[ "${QUICK_CHECK:-}" == "true" ]]; then
+        log_info "QUICK: Would install fonts"
+        return 0
+    fi
+    
+    return 1
+}
+
+# 特定フォントのインストール状態をチェック
+check_font_installed() {
+    local font_key="$1"
+    local font_info="${FONT_CONFIGS[$font_key]}"
+    local font_name=$(echo "$font_info" | cut -d'|' -f1)
+    
+    # プラットフォーム別フォントチェック
+    local platform
+    platform=$(detect_platform)
+    
+    case "$platform" in
+        "macos")
+            # macOS: システムフォントディレクトリでチェック
+            local font_dirs=(
+                "$HOME/Library/Fonts"
+                "/Library/Fonts"
+                "/System/Library/Fonts"
+            )
+            for font_dir in "${font_dirs[@]}"; do
+                if [[ -d "$font_dir" ]] && find "$font_dir" -name "*${font_name%% *}*" -type f >/dev/null 2>&1; then
+                    return 0
+                fi
+            done
+            ;;
+        "linux")
+            # Linux: fontconfigでチェック
+            if command -v fc-list >/dev/null 2>&1; then
+                if fc-list | grep -qi "${font_name%% *}"; then
+                    return 0
+                fi
+            fi
+            # フォールバック: フォントディレクトリでチェック
+            local font_dirs=(
+                "$HOME/.fonts"
+                "$HOME/.local/share/fonts"
+                "/usr/share/fonts"
+                "/usr/local/share/fonts"
+            )
+            for font_dir in "${font_dirs[@]}"; do
+                if [[ -d "$font_dir" ]] && find "$font_dir" -name "*${font_name%% *}*" -type f >/dev/null 2>&1; then
+                    return 0
+                fi
+            done
+            ;;
+    esac
+    
+    return 1
+}
+
+# フォント環境の包括的チェック
+check_font_environment() {
+    log_info "Checking font environment..."
+    
+    local platform
+    platform=$(detect_platform)
+    
+    case "$platform" in
+        "macos")
+            # macOSフォントディレクトリの確認
+            local font_dirs=("$HOME/Library/Fonts" "/Library/Fonts")
+            for font_dir in "${font_dirs[@]}"; do
+                if [[ -d "$font_dir" ]]; then
+                    local font_count
+                    font_count=$(find "$font_dir" -name "*.ttf" -o -name "*.otf" | wc -l)
+                    log_info "$font_dir: $font_count fonts"
+                fi
+            done
+            ;;
+        "linux")
+            # Linux fontconfigステータス
+            if command -v fc-list >/dev/null 2>&1; then
+                local font_count
+                font_count=$(fc-list | wc -l)
+                log_info "System fonts (fontconfig): $font_count"
+            fi
+            
+            # ユーザーフォントディレクトリ
+            local user_font_dirs=("$HOME/.fonts" "$HOME/.local/share/fonts")
+            for font_dir in "${user_font_dirs[@]}"; do
+                if [[ -d "$font_dir" ]]; then
+                    local font_count
+                    font_count=$(find "$font_dir" -name "*.ttf" -o -name "*.otf" 2>/dev/null | wc -l)
+                    log_info "$font_dir: $font_count fonts"
+                fi
+            done
+            ;;
+    esac
+    
+    log_success "Font environment check completed"
+    return 0
+}
+
+# =============================================================================
 # モダンな開発フォント定義
+# =============================================================================
+
 init_font_configs() {
     # Nerd Fonts系 - モダンで高機能
     FONT_CONFIGS["jetbrains-mono-nf"]="JetBrainsMono Nerd Font|yuru7/PlemolJP|font-jetbrains-mono-nerd-font|PlemolJP"
@@ -497,22 +626,46 @@ install_recommended_fonts() {
     
     local failed_count=0
     local success_count=0
+    local skipped_count=0
+    
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would install ${#fonts[@]} fonts for profile: $font_profile"
+        return 0
+    fi
     
     for font in "${fonts[@]}"; do
-        if install_font "$font"; then
-            success_count=$((success_count + 1))
+        # Check if font is already installed (skip logic)
+        if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
+            log_skip_reason "Font: $font" "Already installed"
+            ((skipped_count++))
+            continue
+        fi
+        
+        if [[ "$DRY_RUN" != "true" ]]; then
+            if install_font "$font"; then
+                success_count=$((success_count + 1))
+            else
+                failed_count=$((failed_count + 1))
+            fi
         else
-            failed_count=$((failed_count + 1))
+            log_info "[DRY RUN] Would install font: $font"
+            ((success_count++))
         fi
     done
     
-    log_info "Font installation completed: $success_count success, $failed_count failed"
+    # Enhanced summary with install_checker.sh integration
+    if [[ "$DRY_RUN" != "true" ]]; then
+        log_install_summary "$success_count" "$skipped_count" "$failed_count"
+    else
+        log_info "[DRY RUN] Font summary: $success_count would be installed, $skipped_count skipped"
+    fi
     
     if [[ $failed_count -eq 0 ]]; then
-        log_success "All recommended fonts installed successfully"
+        log_success "🎉 All recommended fonts processed successfully"
         return 0
     else
-        log_warning "Some fonts failed to install"
+        log_warning "⚠️  Some fonts failed to install. This may be normal for system-specific fonts."
         return 1
     fi
 }

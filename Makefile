@@ -202,15 +202,21 @@ backup: ## Create backup of current configuration
 
 # フォント管理コマンド
 fonts: ## Install recommended fonts for current platform
-	@echo "Installing recommended fonts..."
-	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts developer'
+	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
+		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
+	else \
+		echo "Installing recommended fonts..."; \
+		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts developer'; \
+	fi
 
 fonts-list: ## List available and installed fonts
 	@echo "Font installation status:"
 	@bash -c 'source ./bin/lib/font_manager.sh && list_installed_fonts'
 
 fonts-install: ## Install specific font (usage: make fonts-install FONT=font-name)
-	@if [ -z "$(FONT)" ]; then \
+	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
+		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
+	elif [ -z "$(FONT)" ]; then \
 		echo "Usage: make fonts-install FONT=<font-name>"; \
 		echo "Available fonts:"; \
 		bash -c 'source ./bin/lib/font_manager.sh && init_font_configs && for key in $${!FONT_CONFIGS[@]}; do echo "  $$key"; done | sort'; \
@@ -220,12 +226,20 @@ fonts-install: ## Install specific font (usage: make fonts-install FONT=font-nam
 	fi
 
 fonts-japanese: ## Install Japanese-focused font set
-	@echo "Installing Japanese font set..."
-	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts japanese'
+	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
+		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
+	else \
+		echo "Installing Japanese font set..."; \
+		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts japanese'; \
+	fi
 
 fonts-all: ## Install all available fonts
-	@echo "Installing all available fonts..."
-	@bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts all'
+	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
+		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
+	else \
+		echo "Installing all available fonts..."; \
+		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts all'; \
+	fi
 
 # ghq関連コマンド
 ghq-setup: ## Setup ghq for repository management
