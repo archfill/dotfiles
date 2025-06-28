@@ -54,7 +54,7 @@ install_linux_php_deps() {
         libpng-dev libjpeg-dev libfreetype6-dev \
         libzip-dev libonig-dev libsqlite3-dev \
         pkg-config autoconf bison re2c \
-        libreadline-dev libedit-dev
+        libreadline-dev libedit-dev libtidy-dev
       ;;
     arch)
       sudo pacman -Syu --needed --noconfirm \
@@ -63,7 +63,7 @@ install_linux_php_deps() {
         libpng libjpeg-turbo freetype2 \
         libzip oniguruma sqlite \
         pkgconf autoconf bison re2c \
-        readline libedit
+        readline libedit tidyhtml
       ;;
     fedora|centos|rhel)
       sudo yum groupinstall -y "Development Tools"
@@ -73,7 +73,7 @@ install_linux_php_deps() {
         libpng-devel libjpeg-devel freetype-devel \
         libzip-devel oniguruma-devel sqlite-devel \
         pkgconfig autoconf bison re2c \
-        readline-devel libedit-devel
+        readline-devel libedit-devel libtidy-devel
       ;;
     *)
       log_warning "Unknown Linux distribution: $distro"
@@ -99,7 +99,7 @@ install_macos_php_deps() {
     libpng jpeg freetype \
     libzip oniguruma sqlite \
     pkg-config autoconf bison re2c \
-    readline libedit
+    readline libedit tidy-html5
   
   log_success "macOS PHP dependencies installed"
 }
@@ -159,28 +159,26 @@ install_php_build() {
 # Get latest PHP 8.3 version
 get_php_version() {
   local php_major_minor="${PHP_VERSION:-8.3}"
-  
-  log_info "Determining latest PHP $php_major_minor version..."
-  
-  # Use a known stable version to avoid phpenv list issues
   local fallback_version="8.3.22"
+  
+  log_info "Determining latest PHP $php_major_minor version..." >&2
   
   # Try to get available versions if phpenv is available
   if command -v phpenv >/dev/null 2>&1; then
     local latest_version
     latest_version=$(phpenv install --list 2>/dev/null | \
       grep -E "^[[:space:]]*${php_major_minor}\.[0-9]+$" | \
-      tail -1 | tr -d '[:space:]' 2>/dev/null || echo "")
+      tail -1 | tr -d '[:space:]' 2>/dev/null)
     
     if [[ -n "$latest_version" && "$latest_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-      log_success "Found latest PHP $php_major_minor: $latest_version"
+      log_success "Found latest PHP $php_major_minor: $latest_version" >&2
       echo "$latest_version"
       return 0
     fi
   fi
   
   # Use fallback version
-  log_success "Found latest PHP $php_major_minor: $fallback_version"
+  log_success "Found latest PHP $php_major_minor: $fallback_version" >&2
   echo "$fallback_version"
 }
 
