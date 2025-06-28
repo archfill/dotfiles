@@ -49,11 +49,24 @@ install_ghq() {
 
 # Function to install ghq binary on Linux-like systems
 install_ghq_binary_linux() {
-    local ghq_version="v1.4.2"  # Latest stable version
+    local ghq_version
     local arch
     local os
     local download_url
     local install_dir="$HOME/.local/bin"
+    
+    # Get latest version from GitHub API
+    log_info "Fetching latest ghq version from GitHub..."
+    ghq_version=$(curl -s --connect-timeout 10 "https://api.github.com/repos/x-motemen/ghq/releases/latest" 2>/dev/null | \
+        grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 2>/dev/null)
+    
+    if [[ -z "$ghq_version" ]]; then
+        # Fallback to known version
+        ghq_version="v1.6.2"
+        log_info "API fetch failed, using fallback version: $ghq_version"
+    else
+        log_info "Latest ghq version: $ghq_version"
+    fi
     
     # Detect architecture
     case "$(uname -m)" in
@@ -85,14 +98,50 @@ install_ghq_binary_linux() {
     # Create install directory
     mkdir -p "$install_dir"
     
-    # Download and install
-    if curl -fsSL "$download_url" | tar -xz -C "$install_dir" --strip-components=1 ghq_${os}_${arch}/ghq; then
-        chmod +x "$install_dir/ghq"
-        log_success "ghq binary installed to $install_dir/ghq"
+    # Download and extract
+    local temp_file
+    temp_file=$(mktemp)
+    
+    if curl -fsSL "$download_url" -o "$temp_file"; then
+        # Verify the downloaded file
+        if file "$temp_file" | grep -q "gzip compressed"; then
+            # Extract ghq binary
+            if tar -xzf "$temp_file" -C "$install_dir" --strip-components=1 --wildcards "*/ghq" 2>/dev/null; then
+                chmod +x "$install_dir/ghq"
+                log_success "ghq binary installed to $install_dir/ghq"
+            else
+                # Try alternative extraction method
+                local temp_dir
+                temp_dir=$(mktemp -d)
+                tar -xzf "$temp_file" -C "$temp_dir"
+                
+                # Find ghq binary
+                local ghq_binary
+                ghq_binary=$(find "$temp_dir" -name "ghq" -type f | head -1)
+                
+                if [[ -n "$ghq_binary" ]]; then
+                    cp "$ghq_binary" "$install_dir/ghq"
+                    chmod +x "$install_dir/ghq"
+                    log_success "ghq binary installed to $install_dir/ghq"
+                else
+                    log_error "ghq binary not found in archive"
+                    rm -rf "$temp_dir"
+                    exit 1
+                fi
+                
+                rm -rf "$temp_dir"
+            fi
+        else
+            log_error "Downloaded file is not a valid gzip archive"
+            head -n 5 "$temp_file"
+            exit 1
+        fi
     else
-        log_error "Failed to download and install ghq binary"
+        log_error "Failed to download ghq from: $download_url"
         exit 1
     fi
+    
+    rm -f "$temp_file"
 }
 
 # Function to setup ghq configuration
