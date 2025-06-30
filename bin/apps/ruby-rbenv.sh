@@ -176,20 +176,22 @@ check_ruby_project_management() {
         # Test bundler in a temporary environment
         local temp_dir
         temp_dir=$(mktemp -d)
-        cd "$temp_dir"
         
-        cat > Gemfile << 'EOF'
+        (
+            cd "$temp_dir" || return 1
+            
+            cat > Gemfile << 'EOF'
 source 'https://rubygems.org'
 gem 'json'
 EOF
+            
+            if bundle check --dry-run >/dev/null 2>&1; then
+                log_success "Bundler dependency resolution working"
+            else
+                log_info "Bundler needs gem installation for dependency resolution"
+            fi
+        )
         
-        if bundle check --dry-run >/dev/null 2>&1; then
-            log_success "Bundler dependency resolution working"
-        else
-            log_info "Bundler needs gem installation for dependency resolution"
-        fi
-        
-        cd - >/dev/null
         rm -rf "$temp_dir"
     else
         log_warning "Bundler not available"
@@ -473,7 +475,7 @@ install_rbenv() {
   
   if [[ -d "$rbenv_dir" ]]; then
     log_info "rbenv directory exists, updating..."
-    cd "$rbenv_dir" && git pull
+    (cd "$rbenv_dir" && git pull) || log_warning "Failed to update rbenv, but continuing..."
   else
     log_info "Cloning rbenv..."
     git clone https://github.com/rbenv/rbenv.git "$rbenv_dir"
@@ -501,7 +503,7 @@ install_ruby_build() {
   
   if [[ -d "$ruby_build_dir" ]]; then
     log_info "ruby-build already exists, updating..."
-    cd "$ruby_build_dir" && git pull
+    (cd "$ruby_build_dir" && git pull) || log_warning "Failed to update ruby-build, but continuing..."
   else
     log_info "Cloning ruby-build..."
     git clone https://github.com/rbenv/ruby-build.git "$ruby_build_dir"
@@ -740,22 +742,26 @@ setup_ruby_development() {
   local test_dir="$HOME/tmp/ruby-test"
   if [[ ! -d "$test_dir" ]]; then
     mkdir -p "$test_dir"
-    cd "$test_dir"
     
-    cat > Gemfile << 'EOF'
+    (
+      cd "$test_dir" || return 1
+      
+      cat > Gemfile << 'EOF'
 source 'https://rubygems.org'
 
 gem 'rake'
 gem 'rspec'
 EOF
-    
-    if command -v bundle >/dev/null 2>&1; then
-      bundle install --quiet >/dev/null 2>&1
-      if [[ -f "Gemfile.lock" ]]; then
-        log_success "Bundler working correctly"
-        rm -rf "$test_dir"
+      
+      if command -v bundle >/dev/null 2>&1; then
+        bundle install --quiet >/dev/null 2>&1
+        if [[ -f "Gemfile.lock" ]]; then
+          log_success "Bundler working correctly"
+        fi
       fi
-    fi
+    )
+    
+    rm -rf "$test_dir"
   fi
 }
 

@@ -832,28 +832,12 @@ setup_flutter_environment() {
   
   # Setup shell integration
   local shell_rc
-  case "$SHELL" in
-    */zsh)
-      shell_rc="$HOME/.zshrc"
-      ;;
-    */bash)
-      shell_rc="$HOME/.bashrc"
-      ;;
-    *)
-      shell_rc="$HOME/.profile"
-      ;;
-  esac
-  
-  if [[ -f "$shell_rc" ]]; then
-    # Add FVM and pub-cache to shell profile if not already present
-    if ! grep -q "fvm/default/bin" "$shell_rc" 2>/dev/null; then
-      echo 'export PATH="$HOME/fvm/default/bin:$PATH"' >> "$shell_rc"
-    fi
-    if ! grep -q ".pub-cache/bin" "$shell_rc" 2>/dev/null; then
-      echo 'export PATH="$HOME/.pub-cache/bin:$PATH"' >> "$shell_rc"
-    fi
-    log_info "Updated shell profile: $shell_rc"
-  fi
+  # シェル設定ファイルへの自動PATH追加を無効化
+  # ユーザーが手動で設定する必要があります
+  log_info "Flutter setup completed. Manual shell configuration required:"
+  log_info "  Add the following to your shell profile (~/.bashrc, ~/.zshrc, etc.):"
+  log_info "    export PATH=\"\$HOME/fvm/default/bin:\$PATH\"      # FVM Flutter"
+  log_info "    export PATH=\"\$HOME/.pub-cache/bin:\$PATH\"       # Dart pub cache"
 }
 
 # Show Flutter information

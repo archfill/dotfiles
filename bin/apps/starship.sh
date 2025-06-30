@@ -193,7 +193,7 @@ analyze_starship_configuration() {
     local enabled_modules=0
     for module in "${common_modules[@]}"; do
         if grep -q "^\[$module\]" "$config_file" 2>/dev/null; then
-            ((enabled_modules++))
+            enabled_modules=$((enabled_modules + 1))
         fi
     done
     

@@ -33,23 +33,12 @@ setup_volta_environment() {
     export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
     export PATH="$VOLTA_HOME/bin:$PATH"
     
-    # シェル設定ファイルに追加（bashrcやzshrcに既に記載済みか確認）
-    local shell_config=""
-    if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
-        shell_config="$HOME/.bashrc"
-    elif [[ -n "$ZSH_VERSION" && -f "$HOME/.zshrc" ]]; then
-        shell_config="$HOME/.zshrc"
-    fi
-    
-    if [[ -n "$shell_config" ]] && ! grep -q "VOLTA_HOME" "$shell_config" 2>/dev/null; then
-        log_info "Adding Volta environment to $shell_config"
-        {
-            echo ""
-            echo "# Volta configuration"
-            echo "export VOLTA_HOME=\"\$HOME/.volta\""
-            echo "export PATH=\"\$VOLTA_HOME/bin:\$PATH\""
-        } >> "$shell_config"
-    fi
+    # シェル設定ファイルへの自動追加を無効化
+    # ユーザーが手動で設定する必要があります
+    log_info "Volta installation completed. Manual shell configuration required:"
+    log_info "  Add the following to your shell profile (~/.bashrc, ~/.zshrc, etc.):"
+    log_info "    export VOLTA_HOME=\"\$HOME/.volta\""
+    log_info "    export PATH=\"\$VOLTA_HOME/bin:\$PATH\""
 }
 
 # Voltaをインストール
