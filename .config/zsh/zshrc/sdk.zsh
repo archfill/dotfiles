@@ -103,27 +103,21 @@ fi
 # Note: Go environment variables and PATH are now configured in ~/.config/zsh/.zprofile
 # This ensures they are available in both interactive and non-interactive shells
 
-# ===== PHP (phpenv) - Optimized =====
-init_env_var "PHPENV_ROOT" "$HOME/.phpenv"
+# ===== PHP (APT installed) - Optimized =====
+# PHP is now installed via APT package manager instead of phpenv
+# Composer global packages PATH setup
+setup_php_composer_path() {
+  # Standard Composer global bin path
+  local composer_bin_path="$HOME/.composer/vendor/bin"
+  [[ -d "$composer_bin_path" ]] && add_to_path "$composer_bin_path"
+  
+  # Alternative Composer global path
+  local composer_global_path="$HOME/.config/composer/vendor/bin"
+  [[ -d "$composer_global_path" ]] && add_to_path "$composer_global_path"
+}
 
-# Initialize phpenv if available (optimized)
-if dir_exists "$PHPENV_ROOT"; then
-  add_to_path "$PHPENV_ROOT/bin"
-  add_to_path "$PHPENV_ROOT/shims"
-  
-  # Initialize phpenv (with error handling)
-  exec_if_command phpenv eval "$(phpenv init -)" 2>/dev/null || true
-  
-  # Ensure Composer global packages are in PATH
-  if command_exists phpenv && command_exists php; then
-    local composer_bin_path="$(php -r 'echo $_SERVER["HOME"];' 2>/dev/null)/.composer/vendor/bin"
-    [[ -d "$composer_bin_path" ]] && add_to_path "$composer_bin_path"
-    
-    # Alternative Composer global path
-    local composer_global_path="$HOME/.config/composer/vendor/bin"
-    [[ -d "$composer_global_path" ]] && add_to_path "$composer_global_path"
-  fi
-fi
+# Setup Composer paths if PHP is available
+command_exists php && setup_php_composer_path
 
 # ===== Ruby (rbenv) - Optimized =====
 init_env_var "RBENV_ROOT" "$HOME/.rbenv"
@@ -293,7 +287,7 @@ function sdk_status() {
   # PHP (optimized)
   if command_exists php; then
     echo "✅ PHP: $(php --version | head -1)"
-    command_exists phpenv && echo "   Manager: phpenv $(phpenv --version)"
+    echo "   Installation: APT package manager"
     command_exists composer && echo "   Composer: $(composer --version --no-ansi | head -1)"
   else
     echo "❌ PHP: Not installed"
@@ -373,7 +367,7 @@ function sdk_versions() {
 # SDK management aliases
 alias sdk-status='sdk_status'
 alias sdk-versions='sdk_versions'
-alias sdk-paths='echo "JAVA_HOME: ${JAVA_HOME:-Not set}"; echo "CARGO_HOME: ${CARGO_HOME:-Not set}"; echo "GOPATH: ${GOPATH:-Not set}"; echo "GOROOT: ${GOROOT:-Not set}"; echo "FLUTTER_ROOT: ${FLUTTER_ROOT:-Not set}"; echo "RBENV_ROOT: ${RBENV_ROOT:-Not set}"; echo "PHPENV_ROOT: ${PHPENV_ROOT:-Not set}"; echo "TF_PLUGIN_CACHE_DIR: ${TF_PLUGIN_CACHE_DIR:-Not set}"; echo "DOCKER_CONFIG: ${DOCKER_CONFIG:-Not set}"'
+alias sdk-paths='echo "JAVA_HOME: ${JAVA_HOME:-Not set}"; echo "CARGO_HOME: ${CARGO_HOME:-Not set}"; echo "GOPATH: ${GOPATH:-Not set}"; echo "GOROOT: ${GOROOT:-Not set}"; echo "FLUTTER_ROOT: ${FLUTTER_ROOT:-Not set}"; echo "RBENV_ROOT: ${RBENV_ROOT:-Not set}"; echo "TF_PLUGIN_CACHE_DIR: ${TF_PLUGIN_CACHE_DIR:-Not set}"; echo "DOCKER_CONFIG: ${DOCKER_CONFIG:-Not set}"'
 
 # Performance optimization aliases
 alias perf-cache-clear='clear_performance_cache'

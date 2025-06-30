@@ -421,9 +421,9 @@ go-setup: ## Install Go latest via g version manager
 	@echo "Installing Go latest via g version manager..."
 	@bash ./bin/apps/go-g.sh
 
-php-setup: ## Install PHP 8.3 via phpenv
-	@echo "Installing PHP 8.3 via phpenv..."
-	@bash ./bin/apps/php-phpenv.sh
+php-setup: ## Install PHP 8.3 via APT package manager
+	@echo "Installing PHP 8.3 via APT package manager..."
+	@bash ./bin/apps/php-apt.sh
 
 ruby-setup: ## Install Ruby 3.2 via rbenv
 	@echo "Installing Ruby 3.2 via rbenv..."

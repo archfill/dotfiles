@@ -92,7 +92,7 @@ check_tmux_plugin_status() {
     
     if [[ ! -d "$plugins_dir" ]]; then
         log_info "Tmux plugins directory does not exist"
-        return 1
+        return 0
     fi
     
     # Count installed plugins
@@ -298,7 +298,7 @@ install_essential_tmux_plugins() {
         # Skip if plugin is already installed and not forcing
         if [[ "$FORCE_INSTALL" != "true" ]] && [[ -d "$plugin_dir" ]]; then
             log_skip_reason "$(basename "$plugin_name")" "Already installed"
-            ((skipped_count++))
+            skipped_count=$((skipped_count + 1))
             continue
         fi
         
@@ -307,13 +307,13 @@ install_essential_tmux_plugins() {
         if [[ "$DRY_RUN" != "true" ]]; then
             if git clone "https://github.com/$plugin_name" "$plugin_dir" >/dev/null 2>&1; then
                 log_success "Installed plugin: $(basename "$plugin_name")"
-                ((installed_count++))
+                installed_count=$((installed_count + 1))
             else
                 log_warning "Failed to install plugin: $(basename "$plugin_name")"
             fi
         else
             log_info "[DRY RUN] Would install plugin: $(basename "$plugin_name")"
-            ((installed_count++))
+            installed_count=$((installed_count + 1))
         fi
     done
     
@@ -356,7 +356,7 @@ optimize_tmux_plugin_management() {
                 
                 if git pull origin master >/dev/null 2>&1 || git pull origin main >/dev/null 2>&1; then
                     log_info "Updated plugin: $plugin_name"
-                    ((updated_count++))
+                    updated_count=$((updated_count + 1))
                 else
                     log_warning "Failed to update plugin: $plugin_name"
                 fi
@@ -390,7 +390,7 @@ optimize_tmux_plugin_management() {
                 # Check if plugin is declared in tmux.conf
                 if ! grep -q "@plugin.*$plugin_name" "$tmux_config" 2>/dev/null; then
                     log_info "Found potentially unused plugin: $plugin_name"
-                    ((unused_count++))
+                    unused_count=$((unused_count + 1))
                 fi
             fi
         done
@@ -419,7 +419,7 @@ main() {
         log_info "tmux is installed, checking plugins and environment..."
         
         # Perform comprehensive environment check
-        check_tmux_comprehensive_environment
+        check_tmux_comprehensive_environment || log_info "Environment check completed with some issues"
         
         # Install/update TPM
         install_tpm "$@"
