@@ -45,6 +45,26 @@ M.default_keybinds = {
 	-- Window management
 	{ key = "Enter", mods = osKey, action = "ToggleFullScreen" },
 	{ key = "F11", mods = "NONE", action = "ToggleFullScreen" },
+	-- Tab operations (unified for all platforms)
+	{ key = "LeftArrow", mods = osKey, action = act.ActivateTabRelative(-1) },
+	{ key = "RightArrow", mods = osKey, action = act.ActivateTabRelative(1) },
+	{ key = "t", mods = osKey, action = act.SpawnTab("CurrentPaneDomain") },
+	{ key = "w", mods = osKey, action = act.CloseCurrentTab({ confirm = false }) },
+	-- Tab direct access with numbers
+	{ key = "1", mods = osKey, action = act.ActivateTab(0) },
+	{ key = "2", mods = osKey, action = act.ActivateTab(1) },
+	{ key = "3", mods = osKey, action = act.ActivateTab(2) },
+	{ key = "4", mods = osKey, action = act.ActivateTab(3) },
+	{ key = "5", mods = osKey, action = act.ActivateTab(4) },
+	{ key = "6", mods = osKey, action = act.ActivateTab(5) },
+	{ key = "7", mods = osKey, action = act.ActivateTab(6) },
+	{ key = "8", mods = osKey, action = act.ActivateTab(7) },
+	{ key = "9", mods = osKey, action = act.ActivateTab(8) },
+	-- Advanced tab management
+	{ key = "LeftArrow", mods = osKey .. "|SHIFT", action = act.MoveTabRelative(-1) },
+	{ key = "RightArrow", mods = osKey .. "|SHIFT", action = act.MoveTabRelative(1) },
+	{ key = "LeftArrow", mods = osKey .. "|ALT", action = act.ActivateTab(0) },
+	{ key = "RightArrow", mods = osKey .. "|ALT", action = act.ActivateTab(-1) },
 }
 
 function M.create_keybinds()

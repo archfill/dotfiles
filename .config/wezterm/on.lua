@@ -1,31 +1,45 @@
 local wezterm = require("wezterm")
 local utils = require("utils")
 local keybinds = require("keybinds")
-local scheme = wezterm.get_builtin_color_schemes()["nightfox"]
+local scheme = wezterm.get_builtin_color_schemes()["Catppuccin Mocha"]
 local act = wezterm.action
 local mux = wezterm.mux
 
 local function create_tab_title(tab, tabs, panes, config, hover, max_width)
+	-- タブ番号を表示
+	local tab_index = tab.tab_index + 1
+	
+	-- ユーザー定義のタイトルがある場合
 	local user_title = tab.active_pane.user_vars.panetitle
 	if user_title ~= nil and #user_title > 0 then
-		return tab.tab_index + 1 .. ":" .. user_title
+		return tab_index .. ":" .. user_title
 	end
-	-- pane:get_foreground_process_info().status
 
-	local title = wezterm.truncate_right(utils.basename(tab.active_pane.foreground_process_name), max_width)
-	if title == "" then
+	-- プロセス名を取得
+	local process_name = utils.basename(tab.active_pane.foreground_process_name or "")
+	
+	-- プロセス名がない場合、ディレクトリ名を使用
+	if process_name == "" then
 		local dir = string.gsub(tab.active_pane.title, "(.*[: ])(.*)]", "%2")
 		dir = utils.convert_useful_path(dir)
-		title = wezterm.truncate_right(dir, max_width)
+		process_name = wezterm.truncate_right(dir, max_width - 3)
+	else
+		process_name = wezterm.truncate_right(process_name, max_width - 3)
 	end
 
+	-- コピーモード等の特殊状態を検出
 	local copy_mode, n = string.gsub(tab.active_pane.title, "(.+) mode: .*", "%1", 1)
-	if copy_mode == nil or n == 0 then
-		copy_mode = ""
-	else
-		copy_mode = copy_mode .. ": "
+	if copy_mode ~= nil and n > 0 then
+		return copy_mode .. " " .. tab_index .. ":" .. process_name
 	end
-	return copy_mode .. tab.tab_index + 1 .. ":" .. title
+	
+	-- SSH接続の場合、ホスト名を表示
+	local domain_name = tab.active_pane.domain_name
+	if domain_name ~= "local" and domain_name ~= nil then
+		return tab_index .. ":" .. domain_name .. "/" .. process_name
+	end
+	
+	return tab_index .. ":" .. process_name
 end
 
 ---------------------------------------------------------------
@@ -39,35 +53,62 @@ end)
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
 	local title = create_tab_title(tab, tabs, panes, config, hover, max_width)
 
-	local solid_left_arrow = utf8.char(0x2590)
-	local solid_right_arrow = utf8.char(0x258c)
-	-- https://github.com/wez/wezterm/issues/807
-	-- local edge_background = scheme.background
-	-- https://github.com/wez/wezterm/blob/61f01f6ed75a04d40af9ea49aa0afe91f08cb6bd/config/src/color.rs#L245
-	local edge_background = "#2e3440"
-	local background = scheme.ansi[1]
-	local foreground = scheme.ansi[5]
+	-- Catppuccin Mocha colors
+	local colors = {
+		base = "#1e1e2e",
+		mantle = "#181825", 
+		crust = "#11111b",
+		text = "#cdd6f4",
+		subtext1 = "#bac2de",
+		subtext0 = "#a6adc8",
+		overlay2 = "#9399b2",
+		overlay1 = "#7f849c",
+		overlay0 = "#6c7086",
+		surface2 = "#585b70",
+		surface1 = "#45475a",
+		surface0 = "#313244",
+		blue = "#89b4fa",
+		sapphire = "#74c7ec",
+		sky = "#89dceb",
+		teal = "#94e2d5",
+		green = "#a6e3a1",
+		yellow = "#f9e2af",
+		peach = "#fab387",
+		maroon = "#eba0ac",
+		red = "#f38ba8",
+		mauve = "#cba6f7",
+		pink = "#f5c2e7",
+		flamingo = "#f2cdcd",
+		rosewater = "#f5e0dc",
+	}
+
+	-- Tab formatting with modern rounded corners
+	local left_arrow = utf8.char(0xe0b6)
+	local right_arrow = utf8.char(0xe0b4)
+	
+	local background = colors.surface0
+	local foreground = colors.subtext1
+	local edge_background = colors.crust
 
 	if tab.is_active then
-		background = scheme.brights[1]
-		foreground = scheme.brights[8]
+		background = colors.blue
+		foreground = colors.crust
 	elseif hover then
-		background = scheme.cursor_bg
-		foreground = scheme.cursor_fg
+		background = colors.surface1
+		foreground = colors.text
 	end
-	local edge_foreground = background
 
 	return {
-		{ Attribute = { Intensity = "Bold" } },
+		{ Attribute = { Intensity = tab.is_active and "Bold" or "Normal" } },
 		{ Background = { Color = edge_background } },
-		{ Foreground = { Color = edge_foreground } },
-		{ Text = solid_left_arrow },
+		{ Foreground = { Color = background } },
+		{ Text = left_arrow },
 		{ Background = { Color = background } },
 		{ Foreground = { Color = foreground } },
-		{ Text = title },
+		{ Text = " " .. title .. " " },
 		{ Background = { Color = edge_background } },
-		{ Foreground = { Color = edge_foreground } },
-		{ Text = solid_right_arrow },
+		{ Foreground = { Color = background } },
+		{ Text = right_arrow },
 		{ Attribute = { Intensity = "Normal" } },
 	}
 end)

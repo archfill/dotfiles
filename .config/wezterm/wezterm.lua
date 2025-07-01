@@ -64,17 +64,119 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	end
 
 	LOCAL_CONFIG = load_local_config("local")
+	
+	-- Wayland-specific optimizations
+	if enable_wayland() then
+		local wayland_env = detect_wayland_environment()
+		
+		-- GPU acceleration optimizations for Wayland
+		LOCAL_CONFIG.front_end = "WebGpu"
+		LOCAL_CONFIG.webgpu_power_preference = "HighPerformance"
+		LOCAL_CONFIG.webgpu_preferred_adapter = {
+			backend = "Vulkan",  -- Most stable on Wayland
+			device_type = "DiscreteGpu"
+		}
+		
+		-- Wayland-specific rendering settings
+		LOCAL_CONFIG.prefer_egl = true
+		LOCAL_CONFIG.enable_wayland = true
+		
+		-- IME optimizations for Wayland
+		LOCAL_CONFIG.ime_preedit_rendering = "Builtin"  -- Better for Wayland
+		LOCAL_CONFIG.use_dead_keys = false  -- Improve IME responsiveness
+		
+		-- Detect Japanese IME systems
+		local ime_programs = { "fcitx", "fcitx5", "ibus", "mozc" }
+		for _, ime in ipairs(ime_programs) do
+			local handle = io.popen("pgrep " .. ime .. " 2>/dev/null")
+			if handle then
+				local result = handle:read("*l")
+				handle:close()
+				if result and result ~= "" then
+					-- Found IME, set specific optimizations
+					LOCAL_CONFIG.xim_im_name = ime
+					if ime == "fcitx5" then
+						LOCAL_CONFIG.bypass_mouse_reporting_modifiers = "SHIFT"
+					end
+					break
+				end
+			end
+		end
+		
+		-- Fractional scaling and font rendering optimizations
+		LOCAL_CONFIG.dpi = nil  -- Auto-detect DPI
+		LOCAL_CONFIG.allow_square_glyphs_to_overflow_width = "WhenFollowedBySpace"
+		LOCAL_CONFIG.custom_block_glyphs = false
+		
+		-- Enhanced font rendering for Wayland
+		LOCAL_CONFIG.freetype_load_flags = "NO_HINTING"
+		LOCAL_CONFIG.freetype_load_target = "Normal"
+		LOCAL_CONFIG.freetype_render_target = "Normal"
+		LOCAL_CONFIG.font_shaper = "Harfbuzz"  -- Recommended for Wayland
+		
+		-- High DPI optimizations
+		LOCAL_CONFIG.assume_emoji_presentation = true
+		LOCAL_CONFIG.warn_about_missing_glyphs = false
+		
+		-- Performance optimizations for Wayland
+		LOCAL_CONFIG.animation_fps = 60
+		LOCAL_CONFIG.max_fps = 60
+		LOCAL_CONFIG.cursor_blink_rate = 500  -- Lighter for Wayland
+		LOCAL_CONFIG.cursor_thickness = 1.0
+		
+		-- Memory optimizations
+		LOCAL_CONFIG.scrollback_lines = 5000  -- Reduced for Wayland performance
+		
+		-- Input optimizations
+		LOCAL_CONFIG.enable_csi_u_key_encoding = false  -- Disabled for Wayland stability
+		LOCAL_CONFIG.send_composed_key_when_left_alt_is_pressed = false
+		LOCAL_CONFIG.mouse_wheel_scrolls_tabs = false
+		LOCAL_CONFIG.enable_scroll_bar = false
+		
+		-- Compositor-specific optimizations
+		if wayland_env.is_sway then
+			-- Sway optimizations
+			LOCAL_CONFIG.window_background_opacity = 0.95
+		elseif wayland_env.is_gnome then
+			-- GNOME Shell optimizations
+			LOCAL_CONFIG.integrated_title_button_style = "Gnome"
+		elseif wayland_env.is_kde then
+			-- KDE Plasma optimizations
+			LOCAL_CONFIG.integrated_title_button_style = "Windows"
+		elseif wayland_env.is_hyprland then
+			-- Hyprland optimizations
+			LOCAL_CONFIG.window_background_opacity = 0.90
+		end
+	end
 end
 
 ---------------------------------------------------------------
 --- functions
 ---------------------------------------------------------------
+local function detect_wayland_environment()
+	local session_type = os.getenv("XDG_SESSION_TYPE")
+	local wayland_display = os.getenv("WAYLAND_DISPLAY")
+	local compositor = os.getenv("XDG_CURRENT_DESKTOP")
+	local session_desktop = os.getenv("XDG_SESSION_DESKTOP")
+	
+	local is_wayland = session_type == "wayland" or wayland_display ~= nil
+	
+	return {
+		is_wayland = is_wayland,
+		session_type = session_type,
+		display = wayland_display,
+		compositor = compositor,
+		session_desktop = session_desktop,
+		-- 詳細なコンポジター検出
+		is_sway = compositor == "sway" or session_desktop == "sway",
+		is_gnome = compositor == "GNOME" or string.find(compositor or "", "gnome"),
+		is_kde = compositor == "KDE" or string.find(compositor or "", "plasma"),
+		is_hyprland = compositor == "Hyprland" or session_desktop == "Hyprland",
+	}
+end
+
 local function enable_wayland()
-	local wayland = os.getenv("XDG_SESSION_TYPE")
-	if wayland == "wayland" then
-		return true
-	end
-	return false
+	return detect_wayland_environment().is_wayland
 end
 
 ---------------------------------------------------------------
@@ -120,6 +222,10 @@ local config = {
 	cursor_blink_ease_out = "EaseOut",
 	cursor_blink_rate = 800,
 	enable_wayland = enable_wayland(),
+	-- Enhanced IME support for all platforms
+	use_ime = true,
+	-- Wayland-specific IME improvements  
+	wayland_enable_ime = true,
 	-- https://github.com/wez/wezterm/issues/1772
 	-- enable_wayland = false,
 	-- Modern color scheme
@@ -135,7 +241,8 @@ local config = {
 	},
 	use_fancy_tab_bar = true,
 	tab_bar_at_bottom = false,
-	show_new_tab_button_in_tab_bar = false,
+	show_new_tab_button_in_tab_bar = true,
+	new_tab_hover_bg_color = "#45475A",
 	colors = {
 		-- Modern color overrides for Catppuccin Mocha
 		foreground = "#CDD6F4",
@@ -175,25 +282,32 @@ local config = {
 				bg_color = "#89B4FA",
 				fg_color = "#1E1E2E",
 				intensity = "Bold",
+				italic = false,
 			},
 			inactive_tab = {
 				bg_color = "#313244",
 				fg_color = "#CDD6F4",
+				intensity = "Normal",
+				italic = false,
 			},
 			inactive_tab_hover = {
 				bg_color = "#45475A",
 				fg_color = "#CDD6F4",
 				intensity = "Bold",
+				italic = false,
 			},
 			new_tab = {
 				bg_color = "#313244",
 				fg_color = "#CDD6F4",
+				intensity = "Normal",
 			},
 			new_tab_hover = {
 				bg_color = "#45475A",
 				fg_color = "#CDD6F4",
 				intensity = "Bold",
 			},
+			-- Enhanced tab bar styling
+			inactive_tab_edge = "#585B70",
 		},
 	},
 	-- exit_behavior = "CloseOnCleanExit",
@@ -232,9 +346,11 @@ local config = {
 	-- webgpu_preferred_adapter = gpus[1],
 	-- front_end = "WebGpu",
 	default_prog = DEFAULT_PROG,
-	-- Disable built-in multiplexer to use tmux
+	-- Enhanced tab bar configuration
 	enable_tab_bar = true,
-	hide_tab_bar_if_only_one_tab = true,
+	hide_tab_bar_if_only_one_tab = false,
+	show_tab_index_in_tab_bar = true,
+	tab_max_width = 32,
 	unix_domains = {},
 	-- Disable multiplexing completely
 	mux_server_port = nil,

@@ -46,6 +46,7 @@ install_common_packages_debian() {
           vim \
           silversearcher-ag \
           ripgrep \
+          fzf \
           fontconfig \
           curl \
           unzip \
@@ -124,6 +125,7 @@ install_common_packages_arch() {
         if command -v yay >/dev/null 2>&1; then
             yay -Syu --noconfirm \
               ripgrep \
+              fzf \
               wget \
               unzip \
               p7zip \
@@ -144,6 +146,7 @@ install_common_packages_arch() {
             log_warning "yay not available, using pacman for basic packages"
             sudo pacman -Syu --noconfirm \
               ripgrep \
+              fzf \
               wget \
               unzip \
               p7zip \
@@ -159,6 +162,51 @@ install_common_packages_arch() {
 
     # Install uv using common library
     install_uv "$@"
+}
+
+# Install bun JavaScript runtime
+install_bun() {
+    log_info "Installing bun JavaScript runtime..."
+    
+    # Check if already installed
+    if command -v bun >/dev/null 2>&1; then
+        local current_version=$(bun --version 2>/dev/null || echo "unknown")
+        log_info "bun already installed: $current_version"
+        return 0
+    fi
+    
+    # Parse command line options
+    parse_install_options "$@"
+    
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would install bun"
+        return 0
+    fi
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Install bun using official install script
+        if command -v curl >/dev/null 2>&1; then
+            log_info "Installing bun via official install script..."
+            curl -fsSL https://bun.sh/install | bash
+            
+            # Add to current session PATH
+            if [[ -d "$HOME/.bun/bin" ]]; then
+                export PATH="$HOME/.bun/bin:$PATH"
+                log_success "bun installed successfully"
+                log_info "bun version: $(bun --version 2>/dev/null || echo 'unknown')"
+                log_info "Add to your shell profile: export PATH=\"\$HOME/.bun/bin:\$PATH\""
+            else
+                log_error "bun installation failed"
+                return 1
+            fi
+        else
+            log_error "curl not found. Please install curl first."
+            return 1
+        fi
+    else
+        log_info "[DRY RUN] Would install bun via official script"
+    fi
 }
 
 # Main installation function
@@ -185,6 +233,9 @@ main() {
         log_warning "Unsupported distribution: ${distro}"
         ;;
     esac
+    
+    # Install bun for all distributions
+    install_bun "$@"
     
     log_success "Linux configuration completed!"
     

@@ -82,6 +82,7 @@ dev_apps=(
   'uv'
   'volta'
   'deno'
+  'bun'
   'go'
   'openjdk'
   'openjdk@11'
