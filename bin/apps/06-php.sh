@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# PHP SDK installation script using APT (Ubuntu/Debian)
-# This script installs PHP 8.3 LTS version via package manager
+# PHP SDK installation script
+# This script installs PHP via package manager with multi-distribution support
 
 # Load shared libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,7 +20,7 @@ setup_error_handling
 # Load configuration
 load_config
 
-log_info "Starting PHP SDK setup via APT package manager..."
+log_info "Starting PHP SDK setup..."
 
 # =============================================================================
 # PHP Environment Checking and Management Functions
@@ -35,12 +35,12 @@ check_php_status() {
         php_version=$(php --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
         log_info "Current PHP version: $php_version"
         
-        # Check if it's the desired version (8.3.x)
-        if [[ "$php_version" =~ ^8\.3\. ]]; then
-            log_success "PHP 8.3.x is already installed"
+        # Check if it's PHP 8.x (accept any 8.x version)
+        if [[ "$php_version" =~ ^8\. ]]; then
+            log_success "PHP 8.x is already installed"
             return 0
         else
-            log_info "Different PHP version detected, will install PHP 8.3"
+            log_info "Different PHP version detected, will install latest PHP"
             return 1
         fi
     else
@@ -64,22 +64,22 @@ check_composer_status() {
     fi
 }
 
-# Install PHP 8.3 via APT
-install_php_apt() {
-    log_info "Installing PHP 8.3 via APT..."
+# Install PHP via package manager
+install_php_package_manager() {
+    log_info "Installing PHP via package manager..."
     
     # Parse command line options
     parse_install_options "$@"
     
     # Quick check mode
     if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install PHP 8.3 via APT"
+        log_info "QUICK: Would install PHP"
         return 0
     fi
     
-    # Check if PHP 8.3 should be skipped
+    # Check if PHP should be skipped
     if [[ "$FORCE_INSTALL" != "true" ]] && check_php_status; then
-        log_skip_reason "PHP 8.3" "Already installed with correct version"
+        log_skip_reason "PHP" "Already installed with correct version"
         return 0
     fi
     
@@ -88,13 +88,37 @@ install_php_apt() {
     platform=$(detect_platform)
     
     if [[ "$platform" != "linux" ]]; then
-        log_error "This script is designed for Linux (Ubuntu/Debian) only"
+        log_error "This script is designed for Linux only"
         return 1
     fi
     
-    # Check if we're on Ubuntu/Debian
+    # Detect distribution and install accordingly
+    local distro
+    distro=$(get_os_distribution)
+    
+    case "$distro" in
+        debian|ubuntu)
+            install_php_debian_ubuntu "$@"
+            ;;
+        arch)
+            install_php_arch "$@"
+            ;;
+        fedora|centos|rhel)
+            install_php_rhel_fedora "$@"
+            ;;
+        *)
+            log_error "Unsupported distribution: $distro"
+            return 1
+            ;;
+    esac
+}
+
+# Install PHP on Debian/Ubuntu
+install_php_debian_ubuntu() {
+    log_info "Installing PHP on Debian/Ubuntu..."
+    
     if ! command -v apt >/dev/null 2>&1; then
-        log_error "APT package manager not found. This script requires Ubuntu/Debian."
+        log_error "APT package manager not found"
         return 1
     fi
     
@@ -135,6 +159,120 @@ install_php_apt() {
     fi
 }
 
+# Install PHP on Arch Linux
+install_php_arch() {
+    log_info "Installing PHP on Arch Linux..."
+    
+    if ! command -v pacman >/dev/null 2>&1; then
+        log_error "pacman package manager not found"
+        return 1
+    fi
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Update package database
+        log_info "Updating package database..."
+        sudo pacman -Sy
+        
+        # Install PHP and essential extensions
+        log_info "Installing PHP and essential extensions..."
+        local php_packages=(
+            "php"
+            "php-gd"
+            "php-sqlite"
+            "php-sodium"
+            "php-apcu"
+            "php-cgi"
+            "php-fpm"
+            "php-embed"
+            "php-enchant"
+            "php-snmp"
+            "php-tidy"
+            "php-xsl"
+        )
+        
+        # Install packages individually to handle any missing packages gracefully
+        local failed_packages=()
+        for package in "${php_packages[@]}"; do
+            if pacman -Si "$package" >/dev/null 2>&1; then
+                if ! sudo pacman -S --noconfirm --needed "$package"; then
+                    failed_packages+=("$package")
+                fi
+            else
+                log_warning "Package $package not available, skipping"
+            fi
+        done
+        
+        if [[ ${#failed_packages[@]} -gt 0 ]]; then
+            log_warning "Failed to install packages: ${failed_packages[*]}"
+        fi
+        
+        # Enable essential PHP extensions
+        log_info "Enabling PHP extensions..."
+        local php_ini="/etc/php/php.ini"
+        if [[ -f "$php_ini" ]]; then
+            # Enable commonly used extensions
+            sudo sed -i 's/^;extension=bcmath/extension=bcmath/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=bz2/extension=bz2/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=curl/extension=curl/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=gd/extension=gd/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=intl/extension=intl/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=mysqli/extension=mysqli/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=pdo_mysql/extension=pdo_mysql/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=pdo_sqlite/extension=pdo_sqlite/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=soap/extension=soap/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=sqlite3/extension=sqlite3/' "$php_ini" 2>/dev/null || true
+            sudo sed -i 's/^;extension=zip/extension=zip/' "$php_ini" 2>/dev/null || true
+        fi
+        
+        log_success "PHP installed successfully via pacman"
+    else
+        log_info "[DRY RUN] Would install PHP via pacman"
+    fi
+}
+
+# Install PHP on RHEL/Fedora/CentOS
+install_php_rhel_fedora() {
+    log_info "Installing PHP on RHEL/Fedora/CentOS..."
+    
+    local pkg_manager="dnf"
+    if ! command -v dnf >/dev/null 2>&1; then
+        if command -v yum >/dev/null 2>&1; then
+            pkg_manager="yum"
+        else
+            log_error "Neither dnf nor yum package manager found"
+            return 1
+        fi
+    fi
+    
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Update package database
+        log_info "Updating package database..."
+        sudo $pkg_manager update -y
+        
+        # Install PHP and essential extensions
+        log_info "Installing PHP and essential extensions..."
+        sudo $pkg_manager install -y \
+            php \
+            php-cli \
+            php-common \
+            php-gd \
+            php-intl \
+            php-mbstring \
+            php-mysqlnd \
+            php-opcache \
+            php-pdo \
+            php-xml \
+            php-zip \
+            php-bcmath \
+            php-json \
+            php-process
+        
+        log_success "PHP installed successfully via $pkg_manager"
+    else
+        log_info "[DRY RUN] Would install PHP via $pkg_manager"
+    fi
+}
+
 # Install Composer globally
 install_composer() {
     log_info "Installing Composer..."
@@ -154,35 +292,44 @@ install_composer() {
         return 0
     fi
     
-    # Verify PHP is available
-    if ! command -v php >/dev/null 2>&1; then
+    # Verify PHP is available (skip in dry run mode)
+    if [[ "$DRY_RUN" != "true" ]] && ! command -v php >/dev/null 2>&1; then
         log_error "PHP is required but not found. Please install PHP first."
         return 1
     fi
     
     if [[ "$DRY_RUN" != "true" ]]; then
-        # Download and install Composer using official installer
-        log_info "Downloading Composer installer..."
-        curl -sS https://getcomposer.org/installer | php -- --quiet --install-dir=/tmp
+        # Check if composer is available via package manager (Arch Linux)
+        local distro
+        distro=$(get_os_distribution)
         
-        if [[ -f "/tmp/composer.phar" ]]; then
-            # Make Composer globally available
-            sudo mv /tmp/composer.phar /usr/local/bin/composer
-            sudo chmod +x /usr/local/bin/composer
+        if [[ "$distro" == "arch" ]] && pacman -Si composer &>/dev/null; then
+            log_info "Installing Composer via pacman..."
+            sudo pacman -S --noconfirm --needed composer
+        else
+            # Download and install Composer using official installer
+            log_info "Downloading Composer installer..."
+            curl -sS https://getcomposer.org/installer | php -- --quiet --install-dir=/tmp
             
-            # Verify installation
-            if command -v composer >/dev/null 2>&1; then
-                log_success "Composer installed successfully"
+            if [[ -f "/tmp/composer.phar" ]]; then
+                # Make Composer globally available
+                sudo mv /tmp/composer.phar /usr/local/bin/composer
+                sudo chmod +x /usr/local/bin/composer
             else
-                log_error "Composer installation verification failed"
+                log_error "Composer download failed"
                 return 1
             fi
+        fi
+        
+        # Verify installation
+        if command -v composer >/dev/null 2>&1; then
+            log_success "Composer installed successfully"
         else
-            log_error "Composer download failed"
+            log_error "Composer installation verification failed"
             return 1
         fi
     else
-        log_info "[DRY RUN] Would install Composer globally"
+        log_info "[DRY RUN] Would install Composer"
     fi
 }
 
@@ -277,23 +424,16 @@ cleanup_phpenv() {
         log_success "phpenv directory removed"
     fi
     
-    # Remove phpenv from shell profiles
-    local shell_files=("$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile")
-    for shell_file in "${shell_files[@]}"; do
-        if [[ -f "$shell_file" ]]; then
-            # Remove phpenv-related lines
-            sed -i '/phpenv/d' "$shell_file" 2>/dev/null || true
-            sed -i '/\.phpenv/d' "$shell_file" 2>/dev/null || true
-        fi
-    done
+    # Note: Not modifying shell configuration files per CLAUDE.md rules
+    log_info "Note: Please manually remove any phpenv references from your shell configuration files"
     
     log_info "phpenv cleanup completed"
 }
 
 # Main installation function
 main() {
-    log_info "PHP SDK Setup via APT Package Manager"
-    log_info "====================================="
+    log_info "PHP SDK Setup"
+    log_info "============="
     
     # Set PAGER environment variable to avoid SDKMAN issues
     export PAGER="${PAGER:-cat}"
@@ -302,7 +442,7 @@ main() {
     parse_install_options "$@"
     
     # Check if PHP installation should be skipped
-    if should_skip_installation_advanced "PHP" "php" "8.3" "--version"; then
+    if should_skip_installation_advanced "PHP" "php" "8" "--version"; then
         log_info "PHP is already installed, checking Composer and tools..."
         
         # Install/update Composer
@@ -320,10 +460,10 @@ main() {
         return 0
     fi
     
-    log_info "Installing PHP 8.3 via APT package manager..."
+    log_info "Installing PHP via package manager..."
     
-    # Install PHP via APT
-    install_php_apt "$@"
+    # Install PHP via package manager
+    install_php_package_manager "$@"
     
     # Install Composer
     install_composer "$@"
