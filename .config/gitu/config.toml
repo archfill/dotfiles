@@ -1,0 +1,79 @@
+# gitu configuration file
+# A TUI Git client inspired by Magit
+# Documentation: https://github.com/altsem/gitu
+
+[general]
+# Always show help panel for easier navigation
+always_show_help.enabled = true
+
+# Disable quit confirmation for faster workflow
+confirm_quit.enabled = false
+
+# Automatically refresh when files change
+refresh_on_file_change.enabled = true
+
+# Confirm discard operations for safety (options: "line", "file", "disabled")
+confirm_discard = "line"
+
+# Collapsed sections (customize as needed)
+collapsed_sections = []
+
+[style]
+# Section headers in repository view
+section_header = { fg = "yellow", mods = "BOLD" }
+
+# File headers in diff view
+file_header = { fg = "magenta", mods = "BOLD" }
+
+# Hunk headers in diff view
+hunk_header = { fg = "blue", mods = "BOLD" }
+
+# Diff highlighting for better readability
+diff_highlight = {
+    tag_old = { fg = "red", mods = "BOLD" },
+    tag_new = { fg = "green", mods = "BOLD" },
+    unchanged_old = { mods = "DIM" },
+    unchanged_new = { mods = "DIM" },
+    changed_old = { fg = "red" },
+    changed_new = { fg = "green" }
+}
+
+# Syntax highlighting for code files
+syntax_highlight = {
+    enabled = true
+    attribute = { fg = "yellow" }
+    comment = { fg = "gray", mods = "ITALIC" }
+    function_builtin = { fg = "cyan", mods = "BOLD" }
+    function = { fg = "blue" }
+    keyword = { fg = "magenta", mods = "BOLD" }
+    module = { fg = "cyan" }
+    string_special = { fg = "yellow" }
+    string = { fg = "yellow" }
+    type = { fg = "yellow" }
+    type_builtin = { fg = "yellow", mods = "BOLD" }
+}
+
+# Cursor appearance
+cursor = { symbol = "▌", fg = "blue" }
+
+# Selection styling
+selection_bar = { symbol = "▌", fg = "blue", mods = "DIM" }
+selection_line = { mods = "BOLD" }
+selection_area = {}
+
+# Git object styling
+hash = { fg = "yellow" }
+branch = { fg = "green", mods = "BOLD" }
+remote = { fg = "red", mods = "BOLD" }
+tag = { fg = "yellow", mods = "BOLD" }
+
+# Command interface styling
+command = { fg = "blue", mods = "BOLD" }
+active_arg = { fg = "light red", mods = "BOLD" }
+hotkey = { fg = "magenta", mods = "BOLD" }
+
+# Additional styling for Japanese text support
+# These settings ensure good readability in Japanese terminals
+[style.japanese]
+# Optimized for Japanese terminal environments
+# Using colors that work well with common Japanese fonts

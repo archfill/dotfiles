@@ -42,7 +42,7 @@ make help     # 全コマンド表示
 - **Neovim**: `.config/nvim/` - 50+ プラグイン、LSP サポート
 - **Zsh**: `.config/zsh/` - 最適化シェル、補完機能
 - **ターミナル**: `.config/wezterm/` - モダンターミナル設定
-- **Git**: グローバル git 設定、lazygit 統合
+- **Git**: グローバル git 設定、lazygit/gitu TUI 統合
 
 ## 🌍 プラットフォーム対応
 
@@ -71,7 +71,7 @@ make help     # 全コマンド表示
 ### 開発環境
 - **エディタ**: Neovim（LSP、補完、デバッグ）
 - **ターミナル**: WezTerm（カスタムテーマ、SSH 統合）
-- **Git**: 高度設定、lazygit インターフェース
+- **Git**: 高度設定、lazygit/gitu TUI インターフェース
 - **コンテナ**: Docker、Docker Compose セットアップ
 - **モバイル**: Flutter、FVM バージョン管理
 

@@ -93,6 +93,7 @@ dev_apps=(
 utils_apps=(
   'ghq'
   'lazygit'
+  'gitu'
   'direnv'
   'the_silver_searcher'
   'awscli'

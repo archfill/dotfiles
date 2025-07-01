@@ -138,6 +138,7 @@ install_common_packages_arch() {
               zsh \
               tmux \
               lazygit \
+              gitu \
               luarocks \
               lua51 \
               bottom \
@@ -154,7 +155,9 @@ install_common_packages_arch() {
               fontconfig \
               vim \
               zsh \
-              tmux
+              tmux \
+              lazygit \
+              gitu
         fi
     else
         log_info "[DRY RUN] Would install Arch Linux packages via yay/pacman"

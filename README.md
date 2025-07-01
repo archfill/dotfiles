@@ -42,7 +42,7 @@ make help     # Show all commands
 - **Neovim**: `.config/nvim/` - 50+ plugins with LSP support
 - **Zsh**: `.config/zsh/` - Optimized shell with completions
 - **Terminal**: `.config/wezterm/` - Modern terminal configuration
-- **Git**: Global git settings and lazygit integration
+- **Git**: Global git settings and lazygit/gitu TUI integration
 
 ## 🌍 Platform Support
 
@@ -71,7 +71,7 @@ make help     # Show all commands
 ### Development Environment
 - **Editor**: Neovim with LSP, completion, and debugging
 - **Terminal**: WezTerm with custom themes and SSH integration
-- **Git**: Advanced configurations with lazygit interface
+- **Git**: Advanced configurations with lazygit/gitu TUI interface
 - **Containers**: Docker and Docker Compose setup
 - **Mobile**: Flutter with FVM version management
 
