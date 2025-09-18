@@ -3,7 +3,7 @@ local wezterm = require("wezterm")
 local utils = require("utils")
 local keybinds = require("keybinds")
 local scheme = wezterm.get_builtin_color_schemes()["nightfox"]
--- local gpus = wezterm.gui.enumerate_gpus()
+local gpus = wezterm.gui.enumerate_gpus()
 require("on")
 
 -- /etc/ssh/sshd_config
@@ -18,14 +18,87 @@ require("on")
 --- target_triple
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   -- Configs for Windows only
-  -- font_dirs = {
-  --     'C:\\Users\\whoami\\.dotfiles\\.fonts'
-  -- }
-  --DEFAULT_PROG = {'wsl.exe', '~', '-d', 'Ubuntu'}
-  DEFAULT_PROG = {'wsl.exe', '~', '-d', 'Arch'}
+  font_dirs = {
+    'C:\\Windows\\Fonts',
+    'C:\\Users\\' .. os.getenv("USERNAME") .. '\\AppData\\Local\\Microsoft\\Windows\\Fonts',
+    'C:\\Users\\' .. os.getenv("USERNAME") .. '\\.dotfiles\\.fonts'
+  }
+
+  -- WSL自動検出とデフォルト設定（改善版）
+  local function get_wsl_default()
+    -- まず標準的なWSLコマンドでデフォルトディストリビューションを確認
+    local handle = io.popen('wsl --status 2>nul')
+    if handle then
+      handle:close()
+    end
+
+    -- 利用可能なディストリビューション一覧を取得
+    local distro_handle = io.popen('wsl --list --quiet 2>nul')
+    if distro_handle then
+      local result = distro_handle:read('*a')
+      distro_handle:close()
+
+      if result and result ~= '' then
+        -- BOMや特殊文字を除去し、クリーンアップ
+        result = result:gsub('\239\187\191', '') -- UTF-8 BOM除去
+        result = result:gsub('\0', '') -- NULL文字除去
+
+        local distros = {}
+        for line in result:gmatch('[^\r\n]+') do
+          local clean_line = line:gsub('^%s*', ''):gsub('%s*$', '') -- 前後の空白除去
+          if clean_line and clean_line ~= '' then
+            -- デフォルトマーク(*)を除去してディストリビューション名を取得
+            local distro_name = clean_line:gsub('^%*%s*', ''):gsub('%s.*$', '')
+            if distro_name and distro_name ~= '' then
+              table.insert(distros, distro_name)
+            end
+          end
+        end
+
+        -- 利用可能なディストリビューションがある場合
+        if #distros > 0 then
+          -- 優先順位：Arch > Ubuntu > その他の最初のもの
+          for _, distro in ipairs(distros) do
+            if distro:lower():find('arch') then
+              return {'wsl.exe', '-d', distro}
+            end
+          end
+          for _, distro in ipairs(distros) do
+            if distro:lower():find('ubuntu') then
+              return {'wsl.exe', '-d', distro}
+            end
+          end
+          -- どちらもない場合は最初のディストリビューション
+          return {'wsl.exe', '-d', distros[1]}
+        end
+      end
+    end
+
+    -- WSLが利用できない場合の最終フォールバック
+    return {'cmd.exe'}
+  end
+
+  DEFAULT_PROG = get_wsl_default()
   FONT_SIZE = 12.0
 
-	LOCAL_CONFIG = {}
+	-- Windows固有のローカル設定
+	LOCAL_CONFIG = {
+		-- Windows Terminal統合最適化
+		win32_system_backdrop = "Auto",
+		-- IME設定強化
+		ime_preedit_rendering = "System",
+		-- Windows固有のキーバインド
+		send_composed_key_when_left_alt_is_pressed = false,
+		send_composed_key_when_right_alt_is_pressed = true,
+		-- Windows GPU最適化設定
+		webgpu_preferred_adapter = gpus and gpus[1] or nil,
+		front_end = "WebGpu",
+		-- Windows最適化：DirectWriteレンダリング
+		freetype_load_target = "Normal",
+		freetype_render_target = "Normal",
+		-- WSLエラー対応：プロセス終了動作の最適化
+		exit_behavior = "Close",
+	}
 end
 
 if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "aarch64-apple-darwin" then
@@ -201,17 +274,19 @@ local config = {
 	-- window_close_confirmation = "AlwaysPrompt",
 	window_background_opacity = 0.95,
 	macos_window_background_blur = 30,
-	-- Modern window decorations
+	-- Windows最適化：ウィンドウ装飾
 	window_decorations = "TITLE | RESIZE",
 	window_close_confirmation = "NeverPrompt",
-	-- Smooth animations
-	animation_fps = 60,
-	max_fps = 60,
+	-- 全OS共通：パフォーマンス設定
+	animation_fps = 120,
+	max_fps = 120,
+	-- 全OS共通：スクロールパフォーマンス
+	scrollback_lines = 10000,
 	-- Additional modern effects
 	text_background_opacity = 1.0,
 	-- Enable ligatures and advanced font features
 	harfbuzz_features = { "calt=1", "clig=1", "liga=1" },
-	-- Improved text rendering
+	-- フォントレンダリング（macOS/Linux用デフォルト）
 	freetype_load_target = "HorizontalLcd",
 	freetype_render_target = "HorizontalLcd",
 	disable_default_key_bindings = true,
@@ -228,8 +303,8 @@ local config = {
 	keys = keybinds.create_keybinds(),
 	key_tables = keybinds.key_tables,
 	mouse_bindings = keybinds.mouse_bindings,
-	-- https://github.com/wez/wezterm/issues/2756
-	-- webgpu_preferred_adapter = gpus[1],
+	-- GPU設定（デフォルト無効、OS別で最適化）
+	-- webgpu_preferred_adapter = gpus and gpus[1] or nil,
 	-- front_end = "WebGpu",
 	default_prog = DEFAULT_PROG,
 	-- Disable built-in multiplexer to use tmux
