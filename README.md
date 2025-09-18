@@ -46,12 +46,26 @@ make help     # Show all commands
 
 ## 🌍 Platform Support
 
-| Platform | Package Manager | Window Manager |
-|----------|----------------|----------------|
-| macOS    | Homebrew       | yabai/skhd     |
-| Linux    | apt/pacman/dnf | i3/polybar     |
-| Windows  | Cygwin         | Native         |
-| Android  | Termux         | Native         |
+| Platform | Package Manager | Window Manager | Special Features |
+|----------|----------------|----------------|------------------|
+| macOS    | Homebrew       | yabai/skhd     | Unified setup    |
+| Linux    | apt/pacman/dnf | i3/polybar     | Systemd services |
+| Windows  | Scoop/WSL      | Native         | WSL2 config management |
+| Android  | Termux         | Native         | Mobile optimization |
+
+### Windows WSL Configuration
+
+For Windows users, this repository includes WSL2 configuration management:
+
+```bash
+# Setup Windows dotfiles (requires Administrator privileges)
+make windows-setup
+
+# Check Windows dotfiles status
+make windows-status
+```
+
+The `windows/.wslconfig` file is automatically symlinked to manage WSL2 performance settings.
 
 ## 🇯🇵 Japanese Features
 

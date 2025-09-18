@@ -98,6 +98,14 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 		freetype_render_target = "Normal",
 		-- WSLエラー対応：プロセス終了動作の最適化
 		exit_behavior = "Close",
+		-- WSL最適化設定
+		allow_win32_input_mode = true,
+		-- WSL環境での入力遅延削減
+		canonicalize_pasted_newlines = "None",
+		-- WSL用ターミナル設定
+		term = "xterm-256color",
+		-- WSL環境でのスクロール最適化
+		alternate_buffer_wheel_scroll_speed = 3,
 	}
 end
 
@@ -118,6 +126,9 @@ if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "a
 	end
 
 	LOCAL_CONFIG = load_local_config("local")
+	-- macOS用フォントレンダリング最適化
+	LOCAL_CONFIG.freetype_load_target = "HorizontalLcd"
+	LOCAL_CONFIG.freetype_render_target = "HorizontalLcd"
 end
 
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
@@ -137,6 +148,9 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	end
 
 	LOCAL_CONFIG = load_local_config("local")
+	-- Linux用フォントレンダリング最適化
+	LOCAL_CONFIG.freetype_load_target = "HorizontalLcd"
+	LOCAL_CONFIG.freetype_render_target = "HorizontalLcd"
 end
 
 ---------------------------------------------------------------
@@ -185,14 +199,11 @@ local config = {
 	-- ime_preedit_rendering = "System",
 	use_dead_keys = false,
 	warn_about_missing_glyphs = false,
-	-- enable_kitty_graphics = false,
-	-- animation_fps = 1,
 	-- Modern cursor
 	default_cursor_style = "BlinkingBlock",
 	cursor_blink_ease_in = "EaseIn",
 	cursor_blink_ease_out = "EaseOut",
 	cursor_blink_rate = 800,
-	enable_wayland = enable_wayland(),
 	-- https://github.com/wez/wezterm/issues/1772
 	-- enable_wayland = false,
 	-- Modern color scheme
@@ -274,7 +285,7 @@ local config = {
 	-- window_close_confirmation = "AlwaysPrompt",
 	window_background_opacity = 0.95,
 	macos_window_background_blur = 30,
-	-- Windows最適化：ウィンドウ装飾
+	-- ウィンドウ装飾（OS別で上書き）
 	window_decorations = "TITLE | RESIZE",
 	window_close_confirmation = "NeverPrompt",
 	-- 全OS共通：パフォーマンス設定
@@ -282,13 +293,18 @@ local config = {
 	max_fps = 120,
 	-- 全OS共通：スクロールパフォーマンス
 	scrollback_lines = 10000,
+	-- 入力遅延最適化：最小限の効果的設定
+	native_macos_fullscreen_mode = false,
+	automatically_reload_config = false,
+	-- 最も効果的な入力最適化
+	skip_close_confirmation_for_processes_named = {"nvim", "vim", "nano"},
+	-- レンダリング最適化
+	enable_kitty_graphics = false,
+	enable_wayland = enable_wayland(),
 	-- Additional modern effects
 	text_background_opacity = 1.0,
 	-- Enable ligatures and advanced font features
 	harfbuzz_features = { "calt=1", "clig=1", "liga=1" },
-	-- フォントレンダリング（macOS/Linux用デフォルト）
-	freetype_load_target = "HorizontalLcd",
-	freetype_render_target = "HorizontalLcd",
 	disable_default_key_bindings = true,
 	-- visual_bell = {
 	-- 	fade_in_function = "EaseIn",

@@ -1,0 +1,36 @@
+[wsl2]
+# WSL2パフォーマンス最適化設定
+
+# メモリ設定（システムRAMの75%程度に設定）
+memory=12GB
+
+# CPU設定（利用可能なコア数に設定）
+processors=8
+
+# スワップ設定
+swap=4GB
+
+# ネットワーク最適化
+localhostForwarding=true
+
+# GUI最適化
+guiApplications=true
+
+# 実験的機能
+sparseVhd=true
+
+# ネットワークパフォーマンス向上
+networkingMode=mirrored
+firewall=true
+
+# DNS最適化
+dnsTunneling=true
+
+# I/O最適化
+autoProxy=true
+
+# ページファイル最適化
+pageReporting=true
+
+# メモリ回収最適化
+vmIdleTimeout=60000
