@@ -156,7 +156,9 @@ source_if_exists ~/.fzf.zsh
 
 # uv - unified Python package manager (optimized)
 # Note: Cargo bin path is already added above in rust configuration
-exec_if_command uv eval "$(uv generate-shell-completion zsh)" 2>/dev/null || true
+if command_exists uv; then
+  eval "$(uv generate-shell-completion zsh)" 2>/dev/null || true
+fi
 
 # kubectl completion - conditional with error handling
 exec_if_command kubectl '[[ "$commands[kubectl]" ]] && source <(kubectl completion zsh)' 2>/dev/null || true

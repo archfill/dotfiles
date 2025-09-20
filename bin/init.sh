@@ -27,7 +27,7 @@ log_info "Detected OS: $OS_NAME"
 
 case "$OS_NAME" in
   Darwin)
-    local install_mode="${DOTFILES_INSTALL_MODE:-full}"
+    install_mode="${DOTFILES_INSTALL_MODE:-full}"
     log_info "macOS setup starting (mode: $install_mode)"
     run "bin/mac/link.sh"
     
@@ -38,7 +38,12 @@ case "$OS_NAME" in
       
       # Install fonts for essential and full modes
       if [[ "$install_mode" != "minimal" ]] && [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-        run "bin/mac/fonts_setup.sh"
+        log_info "Starting font installation with timeout..."
+        if timeout 300 bash bin/mac/fonts_setup.sh; then
+          log_success "Font installation completed successfully"
+        else
+          log_warning "Font installation timed out or failed (continuing with setup)"
+        fi
       elif [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then
         log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
       fi
@@ -53,7 +58,12 @@ case "$OS_NAME" in
     log_info "Linux setup starting"
     run "bin/linux/install_linux.sh"
     if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-      run "bin/linux/apps/fonts_setup.sh"
+      log_info "Starting font installation with timeout..."
+      if timeout 300 bash bin/linux/apps/fonts_setup.sh; then
+        log_success "Font installation completed successfully"
+      else
+        log_warning "Font installation timed out or failed (continuing with setup)"
+      fi
     else
       log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
     fi

@@ -161,7 +161,7 @@ main() {
     parse_install_options "$@"
     
     # Check if Homebrew installation should be skipped entirely
-    if should_skip_installation_simple "Homebrew packages" "brew"; then
+    if should_skip_installation "Homebrew packages" "brew"; then
         log_info "Homebrew packages installation skipped"
         return 0
     fi
@@ -201,9 +201,6 @@ main() {
     log_info "  brew install --cask <app>  # Install GUI app"
     log_info "  brew list --cask           # List installed GUI apps"
 }
-
-# Run main function
-main "$@"
 
 # Add homebrew taps with enhanced options
 add_homebrew_taps() {
@@ -340,4 +337,7 @@ install_homebrew_packages() {
         log_success "🎉 All packages processed successfully!"
     fi
 }
+
+# Run main function
+main "$@"
 

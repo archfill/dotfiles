@@ -45,25 +45,98 @@ main() {
         log_warning "Some fonts in developer profile failed to install"
     fi
     
-    # 追加で日本語フォントも必要な場合はUDEV Gothicを追加
-    log_info "Installing additional Japanese font..."
-    local udev_success=0
-    local udev_failed=0
-    local udev_skipped=0
-    
-    if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "udev-gothic"; then
-        log_skip_reason "Font: udev-gothic" "Already installed"
-        udev_skipped=1
-    elif [[ "$DRY_RUN" != "true" ]]; then
-        if install_font "udev-gothic" "$@"; then
-            udev_success=1
-        else
-            udev_failed=1
+    # 追加で日本語フォントセットをインストール
+    log_info "Installing additional Japanese fonts..."
+    local japanese_fonts=("udev-gothic" "cica")
+    local japanese_success=0
+    local japanese_failed=0
+    local japanese_skipped=0
+
+    for font in "${japanese_fonts[@]}"; do
+        if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
+            log_skip_reason "Font: $font" "Already installed"
+            ((japanese_skipped++))
+            continue
         fi
-    else
-        log_info "[DRY RUN] Would install font: udev-gothic"
-        udev_success=1
-    fi
+
+        if [[ "$DRY_RUN" != "true" ]]; then
+            log_info "Attempting to install font via Linux font manager: $font"
+
+            # Linux用の統一フォントマネージャーをタイムアウト付きで使用
+            if timeout 180 install_font "$font" 2>/dev/null; then
+                log_success "Font installed successfully: $font"
+                ((japanese_success++))
+            else
+                log_warning "Font installation failed or timed out: $font"
+                ((japanese_failed++))
+            fi
+        else
+            log_info "[DRY RUN] Would install font: $font"
+            ((japanese_success++))
+        fi
+    done
+
+    # 2024-2025年人気フォントをインストール
+    log_info "Installing 2024-2025 popular programming fonts..."
+    local popular_fonts=("cascadia-code" "jetbrains-mono")
+    local popular_success=0
+    local popular_failed=0
+    local popular_skipped=0
+
+    for font in "${popular_fonts[@]}"; do
+        if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
+            log_skip_reason "Font: $font" "Already installed"
+            ((popular_skipped++))
+            continue
+        fi
+
+        if [[ "$DRY_RUN" != "true" ]]; then
+            log_info "Attempting to install popular font via Linux font manager: $font"
+
+            # Linux用の統一フォントマネージャーをタイムアウト付きで使用
+            if timeout 180 install_font "$font" 2>/dev/null; then
+                log_success "Font installed successfully: $font"
+                ((popular_success++))
+            else
+                log_warning "Font installation failed or timed out: $font"
+                ((popular_failed++))
+            fi
+        else
+            log_info "[DRY RUN] Would install popular font: $font"
+            ((popular_success++))
+        fi
+    done
+
+    # クラシックフォントも必要な場合
+    log_info "Installing classic development fonts..."
+    local classic_fonts=("fira-code" "source-code-pro")
+    local classic_success=0
+    local classic_failed=0
+    local classic_skipped=0
+
+    for font in "${classic_fonts[@]}"; do
+        if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
+            log_skip_reason "Font: $font" "Already installed"
+            ((classic_skipped++))
+            continue
+        fi
+
+        if [[ "$DRY_RUN" != "true" ]]; then
+            log_info "Attempting to install font via Linux font manager: $font"
+
+            # Linux用の統一フォントマネージャーをタイムアウト付きで使用
+            if timeout 180 install_font "$font" 2>/dev/null; then
+                log_success "Font installed successfully: $font"
+                ((classic_success++))
+            else
+                log_warning "Font installation failed or timed out: $font"
+                ((classic_failed++))
+            fi
+        else
+            log_info "[DRY RUN] Would install font: $font"
+            ((classic_success++))
+        fi
+    done
     
     # インストール状況の確認
     if [[ "$DRY_RUN" != "true" ]] && [[ "$QUICK_CHECK" != "true" ]]; then
@@ -79,15 +152,19 @@ main() {
     fi
     
     # Summary for additional fonts
+    local total_success=$((japanese_success + popular_success + classic_success))
+    local total_skipped=$((japanese_skipped + popular_skipped + classic_skipped))
+    local total_failed=$((japanese_failed + popular_failed + classic_failed))
+
     if [[ "$DRY_RUN" != "true" ]]; then
-        log_install_summary "$udev_success" "$udev_skipped" "$udev_failed"
+        log_install_summary "$total_success" "$total_skipped" "$total_failed"
     else
-        log_info "[DRY RUN] Additional font summary: $udev_success would be installed, $udev_skipped skipped"
+        log_info "[DRY RUN] Total summary: $total_success would be installed, $total_skipped skipped"
     fi
     
     log_success "Linux font setup completed!"
     
-    if [[ "$DRY_RUN" != "true" ]] && [[ $udev_success -gt 0 ]]; then
+    if [[ "$DRY_RUN" != "true" ]] && [[ $total_success -gt 0 ]]; then
         log_info "Please restart applications to see new fonts"
     fi
     

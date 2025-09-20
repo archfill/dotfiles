@@ -37,17 +37,10 @@ main() {
     # Check font environment
     check_font_environment
     
-    # Homebrew cask-fonts tapが追加されているか確認
-    if [[ "$DRY_RUN" != "true" ]] && command -v brew >/dev/null 2>&1; then
-        if ! brew tap | grep -q "homebrew/cask-fonts"; then
-            log_info "Adding homebrew/cask-fonts tap..."
-            brew tap homebrew/cask-fonts
-        else
-            log_info "homebrew/cask-fonts tap already added"
-        fi
-    elif [[ "$DRY_RUN" == "true" ]]; then
-        log_info "[DRY RUN] Would check and add homebrew/cask-fonts tap"
-    else
+    # Note: homebrew/cask-fonts tap is now deprecated (fonts are available directly)
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY RUN] Would install fonts via Homebrew casks"
+    elif ! command -v brew >/dev/null 2>&1; then
         log_warning "Homebrew not found, fonts will be installed from GitHub releases"
     fi
 
@@ -59,25 +52,34 @@ main() {
         log_warning "Some fonts in developer profile failed to install"
     fi
     
-    # 追加で日本語フォントセットをインストール
-    log_info "Installing additional Japanese fonts..."
+    # 追加で日本語フォントセットをインストール（Homebrewのみ）
+    log_info "Installing additional Japanese fonts via Homebrew..."
     local japanese_fonts=("udev-gothic" "cica")
     local japanese_success=0
     local japanese_failed=0
     local japanese_skipped=0
-    
+
     for font in "${japanese_fonts[@]}"; do
-        if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
-            log_skip_reason "Font: $font" "Already installed"
-            ((japanese_skipped++))
-            continue
-        fi
-        
+        # Homebrewでのインストールのみ試行（簡素化）
         if [[ "$DRY_RUN" != "true" ]]; then
-            if install_font "$font" "$@"; then
+            log_info "Attempting to install font via Homebrew: $font"
+
+            # フォント設定の取得
+            local brew_cask=""
+            case "$font" in
+                "udev-gothic") brew_cask="font-udev-gothic" ;;
+                "cica") brew_cask="font-cica" ;;
+                "plemoljp") brew_cask="font-plemol-jp" ;;
+                *) brew_cask="font-$font" ;;
+            esac
+
+            # Homebrewでインストール試行（既にインストール済みでもエラーにならない）
+            if brew install --cask "$brew_cask" 2>/dev/null; then
+                log_success "Font installed/updated successfully: $font"
                 ((japanese_success++))
             else
-                ((japanese_failed++))
+                log_info "Font already installed or not available via Homebrew: $font"
+                ((japanese_skipped++))
             fi
         else
             log_info "[DRY RUN] Would install font: $font"
@@ -85,25 +87,50 @@ main() {
         fi
     done
     
-    # クラシックフォントも必要な場合
-    log_info "Installing classic development fonts..."
+    # 2024-2025年人気フォントをインストール
+    log_info "Installing 2024-2025 popular programming fonts via Homebrew..."
+    local popular_fonts=("cascadia-code" "jetbrains-mono")
+    local popular_success=0
+    local popular_failed=0
+    local popular_skipped=0
+
+    for font in "${popular_fonts[@]}"; do
+        # Homebrewでのインストールのみ試行（簡素化）
+        if [[ "$DRY_RUN" != "true" ]]; then
+            log_info "Attempting to install popular font via Homebrew: $font"
+
+            # Homebrewでインストール試行（既にインストール済みでもエラーにならない）
+            if brew install --cask "font-$font" 2>/dev/null; then
+                log_success "Font installed/updated successfully: $font"
+                ((popular_success++))
+            else
+                log_info "Font already installed or not available via Homebrew: $font"
+                ((popular_skipped++))
+            fi
+        else
+            log_info "[DRY RUN] Would install popular font: $font"
+            ((popular_success++))
+        fi
+    done
+
+    # クラシックフォントも必要な場合（Homebrewのみ）
+    log_info "Installing classic development fonts via Homebrew..."
     local classic_fonts=("fira-code" "source-code-pro")
     local classic_success=0
     local classic_failed=0
     local classic_skipped=0
-    
+
     for font in "${classic_fonts[@]}"; do
-        if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
-            log_skip_reason "Font: $font" "Already installed"
-            ((classic_skipped++))
-            continue
-        fi
-        
         if [[ "$DRY_RUN" != "true" ]]; then
-            if install_font "$font" "$@"; then
+            log_info "Attempting to install font via Homebrew: $font"
+
+            # Homebrewでインストール試行（既にインストール済みでもエラーにならない）
+            if brew install --cask "font-$font" 2>/dev/null; then
+                log_success "Font installed/updated successfully: $font"
                 ((classic_success++))
             else
-                ((classic_failed++))
+                log_info "Font already installed or not available via Homebrew: $font"
+                ((classic_skipped++))
             fi
         else
             log_info "[DRY RUN] Would install font: $font"
@@ -118,9 +145,9 @@ main() {
     fi
     
     # Summary
-    local total_success=$((japanese_success + classic_success))
-    local total_skipped=$((japanese_skipped + classic_skipped))
-    local total_failed=$((japanese_failed + classic_failed))
+    local total_success=$((japanese_success + popular_success + classic_success))
+    local total_skipped=$((japanese_skipped + popular_skipped + classic_skipped))
+    local total_failed=$((japanese_failed + popular_failed + classic_failed))
     
     if [[ "$DRY_RUN" != "true" ]]; then
         log_install_summary "$total_success" "$total_skipped" "$total_failed"

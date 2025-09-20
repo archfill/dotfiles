@@ -3,7 +3,8 @@
 setup_sheldon() {
   local sheldon_paths=(
     "$HOME/.local/bin/sheldon"    # Local installation
-    "/usr/local/bin/sheldon"      # System installation
+    "/opt/homebrew/bin/sheldon"   # Homebrew (Apple Silicon)
+    "/usr/local/bin/sheldon"      # Homebrew (Intel) / System installation
     "/usr/bin/sheldon"            # Package manager installation
   )
   
@@ -32,7 +33,8 @@ fi
 setup_starship() {
   local starship_paths=(
     "$HOME/.local/bin/starship"   # Local installation
-    "/usr/local/bin/starship"     # System installation
+    "/opt/homebrew/bin/starship"  # Homebrew (Apple Silicon)
+    "/usr/local/bin/starship"     # Homebrew (Intel) / System installation
     "/usr/bin/starship"           # Package manager installation
   )
   
