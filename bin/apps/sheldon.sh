@@ -360,6 +360,58 @@ install_via_cargo() {
     fi
 }
 
+# Smart backup management with deduplication and cleanup
+create_smart_backup() {
+    local target_config="$1"
+    local config_dir="$(dirname "$target_config")"
+    local max_backups="${2:-3}"
+
+    if [[ ! -f "$target_config" ]]; then
+        return 0  # No file to backup
+    fi
+
+    # Find the most recent backup
+    local latest_backup
+    latest_backup=$(find "$config_dir" -name "plugins.toml.backup.*" -type f 2>/dev/null | sort -r | head -1)
+
+    # Check if current config differs from latest backup (avoid duplicates)
+    if [[ -n "$latest_backup" ]] && cmp -s "$target_config" "$latest_backup"; then
+        log_info "Configuration unchanged since last backup, skipping duplicate backup"
+        return 0
+    fi
+
+    # Create new backup
+    local backup_file="${target_config}.backup.$(date +%Y%m%d_%H%M%S)"
+    if cp "$target_config" "$backup_file"; then
+        log_info "Created backup: $(basename "$backup_file")"
+
+        # Cleanup old backups (keep only max_backups)
+        cleanup_old_backups "$config_dir" "$max_backups"
+        return 0
+    else
+        log_warning "Failed to create backup"
+        return 1
+    fi
+}
+
+# Cleanup old backup files, keeping only the most recent ones
+cleanup_old_backups() {
+    local config_dir="$1"
+    local max_backups="${2:-3}"
+
+    # Find all backup files and remove excess ones
+    local backup_files
+    mapfile -t backup_files < <(find "$config_dir" -name "plugins.toml.backup.*" -type f 2>/dev/null | sort -r)
+
+    if (( ${#backup_files[@]} > max_backups )); then
+        local files_to_remove=("${backup_files[@]:$max_backups}")
+        for file in "${files_to_remove[@]}"; do
+            rm -f "$file"
+            log_info "Removed old backup: $(basename "$file")"
+        done
+    fi
+}
+
 # Setup Sheldon configuration and incremental updates
 setup_sheldon_configuration() {
     log_info "Setting up Sheldon configuration and incremental updates..."
@@ -383,16 +435,18 @@ setup_sheldon_configuration() {
             log_info "QUICK: Would setup Sheldon configuration"
         elif [[ -f "$source_config" ]]; then
             if [[ "$DRY_RUN" != "true" ]]; then
-                # Backup existing configuration
-                if [[ -f "$target_config" ]]; then
-                    local backup_file="${target_config}.backup.$(date +%Y%m%d_%H%M%S)"
-                    cp "$target_config" "$backup_file"
-                    log_info "Backed up existing configuration to: $backup_file"
+                # Create smart backup (with deduplication and cleanup)
+                create_smart_backup "$target_config" 3
+
+                # Copy new configuration (handle identical files gracefully)
+                if cp "$source_config" "$target_config" 2>/dev/null; then
+                    log_success "Sheldon configuration updated"
+                elif cmp -s "$source_config" "$target_config"; then
+                    log_info "Sheldon configuration already up to date (files are identical)"
+                else
+                    log_error "Failed to update Sheldon configuration"
+                    return 1
                 fi
-                
-                # Copy new configuration
-                cp "$source_config" "$target_config"
-                log_success "Sheldon configuration updated"
             else
                 log_info "[DRY RUN] Would copy configuration from $source_config to $target_config"
             fi

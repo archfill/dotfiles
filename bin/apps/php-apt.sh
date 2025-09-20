@@ -294,10 +294,29 @@ cleanup_phpenv() {
 main() {
     log_info "PHP SDK Setup via APT Package Manager"
     log_info "====================================="
-    
+
+    # Check platform compatibility early
+    local platform
+    platform=$(detect_platform)
+
+    if [[ "$platform" != "linux" ]]; then
+        log_info "PHP APT setup is designed for Linux (Ubuntu/Debian) only"
+        log_info "Current platform: $platform"
+        log_info "Skipping PHP APT installation"
+        return 0
+    fi
+
+    # Check if APT is available
+    if ! command -v apt >/dev/null 2>&1; then
+        log_info "APT package manager not found"
+        log_info "This script requires Ubuntu/Debian systems"
+        log_info "Skipping PHP APT installation"
+        return 0
+    fi
+
     # Set PAGER environment variable to avoid SDKMAN issues
     export PAGER="${PAGER:-cat}"
-    
+
     # Parse command line options
     parse_install_options "$@"
     

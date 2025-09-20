@@ -29,6 +29,7 @@ BASIC_CONFIGS=(
     ".config/alacritty"
     ".config/kitty"
     ".config/wezterm"
+    ".config/ghostty"
     ".config/direnv"
     ".muttrc"
     ".mutt"
@@ -38,6 +39,7 @@ BASIC_CONFIGS=(
     ".zshenv"
     ".config/sheldon"
     ".config/starship.toml"
+    ".mmcp.json"
 )
 
 # 基本設定ファイルのシンボリックリンク作成
@@ -60,11 +62,11 @@ fi
 
 # zshの既存ファイル削除（バックアップしない）
 log_info "Cleaning up existing zsh files"
-if [[ -f "${HOME}/.zshrc" ]]; then 
+if [[ -f "${HOME}/.zshrc" ]]; then
     log_info "Removing existing .zshrc"
     rm -f "${HOME}/.zshrc"
 fi
-if [[ -e "${HOME}/.zsh" ]]; then 
+if [[ -e "${HOME}/.zsh" ]]; then
     log_info "Removing existing .zsh directory"
     rm -rf "${HOME}/.zsh"
 fi

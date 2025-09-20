@@ -62,12 +62,12 @@ main() {
         if [[ "$DRY_RUN" != "true" ]]; then
             log_info "Attempting to install font via Linux font manager: $font"
 
-            # Linux用の統一フォントマネージャーをタイムアウト付きで使用
-            if timeout 180 install_font "$font" 2>/dev/null; then
+            # Linux用の統一フォントマネージャーを使用
+            if install_font "$font" 2>/dev/null; then
                 log_success "Font installed successfully: $font"
                 ((japanese_success++))
             else
-                log_warning "Font installation failed or timed out: $font"
+                log_warning "Font installation failed: $font"
                 ((japanese_failed++))
             fi
         else
@@ -93,12 +93,12 @@ main() {
         if [[ "$DRY_RUN" != "true" ]]; then
             log_info "Attempting to install popular font via Linux font manager: $font"
 
-            # Linux用の統一フォントマネージャーをタイムアウト付きで使用
-            if timeout 180 install_font "$font" 2>/dev/null; then
+            # Linux用の統一フォントマネージャーを使用
+            if install_font "$font" 2>/dev/null; then
                 log_success "Font installed successfully: $font"
                 ((popular_success++))
             else
-                log_warning "Font installation failed or timed out: $font"
+                log_warning "Font installation failed: $font"
                 ((popular_failed++))
             fi
         else
@@ -124,12 +124,12 @@ main() {
         if [[ "$DRY_RUN" != "true" ]]; then
             log_info "Attempting to install font via Linux font manager: $font"
 
-            # Linux用の統一フォントマネージャーをタイムアウト付きで使用
-            if timeout 180 install_font "$font" 2>/dev/null; then
+            # Linux用の統一フォントマネージャーを使用
+            if install_font "$font" 2>/dev/null; then
                 log_success "Font installed successfully: $font"
                 ((classic_success++))
             else
-                log_warning "Font installation failed or timed out: $font"
+                log_warning "Font installation failed: $font"
                 ((classic_failed++))
             fi
         else

@@ -138,10 +138,18 @@ is_config_up_to_date() {
         return 1
     fi
     
-    # ファイルの最終更新時間を比較
-    local source_time=$(stat -c %Y "$source_config" 2>/dev/null || echo 0)
-    local target_time=$(stat -c %Y "$target_config" 2>/dev/null || echo 0)
-    local current_time=$(date +%s)
+    # ファイルの最終更新時間を比較（クロスプラットフォーム対応）
+    local source_time target_time current_time
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS
+        source_time=$(stat -f %m "$source_config" 2>/dev/null || echo 0)
+        target_time=$(stat -f %m "$target_config" 2>/dev/null || echo 0)
+    else
+        # Linux
+        source_time=$(stat -c %Y "$source_config" 2>/dev/null || echo 0)
+        target_time=$(stat -c %Y "$target_config" 2>/dev/null || echo 0)
+    fi
+    current_time=$(date +%s)
     
     # ソースファイルがターゲットより新しい場合は更新が必要
     if (( source_time > target_time )); then
@@ -309,7 +317,18 @@ should_skip_installation_advanced() {
         log_info "$component_name: Command not available, installation needed"
         return 1
     fi
-    
+
+    # Ruby専用のシステム判定ロジック（クロスプラットフォーム対応）
+    if [[ "$component_name" == "Ruby" ]]; then
+        local ruby_path=$(which ruby 2>/dev/null)
+        case "$ruby_path" in
+            "/usr/bin/ruby"|"/bin/ruby"|"/System/"*)
+                log_info "Ruby: System Ruby detected at $ruby_path, rbenv installation recommended"
+                return 1  # インストールを強制
+                ;;
+        esac
+    fi
+
     # バージョン要件チェック
     if [[ -n "$required_version" ]]; then
         if ! is_version_satisfied "$command_name" "$required_version" "$version_flag"; then

@@ -7,7 +7,7 @@ source "$(dirname "$0")/../lib/config_loader.sh"
 setup_error_handling
 
 # Load configuration
-load_dotfiles_config
+load_config
 
 # stackline - yabai
 if [[ ! -d "${HOME}/.hammerspoon/stackline" ]]; then

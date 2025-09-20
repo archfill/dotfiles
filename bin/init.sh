@@ -38,11 +38,11 @@ case "$OS_NAME" in
       
       # Install fonts for essential and full modes
       if [[ "$install_mode" != "minimal" ]] && [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-        log_info "Starting font installation with timeout..."
-        if timeout 300 bash bin/mac/fonts_setup.sh; then
+        log_info "Starting font installation..."
+        if bash bin/mac/fonts_setup.sh; then
           log_success "Font installation completed successfully"
         else
-          log_warning "Font installation timed out or failed (continuing with setup)"
+          log_warning "Font installation failed (continuing with setup)"
         fi
       elif [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then
         log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
@@ -58,11 +58,11 @@ case "$OS_NAME" in
     log_info "Linux setup starting"
     run "bin/linux/install_linux.sh"
     if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-      log_info "Starting font installation with timeout..."
-      if timeout 300 bash bin/linux/apps/fonts_setup.sh; then
+      log_info "Starting font installation..."
+      if bash bin/linux/apps/fonts_setup.sh; then
         log_success "Font installation completed successfully"
       else
-        log_warning "Font installation timed out or failed (continuing with setup)"
+        log_warning "Font installation failed (continuing with setup)"
       fi
     else
       log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"

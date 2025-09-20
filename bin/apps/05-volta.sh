@@ -400,6 +400,7 @@ install_essential_nodejs_tools() {
         "eslint:volta:JavaScript linter"
         "prettier:volta:Code formatter"
         "nodemon:volta:Development server"
+        "mmcp:volta:Model Context Protocol server management"
     )
     
     local installed_count=0
@@ -576,6 +577,7 @@ main() {
     log_info "  eslint                      # JavaScript linter"
     log_info "  prettier                    # Code formatter"
     log_info "  nodemon                     # Development server"
+    log_info "  mmcp                        # Model Context Protocol server management"
     log_info ""
     if [[ "$DRY_RUN" != "true" ]]; then
         log_info "Current status:"

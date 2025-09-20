@@ -121,6 +121,7 @@ optional_apps=(
 # GUI applications (casks)
 cask_apps=(
   '--cask wezterm'
+  '--cask ghostty'
   '--cask aquaskk'
   '--cask hammerspoon'
   '--cask kitty'

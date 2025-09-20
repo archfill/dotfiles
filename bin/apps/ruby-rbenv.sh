@@ -831,15 +831,29 @@ main() {
   # Get target Ruby version
   local ruby_version
   ruby_version=$(get_ruby_lts_version)
-  
-  # Check if Ruby installation should be skipped
-  if should_skip_installation_advanced "Ruby" "ruby" "$ruby_version" "--version"; then
+
+  # Check for system Ruby and force rbenv installation if detected
+  local ruby_path=$(which ruby 2>/dev/null)
+  local force_rbenv_install=false
+
+  case "$ruby_path" in
+    "/usr/bin/ruby"|"/bin/ruby"|"/System/"*)
+      log_info "System Ruby detected at: $ruby_path"
+      log_info "Installing rbenv for better development environment management"
+      force_rbenv_install=true
+      ;;
+  esac
+
+  # Check if Ruby installation should be skipped (unless system Ruby detected)
+  if [[ "$force_rbenv_install" != "true" ]] && should_skip_installation_advanced "Ruby" "ruby" "$ruby_version" "--version"; then
     # Even if Ruby is installed, check and update environment
     log_info "Ruby is installed, checking environment and gems..."
     
     # Perform comprehensive environment check
-    check_ruby_environment
-    
+    check_ruby_environment || {
+        log_info "Ruby environment checks had some issues, continuing with setup..."
+    }
+
     # Setup/verify environment
     setup_ruby_environment
     

@@ -291,7 +291,7 @@ get_latest_font_version() {
     local version
     
     # API応答をキャッシュして複数回のcurl呼び出しを回避
-    api_response=$(timeout 30 curl -s "$api_url" 2>/dev/null)
+    api_response=$(curl -s "$api_url" 2>/dev/null)
     if [[ $? -ne 0 || -z "$api_response" ]]; then
         log_error "Failed to fetch version information from GitHub API"
         return 1
@@ -451,9 +451,9 @@ download_hackgen() {
     
     log_info "Downloading HackGen from: $download_url"
     
-    if timeout 120 curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
+    if curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
        cd "$temp_dir" && \
-       timeout 60 extract_archive "$zip_name" "." && \
+       extract_archive "$zip_name" "." && \
        find . -name "HackGen*.ttf" -exec cp {} "$font_dir/" \;; then
         return 0
     else
@@ -469,9 +469,9 @@ download_plemoljp() {
     
     log_info "Downloading PlemolJP from: $download_url"
     
-    if timeout 120 curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
+    if curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
        cd "$temp_dir" && \
-       timeout 60 extract_archive "$zip_name" "." && \
+       extract_archive "$zip_name" "." && \
        find . -name "PlemolJP*.ttf" -exec cp {} "$font_dir/" \;; then
         return 0
     else
@@ -488,18 +488,18 @@ download_udev_gothic() {
     local download_urls
     
     if command -v jq >/dev/null 2>&1; then
-        download_urls=$(timeout 30 curl -s "$api_url" | jq -r '.assets[] | select(.name | contains("NF")) | .browser_download_url' | head -1)
+        download_urls=$(curl -s "$api_url" | jq -r '.assets[] | select(.name | contains("NF")) | .browser_download_url' | head -1)
     else
-        download_urls=$(timeout 30 curl -s "$api_url" | grep -o '"browser_download_url": *"[^"]*"' | grep NF | head -1 | cut -d'"' -f4)
+        download_urls=$(curl -s "$api_url" | grep -o '"browser_download_url": *"[^"]*"' | grep NF | head -1 | cut -d'"' -f4)
     fi
 
     if [[ -n "$download_urls" ]]; then
         local zip_name="$(basename "$download_urls")"
         log_info "Downloading UDEV Gothic from: $download_urls"
 
-        if timeout 120 curl -fL -o "${temp_dir}/${zip_name}" "$download_urls" && \
+        if curl -fL -o "${temp_dir}/${zip_name}" "$download_urls" && \
            cd "$temp_dir" && \
-           timeout 60 extract_archive "$zip_name" "." && \
+           extract_archive "$zip_name" "." && \
            find . -name "UDEV*.ttf" -exec cp {} "$font_dir/" \;; then
             return 0
         fi
@@ -515,9 +515,9 @@ download_cica() {
     
     log_info "Downloading Cica from: $download_url"
     
-    if timeout 120 curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
+    if curl -fL -o "${temp_dir}/${zip_name}" "$download_url" && \
        cd "$temp_dir" && \
-       timeout 60 extract_archive "$zip_name" "." && \
+       extract_archive "$zip_name" "." && \
        find . -name "Cica*.ttf" -exec cp {} "$font_dir/" \;; then
         return 0
     else
@@ -540,9 +540,9 @@ download_generic_font() {
         local download_url="https://github.com/${repo}/releases/download/${version}/${pattern}"
         log_info "Trying download from: $download_url"
         
-        if timeout 120 curl -fL -o "${temp_dir}/${pattern}" "$download_url" && \
+        if curl -fL -o "${temp_dir}/${pattern}" "$download_url" && \
            cd "$temp_dir" && \
-           timeout 60 extract_archive "$pattern" "." && \
+           extract_archive "$pattern" "." && \
            find . -name "*.ttf" -o -name "*.otf" | head -10 | xargs -I {} cp {} "$font_dir/"; then
             return 0
         fi
