@@ -128,6 +128,7 @@ go.work
 
 ### Shell and Terminal ###
 .config/zsh/.zcompdump*
+.config/zsh/.zcompcache/
 .bash_history
 .zsh_history
 
