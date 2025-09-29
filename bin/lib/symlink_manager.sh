@@ -15,25 +15,25 @@ create_symlink() {
     local source_path="$1"
     local target_path="${2:-}"
     local backup_existing="${3:-true}"
-    
+
     # 引数の検証
     if [[ -z "$source_path" ]]; then
         log_error "Source path is required"
         return 1
     fi
-    
+
     # デフォルトのターゲットパス設定
     if [[ -z "$target_path" ]]; then
         target_path="${HOME}/${source_path}"
         source_path="${DOTFILES_DIR:-$HOME/dotfiles}/${source_path}"
     fi
-    
+
     # ソースパスの存在確認
     if [[ ! -e "$source_path" ]]; then
         log_error "Source path does not exist: $source_path"
         return 1
     fi
-    
+
     # ターゲットディレクトリの作成
     local target_dir
     target_dir="$(dirname "$target_path")"
@@ -41,7 +41,7 @@ create_symlink() {
         log_info "Creating target directory: $target_dir"
         mkdir -p "$target_dir"
     fi
-    
+
     # 既存ファイルの処理
     if [[ -e "$target_path" ]] || [[ -L "$target_path" ]]; then
         if [[ "$backup_existing" == "true" ]]; then
@@ -51,11 +51,11 @@ create_symlink() {
             rm -rf "$target_path"
         fi
     fi
-    
+
     # シンボリックリンクの作成
     log_info "Creating symlink: $target_path -> $source_path"
     ln -snf "$source_path" "$target_path"
-    
+
     # 作成確認
     if [[ -L "$target_path" ]]; then
         log_success "Symlink created successfully: $target_path"
@@ -70,16 +70,16 @@ create_symlink() {
 create_symlink_from_dotfiles() {
     local relative_path="$1"
     local backup_existing="${2:-true}"
-    
+
     # DOTFILES_DIRが設定されていない場合はエラー
     if [[ -z "${DOTFILES_DIR:-}" ]]; then
         log_error "DOTFILES_DIR is not set. Please set DOTFILES_DIR environment variable."
         return 1
     fi
-    
+
     local source_path="${DOTFILES_DIR}/${relative_path}"
     local target_path="${HOME}/${relative_path}"
-    
+
     create_symlink "$source_path" "$target_path" "$backup_existing"
 }
 
@@ -89,17 +89,17 @@ backup_existing_file() {
     local backup_dir="${HOME}/.dotfiles_backup"
     local timestamp
     timestamp="$(date +%Y%m%d_%H%M%S)"
-    
+
     # バックアップディレクトリの作成
     mkdir -p "$backup_dir"
-    
+
     # ファイル名の取得
     local filename
     filename="$(basename "$file_path")"
     local backup_path="${backup_dir}/${filename}.${timestamp}"
-    
+
     log_info "Backing up existing file: $file_path -> $backup_path"
-    
+
     if [[ -L "$file_path" ]]; then
         # シンボリックリンクの場合は削除のみ
         rm "$file_path"
@@ -117,9 +117,9 @@ create_symlinks_batch() {
     local config_list=("$@")
     local failed_count=0
     local success_count=0
-    
+
     log_info "Creating ${#config_list[@]} symlinks..."
-    
+
     for config_path in "${config_list[@]}"; do
         if create_symlink_from_dotfiles "$config_path"; then
             success_count=$((success_count + 1))
@@ -127,9 +127,9 @@ create_symlinks_batch() {
             failed_count=$((failed_count + 1))
         fi
     done
-    
+
     log_info "Symlink creation completed: $success_count success, $failed_count failed"
-    
+
     if [[ $failed_count -gt 0 ]]; then
         return 1
     fi
@@ -139,20 +139,20 @@ create_symlinks_batch() {
 # シンボリックリンクの検証
 verify_symlink() {
     local target_path="$1"
-    
+
     if [[ ! -L "$target_path" ]]; then
         log_error "Not a symlink: $target_path"
         return 1
     fi
-    
+
     local source_path
     source_path="$(readlink "$target_path")"
-    
+
     if [[ ! -e "$source_path" ]]; then
         log_error "Broken symlink: $target_path -> $source_path"
         return 1
     fi
-    
+
     log_info "Valid symlink: $target_path -> $source_path"
     return 0
 }
@@ -160,15 +160,15 @@ verify_symlink() {
 # シンボリックリンクの削除
 remove_symlink() {
     local target_path="$1"
-    
+
     if [[ ! -L "$target_path" ]]; then
         log_warning "Not a symlink, skipping: $target_path"
         return 0
     fi
-    
+
     log_info "Removing symlink: $target_path"
     rm "$target_path"
-    
+
     if [[ ! -e "$target_path" ]]; then
         log_success "Symlink removed: $target_path"
         return 0
@@ -182,9 +182,9 @@ remove_symlink() {
 create_platform_specific_symlinks() {
     local platform
     platform="$(detect_platform)"
-    
+
     log_info "Creating platform-specific symlinks for: $platform"
-    
+
     case "$platform" in
         "macos")
             create_macos_symlinks
@@ -205,12 +205,13 @@ create_platform_specific_symlinks() {
 create_macos_symlinks() {
     local macos_configs=(
         ".config/karabiner"
-        ".config/yabai"
-        ".config/skhd"
+        ".config/borders"
+        ".config/sketchybar"
+        ".aerospace.toml"
     )
-    
+
     for config in "${macos_configs[@]}"; do
-        if [[ -d "${DOTFILES_DIR}/${config}" ]]; then
+        if [[ -e "${DOTFILES_DIR}/${config}" ]]; then
             create_symlink_from_dotfiles "$config"
         fi
     done
@@ -224,7 +225,7 @@ create_linux_symlinks() {
         ".xinitrc"
         ".Xresources"
     )
-    
+
     for config in "${linux_configs[@]}"; do
         if [[ -e "${DOTFILES_DIR}/${config}" ]]; then
             create_symlink_from_dotfiles "$config"

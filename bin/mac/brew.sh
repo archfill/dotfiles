@@ -100,8 +100,8 @@ utils_apps=(
 
 # macOS specific tools
 macos_apps=(
-  'yabai'
-  'skhd'
+  'borders'
+  'sketchybar'
   'displayplacer'
   'dmg2img'
   'wakeonlan'
@@ -129,6 +129,7 @@ cask_apps=(
   '--cask google-cloud-sdk'
   '--cask brewlet'
   '--cask cheatsheet'
+  '--cask nikitabobko/tap/aerospace'
 )
 
 # Optional casks (can be skipped)
@@ -217,12 +218,14 @@ add_homebrew_taps() {
     fi
     
     local taps=(
+        "FelixKratz/formulae"
         "gcenx/wine"
         "homebrew/cask"
         "homebrew/core"
         "homebrew/services"
         "jakehilborn/jakehilborn"
         "koekeishiya/formulae"
+        "nikitabobko/tap"
         "osx-cross/arm"
         "osx-cross/avr"
         "qmk/qmk"

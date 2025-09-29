@@ -127,6 +127,70 @@ test: ## Run dotfiles functionality tests
 	@echo "Running dotfiles tests..."
 	bash ./bin/test.sh
 
+# === 保守・メンテナンス管理 ===
+cleanup-symlinks: ## Clean up broken symbolic links
+	@echo "Cleaning up broken symbolic links..."
+	bash ./bin/cleanup-symlinks.sh
+
+cleanup-symlinks-dry: ## Show broken symbolic links without removing them
+	@echo "Checking for broken symbolic links (dry run)..."
+	bash ./bin/cleanup-symlinks.sh --dry-run
+
+verify-links: ## Check status of all symbolic links
+	@echo "Verifying symbolic links status..."
+	bash ./bin/verify-links.sh
+
+verify-links-broken: ## Show only broken symbolic links
+	@echo "Checking for broken symbolic links..."
+	bash ./bin/verify-links.sh --broken-only
+
+verify-links-dotfiles: ## Show only dotfiles-related symbolic links
+	@echo "Checking dotfiles-related symbolic links..."
+	bash ./bin/verify-links.sh --dotfiles-only
+
+archive-config: ## Archive configuration before removal (usage: make archive-config CONFIG=name REASON="reason")
+	@if [ -z "$(CONFIG)" ]; then \
+		echo "Usage: make archive-config CONFIG=<config-name> [REASON=\"reason\"]"; \
+		echo "Example: make archive-config CONFIG=yabai-skhd REASON=\"Migrated to Aerospace\""; \
+		exit 1; \
+	else \
+		echo "Archiving configuration: $(CONFIG)"; \
+		bash ./bin/archive-config.sh "$(CONFIG)" "$(REASON)"; \
+	fi
+
+archive-config-dry: ## Preview archive operation without executing
+	@if [ -z "$(CONFIG)" ]; then \
+		echo "Usage: make archive-config-dry CONFIG=<config-name> [REASON=\"reason\"]"; \
+		echo "Example: make archive-config-dry CONFIG=yabai-skhd REASON=\"Migrated to Aerospace\""; \
+		exit 1; \
+	else \
+		echo "Previewing archive operation for: $(CONFIG)"; \
+		bash ./bin/archive-config.sh --dry-run "$(CONFIG)" "$(REASON)"; \
+	fi
+
+maintenance-status: ## Show comprehensive maintenance status
+	@echo "=== Dotfiles Maintenance Status ==="
+	@echo ""
+	@echo "📊 Repository Status:"
+	@echo "Repository: $(shell pwd)"
+	@echo "Git branch: $(shell git branch --show-current 2>/dev/null || echo 'Not a git repository')"
+	@echo "Last commit: $(shell git log -1 --format='%h - %s (%cr)' 2>/dev/null || echo 'No git history')"
+	@echo ""
+	@echo "🔗 Symbolic Links Summary:"
+	@bash ./bin/verify-links.sh 2>/dev/null || echo "Link verification failed"
+	@echo ""
+	@echo "📁 Archive Branches:"
+	@git branch -a | grep archive/ 2>/dev/null || echo "No archive branches found"
+
+maintenance-full: cleanup-symlinks verify-links ## Run complete maintenance cycle
+	@echo "✅ Full maintenance cycle completed!"
+	@echo ""
+	@echo "📋 Summary:"
+	@echo "  • Cleaned up broken symbolic links"
+	@echo "  • Verified all symbolic links"
+	@echo ""
+	@echo "💡 For more detailed status: make maintenance-status"
+
 status: ## Show current dotfiles status and configuration
 	@echo "Dotfiles Status:"
 	@echo "=================="
@@ -239,6 +303,45 @@ fonts-all: ## Install all available fonts
 	else \
 		echo "Installing all available fonts..."; \
 		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts all'; \
+	fi
+
+# SketchyBar関連コマンド
+sketchybar-install: ## Install SketchyBar with SbarLua support
+	@echo "Setting up SketchyBar with SbarLua..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo "🎨 Installing SketchyBar and SbarLua..."; \
+		if ! command -v sketchybar >/dev/null 2>&1; then \
+			echo "Installing SketchyBar via Homebrew..."; \
+			brew tap FelixKratz/formulae && brew install sketchybar; \
+		fi; \
+		bash bin/apps/sketchybar-sbarlua.sh; \
+		echo "✅ SketchyBar setup completed!"; \
+		echo ""; \
+		echo "💡 Next steps:"; \
+		echo "  • Test installation: make sketchybar-test"; \
+		echo "  • Start SketchyBar: brew services start sketchybar"; \
+	else \
+		echo "❌ SketchyBar is only available on macOS"; \
+		exit 1; \
+	fi
+
+sketchybar-uninstall: ## Uninstall SbarLua
+	@echo "Uninstalling SbarLua..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		bash bin/apps/sketchybar-sbarlua.sh uninstall; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+
+sketchybar-test: ## Test SketchyBar Lua configuration (usage: make sketchybar-test [MODE=full/syntax/performance/quick])
+	@echo "Testing SketchyBar Lua configuration..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		bash bin/sketchybar-test.sh $(MODE); \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
 	fi
 
 # ghq関連コマンド

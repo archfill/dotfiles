@@ -9,11 +9,6 @@ setup_error_handling
 # Load configuration
 load_config
 
-# stackline - yabai
-if [[ ! -d "${HOME}/.hammerspoon/stackline" ]]; then
-    log_info "Installing stackline for yabai..."
-    git clone https://github.com/AdamWagner/stackline.git ${HOME}/.hammerspoon/stackline
-fi
 
 # Set ghq root from configuration
 log_info "Setting ghq.root to ${GHQ_ROOT}"

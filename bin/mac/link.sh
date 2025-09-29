@@ -34,10 +34,10 @@ link "dotfiles/.config/lazygit/config.yml" "Library/Application Support/lazygit/
 link ".config/karabiner/assets/complex_modifications/aquaskk_iterm2.json"
 
 # yabai
-link ".config/yabai"
+# link ".config/yabai"
 
 # skhd
-link ".config/skhd"
+# link ".config/skhd"
 
 # hammerspoon
 HAMMERSPOON_DIR=${HOME}/.hammerspoon
