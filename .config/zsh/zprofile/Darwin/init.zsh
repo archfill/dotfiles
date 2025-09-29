@@ -40,8 +40,3 @@ if [ -d "/opt/homebrew/opt/mysql-client/bin" ] ; then
   export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
 fi
 
-# skhd startup
-# isskhd=(`ps aux | grep skhd | awk '{print $11}'`)
-# if [[ "$isskhd" != *skhd* ]]; then
-#   nohup skhd &
-# fi

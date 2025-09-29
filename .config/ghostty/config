@@ -1,44 +1,151 @@
 # Ghostty Terminal Configuration
 # https://github.com/ghostty-org/ghostty
 
+# ==========================================
 # Font Configuration
-font-family = "UDEV Gothic 35NFLG"
+# ==========================================
+# HackGen Console NFをメインフォントに設定（ターミナル作業最適化）
+font-family = "HackGen Console NF"
+font-family = "JetBrains Mono"
 font-size = 14
+# Console NFは十分太いのでthickenは無効化
+font-thicken = false
+# リガチャを無効化（多くのユーザーが設定）
+font-feature = -liga
 
-# Theme
-theme = "One Dark"
+# ==========================================
+# Theme Configuration
+# ==========================================
+# 人気のCatppuccinテーマに変更（ライト/ダーク自動切り替え）
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 
+# ==========================================
 # Window Configuration
+# ==========================================
 window-decoration = true
-window-opacity = 0.95
+background-opacity = 0.95
 window-theme = "system"
+# ウィンドウサイズの設定（文字数ベース）
+window-height = 30
+window-width = 110
+# ウィンドウの状態を保存
+window-save-state = always
+# パディングのバランス調整
+window-padding-balance = true
+# セルの高さを調整してより見やすく
+adjust-cell-height = 35%
 
-# Cursor
+# ==========================================
+# macOS Specific Settings
+# ==========================================
+macos-titlebar-style = "native"
+# 人気のchalkboardアイコンを使用
+macos-icon = "chalkboard"
+# Display P3カラースペースを使用
+window-colorspace = "display-p3"
+
+# ==========================================
+# Cursor Configuration
+# ==========================================
 cursor-style = "block"
 cursor-style-blink = false
+# カーソルの色をより目立つように
+cursor-color = "#61afef"
 
-# Japanese Input Support
-macos-titlebar-style = "native"
+# ==========================================
+# Split Panes
+# ==========================================
 unfocused-split-opacity = 0.7
 
+# ==========================================
 # Shell Integration
-shell-integration = true
-shell-integration-features = "cursor,sudo,title"
+# ==========================================
+shell-integration = zsh
+# より安全で人気の設定
+shell-integration-features = "no-cursor,sudo,no-title"
 
-# Performance
-sync-to-monitor = true
+# ==========================================
+# Performance Settings
+# ==========================================
+# スクロールバックバッファの最適化
+scrollback-limit = 100000
 
-# Mouse
+# ==========================================
+# Mouse Configuration
+# ==========================================
 mouse-hide-while-typing = true
+# スクロール速度を向上
+mouse-scroll-multiplier = 2
 
-# Key Bindings
-keybind = super+shift+c=copy_to_clipboard
-keybind = super+shift+v=paste_from_clipboard
-keybind = super+t=new_tab
-keybind = super+w=close_surface
-keybind = super+n=new_window
-keybind = super+shift+n=new_window
-keybind = super+comma=open_config
+# ==========================================
+# Key Bindings - Basic
+# ==========================================
+keybind = cmd+shift+c=copy_to_clipboard
+keybind = cmd+shift+v=paste_from_clipboard
+keybind = cmd+t=new_tab
+keybind = cmd+w=close_surface
+keybind = cmd+n=new_window
+keybind = cmd+shift+n=new_window
+keybind = cmd+comma=open_config
 
-# Tab Configuration
-tab-width = 8
+# ==========================================
+# Key Bindings - Enhanced
+# ==========================================
+# 設定リロード
+keybind = cmd+shift+comma=reload_config
+# 改行の追加（便利）
+keybind = shift+enter=text:\n
+# 分割ペイン
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+# タブ移動
+keybind = cmd+shift+left=previous_tab
+keybind = cmd+shift+right=next_tab
+# 数字キーでタブ切り替え
+keybind = cmd+one=goto_tab:1
+keybind = cmd+two=goto_tab:2
+keybind = cmd+three=goto_tab:3
+keybind = cmd+four=goto_tab:4
+keybind = cmd+five=goto_tab:5
+keybind = cmd+six=goto_tab:6
+keybind = cmd+seven=goto_tab:7
+keybind = cmd+eight=goto_tab:8
+keybind = cmd+nine=goto_tab:9
+
+# ==========================================
+# Selection and Colors
+# ==========================================
+# 選択範囲の色をより見やすく
+selection-background = "#3e4451"
+selection-foreground = "#abb2bf"
+
+# ==========================================
+# Additional Recommended Settings
+# ==========================================
+# ウィンドウタイトルのカスタマイズ
+title = "Ghostty Terminal"
+window-title-font-family = "HackGen Console NF"
+
+# クイックターミナル機能（グローバルキーバインド）
+keybind = global:cmd+grave_accent=toggle_quick_terminal
+
+# 背景ぼかし効果（macOSで透明度使用時）
+background-blur-radius = 20
+
+# より高度なシェル統合（tmux使用者向け）
+# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
+
+# ==========================================
+# Optional: Custom Shaders
+# ==========================================
+# より高度なビジュアル効果が必要な場合
+# custom-shader = "shaders/bloom025.glsl"
+
+# ==========================================
+# Notes
+# ==========================================
+# 設定の変更後は Super+Shift+, でリロードするか、
+# ターミナルを再起動してください。
+#
+# 利用可能なテーマ一覧: ghostty +list-themes
+# 設定オプション確認: ghostty +show-config --default --docs
