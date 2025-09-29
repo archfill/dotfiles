@@ -1,0 +1,9 @@
+#!/usr/bin/env lua
+
+-- SketchyBar Lua Configuration Entry Point
+-- This file replaces the traditional shell-based sketchybarrc
+-- and loads the modular SbarLua configuration
+
+-- Execute the main Lua configuration
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/.config/sketchybar/?.lua"
+require("lua.init")
