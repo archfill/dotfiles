@@ -108,8 +108,12 @@ check_font_installed() {
                 "/System/Library/Fonts"
             )
             for font_dir in "${font_dirs[@]}"; do
-                if [[ -d "$font_dir" ]] && find "$font_dir" -name "*${font_name%% *}*" -type f >/dev/null 2>&1; then
-                    return 0
+                if [[ -d "$font_dir" ]]; then
+                    local found_files
+                    found_files=$(find "$font_dir" -name "*${font_name%% *}*" -type f 2>/dev/null)
+                    if [[ -n "$found_files" ]]; then
+                        return 0
+                    fi
                 fi
             done
             ;;
@@ -128,13 +132,17 @@ check_font_installed() {
                 "/usr/local/share/fonts"
             )
             for font_dir in "${font_dirs[@]}"; do
-                if [[ -d "$font_dir" ]] && find "$font_dir" -name "*${font_name%% *}*" -type f >/dev/null 2>&1; then
-                    return 0
+                if [[ -d "$font_dir" ]]; then
+                    local found_files
+                    found_files=$(find "$font_dir" -name "*${font_name%% *}*" -type f 2>/dev/null)
+                    if [[ -n "$found_files" ]]; then
+                        return 0
+                    fi
                 fi
             done
             ;;
     esac
-    
+
     return 1
 }
 
@@ -186,25 +194,28 @@ check_font_environment() {
 # =============================================================================
 
 init_font_configs() {
+    # フォーマット: "表示名|GitHubリポジトリ|Homebrewパッケージ名|Linux/Archパッケージ名"
+
     # Nerd Fonts系 - モダンで高機能
-    FONT_CONFIGS["jetbrains-mono-nf"]="JetBrainsMono Nerd Font|yuru7/PlemolJP|font-jetbrains-mono-nerd-font|PlemolJP"
-    FONT_CONFIGS["hackgen-nf"]="HackGen Nerd Font|yuru7/HackGen|font-hackgen-nerd|HackGen"
-    FONT_CONFIGS["fira-code-nf"]="FiraCode Nerd Font|ryanoasis/nerd-fonts|font-fira-code-nerd-font|FiraCodeNerdFont"
-    
+    FONT_CONFIGS["jetbrains-mono-nf"]="JetBrainsMono Nerd Font|ryanoasis/nerd-fonts|font-jetbrains-mono-nerd-font|ttf-jetbrains-mono-nerd"
+    # Note: ttf-hackgen includes HackGen, HackGen Console, HackGen35, and their NF variants (6 fonts total)
+    FONT_CONFIGS["hackgen-nf"]="HackGen Nerd Font|yuru7/HackGen|font-hackgen-nerd|ttf-hackgen"
+    FONT_CONFIGS["fira-code-nf"]="FiraCode Nerd Font|ryanoasis/nerd-fonts|font-fira-code-nerd-font|ttf-fira-code"
+
     # 日本語対応高品質フォント
-    FONT_CONFIGS["plemoljp"]="PlemolJP|yuru7/PlemolJP|font-plemol-jp|PlemolJP"
-    FONT_CONFIGS["udev-gothic"]="UDEV Gothic|yuru7/udev-gothic|font-udev-gothic|UDEVGothic"
-    FONT_CONFIGS["cica"]="Cica|miiton/Cica|font-cica|Cica"
+    FONT_CONFIGS["plemoljp"]="PlemolJP|yuru7/PlemolJP|font-plemol-jp|ttf-plemoljp"
+    FONT_CONFIGS["udev-gothic"]="UDEV Gothic|yuru7/udev-gothic|font-udev-gothic|ttf-udev-gothic"
+    FONT_CONFIGS["cica"]="Cica|miiton/Cica|font-cica|ttf-cica"
 
     # 2024-2025年人気フォント
-    FONT_CONFIGS["cascadia-code"]="Cascadia Code|microsoft/cascadia-code|font-cascadia-code|CascadiaCode"
-    FONT_CONFIGS["jetbrains-mono"]="JetBrains Mono|JetBrains/JetBrainsMono|font-jetbrains-mono|JetBrainsMono"
-    FONT_CONFIGS["commit-mono"]="Commit Mono|eigilnikolajsen/commit-mono|font-commit-mono|CommitMono"
-    
+    FONT_CONFIGS["cascadia-code"]="Cascadia Code|microsoft/cascadia-code|font-cascadia-code|ttf-cascadia-code"
+    FONT_CONFIGS["jetbrains-mono"]="JetBrains Mono|JetBrains/JetBrainsMono|font-jetbrains-mono|ttf-jetbrains-mono"
+    FONT_CONFIGS["commit-mono"]="Commit Mono|eigilnikolajsen/commit-mono|font-commit-mono|ttf-commit-mono"
+
     # クラシック（後方互換性用）
-    FONT_CONFIGS["source-code-pro"]="Source Code Pro|adobe-fonts/source-code-pro|font-source-code-pro|SourceCodePro"
-    FONT_CONFIGS["fira-code"]="Fira Code|tonsky/FiraCode|font-fira-code|FiraCode"
-    
+    FONT_CONFIGS["source-code-pro"]="Source Code Pro|adobe-fonts/source-code-pro|font-source-code-pro|adobe-source-code-pro-fonts"
+    FONT_CONFIGS["fira-code"]="Fira Code|tonsky/FiraCode|font-fira-code|ttf-fira-code"
+
     # 初期化完了フラグを設定
     FONT_CONFIGS_INITIALIZED="true"
 }
@@ -253,21 +264,26 @@ is_font_installed() {
     local font_name="$1"
     local platform
     platform="$(detect_platform)"
-    
+
+    # フォント名の最初の単語を抽出（"HackGen Nerd Font" -> "HackGen"）
+    local search_name="${font_name%% *}"
+
     case "$platform" in
         "macos")
             # macOSではsystem_profilerで確認
-            system_profiler SPFontsDataType 2>/dev/null | grep -qi "$font_name"
+            system_profiler SPFontsDataType 2>/dev/null | grep -qi "$search_name"
             ;;
         "linux")
             # Linuxではfc-listで確認
             if command -v fc-list >/dev/null 2>&1; then
-                fc-list | grep -qi "$font_name"
+                fc-list | grep -qi "$search_name"
             else
                 # fc-listがない場合はファイル存在で判定
                 local font_dir
                 font_dir="$(get_font_directory)"
-                find "$font_dir" -name "*${font_name}*" -type f 2>/dev/null | grep -q .
+                local found_files
+                found_files=$(find "$font_dir" -name "*${search_name}*" -type f 2>/dev/null)
+                [[ -n "$found_files" ]]
             fi
             ;;
         *)
@@ -368,14 +384,35 @@ install_font_linux() {
             ;;
         "pacman")
             # Arch Linuxでパッケージが利用可能かチェック
-            if pacman -Ss "ttf-${INSTALL_NAME,,}" 2>/dev/null | grep -q .; then
-                log_info "Installing $FONT_NAME via pacman..."
-                sudo pacman -S --noconfirm "ttf-${INSTALL_NAME,,}"
+            # INSTALL_NAMEは既にLinux/Archパッケージ名が設定されている
+            local arch_package="$INSTALL_NAME"
+
+            # 公式リポジトリを優先的にチェック
+            if pacman -Ss "^${arch_package}$" 2>/dev/null | grep -q "^extra/${arch_package} \|^core/${arch_package} \|^community/${arch_package} "; then
+                log_info "Installing $FONT_NAME via pacman (official repo): $arch_package"
+                sudo pacman -S --noconfirm "$arch_package"
                 return $?
+            fi
+
+            # AURヘルパー(yay/paru)でチェック
+            if command -v yay >/dev/null 2>&1; then
+                # ANSIエスケープコードを除去してから検索
+                if yay -Ss "${arch_package}" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g; s/\x1b]8;;[^\x1b]*\x1b\\//g' | grep -q "^aur/${arch_package} "; then
+                    log_info "Installing $FONT_NAME via yay (AUR): $arch_package"
+                    yay -S --noconfirm "$arch_package"
+                    return $?
+                fi
+            elif command -v paru >/dev/null 2>&1; then
+                # ANSIエスケープコードを除去してから検索
+                if paru -Ss "${arch_package}" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g; s/\x1b]8;;[^\x1b]*\x1b\\//g' | grep -q "^aur/${arch_package} "; then
+                    log_info "Installing $FONT_NAME via paru (AUR): $arch_package"
+                    paru -S --noconfirm "$arch_package"
+                    return $?
+                fi
             fi
             ;;
     esac
-    
+
     # パッケージマネージャーで見つからない場合はGitHubから
     log_info "Package manager installation not available, using GitHub releases..."
     install_font_from_github "$font_key"
