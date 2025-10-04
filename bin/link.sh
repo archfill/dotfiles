@@ -34,6 +34,7 @@ BASIC_CONFIGS=(
     ".mutt"
     ".textlintrc"
     ".tmux/bin"
+    ".config/tmux"
     ".config/zsh"
     ".zshenv"
     ".config/sheldon"
@@ -48,7 +49,8 @@ create_symlinks_batch "${BASIC_CONFIGS[@]}"
 # 特別なパスマッピングが必要な設定ファイル
 log_info "Creating special path mapping symlinks"
 # tmux設定: .config/tmux/tmux.conf → ~/.tmux.conf
-if [[ -f "${DOTFILES_DIR}/.config/tmux/tmux.conf" ]]; then
+# (.config/tmuxディレクトリ全体がシンボリックリンクされるため、個別の処理は不要)
+if [[ -f "${DOTFILES_DIR}/.config/tmux/tmux.conf" ]] && [[ ! -L "${HOME}/.config/tmux" ]]; then
     create_symlink "${DOTFILES_DIR}/.config/tmux/tmux.conf" "${HOME}/.tmux.conf"
 fi
 

@@ -15,6 +15,47 @@ alias vim="nvim"
 # alias tmux="tmux -u"
 alias xdisplay="Xephyr -resizeable"
 ## git
+# Basic commands
+alias gs='git status'
+alias ga='git add'
+alias gaa='git add --all'
+alias gc='git commit'
+alias gcm='git commit -m'
+alias gca='git commit --amend'
+alias gp='git push'
+alias gl='git pull'
+alias gf='git fetch'
+
+# Branch operations
+alias gb='git branch'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+alias gsw='git switch'
+alias gswc='git switch -c'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+
+# Diff and log
+alias gd='git diff'
+alias gds='git diff --staged'
+alias glog='git log --oneline --graph --decorate'
+alias gloga='git log --oneline --graph --decorate --all'
+
+# Stash operations
+alias gst='git stash'
+alias gstp='git stash pop'
+alias gstl='git stash list'
+
+# Merge and rebase
+alias gm='git merge'
+alias gr='git rebase'
+alias gri='git rebase -i'
+
+# Remote operations
+alias gre='git remote'
+alias grev='git remote -v'
+
+# Combined operations
 alias gacp='(){git add . && git commit -m "$1" && git push origin $(git_current_branch)}'
 ## mutt
 alias mutt="neomutt"
