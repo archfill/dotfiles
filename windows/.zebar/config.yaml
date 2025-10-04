@@ -1,0 +1,193 @@
+# Zebar - Status bar for GlazeWM
+# Configuration file for Zebar status bar
+
+# Define bar appearance and behavior
+general:
+  # Whether to show the bar on startup.
+  startup_enabled: true
+
+  # Default position of the bar on screen
+  position: "top"
+
+  # Height of the bar in pixels
+  height: 34
+
+  # Margin around the bar
+  margin: "0 0 0 0"
+
+  # Padding inside the bar
+  padding: "0 15"
+
+  # Background color (hex or rgba)
+  background_color: "rgba(45, 45, 45, 0.95)"
+
+  # Border configuration
+  border:
+    enabled: true
+    width: 1
+    color: "rgba(255, 255, 255, 0.1)"
+
+  # Font configuration
+  font:
+    family: "Segoe UI, 'SF Pro Display', system-ui"
+    size: 13
+    weight: 400
+
+# Define widgets to display in the bar
+widgets:
+  # Left side widgets
+  left:
+    # Workspaces widget - shows GlazeWM workspaces
+    - type: "glazewm_workspaces"
+      focused_workspace:
+        background_color: "rgba(134, 192, 99, 0.8)"  # Green for active workspace
+        font_color: "#ffffff"
+        border_color: "rgba(134, 192, 99, 1.0)"
+      displayed_workspace:
+        background_color: "rgba(134, 192, 99, 0.3)"  # Dim green for visible but not focused
+        font_color: "#ffffff"
+        border_color: "rgba(134, 192, 99, 0.5)"
+      default_workspace:
+        background_color: "transparent"
+        font_color: "rgba(255, 255, 255, 0.7)"
+        border_color: "transparent"
+
+    # Window title widget
+    - type: "glazewm_binding_mode"
+      background_color: "rgba(255, 165, 0, 0.8)"  # Orange for binding mode
+      font_color: "#ffffff"
+      margin: "0 10"
+
+  # Center widgets
+  center:
+    # Current window title
+    - type: "glazewm_focused"
+      # Show focused window title
+      show_icon: true
+      max_title_length: 50
+      font_color: "rgba(255, 255, 255, 0.9)"
+      icon_color: "rgba(134, 192, 99, 1.0)"
+
+  # Right side widgets
+  right:
+    # System information widgets
+    - type: "network"
+      refresh_interval_ms: 5000
+      # Network status (Wi-Fi/Ethernet)
+      templates:
+        wifi_connected: "📶 {{ssid}}"
+        wifi_disconnected: "📶 Disconnected"
+        ethernet_connected: "🌐 Connected"
+        ethernet_disconnected: "🌐 Disconnected"
+      font_color: "rgba(255, 255, 255, 0.8)"
+      margin: "0 10 0 0"
+
+    - type: "cpu"
+      refresh_interval_ms: 2000
+      # CPU usage percentage
+      template: "🖥️ {{usage}}%"
+      font_color: "rgba(255, 255, 255, 0.8)"
+      margin: "0 10 0 0"
+      # Color coding for CPU usage
+      thresholds:
+        high: 80
+        medium: 50
+      colors:
+        high: "rgba(255, 99, 99, 1.0)"      # Red for high usage
+        medium: "rgba(255, 165, 0, 1.0)"    # Orange for medium usage
+        low: "rgba(255, 255, 255, 0.8)"     # White for low usage
+
+    - type: "memory"
+      refresh_interval_ms: 5000
+      # Memory usage
+      template: "🧠 {{usage}}%"
+      font_color: "rgba(255, 255, 255, 0.8)"
+      margin: "0 10 0 0"
+      # Color coding for memory usage
+      thresholds:
+        high: 80
+        medium: 60
+      colors:
+        high: "rgba(255, 99, 99, 1.0)"      # Red for high usage
+        medium: "rgba(255, 165, 0, 1.0)"    # Orange for medium usage
+        low: "rgba(255, 255, 255, 0.8)"     # White for low usage
+
+    - type: "battery"
+      refresh_interval_ms: 30000
+      # Battery status (only shows if on battery)
+      templates:
+        charging: "🔌 {{percentage}}%"
+        discharging: "🔋 {{percentage}}%"
+        full: "🔋 {{percentage}}%"
+      font_color: "rgba(255, 255, 255, 0.8)"
+      margin: "0 10 0 0"
+      # Color coding for battery level
+      thresholds:
+        low: 20
+        medium: 50
+      colors:
+        low: "rgba(255, 99, 99, 1.0)"       # Red for low battery
+        medium: "rgba(255, 165, 0, 1.0)"    # Orange for medium battery
+        high: "rgba(255, 255, 255, 0.8)"    # White for high battery
+
+    # Date and time
+    - type: "clock"
+      refresh_interval_ms: 1000
+      # Time format - 24 hour with seconds
+      time_formatting: "HH:mm:ss"
+      # Date format - Japanese style
+      date_formatting: "yyyy/MM/dd (ddd)"
+      font_color: "#ffffff"
+      margin: "0 5 0 10"
+      templates:
+        default: "📅 {{date}} 🕐 {{time}}"
+
+# Multi-monitor support
+monitors:
+  # Configuration for primary monitor
+  primary:
+    enabled: true
+
+  # Configuration for secondary monitors
+  secondary:
+    enabled: true
+    # Show minimal widgets on secondary monitors
+    widgets:
+      left:
+        - type: "glazewm_workspaces"
+      center:
+        - type: "glazewm_focused"
+          max_title_length: 30
+      right:
+        - type: "clock"
+          time_formatting: "HH:mm"
+          templates:
+            default: "🕐 {{time}}"
+
+# Styling and themes
+theme:
+  # Default color scheme - dark theme
+  colors:
+    background: "rgba(45, 45, 45, 0.95)"
+    foreground: "rgba(255, 255, 255, 0.9)"
+    accent: "rgba(134, 192, 99, 1.0)"      # Green accent
+    warning: "rgba(255, 165, 0, 1.0)"      # Orange for warnings
+    error: "rgba(255, 99, 99, 1.0)"        # Red for errors
+
+  # Font settings
+  fonts:
+    primary: "Segoe UI, 'SF Pro Display', system-ui"
+    monospace: "Consolas, 'SF Mono', Monaco, monospace"
+
+  # Animation settings
+  animations:
+    enabled: true
+    duration: 200  # milliseconds
+
+# Integration with GlazeWM
+glazewm:
+  # Automatically hide bar when GlazeWM is in fullscreen mode
+  hide_in_fullscreen: true
+
+  # Subscribe to GlazeWM events for real-time updates
+  event_subscription: true

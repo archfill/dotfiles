@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Bar</title>
+    <style>
+        :root {
+            --main-color: #ffffff;
+            --font-color: #ffffff;
+            --background-color: rgba(20, 20, 20, 0.95);
+            --accent-color: rgba(255, 255, 255, 0.1);
+            --active-color: rgba(255, 255, 255, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 13px;
+            background: var(--background-color);
+            backdrop-filter: blur(10px);
+            color: var(--font-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .workspaces {
+            display: flex;
+            gap: 6px;
+        }
+
+        .workspace {
+            padding: 4px 8px;
+            background: var(--accent-color);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .workspace.focused {
+            background: var(--active-color);
+        }
+
+        .workspace:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .window-title {
+            color: #cccccc;
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 12px;
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .metric {
+            padding: 2px 6px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .date-time {
+            font-weight: 500;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="left-section">
+        <div class="workspaces">
+            <div class="workspace focused">1</div>
+            <div class="workspace">2</div>
+            <div class="workspace">3</div>
+            <div class="workspace">4</div>
+            <div class="workspace">5</div>
+        </div>
+        <div class="window-title">Active Window Title</div>
+    </div>
+
+    <div class="right-section">
+        <div class="system-info">
+            <div class="metric">CPU: 25%</div>
+            <div class="metric">RAM: 8.2GB</div>
+            <div class="metric">BAT: 85%</div>
+        </div>
+        <div class="date-time">2025/09/29 23:55</div>
+    </div>
+
+    <script>
+        // Basic time update
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.querySelector('.date-time').textContent = timeStr;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>

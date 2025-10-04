@@ -1,0 +1,37 @@
+/* Custom CSS overrides for Zebar paix widget */
+
+/* Main bar background - darker theme */
+body {
+  background: rgba(20, 20, 20, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Override any existing background styles */
+.bar, .container, [class*="bar"], [class*="container"] {
+  background: rgba(20, 20, 20, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Ensure text remains visible */
+* {
+  color: #ffffff !important;
+}
+
+/* Style adjustments for better contrast */
+.workspace, .button, [class*="workspace"], [class*="button"] {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.workspace.active, .button.active, [class*="active"] {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* System info styling */
+.system-info, [class*="system"], [class*="info"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+}

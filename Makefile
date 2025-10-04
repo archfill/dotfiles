@@ -593,23 +593,3 @@ dev-environment: init all-sdks ## Complete development environment setup (dotfil
 # ===== Neovim統一管理システム完了 =====
 # 非推奨エイリアスコマンドを削除し、統一コマンドのみ提供
 
-# ===== Windows管理コマンド =====
-windows-setup: ## Setup Windows dotfiles (requires Administrator privileges)
-	@echo "Setting up Windows dotfiles..."
-	@if [ "$$(uname -o 2>/dev/null || echo 'unknown')" = "Msys" ] || [ "$$(uname -s)" = "MINGW64_NT"* ] || [ -n "$$COMSPEC" ]; then \
-		echo "🪟 Running Windows dotfiles setup..."; \
-		powershell.exe -ExecutionPolicy Bypass -File "./windows/setup.ps1"; \
-	else \
-		echo "❌ This command is only for Windows"; \
-		exit 1; \
-	fi
-
-windows-status: ## Check Windows dotfiles link status
-	@echo "Checking Windows dotfiles status..."
-	@if [ "$$(uname -o 2>/dev/null || echo 'unknown')" = "Msys" ] || [ "$$(uname -s)" = "MINGW64_NT"* ] || [ -n "$$COMSPEC" ]; then \
-		echo "🔍 WSL Configuration Status:"; \
-		powershell.exe -Command "if (Test-Path '$$env:USERPROFILE\.wslconfig') { if ((Get-Item '$$env:USERPROFILE\.wslconfig').LinkType -eq 'SymbolicLink') { Write-Host '✅ .wslconfig is properly linked' -ForegroundColor Green } else { Write-Host '❌ .wslconfig exists but is not a symlink' -ForegroundColor Red } } else { Write-Host '❌ .wslconfig not found' -ForegroundColor Red }"; \
-	else \
-		echo "❌ This command is only for Windows"; \
-		exit 1; \
-	fi

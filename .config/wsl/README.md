@@ -13,9 +13,9 @@
   - ネットワーク設定
   - パフォーマンス最適化
 
-### windows_terminal.json
-- **用途**: Windows Terminal設定テンプレート
-- **配置場所**: Windows Terminal設定ディレクトリにコピー
+### windows_terminal.json（移行済み）
+- **用途**: Windows Terminal設定（`windows/windows_terminal.json`に移行済み）
+- **配置場所**: 自動シンボリックリンク（`make windows-setup`で自動作成）
 - **主要設定**:
   - Arch Linux / Ubuntu プロファイル
   - フォント設定（HackGen Console NF推奨）
@@ -50,9 +50,17 @@
    make wsl-windows-integration
    ```
 
-3. 手動設定が必要なファイル:
-   - `wslconfig.template` → `C:\Users\username\.wslconfig`
-   - `windows_terminal.json` → Windows Terminal設定
+3. Windows設定の自動セットアップ:
+   ```bash
+   make windows-setup  # 管理者権限が必要
+   ```
+   - `.wslconfig` のシンボリックリンク作成
+   - Windows Terminal設定のシンボリックリンク作成（動的検出）
+
+4. 設定状態の確認:
+   ```bash
+   make windows-status
+   ```
 
 ## 動作確認
 

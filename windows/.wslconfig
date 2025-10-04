@@ -10,17 +10,15 @@ processors=8
 # スワップ設定
 swap=4GB
 
-# ネットワーク最適化
-localhostForwarding=true
-
 # GUI最適化
 guiApplications=true
 
-# 実験的機能
-sparseVhd=true
+# ネットワーク最適化
+localhostForwarding=true
 
 # ネットワークパフォーマンス向上
-networkingMode=mirrored
+# networkingMode=mirrored
+networkingMode=nat
 firewall=true
 
 # DNS最適化
@@ -28,9 +26,6 @@ dnsTunneling=true
 
 # I/O最適化
 autoProxy=true
-
-# ページファイル最適化
-pageReporting=true
 
 # メモリ回収最適化
 vmIdleTimeout=60000
