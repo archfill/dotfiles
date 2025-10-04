@@ -1,5 +1,8 @@
 # Ghostty Terminal Configuration
 # https://github.com/ghostty-org/ghostty
+#
+# このファイルは共通設定を含み、プラットフォーム固有の設定は
+# 別ファイルから読み込みます。
 
 # ==========================================
 # Font Configuration
@@ -36,15 +39,6 @@ window-padding-balance = true
 adjust-cell-height = 35%
 
 # ==========================================
-# macOS Specific Settings
-# ==========================================
-macos-titlebar-style = "native"
-# 人気のchalkboardアイコンを使用
-macos-icon = "chalkboard"
-# Display P3カラースペースを使用
-window-colorspace = "display-p3"
-
-# ==========================================
 # Cursor Configuration
 # ==========================================
 cursor-style = "block"
@@ -78,39 +72,10 @@ mouse-hide-while-typing = true
 mouse-scroll-multiplier = 2
 
 # ==========================================
-# Key Bindings - Basic
+# Common Key Bindings
 # ==========================================
-keybind = cmd+shift+c=copy_to_clipboard
-keybind = cmd+shift+v=paste_from_clipboard
-keybind = cmd+t=new_tab
-keybind = cmd+w=close_surface
-keybind = cmd+n=new_window
-keybind = cmd+shift+n=new_window
-keybind = cmd+comma=open_config
-
-# ==========================================
-# Key Bindings - Enhanced
-# ==========================================
-# 設定リロード
-keybind = cmd+shift+comma=reload_config
 # 改行の追加（便利）
 keybind = shift+enter=text:\n
-# 分割ペイン
-keybind = cmd+d=new_split:right
-keybind = cmd+shift+d=new_split:down
-# タブ移動
-keybind = cmd+shift+left=previous_tab
-keybind = cmd+shift+right=next_tab
-# 数字キーでタブ切り替え
-keybind = cmd+one=goto_tab:1
-keybind = cmd+two=goto_tab:2
-keybind = cmd+three=goto_tab:3
-keybind = cmd+four=goto_tab:4
-keybind = cmd+five=goto_tab:5
-keybind = cmd+six=goto_tab:6
-keybind = cmd+seven=goto_tab:7
-keybind = cmd+eight=goto_tab:8
-keybind = cmd+nine=goto_tab:9
 
 # ==========================================
 # Selection and Colors
@@ -126,12 +91,6 @@ selection-foreground = "#abb2bf"
 title = "Ghostty Terminal"
 window-title-font-family = "HackGen Console NF"
 
-# クイックターミナル機能（グローバルキーバインド）
-keybind = global:cmd+grave_accent=toggle_quick_terminal
-
-# 背景ぼかし効果（macOSで透明度使用時）
-background-blur-radius = 20
-
 # より高度なシェル統合（tmux使用者向け）
 # command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
 
@@ -140,6 +99,15 @@ background-blur-radius = 20
 # ==========================================
 # より高度なビジュアル効果が必要な場合
 # custom-shader = "shaders/bloom025.glsl"
+
+# ==========================================
+# Platform-Specific Configuration
+# ==========================================
+# プラットフォーム固有の設定を読み込み（存在する場合のみ）
+# macOS: .config/ghostty/macos
+# Linux: .config/ghostty/linux
+config-file = ?macos
+config-file = ?linux
 
 # ==========================================
 # Notes

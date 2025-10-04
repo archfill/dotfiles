@@ -1,0 +1,56 @@
+# Ghostty macOS-Specific Configuration
+# このファイルはmacOSでのみ読み込まれます
+
+# ==========================================
+# macOS Window Settings
+# ==========================================
+macos-titlebar-style = "native"
+# 人気のchalkboardアイコンを使用
+macos-icon = "chalkboard"
+# Display P3カラースペースを使用
+window-colorspace = "display-p3"
+
+# ==========================================
+# macOS Visual Effects
+# ==========================================
+# 背景ぼかし効果（macOSで透明度使用時）
+background-blur-radius = 20
+
+# ==========================================
+# macOS Key Bindings - Basic
+# ==========================================
+keybind = cmd+shift+c=copy_to_clipboard
+keybind = cmd+shift+v=paste_from_clipboard
+keybind = cmd+t=new_tab
+keybind = cmd+w=close_surface
+keybind = cmd+n=new_window
+keybind = cmd+shift+n=new_window
+keybind = cmd+comma=open_config
+
+# ==========================================
+# macOS Key Bindings - Enhanced
+# ==========================================
+# 設定リロード
+keybind = cmd+shift+comma=reload_config
+# 分割ペイン
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+# タブ移動
+keybind = cmd+shift+left=previous_tab
+keybind = cmd+shift+right=next_tab
+# 数字キーでタブ切り替え
+keybind = cmd+one=goto_tab:1
+keybind = cmd+two=goto_tab:2
+keybind = cmd+three=goto_tab:3
+keybind = cmd+four=goto_tab:4
+keybind = cmd+five=goto_tab:5
+keybind = cmd+six=goto_tab:6
+keybind = cmd+seven=goto_tab:7
+keybind = cmd+eight=goto_tab:8
+keybind = cmd+nine=goto_tab:9
+
+# ==========================================
+# macOS Quick Terminal
+# ==========================================
+# クイックターミナル機能（グローバルキーバインド）
+keybind = global:cmd+grave_accent=toggle_quick_terminal
