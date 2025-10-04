@@ -58,7 +58,12 @@ install_common_packages_debian() {
           xsel \
           xclip \
           sqlite3 \
-          libsqlite3-dev
+          libsqlite3-dev \
+          yazi \
+          ffmpegthumbnailer \
+          poppler-utils \
+          fd-find \
+          imagemagick
     else
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
@@ -156,7 +161,12 @@ install_common_packages_arch() {
               jq \
               xsel \
               xclip \
-              sqlite
+              sqlite \
+              yazi \
+              ffmpegthumbnailer \
+              poppler \
+              fd \
+              imagemagick
         else
             log_warning "yay not available, using pacman for basic packages"
             sudo pacman -Syu --noconfirm \

@@ -21,12 +21,6 @@ for filepath in $files; do
       continue
     fi
 
-    # Skip macOS-only scripts on non-macOS platforms
-    if [[ "$(uname -s)" != "Darwin" ]] && [[ "$script_name" == "sketchybar-sbarlua.sh" ]]; then
-      log_info "Skipping macOS-only script: $script_name"
-      continue
-    fi
-
     log_info "Running app setup: $script_name"
 
     if ! bash "${filepath}"; then

@@ -511,8 +511,8 @@ install_stable_nightly() {
     # システムワイドNeovimチェック  
     check_system_neovim
     
-    # 既存のneovim_installer.shを使用
-    local installer_script="$DOTFILES_DIR/bin/apps/neovim_installer.sh"
+    # 既存のneovim installer を使用
+    local installer_script="$DOTFILES_DIR/bin/installers/neovim.sh"
     if [[ ! -x "$installer_script" ]]; then
         log_error "Neovim installer script not found: $installer_script"
         exit 1

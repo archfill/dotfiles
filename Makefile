@@ -60,7 +60,7 @@ yaskkserv2-build: ## Build Japanese SKK input method server
 # Flutter開発環境
 flutter-setup: ## Install and setup Flutter development environment
 	@echo "Setting up Flutter development environment..."
-	bash ./bin/apps/flutter.sh
+	bash ./bin/apps/52-flutter.sh
 
 # ===== 統一Neovim管理システム（推奨） =====
 neovim-install: ## Install Neovim version (usage: make neovim-install VERSION=stable/nightly/head)
@@ -314,7 +314,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 			echo "Installing SketchyBar via Homebrew..."; \
 			brew tap FelixKratz/formulae && brew install sketchybar; \
 		fi; \
-		bash bin/apps/sketchybar-sbarlua.sh; \
+		bash bin/installers/sketchybar.sh; \
 		echo "✅ SketchyBar setup completed!"; \
 		echo ""; \
 		echo "💡 Next steps:"; \
@@ -328,7 +328,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 sketchybar-uninstall: ## Uninstall SbarLua
 	@echo "Uninstalling SbarLua..."
 	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		bash bin/apps/sketchybar-sbarlua.sh uninstall; \
+		bash bin/installers/sketchybar.sh uninstall; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \
@@ -347,7 +347,7 @@ sketchybar-test: ## Test SketchyBar Lua configuration (usage: make sketchybar-te
 # ghq関連コマンド
 ghq-setup: ## Setup ghq for repository management
 	@echo "Setting up ghq..."
-	@bash bin/apps/ghq.sh
+	@bash ./bin/apps/ghq.sh
 
 ghq-list: ## List all repositories managed by ghq
 	@echo "Repositories managed by ghq:"
@@ -514,15 +514,15 @@ macos-test: ## Run macOS-specific environment tests
 # Individual SDK setup commands
 java-setup: ## Install Java 21 LTS via SDKMAN!
 	@echo "Installing Java 21 LTS via SDKMAN!..."
-	@bash ./bin/apps/java-sdkman.sh
+	@bash ./bin/apps/03-java-sdkman.sh
 
 rust-setup: ## Install Rust stable toolchain via rustup
 	@echo "Installing Rust stable toolchain via rustup..."
-	@bash ./bin/apps/rust-rustup.sh
+	@bash ./bin/apps/02-rust-rustup.sh
 
 go-setup: ## Install Go latest via g version manager
 	@echo "Installing Go latest via g version manager..."
-	@bash ./bin/apps/go-g.sh
+	@bash ./bin/apps/01-go-g.sh
 
 php-setup: ## Install PHP 8.3 via APT package manager
 	@echo "Installing PHP 8.3 via APT package manager..."
@@ -534,11 +534,11 @@ ruby-setup: ## Install Ruby 3.2 via rbenv
 
 terraform-setup: ## Install Terraform CLI
 	@echo "Installing Terraform CLI..."
-	@bash ./bin/apps/terraform.sh
+	@bash ./bin/apps/51-terraform.sh
 
 docker-setup: ## Setup Docker Engine
 	@echo "Setting up Docker Engine..."
-	@bash ./bin/apps/docker.sh
+	@bash ./bin/apps/50-docker.sh
 
 # Grouped SDK setup commands
 core-sdks: java-setup rust-setup go-setup ## Install core development SDKs (Java, Rust, Go)

@@ -95,6 +95,12 @@ utils_apps=(
   'the_silver_searcher'
   'awscli'
   'stripe'
+  'yazi'
+  'ffmpegthumbnailer'
+  'sevenzip'
+  'poppler'
+  'fd'
+  'imagemagick'
 )
 
 # macOS specific tools
