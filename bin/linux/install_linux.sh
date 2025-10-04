@@ -46,6 +46,7 @@ install_common_packages_debian() {
           vim \
           silversearcher-ag \
           ripgrep \
+          git-delta \
           fontconfig \
           curl \
           unzip \
@@ -124,6 +125,7 @@ install_common_packages_arch() {
         if command -v yay >/dev/null 2>&1; then
             yay -Syu --noconfirm \
               ripgrep \
+              git-delta \
               wget \
               unzip \
               p7zip \

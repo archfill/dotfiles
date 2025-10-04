@@ -14,14 +14,21 @@ files="${DOTFILES_DIR}/bin/apps/*"
 for filepath in $files; do
   if [[ -f "$filepath" && ! "${filepath}" == *setup.sh* ]]; then
     script_name="$(basename "$filepath")"
-    log_info "Running app setup: $script_name"
-    
+
     # Skip certain scripts in CI environment
     if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]] && [[ "$script_name" == "ghq.sh" ]]; then
       log_info "Skipping $script_name in CI environment"
       continue
     fi
-    
+
+    # Skip macOS-only scripts on non-macOS platforms
+    if [[ "$(uname -s)" != "Darwin" ]] && [[ "$script_name" == "sketchybar-sbarlua.sh" ]]; then
+      log_info "Skipping macOS-only script: $script_name"
+      continue
+    fi
+
+    log_info "Running app setup: $script_name"
+
     if ! bash "${filepath}"; then
       log_error "Script failed: $script_name"
       log_error "Script path: $filepath"
