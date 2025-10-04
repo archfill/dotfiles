@@ -30,7 +30,6 @@ BASIC_CONFIGS=(
     ".config/kitty"
     ".config/wezterm"
     ".config/ghostty"
-    ".config/direnv"
     ".muttrc"
     ".mutt"
     ".textlintrc"

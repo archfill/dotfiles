@@ -24,8 +24,6 @@ link ".vimrc"
 # link ".config/kitty"
 # # wezterm
 # link ".config/wezterm"
-# # direnv
-# link ".config/direnv"
 # # neomutt
 # link ".muttrc"
 # link ".mutt"

@@ -86,15 +86,15 @@ xcode-select --install
 # 必須開発ツール
 git curl wget jq yq fzf ripgrep bat tmux make coreutils openssl readline xz zlib
 
-# プログラミング言語・ツール  
-uv volta deno go openjdk openjdk@11 jenv
+# プログラミング言語・ツール
+uv volta deno go openjdk openjdk@11
 ```
 
 #### 基本セット（essential）
 最小セット + 以下：
 ```bash
 # 開発ユーティリティ
-ghq lazygit direnv the_silver_searcher awscli stripe
+ghq lazygit the_silver_searcher awscli stripe
 
 # GUI アプリケーション（Cask）
 wezterm aquaskk hammerspoon kitty android-platform-tools google-cloud-sdk brewlet cheatsheet

@@ -11,26 +11,15 @@ fi
 
 # Volta settings moved to shared .zprofile to avoid duplication
 
-# Java configuration - removed default version, keeping specific version only
-# Default Java setup removed to avoid conflicts with jenv
-if [ `/usr/libexec/java_home -v "11"` ] ; then
-  export JAVA_HOME=`/usr/libexec/java_home -v "11"`
-  export PATH=${JAVA_HOME}/bin:${PATH}
-fi
-
-if [ -d "$HOME/.jenv/bin" ] ; then
-  export PATH="$HOME/.jenv/bin:$PATH"
-  eval "$(jenv init -)"
-fi
+# Java configuration via SDKMAN (jenv removed)
+# SDKMAN is initialized in .zshrc (interactive shells only)
+# For non-interactive shells, JAVA_HOME is set by SDKMAN env
 
 # uv configuration moved to shared .zprofile
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Flutter configuration moved to shared configuration
 # Individual FLUTTER_ROOT should be set in personal.conf if needed
-
-# direnv
-eval "$(direnv hook zsh)"
 
 # Google Cloud SDK configuration moved to shared .zprofile to avoid duplication
 

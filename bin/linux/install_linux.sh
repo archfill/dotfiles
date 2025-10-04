@@ -44,13 +44,21 @@ install_common_packages_debian() {
           zsh \
           tmux \
           vim \
+          fzf \
           silversearcher-ag \
           ripgrep \
           git-delta \
           fontconfig \
           curl \
           unzip \
-          p7zip-full
+          p7zip-full \
+          zoxide \
+          bat \
+          jq \
+          xsel \
+          xclip \
+          sqlite3 \
+          libsqlite3-dev
     else
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
@@ -137,11 +145,18 @@ install_common_packages_arch() {
               vim \
               zsh \
               tmux \
+              fzf \
               lazygit \
               luarocks \
               lua51 \
               bottom \
-              the_silver_searcher
+              the_silver_searcher \
+              zoxide \
+              bat \
+              jq \
+              xsel \
+              xclip \
+              sqlite
         else
             log_warning "yay not available, using pacman for basic packages"
             sudo pacman -Syu --noconfirm \
@@ -153,7 +168,14 @@ install_common_packages_arch() {
               fontconfig \
               vim \
               zsh \
-              tmux
+              tmux \
+              fzf \
+              zoxide \
+              bat \
+              jq \
+              xsel \
+              xclip \
+              sqlite
         fi
     else
         log_info "[DRY RUN] Would install Arch Linux packages via yay/pacman"

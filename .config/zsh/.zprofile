@@ -43,33 +43,18 @@ setup_path_unified \
 #   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 # fi
 
-# Node.js version management - optimized with early returns
+# Node.js version management - Volta only (modern unified solution)
 setup_nodejs_manager() {
-  # 1. Volta (preferred) - fast, reliable, cross-platform
+  # Volta (preferred) - fast, reliable, cross-platform
   if dir_exists "$HOME/.volta"; then
     init_env_var "VOLTA_HOME" "$HOME/.volta"
     add_to_path "$VOLTA_HOME/bin"
-    
+
     # Add volta completion if available (non-blocking)
     [[ -f ~/.config/zsh/completions/_volta ]] && fpath+=(~/.config/zsh/completions)
     return 0
   fi
-  
-  # 2. Nodebrew (macOS alternative)
-  dir_exists "$HOME/.nodebrew/current/bin" && {
-    add_to_path "$HOME/.nodebrew/current/bin"
-    return 0
-  }
-  
-  # 3. nvm (legacy fallback - load only if needed)
-  local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
-  if dir_exists "$nvm_dir"; then
-    init_env_var "NVM_DIR" "$nvm_dir"
-    source_if_exists "$NVM_DIR/nvm.sh"
-    source_if_exists "$NVM_DIR/bash_completion"
-    return 0
-  fi
-  
+
   return 1
 }
 
@@ -98,12 +83,6 @@ setup_google_cloud_sdk "$HOME/google-cloud-sdk" || \
 setup_google_cloud_sdk "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" || \
 setup_google_cloud_sdk "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" || \
 setup_google_cloud_sdk "/snap/google-cloud-sdk/current" || true
-
-# opam configuration - optimized with early return
-if dir_exists "${HOME}/.opam"; then
-  source_if_exists "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
-  command_exists opam && eval "$(opam env)" 2>/dev/null || true
-fi
 
 # ===== Go (g version manager + official) - Environment Setup =====
 # Note: Moved from sdk.zsh to ensure environment variables are available

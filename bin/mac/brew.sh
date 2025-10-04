@@ -85,7 +85,6 @@ dev_apps=(
   'go'
   'openjdk'
   'openjdk@11'
-  'jenv'
 )
 
 # Development utilities
@@ -93,7 +92,6 @@ utils_apps=(
   'ghq'
   'lazygit'
   'git-delta'
-  'direnv'
   'the_silver_searcher'
   'awscli'
   'stripe'

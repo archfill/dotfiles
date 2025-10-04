@@ -642,13 +642,13 @@ install_ruby_tools() {
   if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
     log_install_summary "$installed_count" "$skipped_count" "$failed_count" 2>/dev/null || true
   fi
-  
+
   # Rehash after gem installation to update shims
   if [[ "$DRY_RUN" != "true" && "$installed_count" -gt 0 ]]; then
     log_info "Updating rbenv shims..."
-    rbenv rehash
+    rbenv rehash 2>/dev/null || log_warning "rbenv rehash failed, but continuing..."
   fi
-  
+
   log_success "Essential Ruby gems installation completed"
   return 0  # Ensure success return code
 }
@@ -712,13 +712,13 @@ verify_ruby_installation() {
     if command -v rbenv >/dev/null 2>&1; then
       log_info "rbenv version: $(rbenv --version)"
       log_info "Available Ruby versions:"
-      rbenv versions
-      log_info "Global Ruby version: $(rbenv global)"
+      rbenv versions 2>/dev/null || log_warning "Could not list rbenv versions"
+      log_info "Global Ruby version: $(rbenv global 2>/dev/null || echo 'not set')"
     fi
-    
+
     # Show gem environment
     log_info "Gem environment:"
-    gem env gemdir
+    gem env gemdir 2>/dev/null || log_warning "Could not get gem environment"
     
     # Test basic Ruby functionality
     log_info "Testing Ruby installation..."
@@ -855,17 +855,25 @@ main() {
     }
 
     # Setup/verify environment
-    setup_ruby_environment
-    
+    setup_ruby_environment || {
+      log_warning "Ruby environment setup had issues, but continuing..."
+    }
+
     # Install/update essential gems
-    install_ruby_tools "$@"
-    
+    install_ruby_tools "$@" || {
+      log_warning "Ruby tools installation had issues, but continuing..."
+    }
+
     # Ruby project management optimization
     if [[ "$QUICK_CHECK" != "true" ]]; then
-      optimize_ruby_project_management "$@"
+      optimize_ruby_project_management "$@" || {
+        log_warning "Ruby project optimization had issues, but continuing..."
+      }
     fi
-    
-    verify_ruby_installation
+
+    verify_ruby_installation || {
+      log_warning "Ruby verification had issues, but continuing..."
+    }
     cleanup_sudo_keeper
     return 0
   fi
