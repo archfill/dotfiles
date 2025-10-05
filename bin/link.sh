@@ -32,6 +32,7 @@ BASIC_CONFIGS=(
     ".config/ghostty"
     ".muttrc"
     ".mutt"
+    ".config/aerc"
     ".textlintrc"
     ".tmux/bin"
     ".config/tmux"

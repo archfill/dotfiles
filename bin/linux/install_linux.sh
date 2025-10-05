@@ -47,6 +47,7 @@ install_common_packages_debian() {
           notmuch \
           isync \
           msmtp \
+          less \
           zsh \
           tmux \
           vim \
@@ -158,6 +159,7 @@ install_common_packages_arch() {
               notmuch \
               isync \
               msmtp \
+              less \
               mpv \
               vim \
               zsh \
@@ -188,6 +190,7 @@ install_common_packages_arch() {
               p7zip \
               curl \
               fontconfig \
+              less \
               vim \
               zsh \
               tmux \
