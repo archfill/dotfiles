@@ -4,8 +4,12 @@
 # 全アプリケーションスクリプトで使用する統一的なチェック機能を提供
 
 # 共通ライブラリをインポート
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+if [[ -z "${DOTFILES_DIR:-}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+fi
+
+source "${DOTFILES_DIR}/bin/lib/common.sh"
 
 # =============================================================================
 # コマンド存在チェック関数
