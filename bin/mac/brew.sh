@@ -116,6 +116,12 @@ macos_apps=(
 optional_apps=(
   'bazelisk'
   'neomutt'
+  'aerc'
+  'urlscan'
+  'khard'
+  'notmuch'
+  'isync'
+  'msmtp'
   'qmk'
   'ranger'
   'sqlite3'

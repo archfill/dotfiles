@@ -41,6 +41,12 @@ install_common_packages_debian() {
           wget \
           w3m \
           neomutt \
+          aerc \
+          urlscan \
+          khard \
+          notmuch \
+          isync \
+          msmtp \
           zsh \
           tmux \
           vim \
@@ -145,7 +151,13 @@ install_common_packages_arch() {
               curl \
               fontconfig \
               neomutt \
+              aerc \
               w3m \
+              urlscan \
+              khard \
+              notmuch \
+              isync \
+              msmtp \
               mpv \
               vim \
               zsh \
