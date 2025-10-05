@@ -57,11 +57,23 @@ shell-integration = zsh
 # より安全で人気の設定
 shell-integration-features = "no-cursor,sudo,no-title"
 
+# OSC 52クリップボードサポート（SSH/リモート作業用）
+clipboard-read = allow
+clipboard-write = allow
+
 # ==========================================
 # Performance Settings
 # ==========================================
 # スクロールバックバッファの最適化
 scrollback-limit = 100000
+# 画像プロトコルのサポート（kitty互換）
+image-storage-limit = 320000000
+
+# ==========================================
+# True Color Support
+# ==========================================
+# tmux連携のため明示的にTERM変数を設定
+term = xterm-256color
 
 # ==========================================
 # Mouse Configuration
@@ -75,6 +87,10 @@ mouse-scroll-multiplier = 2
 # ==========================================
 # 改行の追加（便利）
 keybind = shift+enter=text:\n
+# フォントサイズ調整（よく使われる）
+keybind = ctrl+plus=increase_font_size:1
+keybind = ctrl+minus=decrease_font_size:1
+keybind = ctrl+zero=reset_font_size
 
 # ==========================================
 # Selection and Colors
@@ -91,7 +107,8 @@ title = "Ghostty Terminal"
 window-title-font-family = "HackGen Console NF"
 
 # より高度なシェル統合（tmux使用者向け）
-# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
+# $TMUX変数をチェックしてネストされたtmuxを防止
+command = zsh --login -c "if [ -z \"$TMUX\" ] && command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
 
 # ==========================================
 # Optional: Custom Shaders

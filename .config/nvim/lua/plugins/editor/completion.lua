@@ -23,6 +23,8 @@ return {
           -- Custom enhanced keymaps for better UX
           ["<C-j>"] = { "select_next", "fallback" },
           ["<C-k>"] = { "select_prev", "fallback" },
+          ["<Down>"] = { "select_next", "fallback" },
+          ["<Up>"] = { "select_prev", "fallback" },
           ["<C-d>"] = { "scroll_documentation_down", "fallback" },
           ["<C-u>"] = { "scroll_documentation_up", "fallback" },
           ["<C-l>"] = { "accept", "fallback" },
@@ -191,6 +193,8 @@ return {
             ["<S-Tab>"] = { "select_prev", "fallback" },
             ["<C-n>"] = { "select_next", "fallback" },
             ["<C-p>"] = { "select_prev", "fallback" },
+            ["<Down>"] = { "select_next", "fallback" },
+            ["<Up>"] = { "select_prev", "fallback" },
           },
           sources = function()
             local type = vim.fn.getcmdtype()

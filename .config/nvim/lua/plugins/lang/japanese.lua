@@ -148,24 +148,6 @@ return {
     "delphinus/skkeleton_indicator.nvim",
     dependencies = { "vim-skk/skkeleton" },
     event = "VeryLazy",
-    opts = {
-      -- ===== 表示設定 =====
-      fadeOutMs = 3000,
-      border = "single",
-      
-      -- ===== 位置設定 =====
-      row = 0,
-      col = 0,
-      
-      -- ===== スタイル設定 =====
-      zindex = 1000,
-      
-      -- ===== モード別表示 =====
-      eijiText = "英字",
-      hiraText = "ひら",
-      kataText = "カタ",
-      hanKataText = "半ｶﾀ",
-      zenkakuText = "全角",
-    },
+    opts = {},
   },
 }
