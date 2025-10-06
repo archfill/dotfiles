@@ -21,18 +21,65 @@ log_info "Starting Linux configuration"
 distro="$(get_os_distribution)"
 arch="$(detect_architecture)"
 
-install_common_packages_debian() {
-    log_info "Installing packages for Debian/Ubuntu..."
-    
+# Install mise for Debian/Ubuntu
+install_mise_debian() {
+    log_info "Installing mise for Debian/Ubuntu..."
+
     # Parse command line options
     parse_install_options "$@"
-    
+
+    # Check if mise should be skipped
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v mise >/dev/null 2>&1; then
+        log_skip_reason "mise" "Already installed: $(mise --version 2>/dev/null || echo 'version unknown')"
+        return 0
+    fi
+
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would install mise"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Install prerequisites
+        sudo apt update -y
+        sudo apt install -y gpg sudo wget curl
+
+        # Add mise repository
+        sudo install -dm 755 /etc/apt/keyrings
+        wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | sudo tee /etc/apt/keyrings/mise-archive-keyring.gpg 1> /dev/null
+        echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | sudo tee /etc/apt/sources.list.d/mise.list
+
+        # Install mise
+        sudo apt update
+        sudo apt install -y mise
+
+        # Verify installation
+        if command -v mise >/dev/null 2>&1; then
+            log_success "mise installed successfully: $(mise --version)"
+        else
+            log_error "mise installation failed"
+            return 1
+        fi
+    else
+        log_info "[DRY RUN] Would add mise repository and install mise"
+    fi
+
+    return 0
+}
+
+install_common_packages_debian() {
+    log_info "Installing packages for Debian/Ubuntu..."
+
+    # Parse command line options
+    parse_install_options "$@"
+
     # Quick check mode
     if [[ "$QUICK_CHECK" == "true" ]]; then
         log_info "QUICK: Would install Debian/Ubuntu packages"
         return 0
     fi
-    
+
     if [[ "$DRY_RUN" != "true" ]]; then
         sudo apt update
         sudo apt install -y \
@@ -74,6 +121,9 @@ install_common_packages_debian() {
     else
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
+
+    # Install mise
+    install_mise_debian "$@"
 
     # Install uv using common library
     install_uv "$@"
@@ -144,6 +194,7 @@ install_common_packages_arch() {
         # Install packages via yay (if available) or pacman
         if command -v yay >/dev/null 2>&1; then
             yay -Syu --noconfirm \
+              mise \
               ripgrep \
               git-delta \
               wget \
@@ -184,6 +235,7 @@ install_common_packages_arch() {
         else
             log_warning "yay not available, using pacman for basic packages"
             sudo pacman -Syu --noconfirm \
+              mise \
               ripgrep \
               wget \
               unzip \

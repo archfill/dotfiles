@@ -79,6 +79,7 @@ essential_apps=(
 
 # Programming languages and tools
 dev_apps=(
+  'mise'
   'uv'
   'volta'
   'deno'

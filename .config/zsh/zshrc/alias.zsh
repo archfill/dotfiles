@@ -70,6 +70,17 @@ alias pyenv-install='uv python install'
 alias pyenv-versions='uv python list'
 alias pyenv-which='uv python which'
 
+## mise aliases
+alias mup='mise install'             # Install all tools from config
+alias mls='mise ls'                  # List installed tools
+alias muse='mise use'                # Install and pin tool version
+alias mex='mise exec'                # Execute command with specific tool
+alias menv='mise env'                # Show environment variables
+alias mdoc='mise doctor'             # Check mise installation
+alias mwatch='mise watch'            # Watch for config changes
+alias mtasks='mise tasks'            # List available tasks
+alias mrun='mise run'                # Run task from config
+
 ## ghq aliases
 alias ghq-list='ghq list'
 alias ghq-root='ghq root'

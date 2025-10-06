@@ -137,6 +137,20 @@ if dir_exists "$RBENV_ROOT"; then
   fi
 fi
 
+# ===== mise (Polyglot Tool Version Manager) =====
+# mise manages multiple language versions and environment variables per project
+# Replaces: asdf, pyenv, rbenv, nvm, direnv, and more
+if command_exists mise; then
+  # Initialize mise for shell integration
+  eval "$(mise activate zsh)" 2>/dev/null || true
+
+  # mise settings
+  export MISE_YES=1                    # Auto-answer yes to prompts
+  export MISE_VERBOSE=0                # Reduce verbosity
+  export MISE_EXPERIMENTAL=true        # Enable experimental features
+  export MISE_LEGACY_VERSION_FILE=1    # Support .node-version, .python-version, etc.
+fi
+
 # ===== Node.js (volta - already configured) =====
 # Note: volta is already configured in separate files
 # This is just for reference and compatibility
@@ -242,6 +256,15 @@ function sdk_status() {
   echo "=== Development SDKs Status ==="
   echo
   
+  # mise (optimized)
+  if command_exists mise; then
+    echo "✅ mise: $(mise --version 2>/dev/null | head -1)"
+    local tool_count=$(mise list 2>/dev/null | grep -c "^" || echo 0)
+    echo "   Managed tools: $tool_count"
+  else
+    echo "❌ mise: Not installed"
+  fi
+
   # Java (optimized)
   if command_exists java; then
     echo "✅ Java: $(java -version 2>&1 | head -1)"

@@ -1,0 +1,37 @@
+# Sheldon configuration for zsh plugins
+# Converted from zinit setup
+
+shell = "zsh"
+
+[plugins.zsh-fast-syntax-highlighting]
+github = "zdharma-continuum/fast-syntax-highlighting"
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+
+[plugins.zsh-history-substring-search]
+github = "zsh-users/zsh-history-substring-search"
+
+[plugins.zsh-256color]
+github = "chrissicool/zsh-256color"
+
+# Docker completion is handled by the system docker package
+# [plugins.docker-completion]
+# github = "docker/cli"
+# dir = "contrib/completion/zsh"
+# use = ["_docker"]
+
+[plugins.fzf-tab]
+github = "Aloxaf/fzf-tab"
+
+[plugins.zsh-you-should-use]
+github = "MichaelAquilina/zsh-you-should-use"
+
+[plugins.zsh-abbr]
+github = "olets/zsh-abbr"
+
+[templates]
+defer = "{{ hooks?.pre | nl }}{% for plugin in plugins %}{{ plugin.raw }}{% endfor %}{{ hooks?.post | nl }}"
