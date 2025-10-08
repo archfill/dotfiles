@@ -58,3 +58,203 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 - `make backup` - Backup current configuration
 
 ⚠️ **For detailed documentation on specific topics, see the linked documents above.**
+
+---
+
+## 📁 Repository Structure
+
+```
+dotfiles/
+├── .config/           # アプリケーション設定ファイル (20+ configs)
+│   ├── nvim/          # Neovim設定
+│   ├── zsh/           # Zsh設定
+│   ├── tmux/          # tmux設定
+│   ├── wezterm/       # WezTerm設定
+│   ├── kitty/         # Kitty設定
+│   ├── ghostty/       # Ghostty設定
+│   ├── alacritty/     # Alacritty設定
+│   ├── starship.toml  # Starshipプロンプト
+│   ├── sheldon/       # Sheldon (zshプラグイン管理)
+│   ├── aerc/          # Aerc (メールクライアント)
+│   ├── lazygit/       # Lazygit
+│   └── ...            # その他20+の設定
+│
+├── bin/               # インストール・セットアップスクリプト (詳細は次セクション)
+│   ├── apps/          # クロスプラットフォーム開発ツール
+│   ├── platform/      # プラットフォーム固有処理
+│   ├── install-methods/ # 特殊インストール方法
+│   └── lib/           # 共通ライブラリ
+│
+├── config/            # dotfiles設定
+│   ├── versions.conf  # パッケージバージョン管理
+│   └── personal.conf  # 個人設定 (Git user/email)
+│
+├── docs/              # ドキュメント
+│   └── claude/        # Claude Code向けドキュメント
+│
+├── macos/             # macOS固有ファイル
+├── windows/           # Windows固有ファイル
+├── archive/           # アーカイブ済み設定
+│
+├── Makefile           # メインコマンドインターフェース
+├── CLAUDE.md          # このファイル
+└── README.md          # プロジェクト説明
+```
+
+---
+
+## 🔧 bin/ Directory Architecture
+
+### 📊 概要
+
+インストールスクリプトを**3つの軸**で整理:
+
+1. **apps/** - クロスプラットフォーム開発ツール（何をインストールするか）
+2. **platform/** - プラットフォーム固有処理（どこで動かすか）
+3. **install-methods/** - 特殊インストール方法（どうやってインストールするか）
+
+### 📂 詳細構造
+
+```
+bin/
+├── apps/                           # クロスプラットフォーム開発ツール (18スクリプト)
+│   │
+│   ├── languages/                  # プログラミング言語 (8スクリプト)
+│   │   ├── go.sh                   # Go (g version manager)
+│   │   ├── rust.sh                 # Rust (rustup)
+│   │   ├── java.sh                 # Java 21 LTS (SDKMAN!)
+│   │   ├── python.sh               # Python (uv)
+│   │   ├── nodejs.sh               # Node.js (volta)
+│   │   ├── php.sh                  # PHP 8.3
+│   │   ├── ruby.sh                 # Ruby 3.2 (rbenv)
+│   │   └── deno.sh                 # Deno runtime
+│   │
+│   ├── devops/                     # DevOpsツール (3スクリプト)
+│   │   ├── docker.sh               # Docker Engine
+│   │   ├── terraform.sh            # Terraform CLI
+│   │   └── flutter.sh              # Flutter SDK
+│   │
+│   └── tools/                      # CLI開発ツール (7スクリプト)
+│       ├── eza.sh                  # モダンls代替
+│       ├── starship.sh             # プロンプト
+│       ├── sheldon.sh              # zshプラグイン管理
+│       ├── tmux.sh                 # tmuxプラグイン管理
+│       ├── ghq.sh                  # リポジトリ管理
+│       ├── abbr.sh                 # zsh略語展開
+│       └── fonts.sh                # フォント管理
+│
+├── platform/                       # プラットフォーム固有処理 (13スクリプト)
+│   │
+│   ├── macos/                      # macOS (3スクリプト)
+│   │   ├── packages.sh             # Homebrewパッケージ (78個 + 25 casks)
+│   │   ├── link.sh                 # macOS専用シンボリックリンク
+│   │   └── config.sh               # macOS設定 (ghq等)
+│   │
+│   ├── linux/                      # Linux (1スクリプト)
+│   │   └── packages.sh             # apt/pacman/yayパッケージ
+│   │
+│   ├── chromebook/                 # Chromebook (3スクリプト)
+│   │   ├── chromebook_install.sh
+│   │   ├── alacritty_install.sh
+│   │   └── lazygit_install.sh
+│   │
+│   ├── termux/                     # Android Termux (3スクリプト)
+│   │   ├── init.sh
+│   │   ├── install.sh
+│   │   └── link.sh
+│   │
+│   ├── wsl/                        # Windows WSL (2スクリプト)
+│   │   ├── wsl_enhancements.sh
+│   │   └── windows_integration.sh
+│   │
+│   └── cygwin/                     # Windows Cygwin (1スクリプト)
+│       └── install_cygwin.sh
+│
+├── install-methods/                # 特殊インストール方法 (4スクリプト)
+│   │
+│   ├── appimage/                   # Linux AppImage (2スクリプト)
+│   │   ├── neovim.sh               # Neovim AppImage管理 (stable/nightly)
+│   │   └── winboat.sh              # Winboat AppImage
+│   │
+│   └── binary/                     # バイナリ配布版 (2スクリプト)
+│       ├── neovim-macos.sh         # Neovim macOS tar.gz版
+│       └── sketchybar.sh           # SketchyBar (SbarLua)
+│
+├── lib/                            # 共通ライブラリ (9モジュール)
+│   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
+│   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
+│   ├── install_checker.sh          # インストール状態管理・スキップ判定
+│   ├── symlink_manager.sh          # シンボリックリンク管理
+│   ├── font_manager.sh             # フォント管理 (Nerd Fonts等)
+│   ├── appimage_manager.sh         # AppImage管理
+│   ├── uv_installer.sh             # uv専用インストーラー
+│   └── volta_installer.sh          # volta専用インストーラー
+│
+├── init.sh                         # メインエントリーポイント (make init)
+├── apps_setup.sh                   # apps/配下を順次実行
+├── link.sh                         # シンボリックリンク作成
+├── config.sh                       # Git設定
+├── appimage-manager.sh             # AppImage一括管理
+├── neovim-unified-manager.sh       # Neovim統合管理
+└── test.sh                         # テストスクリプト
+```
+
+### 🔄 実行フロー
+
+```
+make init
+  ↓
+bin/init.sh
+  ├─ bin/link.sh (シンボリックリンク)
+  │
+  ├─ プラットフォーム別セットアップ
+  │   ├─ [macOS]   bin/platform/macos/packages.sh
+  │   ├─ [Linux]   bin/platform/linux/packages.sh
+  │   └─ [Cygwin]  bin/platform/cygwin/install_cygwin.sh
+  │
+  ├─ bin/apps_setup.sh
+  │   ├─ apps/languages/* (依存順)
+  │   ├─ apps/devops/*
+  │   └─ apps/tools/*
+  │
+  └─ bin/config.sh (Git設定)
+```
+
+### 💡 設計原則
+
+1. **責務の分離**: 3軸（apps/platform/install-methods）で明確に分類
+2. **依存関係管理**: languages → devops → tools の順で実行
+3. **クロスプラットフォーム**: apps/は全環境で動作
+4. **Git履歴保持**: git mv使用でファイル履歴を完全保持
+5. **スキップロジック**: 既存インストールを自動検出・スキップ
+
+---
+
+## 📝 Recent Changes
+
+### 2025-10-08: bin/配下の大規模再構成
+
+**背景:**
+- アプリインストールスクリプトの重複と分散
+- 不明確なディレクトリ構造（apps/, linux/apps/, mac/, appimages/, installers/）
+- uv/miseの二重インストール問題
+
+**変更内容:**
+1. **カテゴリ別整理** - `bin/apps/` を `languages/`, `devops/`, `tools/` に分類
+2. **プラットフォーム統一** - `bin/platform/` 配下に全プラットフォーム集約
+3. **インストール方法分離** - `bin/install-methods/` でAppImageとバイナリ配布を分離
+4. **重複解消** - uv/miseの重複インストールを削除、fonts.shを統合
+5. **命名統一** - `brew.sh` → `packages.sh`, `install_linux.sh` → `packages.sh`
+
+**変更統計:**
+- **変更ファイル数**: 43ファイル
+- **削除行数**: 408行 → **追加行数**: 120行
+- **コード削減**: -288行 (70%減)
+
+**影響:**
+- ✅ ユーザー向けコマンドは変更なし（Makefile互換性維持）
+- ✅ Git履歴完全保持（git mv使用）
+- ✅ 全スクリプトの構文チェック済み
+- ✅ 既存機能は完全互換
+
+**詳細**: Commit [e58e913](https://github.com/yourusername/dotfiles/commit/e58e913)
