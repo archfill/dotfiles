@@ -228,6 +228,84 @@ bin/init.sh
 4. **Git履歴保持**: git mv使用でファイル履歴を完全保持
 5. **スキップロジック**: 既存インストールを自動検出・スキップ
 
+### 📦 アプリインストールポリシー
+
+新しいアプリを追加する際の判断基準と優先順位：
+
+#### **基本方針**
+- **プラットフォームごとの慣習を尊重**
+- クロスプラットフォーム対応だが、各環境の標準的な方法を優先
+- 不要な依存関係や並行システムを作らない
+
+#### **プラットフォーム別インストール優先順位**
+
+**macOS:**
+```
+1. Homebrew（標準パッケージマネージャー）
+2. 公式インストーラー/スクリプト
+3. バイナリ直接配置
+```
+
+**Arch Linux:**
+```
+1. pacman（公式リポジトリ）
+2. yay/AUR（Arch User Repository）
+3. 公式スクリプト/バイナリ
+```
+
+**Ubuntu/Debian:**
+```
+1. APT（公式リポジトリ）
+2. サードパーティリポジトリ（信頼できるもののみ）
+3. 公式インストールスクリプト/バイナリ（~/.local/binに配置）
+❌ Linux版Homebrew（不要 - 大多数のユーザーが使用していない）
+```
+
+#### **重要な考え方**
+
+**❌ 避けるべきこと:**
+- Ubuntu/DebianでLinux版Homebrewを必須にする
+  - 理由: Ubuntu利用者の大多数は使っていない
+  - 理由: 並行システムを作り、ディスク容量を浪費
+  - 理由: Ubuntuエコシステムから外れる
+
+**✅ 推奨すること:**
+- 公式パッケージマネージャーを最優先
+- 公式が提供するインストール方法を尊重
+- `~/.local/bin`へのユーザーローカルインストール
+- プラットフォームごとに最適な方法を選択
+
+#### **実装例: lazydocker**
+
+```bash
+# macOS
+brew install lazydocker
+
+# Arch Linux
+pacman -S lazydocker  # または yay -S lazydocker
+
+# Ubuntu/Debian
+# 公式スクリプト（~/.local/binに配置）
+curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+```
+
+#### **判断フローチャート**
+
+新しいツールを追加する際：
+
+1. **公式リポジトリを確認**
+   - macOS: `brew search <tool>`
+   - Arch: `pacman -Ss <tool>` / `yay -Ss <tool>`
+   - Ubuntu: `apt search <tool>`
+
+2. **公式ドキュメントを確認**
+   - 推奨インストール方法をチェック
+   - プラットフォームごとの対応状況を確認
+
+3. **優先順位に従って実装**
+   - 各プラットフォームで最適な方法を選択
+   - 統一性よりも、各環境での自然さを優先
+
 ---
 
 ## 📝 Recent Changes
