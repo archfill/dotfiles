@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Android-blue)](https://github.com)
+[![日本語](https://img.shields.io/badge/lang-ja-blue)](README.ja.md)
 
 Cross-platform dotfiles for modern development environments with Japanese language support.
 
@@ -264,21 +265,6 @@ For more help:
 - **Git**: Advanced configurations with lazygit interface
 - **Containers**: Docker and Docker Compose setup
 - **Mobile**: Flutter with FVM version management
-
-## 📖 Documentation
-
-For detailed setup instructions and troubleshooting:
-- [日本語ドキュメント](README.ja.md)
-- [CLAUDE.md](CLAUDE.md) - AI assistant guidance
-- [Makefile](Makefile) - Available commands
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Test changes with `make test`
-4. Update documentation if needed
-5. Submit a pull request
 
 ## 📄 License
 

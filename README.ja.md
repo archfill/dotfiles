@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Android-blue)](https://github.com)
+[![English](https://img.shields.io/badge/lang-en-red)](README.md)
 
 日本語環境対応のクロスプラットフォーム dotfiles です。モダンな開発環境を自動構築します。
 
@@ -250,21 +251,6 @@ Hyprland
 - **Git**: 高度設定、lazygit インターフェース
 - **コンテナ**: Docker、Docker Compose セットアップ
 - **モバイル**: Flutter、FVM バージョン管理
-
-## 📖 ドキュメント
-
-詳細なセットアップとトラブルシューティング:
-- [English Documentation](README.md)
-- [CLAUDE.md](CLAUDE.md) - AI アシスタント用ガイダンス
-- [Makefile](Makefile) - 利用可能コマンド
-
-## 🤝 コントリビューション
-
-1. リポジトリをフォーク
-2. フィーチャーブランチを作成
-3. `make test` で変更をテスト
-4. 必要に応じてドキュメント更新
-5. プルリクエストを送信
 
 ## 📄 ライセンス
 
