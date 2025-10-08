@@ -105,14 +105,14 @@ check_tmux_plugin_status() {
     
     if (( plugin_count > 0 )); then
         log_info "Plugin directories:"
-        find "$plugins_dir" -maxdepth 1 -type d ! -path "$plugins_dir" -exec basename {} \; | head -5
+        find "$plugins_dir" -maxdepth 1 -type d ! -path "$plugins_dir" -printf '%f\n' 2>/dev/null | head -5
     fi
     
     # Check if tmux configuration has plugin declarations
     local tmux_config="$HOME/.tmux.conf"
     if [[ -f "$tmux_config" ]]; then
         local plugin_declarations
-        plugin_declarations=$(grep -c "set -g @plugin" "$tmux_config" 2>/dev/null || echo 0)
+        plugin_declarations=$(grep -c "set -g @plugin" "$tmux_config" 2>/dev/null) || plugin_declarations=0
         log_info "Plugin declarations in config: $plugin_declarations"
     fi
     
