@@ -254,6 +254,31 @@ bin/init.sh
 3. 公式スクリプト/バイナリ
 ```
 
+**⚠️ pacman/yay 使い分けの重要性:**
+
+公式リポジトリパッケージは**必ずpacmanで明示的にインストール**すること。yay一本化は避ける。
+
+**理由:**
+- yayは公式リポジトリパッケージが削除されると、**警告なしで**同名のAURパッケージに自動切り替えする（[Issue #2375](https://github.com/Jguer/yay/issues/2375)）
+- ユーザーが公式版を使っているつもりで、実際は非公式AUR版になるセキュリティリスク
+- Arch Linuxコミュニティ推奨: 公式パッケージは公式ツール（pacman）で管理
+
+**実装例:**
+```bash
+# 公式リポジトリパッケージ（pacmanで明示的にインストール）
+official_packages=(mise ripgrep git-delta wget ...)
+sudo pacman -S --needed --noconfirm "${official_packages[@]}"
+
+# AUR専用パッケージ（yayでのみインストール）
+aur_packages=(urlscan khard ...)
+yay -S --needed --noconfirm "${aur_packages[@]}"
+```
+
+**メリット:**
+- 公式パッケージが意図せずAUR版に置換されない
+- どこから何がインストールされるか明確
+- セキュリティと信頼性の向上
+
 **Ubuntu/Debian:**
 ```
 1. APT（公式リポジトリ）
@@ -310,6 +335,35 @@ curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/i
 ---
 
 ## 📝 Recent Changes
+
+### 2025-10-08: Arch Linux パッケージ管理の改善
+
+**背景:**
+- pacman/yayのパッケージリストが二重管理されており保守性が悪い
+- yayによる意図しないAURパッケージへの切り替えリスク
+
+**変更内容:**
+1. **パッケージリスト統合** - 公式リポジトリ（37個）とAUR（2個）を明確に分離
+2. **pacman優先** - 公式パッケージは必ずpacmanで明示的にインストール
+3. **セキュリティ強化** - yayによる警告なしのAUR切り替えを防止
+
+**技術的背景:**
+- yayは公式パッケージが削除されると警告なしにAUR版に自動切り替え（GitHub Issue #2375）
+- Arch Linuxコミュニティ推奨: 公式パッケージは公式ツール（pacman）で管理
+
+**実装:**
+```bash
+# bin/platform/linux/packages.sh
+official_packages=(...)  # pacmanでインストール
+aur_packages=(...)       # yayでインストール
+```
+
+**影響:**
+- ✅ セキュリティ向上（意図しないAURパッケージ使用を防止）
+- ✅ 保守性向上（パッケージリスト一元管理）
+- ✅ 透明性向上（パッケージソースが明確）
+
+---
 
 ### 2025-10-08: bin/配下の大規模再構成
 
