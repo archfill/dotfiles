@@ -83,6 +83,7 @@ dev_apps=(
   'uv'
   'volta'
   'deno'
+  'bun'
   'go'
   'openjdk'
   'openjdk@11'
@@ -238,6 +239,7 @@ add_homebrew_taps() {
         "jakehilborn/jakehilborn"
         "koekeishiya/formulae"
         "nikitabobko/tap"
+        "oven-sh/bun"
         "osx-cross/arm"
         "osx-cross/avr"
         "qmk/qmk"

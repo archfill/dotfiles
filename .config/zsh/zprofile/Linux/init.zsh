@@ -24,5 +24,11 @@ if dir_exists "$HOME/.deno"; then
   add_to_path "$DENO_INSTALL/bin"
 fi
 
+# Bun setup (optimized)
+if dir_exists "$HOME/.bun"; then
+  init_env_var "BUN_INSTALL" "$HOME/.bun"
+  add_to_path "$BUN_INSTALL/bin"
+fi
+
 # Snap packages PATH (optimized)
 add_to_path "/snap/bin"

@@ -232,6 +232,7 @@ install_common_packages_arch() {
     local aur_packages=(
         urlscan
         khard
+        bun-bin
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then

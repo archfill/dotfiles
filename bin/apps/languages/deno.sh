@@ -156,7 +156,7 @@ main() {
     parse_install_options "$@"
 
     # Detect platform
-    local os_type=$(detect_os)
+    local os_type=$(detect_platform)
     local distro=$(get_os_distribution)
 
     # Check if Deno should be managed by platform package manager
