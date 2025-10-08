@@ -47,9 +47,6 @@ main() {
         install_recommended_fonts developer
 
         log_success "Font installation completed!"
-        log_info ""
-        log_info "Installed fonts:"
-        list_installed_fonts
     else
         log_info "[DRY RUN] Would install developer font set"
     fi

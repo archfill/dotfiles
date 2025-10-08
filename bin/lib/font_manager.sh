@@ -702,10 +702,10 @@ install_recommended_fonts() {
         # Check if font is already installed (skip logic)
         if [[ "$FORCE_INSTALL" != "true" ]] && check_font_installed "$font"; then
             log_skip_reason "Font: $font" "Already installed"
-            ((skipped_count++))
+            skipped_count=$((skipped_count + 1))
             continue
         fi
-        
+
         if [[ "$DRY_RUN" != "true" ]]; then
             if install_font "$font"; then
                 success_count=$((success_count + 1))
@@ -714,7 +714,7 @@ install_recommended_fonts() {
             fi
         else
             log_info "[DRY RUN] Would install font: $font"
-            ((success_count++))
+            success_count=$((success_count + 1))
         fi
     done
     
