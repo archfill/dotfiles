@@ -565,3 +565,34 @@ dev-environment: init all-sdks ## Complete development environment setup (dotfil
 
 # ===== Neovim管理システム完了 =====
 
+# ===== ログ付き実行コマンド =====
+init-log: ## Complete dotfiles initialization with logging
+	@bash -c 'source ./bin/lib/logger.sh && run_with_log "init" bash ./bin/init.sh'
+
+apps-setup-log: ## Run apps setup with logging
+	@bash -c 'source ./bin/lib/logger.sh && run_with_log "apps_setup" bash ./bin/apps_setup.sh'
+
+# ===== ログ管理コマンド =====
+logs-list: ## List all log files
+	@echo "Available log files:"
+	@ls -lht .logs/*.log 2>/dev/null | head -20 || echo "No log files found"
+
+logs-latest: ## Show the latest log file (last 100 lines)
+	@echo "=== Latest Log File (last 100 lines) ==="
+	@ls -t .logs/*.log 2>/dev/null | head -1 | xargs tail -100 || echo "No log files found"
+
+logs-clean: ## Clean up log files older than 30 days
+	@echo "Cleaning up old log files (30+ days)..."
+	@find .logs -name "*.log" -type f -mtime +30 -delete 2>/dev/null || true
+	@echo "Cleanup completed"
+
+logs-view: ## View specific log file (usage: make logs-view LOG=filename)
+	@if [ -z "$(LOG)" ]; then \
+		echo "Usage: make logs-view LOG=<filename>"; \
+		echo ""; \
+		echo "Available logs:"; \
+		ls .logs/*.log 2>/dev/null | xargs -n1 basename || echo "No logs found"; \
+	else \
+		less .logs/$(LOG); \
+	fi
+

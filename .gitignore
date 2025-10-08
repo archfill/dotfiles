@@ -159,6 +159,9 @@ go.work
 *.log
 .cache/
 
+### Dotfiles Logs ###
+.logs/
+
 ### Package Managers ###
 .bundle/
 .npm/
