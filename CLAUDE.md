@@ -336,6 +336,57 @@ curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/i
 
 ## 📝 Recent Changes
 
+### 2025-10-08: toolboxリポジトリ設計とnpm管理の追加
+
+**背景:**
+- claude-codeのようなオプショナルなツール（AI、実験的ツール）の管理方法を検討
+- npmグローバルパッケージ管理は一般的だが、既存の設計方針（バイナリ、公式スクリプト優先）と矛盾
+- AIツールは個人の選択に依存し、必須ではない
+
+**採用した解決策:**
+**サブモジュール化 + 最小限npm管理**
+
+```
+dotfiles/                               # 親リポジトリ
+├── bin/apps/tools/
+│   └── npm-essentials.sh               # 必須npmパッケージ（typescript, eslint）
+├── .gitmodules                         # サブモジュール設定
+└── toolbox/                            # サブモジュール（オプショナルツール）
+    ├── bin/
+    │   ├── ai/                         # AIツール（claude-code等）
+    │   ├── npm-globals/                # 汎用npmツール
+    │   └── experimental/
+    └── Makefile
+```
+
+**判断基準:**
+- **dotfiles**: 必須の開発環境、最小限のnpmパッケージ（typescript, eslint）
+- **toolbox**: オプショナルなツール（AI、実験的、個人的好み）
+
+**新規コマンド:**
+```bash
+make toolbox-init    # サブモジュール初期化
+make toolbox-update  # toolbox最新版に更新
+make toolbox-ai      # AIツールのみインストール
+```
+
+**メリット:**
+1. 一般的慣習への対応（npm管理を最小限追加）
+2. 設計方針の維持（コアは従来通り）
+3. 統合管理（1つのクローンで完結）
+4. オプショナル性（必要な人だけ追加）
+5. 拡張性（開発ツール以外も管理可能）
+
+**詳細設計:**
+詳細は `toolbox-repository-design.md` を参照
+
+**影響:**
+- ✅ make initは変更なし（必須ツールのみ）
+- ✅ toolboxはオプション（デフォルトで無効）
+- ✅ 設計方針の一貫性を維持
+
+---
+
 ### 2025-10-08: Arch Linux パッケージ管理の改善
 
 **背景:**
