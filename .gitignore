@@ -144,6 +144,9 @@ go.work
 .config/nvim/plugin/packer_compiled.lua
 .config/nvim/lua/config/local.lua
 
+### Hyprland ###
+.config/hypr/local.conf
+
 ### Git ###
 *.orig
 *.rej

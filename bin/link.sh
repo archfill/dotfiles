@@ -41,6 +41,10 @@ BASIC_CONFIGS=(
     ".config/sheldon"
     ".config/starship.toml"
     ".mmcp.json"
+    ".config/hypr"
+    ".config/waybar"
+    ".config/fuzzel"
+    ".config/swaync"
 )
 
 # 基本設定ファイルのシンボリックリンク作成

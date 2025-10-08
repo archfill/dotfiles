@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -61,6 +61,75 @@ yaskkserv2-build: ## Build Japanese SKK input method server
 flutter-setup: ## Install and setup Flutter development environment
 	@echo "Setting up Flutter development environment..."
 	bash ./bin/apps/devops/flutter.sh
+
+# Hyprland環境（Arch Linuxのみ）
+hyprland-install: ## Install Hyprland compositor and ecosystem (Arch Linux only)
+	@echo "Installing Hyprland and ecosystem..."
+	@bash ./bin/apps/tools/hyprland.sh
+
+hyprland-status: ## Check Hyprland installation and configuration status
+	@echo "Checking Hyprland status..."
+	@echo ""
+	@echo "=== Package Status ==="
+	@if command -v Hyprland >/dev/null 2>&1; then \
+		echo "✅ Hyprland: $(shell Hyprland --version | head -1)"; \
+	else \
+		echo "❌ Hyprland: Not installed"; \
+	fi
+	@if command -v waybar >/dev/null 2>&1; then \
+		echo "✅ waybar: $(shell waybar --version 2>&1 | head -1)"; \
+	else \
+		echo "❌ waybar: Not installed"; \
+	fi
+	@if command -v fuzzel >/dev/null 2>&1; then \
+		echo "✅ fuzzel: $(shell fuzzel --version 2>&1 | head -1)"; \
+	else \
+		echo "❌ fuzzel: Not installed"; \
+	fi
+	@if command -v swaync >/dev/null 2>&1; then \
+		echo "✅ swaync: installed"; \
+	else \
+		echo "❌ swaync: Not installed"; \
+	fi
+	@echo ""
+	@echo "=== Configuration Files ==="
+	@if [ -f ~/.config/hypr/hyprland.conf ]; then \
+		echo "✅ hyprland.conf: exists"; \
+	else \
+		echo "❌ hyprland.conf: missing"; \
+	fi
+	@if [ -f ~/.config/waybar/config.json ]; then \
+		echo "✅ waybar config: exists"; \
+	else \
+		echo "❌ waybar config: missing"; \
+	fi
+	@if [ -f ~/.config/fuzzel/fuzzel.ini ]; then \
+		echo "✅ fuzzel config: exists"; \
+	else \
+		echo "❌ fuzzel config: missing"; \
+	fi
+	@if [ -f ~/.config/swaync/config.json ]; then \
+		echo "✅ swaync config: exists"; \
+	else \
+		echo "❌ swaync config: missing"; \
+	fi
+	@echo ""
+	@echo "=== NVIDIA Status ==="
+	@if lspci | grep -i nvidia >/dev/null 2>&1; then \
+		echo "🎮 NVIDIA GPU detected"; \
+		if [ -f /sys/module/nvidia_drm/parameters/modeset ]; then \
+			MODESET=$$(cat /sys/module/nvidia_drm/parameters/modeset 2>/dev/null); \
+			if [ "$$MODESET" = "Y" ]; then \
+				echo "✅ nvidia-drm.modeset=1: configured"; \
+			else \
+				echo "⚠️  nvidia-drm.modeset=1: NOT configured"; \
+			fi; \
+		else \
+			echo "⚠️  NVIDIA driver not loaded"; \
+		fi; \
+	else \
+		echo "ℹ️  No NVIDIA GPU detected"; \
+	fi
 
 # ===== Neovim管理システム =====
 neovim-install: ## Install Neovim version (usage: make neovim-install VERSION=stable/nightly)
