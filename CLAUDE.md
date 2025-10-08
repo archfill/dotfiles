@@ -117,7 +117,7 @@ dotfiles/
 
 ```
 bin/
-├── apps/                           # クロスプラットフォーム開発ツール (18スクリプト)
+├── apps/                           # クロスプラットフォーム開発ツール (19スクリプト)
 │   │
 │   ├── languages/                  # プログラミング言語 (8スクリプト)
 │   │   ├── go.sh                   # Go (g version manager)
@@ -134,13 +134,14 @@ bin/
 │   │   ├── terraform.sh            # Terraform CLI
 │   │   └── flutter.sh              # Flutter SDK
 │   │
-│   └── tools/                      # CLI開発ツール (7スクリプト)
+│   └── tools/                      # CLI開発ツール (8スクリプト)
 │       ├── eza.sh                  # モダンls代替
 │       ├── starship.sh             # プロンプト
 │       ├── sheldon.sh              # zshプラグイン管理
 │       ├── tmux.sh                 # tmuxプラグイン管理
 │       ├── ghq.sh                  # リポジトリ管理
 │       ├── abbr.sh                 # zsh略語展開
+│       ├── lazydocker.sh           # Docker管理TUI
 │       └── fonts.sh                # フォント管理
 │
 ├── platform/                       # プラットフォーム固有処理 (13スクリプト)
