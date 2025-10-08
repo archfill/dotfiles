@@ -122,11 +122,9 @@ install_common_packages_debian() {
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
 
-    # Install mise
-    install_mise_debian "$@"
-
-    # Install uv using common library
-    install_uv "$@"
+    # Note: mise and uv are now installed via bin/apps/languages/
+    # - mise: Not currently in apps/ (still installed via Homebrew on macOS)
+    # - uv: bin/apps/languages/python.sh
 }
 
 # Install yay (AUR helper) with skip logic
@@ -258,8 +256,7 @@ install_common_packages_arch() {
         log_info "[DRY RUN] Would install Arch Linux packages via yay/pacman"
     fi
 
-    # Install uv using common library
-    install_uv "$@"
+    # Note: uv is now installed via bin/apps/languages/python.sh
 }
 
 # Main installation function

@@ -29,17 +29,17 @@ case "$OS_NAME" in
   Darwin)
     install_mode="${DOTFILES_INSTALL_MODE:-full}"
     log_info "macOS setup starting (mode: $install_mode)"
-    run "bin/mac/link.sh"
-    
+    run "bin/platform/macos/link.sh"
+
     # Skip package installation in CI environment
     if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" ]]; then
       log_info "Installing packages with mode: $install_mode"
-      DOTFILES_INSTALL_MODE="$install_mode" run "bin/mac/brew.sh"
-      
+      DOTFILES_INSTALL_MODE="$install_mode" run "bin/platform/macos/packages.sh"
+
       # Install fonts for essential and full modes
       if [[ "$install_mode" != "minimal" ]] && [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
         log_info "Starting font installation..."
-        if bash bin/mac/fonts_setup.sh; then
+        if bash bin/apps/tools/fonts.sh; then
           log_success "Font installation completed successfully"
         else
           log_warning "Font installation failed (continuing with setup)"
@@ -50,16 +50,16 @@ case "$OS_NAME" in
     else
       log_info "Skipping package installation (CI environment)"
     fi
-    
-    run "bin/mac/config.sh"
+
+    run "bin/platform/macos/config.sh"
     ;;
 
   Linux)
     log_info "Linux setup starting"
-    run "bin/linux/install_linux.sh"
+    run "bin/platform/linux/packages.sh"
     if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
       log_info "Starting font installation..."
-      if bash bin/linux/apps/fonts_setup.sh; then
+      if bash bin/apps/tools/fonts.sh; then
         log_success "Font installation completed successfully"
       else
         log_warning "Font installation failed (continuing with setup)"
@@ -67,12 +67,11 @@ case "$OS_NAME" in
     else
       log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
     fi
-    run "bin/linux/apps/deno_install.sh"
     ;;
 
   MINGW32_NT*|MINGW64_NT*)
     log_info "Windows (Cygwin) setup starting"
-    run "bin/cygwin/install_cygwin.sh"
+    run "bin/platform/cygwin/install_cygwin.sh"
     ;;
 
   *)

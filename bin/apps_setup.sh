@@ -10,24 +10,44 @@ if [[ -z "${DOTFILES_DIR:-}" ]]; then
     DOTFILES_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
 fi
 
-files="${DOTFILES_DIR}/bin/apps/*"
-for filepath in $files; do
-  if [[ -f "$filepath" && ! "${filepath}" == *setup.sh* ]]; then
-    script_name="$(basename "$filepath")"
+log_info "Starting app setup from categorized directories..."
 
-    # Skip certain scripts in CI environment
-    if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]] && [[ "$script_name" == "ghq.sh" ]]; then
-      log_info "Skipping $script_name in CI environment"
-      continue
-    fi
+# Define categories in dependency order
+# languages first (version managers), then devops, then tools
+categories=("languages" "devops" "tools")
 
-    log_info "Running app setup: $script_name"
+for category in "${categories[@]}"; do
+  category_dir="${DOTFILES_DIR}/bin/apps/${category}"
 
-    if ! bash "${filepath}"; then
-      log_error "Script failed: $script_name"
-      log_error "Script path: $filepath"
-      exit 1
-    fi
+  if [[ ! -d "$category_dir" ]]; then
+    log_warning "Category directory not found: $category_dir"
+    continue
   fi
+
+  log_info "Processing category: $category"
+
+  # Sort files to ensure consistent execution order
+  for filepath in "$category_dir"/*.sh; do
+    if [[ -f "$filepath" ]]; then
+      script_name="$(basename "$filepath")"
+
+      # Skip certain scripts in CI environment
+      if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]] && [[ "$script_name" == "ghq.sh" ]]; then
+        log_info "Skipping $category/$script_name in CI environment"
+        continue
+      fi
+
+      log_info "Running app setup: $category/$script_name"
+
+      if ! bash "${filepath}"; then
+        log_error "Script failed: $category/$script_name"
+        log_error "Script path: $filepath"
+        exit 1
+      fi
+    fi
+  done
+
+  log_success "Category $category completed"
 done
 
+log_success "All app setups completed successfully"

@@ -60,7 +60,7 @@ yaskkserv2-build: ## Build Japanese SKK input method server
 # Flutter開発環境
 flutter-setup: ## Install and setup Flutter development environment
 	@echo "Setting up Flutter development environment..."
-	bash ./bin/apps/52-flutter.sh
+	bash ./bin/apps/devops/flutter.sh
 
 # ===== Neovim管理システム =====
 neovim-install: ## Install Neovim version (usage: make neovim-install VERSION=stable/nightly)
@@ -360,7 +360,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 			echo "Installing SketchyBar via Homebrew..."; \
 			brew tap FelixKratz/formulae && brew install sketchybar; \
 		fi; \
-		bash bin/installers/sketchybar.sh; \
+		bash bin/install-methods/binary/sketchybar.sh; \
 		echo "✅ SketchyBar setup completed!"; \
 		echo ""; \
 		echo "💡 Next steps:"; \
@@ -374,7 +374,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 sketchybar-uninstall: ## Uninstall SbarLua
 	@echo "Uninstalling SbarLua..."
 	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		bash bin/installers/sketchybar.sh uninstall; \
+		bash bin/install-methods/binary/sketchybar.sh uninstall; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \

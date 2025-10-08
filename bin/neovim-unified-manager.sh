@@ -30,10 +30,10 @@ get_neovim_script() {
 
     case "$platform" in
         Linux)
-            echo "$DOTFILES_DIR/bin/appimages/neovim.sh"
+            echo "$DOTFILES_DIR/bin/install-methods/appimage/neovim.sh"
             ;;
         Darwin)
-            echo "$DOTFILES_DIR/bin/installers/neovim.sh"
+            echo "$DOTFILES_DIR/bin/install-methods/binary/neovim-macos.sh"
             ;;
         *)
             log_error "Unsupported platform: $platform"

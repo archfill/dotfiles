@@ -25,7 +25,7 @@ load_config
 # 利用可能なAppImageスクリプトを取得
 get_available_apps() {
     local apps=()
-    for script in "$DOTFILES_DIR/bin/appimages"/*.sh; do
+    for script in "$DOTFILES_DIR/bin/install-methods/appimage"/*.sh; do
         if [[ -f "$script" ]]; then
             local app_name
             app_name=$(basename "$script" .sh)
@@ -38,7 +38,7 @@ get_available_apps() {
 # AppImageスクリプトのパスを取得
 get_app_script() {
     local app_name="$1"
-    echo "$DOTFILES_DIR/bin/appimages/${app_name}.sh"
+    echo "$DOTFILES_DIR/bin/install-methods/appimage/${app_name}.sh"
 }
 
 # =============================================================================
@@ -55,7 +55,7 @@ list_all() {
     apps=($(get_available_apps))
 
     if [[ ${#apps[@]} -eq 0 ]]; then
-        log_info "No AppImage scripts found in bin/appimages/"
+        log_info "No AppImage scripts found in bin/install-methods/appimage/"
         return 0
     fi
 
@@ -65,7 +65,7 @@ list_all() {
 
         if [[ -x "$script" ]]; then
             log_info "📦 $app"
-            log_info "   Script: bin/appimages/${app}.sh"
+            log_info "   Script: bin/install-methods/appimage/${app}.sh"
 
             # ステータス取得（エラーは無視）
             if "$script" status >/dev/null 2>&1; then
