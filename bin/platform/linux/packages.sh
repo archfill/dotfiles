@@ -109,6 +109,7 @@ install_common_packages_debian() {
           zoxide \
           bat \
           jq \
+          wl-clipboard \
           xsel \
           xclip \
           sqlite3 \
@@ -217,6 +218,7 @@ install_common_packages_arch() {
         zoxide
         bat
         jq
+        wl-clipboard
         xsel
         xclip
         sqlite
