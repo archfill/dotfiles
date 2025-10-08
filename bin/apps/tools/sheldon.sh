@@ -363,7 +363,7 @@ install_via_cargo() {
 # Smart backup management with deduplication and cleanup
 create_smart_backup() {
     local target_config="$1"
-    local config_dir="$(dirname "$target_config")"
+    local config_dir="$(cd "$(dirname "$target_config")" && pwd -P)"
     local max_backups="${2:-3}"
 
     if [[ ! -f "$target_config" ]]; then

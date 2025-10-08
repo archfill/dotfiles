@@ -209,5 +209,6 @@ out/
 ### Backup Files ###
 *.bak
 *.backup
+*.backup.*
 *.old
 *~
