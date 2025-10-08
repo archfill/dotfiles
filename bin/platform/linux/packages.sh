@@ -225,6 +225,7 @@ install_common_packages_arch() {
         poppler
         fd
         imagemagick
+        deno
     )
 
     # AUR-only packages (installed via yay)

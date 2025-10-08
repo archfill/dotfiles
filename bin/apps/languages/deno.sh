@@ -151,37 +151,55 @@ verify_deno_installation() {
 main() {
     log_info "Deno (JavaScript/TypeScript Runtime) Setup"
     log_info "=========================================="
-    
+
     # Parse command line options
     parse_install_options "$@"
-    
+
+    # Detect platform
+    local os_type=$(detect_os)
+    local distro=$(get_os_distribution)
+
+    # Check if Deno should be managed by platform package manager
+    if [[ "$os_type" == "macos" ]]; then
+        log_info "macOS detected - Deno is managed by Homebrew (bin/platform/macos/packages.sh)"
+        log_skip_reason "Deno" "Managed by Homebrew package manager"
+        return 0
+    elif [[ "$distro" == "arch" ]]; then
+        log_info "Arch Linux detected - Deno is managed by pacman (bin/platform/linux/packages.sh)"
+        log_skip_reason "Deno" "Managed by pacman package manager"
+        return 0
+    fi
+
+    # For Debian/Ubuntu, use official install script
+    log_info "Detected $distro - using official Deno install script"
+
     # Get target Deno version
     local deno_version="${DENO_VERSION:-latest}"
-    
+
     # Check if Deno installation should be skipped
     if should_skip_installation_advanced "Deno" "deno" "$deno_version" "--version"; then
         # Even if Deno is installed, check and update environment
         log_info "Deno is installed, checking environment..."
-        
+
         # Perform comprehensive environment check
         check_deno_environment
-        
+
         # Verify installation
         if [[ "$DRY_RUN" != "true" ]]; then
             verify_deno_installation "$@"
         fi
-        
+
         return 0
     fi
-    
+
     # Install Deno
     install_deno "$@"
-    
+
     # Verify installation
     if [[ "$DRY_RUN" != "true" ]]; then
         verify_deno_installation "$@"
     fi
-    
+
     log_success "Deno setup completed!"
     log_info ""
     log_info "Available Deno commands:"
