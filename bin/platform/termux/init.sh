@@ -2,7 +2,7 @@
 
 # Load shared libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 source "$DOTFILES_DIR/bin/lib/common.sh"
 
 # Setup standardized error handling
