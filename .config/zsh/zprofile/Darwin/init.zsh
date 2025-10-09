@@ -1,31 +1,20 @@
-# homebrew
-## m1
-if [ -d "/opt/homebrew/bin" ] ; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-else if [ -e "/usr/local/bin/brew" ] ; then
-    ## intel
-    eval "$(/usr/local/bin/brew shellenv)"
-  fi
-fi
+# ===== macOS-specific .zprofile Configuration =====
+# IMPORTANT: Most environment variables and PATH settings have been moved to
+# ~/.config/zsh/zshenv/Darwin/init.zsh to support non-login shells.
+#
+# This file is now reserved for:
+# - Login-only initialization
+# - Interactive completions (consider moving to .zshrc)
 
-
-# Volta settings moved to shared .zprofile to avoid duplication
+# iTerm2 shell integration (interactive only)
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Java configuration via SDKMAN (jenv removed)
 # SDKMAN is initialized in .zshrc (interactive shells only)
 # For non-interactive shells, JAVA_HOME is set by SDKMAN env
 
-# uv configuration moved to shared .zprofile
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
 # Flutter configuration moved to shared configuration
 # Individual FLUTTER_ROOT should be set in personal.conf if needed
 
 # Google Cloud SDK configuration moved to shared .zprofile to avoid duplication
-
-# mysql-client
-## m1
-if [ -d "/opt/homebrew/opt/mysql-client/bin" ] ; then
-  export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
-fi
 

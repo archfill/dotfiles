@@ -1,3 +1,17 @@
+# ===== IMPORTANT NOTE =====
+# Environment variables and PATH settings have been moved to .zshenv
+# to ensure they are available in all shell types (login, non-login, interactive, non-interactive).
+# This fixes issues with VSCode and other tools that spawn non-login shells.
+#
+# See:
+# - ~/.zshenv (common settings)
+# - ~/.config/zsh/zshenv/{Linux,Darwin,WSL}/init.zsh (platform-specific settings)
+#
+# This file (.zprofile) is now reserved for:
+# - Interactive completion setup
+# - Time-consuming initialization that should only run once at login
+# - Special login-only configurations
+
 # Load performance optimization library
 if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
@@ -5,26 +19,7 @@ else
   # Fallback functions if performance library fails to load
   command_exists() { command -v "$1" &>/dev/null; }
   dir_exists() { [[ -d "$1" ]]; }
-  add_to_path() { 
-    local new_path="$1"
-    local position="${2:-front}"
-    [[ -d "$new_path" ]] || return 1
-    [[ ":$PATH:" == *":$new_path:"* ]] && return 0
-    if [[ "$position" == "back" ]]; then
-      export PATH="$PATH:$new_path"
-    else
-      export PATH="$new_path:$PATH"
-    fi
-  }
   source_if_exists() { [[ -f "$1" ]] && source "$1"; }
-  init_env_var() { [[ -z "${(P)1}" ]] && export "$1"="$2"; }
-  setup_path_unified() {
-    local -a path_entries=("$@")
-    local entry
-    for entry in "${path_entries[@]}"; do
-      add_to_path "$entry"
-    done
-  }
   exec_if_command() {
     local cmd="$1"
     shift
@@ -33,37 +28,13 @@ else
   }
 fi
 
-# Optimized PATH setup using performance library
-setup_path_unified \
-  "${HOME}/bin" \
-  "/usr/local/bin" \
-  "${HOME}/.local/bin"
-
 # if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
 #   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 # fi
 
-# Node.js version management - Volta only (modern unified solution)
-setup_nodejs_manager() {
-  # Volta (preferred) - fast, reliable, cross-platform
-  if dir_exists "$HOME/.volta"; then
-    init_env_var "VOLTA_HOME" "$HOME/.volta"
-    add_to_path "$VOLTA_HOME/bin"
-
-    # Add volta completion if available (non-blocking)
-    [[ -f ~/.config/zsh/completions/_volta ]] && fpath+=(~/.config/zsh/completions)
-    return 0
-  fi
-
-  return 1
-}
-
-# Initialize Node.js version manager (with error handling)
-setup_nodejs_manager 2>/dev/null || true
-
-# anyenv removed - using modern tools instead:
-# - uv for Python package management
-# - volta for Node.js version management
+# ===== Volta Completion (Interactive Only) =====
+# Completion files should be loaded in .zprofile or .zshrc (interactive shells)
+[[ -f ~/.config/zsh/completions/_volta ]] && fpath+=(~/.config/zsh/completions)
 
 # Google Cloud SDK configuration - optimized with caching
 setup_google_cloud_sdk() {
@@ -84,57 +55,19 @@ setup_google_cloud_sdk "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cl
 setup_google_cloud_sdk "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" || \
 setup_google_cloud_sdk "/snap/google-cloud-sdk/current" || true
 
-# ===== Go (g version manager + official) - Environment Setup =====
-# Note: Moved from sdk.zsh to ensure environment variables are available
-# in both interactive and non-interactive shells (login shells)
+# ===== Go, Rust, Deno, Bun Environment Setup =====
+# MOVED TO: ~/.zshenv
+# These environment variables are now set in .zshenv to ensure they are available
+# in all shell types (including non-login shells like VSCode terminals)
 
-# Go environment variables (with defaults)
-init_env_var "GOPATH" "$HOME/go"
-init_env_var "GOBIN" "$GOPATH/bin"
-
-# Source g environment if available (highest priority for version management)
-source_if_exists "$HOME/.g/env"
-
-# Add Go binaries to PATH
-add_to_path "$GOBIN"
-
-# Fallback GOROOT detection for manual installations
-if [[ -z "${GOROOT:-}" ]]; then
-  local go_paths=(
-    "$HOME/.local/go"
-    "/usr/local/go"
-    "/opt/homebrew/opt/go/libexec"
-    "/usr/lib/go"
-  )
-  
-  for go_path in "${go_paths[@]}"; do
-    if dir_exists "$go_path" && [[ -x "$go_path/bin/go" ]]; then
-      init_env_var "GOROOT" "$go_path"
-      add_to_path "$GOROOT/bin"
-      break
-    fi
-  done
-fi
-
-# ===== Rust (rustup + Cargo) - Environment Setup =====
-# Note: Moved from sdk.zsh to ensure environment variables are available
-# in both interactive and non-interactive shells (login shells)
-
-# Rust environment variables (with defaults)
-init_env_var "RUSTUP_HOME" "$HOME/.rustup"
-init_env_var "CARGO_HOME" "$HOME/.cargo"
-
-# Source Rust environment if available
-source_if_exists "$CARGO_HOME/env"
-
-# Add Cargo bin to PATH
-add_to_path "$CARGO_HOME/bin"
+# ===== Interactive Completions =====
+# These should ideally be in .zshrc (for interactive shells only)
+# but are kept here for backwards compatibility
 
 # fzf integration - conditional loading
 source_if_exists ~/.fzf.zsh
 
-# uv - unified Python package manager (optimized)
-# Note: Cargo bin path is already added above in rust configuration
+# uv - unified Python package manager completion
 if command_exists uv; then
   eval "$(uv generate-shell-completion zsh)" 2>/dev/null || true
 fi
