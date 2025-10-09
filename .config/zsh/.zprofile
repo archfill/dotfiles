@@ -12,20 +12,35 @@
 # - Time-consuming initialization that should only run once at login
 # - Special login-only configurations
 
-# Load performance optimization library
-if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
-else
-  # Fallback functions if performance library fails to load
-  command_exists() { command -v "$1" &>/dev/null; }
-  dir_exists() { [[ -d "$1" ]]; }
-  source_if_exists() { [[ -f "$1" ]] && source "$1"; }
-  exec_if_command() {
-    local cmd="$1"
-    shift
-    command_exists "$cmd" || return 1
-    eval "$@"
-  }
+# Load performance optimization library if not already loaded
+# Note: This should already be loaded from .zshenv, but we check just in case
+if ! command -v command_exists &>/dev/null; then
+  if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
+    source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
+  else
+    # Fallback functions if performance library fails to load
+    command_exists() { command -v "$1" &>/dev/null; }
+    dir_exists() { [[ -d "$1" ]]; }
+    add_to_path() {
+      local new_path="$1"
+      local position="${2:-front}"
+      [[ -d "$new_path" ]] || return 1
+      [[ ":$PATH:" == *":$new_path:"* ]] && return 0
+      if [[ "$position" == "back" ]]; then
+        export PATH="$PATH:$new_path"
+      else
+        export PATH="$new_path:$PATH"
+      fi
+    }
+    source_if_exists() { [[ -f "$1" ]] && source "$1"; }
+    init_env_var() { [[ -z "${(P)1}" ]] && export "$1"="$2"; }
+    exec_if_command() {
+      local cmd="$1"
+      shift
+      command_exists "$cmd" || return 1
+      eval "$@"
+    }
+  fi
 fi
 
 # if [ -f "/usr/local/bin/yaskkserv2_make_dictionary" ] ; then
