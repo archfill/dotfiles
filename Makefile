@@ -72,17 +72,17 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	@echo ""
 	@echo "=== Package Status ==="
 	@if command -v Hyprland >/dev/null 2>&1; then \
-		echo "✅ Hyprland: $(shell Hyprland --version | head -1)"; \
+		echo "✅ Hyprland: $$(Hyprland --version 2>&1 | head -1)"; \
 	else \
 		echo "❌ Hyprland: Not installed"; \
 	fi
 	@if command -v waybar >/dev/null 2>&1; then \
-		echo "✅ waybar: $(shell waybar --version 2>&1 | head -1)"; \
+		echo "✅ waybar: $$(waybar --version 2>&1 | head -1)"; \
 	else \
 		echo "❌ waybar: Not installed"; \
 	fi
 	@if command -v fuzzel >/dev/null 2>&1; then \
-		echo "✅ fuzzel: $(shell fuzzel --version 2>&1 | head -1)"; \
+		echo "✅ fuzzel: $$(fuzzel --version 2>&1 | head -1)"; \
 	else \
 		echo "❌ fuzzel: Not installed"; \
 	fi

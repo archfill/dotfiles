@@ -8,6 +8,7 @@ DOTFILES_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
 source "$DOTFILES_DIR/bin/lib/install_checker.sh"
+source "$DOTFILES_DIR/bin/lib/symlink_manager.sh"
 
 setup_error_handling
 
@@ -232,6 +233,48 @@ install_hyprland() {
             log_info "Creating Hyprland directories..."
             mkdir -p "${HOME}/Pictures/Screenshots"
             log_success "Created: ~/Pictures/Screenshots"
+
+            # Ensure Hyprland configuration symlinks are created
+            log_info "Ensuring Hyprland configuration symlinks..."
+            local hyprland_configs=(
+                ".config/hypr"
+                ".config/waybar"
+                ".config/fuzzel"
+                ".config/swaync"
+            )
+
+            for config_path in "${hyprland_configs[@]}"; do
+                local target_path="${HOME}/${config_path}"
+                local source_path="${DOTFILES_DIR}/${config_path}"
+
+                # Check if dotfiles have this config
+                if [[ ! -e "$source_path" ]]; then
+                    log_warning "Config not found in dotfiles, skipping: $config_path"
+                    continue
+                fi
+
+                # Check if already a symlink pointing to dotfiles
+                if [[ -L "$target_path" ]]; then
+                    local current_target
+                    current_target="$(readlink "$target_path")"
+                    if [[ "$current_target" == "$source_path" ]]; then
+                        log_info "✓ Already symlinked: $config_path"
+                        continue
+                    fi
+                fi
+
+                # Create or update symlink
+                if [[ -e "$target_path" ]] && [[ ! -L "$target_path" ]]; then
+                    log_warning "Existing directory/file found: $target_path"
+                    log_info "Creating symlink (existing file will be backed up)..."
+                fi
+
+                create_symlink_from_dotfiles "$config_path" || {
+                    log_warning "Failed to create symlink for $config_path"
+                    continue
+                }
+            done
+            log_success "Hyprland configuration symlinks ready"
 
             # Create local.conf for GPU-specific environment variables
             local local_conf="${HOME}/.config/hypr/local.conf"

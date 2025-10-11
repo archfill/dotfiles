@@ -1,0 +1,290 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 30,
+  "spacing": 4,
+  "modules-left": [
+    "custom/launcher",
+    "hyprland/workspaces",
+    "hyprland/submap",
+    "wlr/taskbar"
+  ],
+  "modules-center": [
+    "mpris",
+    "clock"
+  ],
+  "modules-right": [
+    "custom/updates",
+    "idle_inhibitor",
+    "pulseaudio",
+    "bluetooth",
+    "network",
+    "cpu",
+    "memory",
+    "temperature",
+    "disk",
+    "backlight",
+    "battery",
+    "tray",
+    "custom/power"
+  ],
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "active": "",
+      "default": "",
+      "empty": "",
+      "urgent": ""
+    },
+    "on-click": "activate",
+    "persistent-workspaces": {
+      "DP-3": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "HDMI-A-1": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "all-outputs": false,
+    "show-special": false
+  },
+  "hyprland/window": {
+    "format": "{}",
+    "max-length": 50,
+    "separate-outputs": true,
+    "icon": true,
+    "icon-size": 16,
+    "tooltip": true,
+    "tooltip-format": "{title}",
+    "rewrite": {
+      "(.*) — Mozilla Firefox": "🌐 $1",
+      "(.*) - Visual Studio Code": " $1",
+      "(.*) - Chromium": "🌐 $1",
+      "(.*) - ghostty": " $1"
+    }
+  },
+  "hyprland/submap": {
+    "format": "<span style=\"italic\">  {}</span>",
+    "tooltip": false
+  },
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 18,
+    "icon-theme": "Papirus-Dark",
+    "tooltip-format": "{title}",
+    "on-click": "activate",
+    "on-click-middle": "close",
+    "ignore-list": [],
+    "app_ids-mapping": {
+      "firefoxdeveloperedition": "firefox-developer-edition"
+    }
+  },
+  "custom/launcher": {
+    "format": "",
+    "on-click": "fuzzel",
+    "tooltip": false
+  },
+  "clock": {
+    "timezone": "Asia/Tokyo",
+    "format": "{:%a %Y-%m-%d %H:%M}",
+    "format-alt": "{:%Y年%m月%d日 (%a) %H:%M:%S}",
+    "tooltip-format": "<big>{:%Y年 %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "on-click": "gnome-calendar",
+    "calendar": {
+      "mode": "year",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "on-click-right": "mode",
+      "format": {
+        "months": "<span color='#89b4fa'><b>{}</b></span>",
+        "days": "<span color='#cdd6f4'><b>{}</b></span>",
+        "weeks": "<span color='#a6e3a1'><b>W{}</b></span>",
+        "weekdays": "<span color='#f9e2af'><b>{}</b></span>",
+        "today": "<span color='#f38ba8'><b><u>{}</u></b></span>"
+      }
+    }
+  },
+  "cpu": {
+    "format": " {usage}%",
+    "format-alt": " {avg_frequency}GHz",
+    "tooltip-format": "使用率: {usage}%\n平均周波数: {avg_frequency}GHz\nコア別:\n{load}",
+    "interval": 2,
+    "on-click": "ghostty -e htop"
+  },
+  "memory": {
+    "format": " {percentage}%",
+    "format-alt": " {used:0.1f}G/{total:0.1f}G",
+    "tooltip-format": "使用中: {used:0.2f}GB / {total:0.2f}GB\n使用率: {percentage}%\nスワップ: {swapUsed:0.2f}GB / {swapTotal:0.2f}GB ({swapPercentage}%)",
+    "interval": 2,
+    "on-click": "ghostty -e htop"
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon} {percent}%",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "on-scroll-up": "brightnessctl set 5%+",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{icon} {time}",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "network": {
+    "format-wifi": "📶",
+    "format-ethernet": "🔌",
+    "format-disconnected": "⚠️",
+    "tooltip-format": "{ifname}: {ipaddr}/{cidr}\nゲートウェイ: {gwaddr}\n信号強度: {signalStrength}%\nSSID: {essid}\n速度: ↓{bandwidthDownBits} ↑{bandwidthUpBits}",
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}\nゲートウェイ: {gwaddr}\n速度: ↓{bandwidthDownBits} ↑{bandwidthUpBits}",
+    "tooltip-format-disconnected": "ネットワーク接続なし",
+    "interval": 2,
+    "on-click": "nm-connection-editor",
+    "on-click-right": "ghostty -e nmtui"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": " ミュート",
+    "format-bluetooth": "{icon} {volume}%",
+    "format-bluetooth-muted": " {icon} ミュート",
+    "format-source": " {volume}%",
+    "format-source-muted": "",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "tooltip-format": "{desc}\n音量: {volume}%",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  },
+  "tray": {
+    "icon-size": 21,
+    "spacing": 10
+  },
+  "temperature": {
+    "hwmon-path": "/sys/class/hwmon/hwmon1/temp1_input",
+    "critical-threshold": 80,
+    "format-critical": " {temperatureC}°C",
+    "format": " {temperatureC}°C",
+    "format-alt": " {temperatureF}°F",
+    "tooltip-format": "温度: {temperatureC}°C ({temperatureF}°F)\n警告閾値: 80°C",
+    "interval": 2,
+    "on-click": "ghostty -e sensors",
+    "on-click-right": "ghostty -e watch -n 1 sensors"
+  },
+  "disk": {
+    "interval": 30,
+    "format": " {percentage_used}%",
+    "format-alt": " {free}",
+    "path": "/",
+    "tooltip-format": "使用済み: {used} / 合計: {total}\n空き容量: {free} ({percentage_free}%)\nマウントポイント: {path}",
+    "on-click": "thunar /",
+    "on-click-right": "ghostty -e df -h",
+    "states": {
+      "warning": 70,
+      "critical": 90
+    }
+  },
+  "bluetooth": {
+    "format": " {status}",
+    "format-connected": " {device_alias}",
+    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+    "on-click": "ghostty -e bluetoothctl"
+  },
+  "custom/updates": {
+    "format": " {}",
+    "interval": 3600,
+    "exec": "checkupdates 2>/dev/null | wc -l || echo 0",
+    "exec-if": "exit 0",
+    "on-click": "ghostty -e yay -Syu",
+    "tooltip-format": "利用可能なアップデート: {}個"
+  },
+  "custom/power": {
+    "format": "⏻",
+    "on-click": "wlogout",
+    "tooltip": "電源メニュー"
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "☕",
+      "deactivated": "💤"
+    },
+    "tooltip-format-activated": "カフェインモード: ON\n自動スリープ無効化中",
+    "tooltip-format-deactivated": "カフェインモード: OFF\n自動スリープ有効",
+    "on-click-right": "hyprctl dispatch dpms toggle"
+  },
+  "mpris": {
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} <i>{dynamic}</i>",
+    "player-icons": {
+      "default": "🎵",
+      "spotify": "",
+      "firefox": "",
+      "chromium": ""
+    },
+    "status-icons": {
+      "playing": "▶",
+      "paused": "⏸"
+    },
+    "dynamic-order": [
+      "title",
+      "artist"
+    ],
+    "dynamic-separator": " - ",
+    "dynamic-len": 50,
+    "tooltip-format": "{player}\n{title}\n{artist}\n{album}",
+    "ignored-players": [],
+    "on-click": "playerctl play-pause",
+    "on-click-right": "playerctl next",
+    "on-click-middle": "playerctl previous",
+    "on-scroll-up": "playerctl volume 0.05+",
+    "on-scroll-down": "playerctl volume 0.05-"
+  }
+}
