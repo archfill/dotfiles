@@ -188,8 +188,8 @@ end
 ---------------------------------------------------------------
 local config = {
 	font = wezterm.font_with_fallback({
-		{ family = "JetBrains Mono", weight = "Regular", harfbuzz_features = { "calt=1", "clig=1", "liga=1" } },
 		{ family = "HackGen Console NF", weight = "Regular" },
+		{ family = "JetBrainsMono Nerd Font", weight = "Regular", harfbuzz_features = { "calt=1", "clig=1", "liga=1" } },
 		{ family = "UDEV Gothic 35NFLG" },
 	}),
 	font_size = FONT_SIZE,
