@@ -7,10 +7,11 @@
 # ==========================================
 # Font Configuration
 # ==========================================
-# HackGen Console NFをメインフォントに設定（ターミナル作業最適化）
+# HackGen Console NF（パッチ済みNerd Font版）+ フォールバック
 font-family = "HackGen Console NF"
-font-family = "JetBrains Mono"
-# Console NFは十分太いのでthickenは無効化
+font-family = "JetBrainsMono Nerd Font"
+font-family = "Noto Sans CJK JP"
+# Console版は十分太いのでthickenは無効化
 font-thicken = false
 # リガチャを無効化（多くのユーザーが設定）
 font-feature = -liga
