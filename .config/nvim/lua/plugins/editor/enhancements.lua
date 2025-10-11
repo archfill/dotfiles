@@ -293,5 +293,34 @@ return {
         on_quit = true,
       },
     },
+    config = function(_, opts)
+      require("possession").setup(opts)
+
+      -- 入力キャンセル時のエラーを回避するカスタムコマンド
+      vim.api.nvim_create_user_command("PossessionSaveSafe", function()
+        local cwd = vim.fn.getcwd()
+        local default_name = vim.fn.fnamemodify(cwd, ":t")
+
+        vim.ui.input({
+          prompt = "セッション名を入力 (Enter=デフォルト, Esc=キャンセル): ",
+          default = default_name,
+        }, function(name)
+          if name and name ~= "" then
+            require("possession.session").save(name)
+            vim.notify("セッション '" .. name .. "' を保存しました", vim.log.levels.INFO)
+          elseif name == "" then
+            -- デフォルト名で保存
+            require("possession.session").save(default_name)
+            vim.notify("セッション '" .. default_name .. "' を保存しました", vim.log.levels.INFO)
+          else
+            -- キャンセルされた場合（nil）
+            vim.notify("セッション保存をキャンセルしました", vim.log.levels.WARN)
+          end
+        end)
+      end, { desc = "Save session with error handling" })
+
+      -- ダッシュボード用のショートコマンド
+      vim.keymap.set("n", "<leader>sS", "<cmd>PossessionSaveSafe<cr>", { desc = "Save session (safe)" })
+    end,
   },
 }

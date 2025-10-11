@@ -81,7 +81,7 @@ return {
             -- ⚙️ Essentials
             { icon = "⚙️ ", key = "c", desc = "Edit Config", action = ":edit ~/.config/nvim/init.lua" },
             { icon = "💤", key = "l", desc = "Lazy Home", action = ":Lazy" },
-            { icon = "💾", key = "s", desc = "Save Session", action = ":PossessionSave" },
+            { icon = "📂", key = "s", desc = "Load Session", action = ":PossessionLoad" },
             
             -- 🚪 Exit
             { icon = "🚪", key = "q", desc = "Quit Neovim", action = ":qa" },
