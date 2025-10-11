@@ -474,7 +474,7 @@ optimize_nodejs_package_management() {
         log_info "Configuring npm for optimal performance..."
         
         # Set npm configuration for faster installs
-        npm config set prefer-offline true >/dev/null 2>&1 || true
+        npm config set prefer-offline false >/dev/null 2>&1 || true
         npm config set audit false >/dev/null 2>&1 || true
         npm config set fund false >/dev/null 2>&1 || true
         
