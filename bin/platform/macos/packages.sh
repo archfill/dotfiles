@@ -103,6 +103,7 @@ utils_apps=(
   'poppler'
   'fd'
   'imagemagick'
+  'fastfetch'
 )
 
 # macOS specific tools

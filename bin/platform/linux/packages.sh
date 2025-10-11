@@ -118,7 +118,8 @@ install_common_packages_debian() {
           ffmpegthumbnailer \
           poppler-utils \
           fd-find \
-          imagemagick
+          imagemagick \
+          fastfetch
     else
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
@@ -228,6 +229,7 @@ install_common_packages_arch() {
         fd
         imagemagick
         deno
+        fastfetch
     )
 
     # AUR-only packages (installed via yay)
