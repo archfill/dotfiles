@@ -37,7 +37,7 @@ require("lazy").setup(final_plugins, {
 	lockfile = get_lockfile_path(), -- バージョン別lockfile指定
 	install = {
 		missing = true,
-		colorscheme = { "tokyonight" },
+		colorscheme = { "catppuccin" },
 	},
 	checker = {
 		enabled = false, -- 自動チェック無効

@@ -134,21 +134,5 @@ return {
 			vim.opt.guicursor = "n-v-c:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor"
 		end,
 	},
-
-	-- 🌃 Tokyo Night: フォールバック用に保持
-	{
-		"folke/tokyonight.nvim",
-		priority = 999,
-		lazy = true,
-		config = function()
-			vim.opt.termguicolors = true
-			local ok, _ = pcall(vim.cmd.colorscheme, "tokyonight")
-			if not ok then
-				vim.cmd.colorscheme("default")
-				vim.notify("tokyonight colorscheme not found, using default", vim.log.levels.WARN)
-			end
-			vim.cmd("hi Comment gui=NONE")
-		end,
-	},
 }
 
