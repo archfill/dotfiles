@@ -1,32 +1,43 @@
 {
+  // ============================================================
+  // グローバル設定
+  // ============================================================
   "layer": "top",
   "position": "top",
   "height": 34,
   "spacing": 0,
+
+  // ============================================================
+  // モジュール配置
+  // ============================================================
   "modules-left": [
-    "custom/launcher",
-    "hyprland/workspaces",
-    "hyprland/submap",
-    "wlr/taskbar",
-    "hyprland/window"
+    "custom/launcher",         // アプリランチャー
+    "hyprland/workspaces",     // ワークスペース一覧
+    "hyprland/submap",         // サブマップ表示
+    "wlr/taskbar",             // タスクバー
+    "hyprland/window"          // ウィンドウタイトル
   ],
   "modules-center": [
-    "mpris",
-    "clock"
+    "mpris",                   // メディアプレイヤー情報
+    "clock"                    // 時計・カレンダー
   ],
   "modules-right": [
-    "custom/updates",
-    "idle_inhibitor",
-    "pulseaudio",
-    "bluetooth",
-    "network",
-    "cpu",
-    "memory",
-    "backlight",
-    "battery",
-    "tray",
-    "custom/power"
+    "custom/updates",          // システムアップデート
+    "idle_inhibitor",          // アイドル抑制（カフェインモード）
+    "pulseaudio",              // 音量コントロール
+    "bluetooth",               // Bluetooth
+    "network",                 // ネットワーク
+    "cpu",                     // CPU使用率
+    "memory",                  // メモリ使用率
+    "backlight",               // 画面輝度
+    "battery",                 // バッテリー
+    "tray",                    // システムトレイ
+    "custom/power"             // 電源メニュー
   ],
+
+  // ============================================================
+  // 左側モジュール設定
+  // ============================================================
   "hyprland/workspaces": {
     "format": "{icon}",
     "format-icons": {
@@ -91,6 +102,10 @@
     "on-click": "fuzzel",
     "tooltip": false
   },
+
+  // ============================================================
+  // 中央モジュール設定
+  // ============================================================
   "clock": {
     "timezone": "Asia/Tokyo",
     "format": "\uf017 {:%Y-%m-%d %H:%M}",
@@ -112,6 +127,10 @@
       }
     }
   },
+
+  // ============================================================
+  // 右側モジュール設定
+  // ============================================================
   "cpu": {
     "format": "\uf4bc {usage}%",
     "format-alt": " {avg_frequency}GHz",

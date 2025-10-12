@@ -150,7 +150,7 @@ install_hyprland() {
         log_info "NVIDIA GPU detected - Will install additional packages"
     fi
 
-    # Hyprland core packages (8 packages - all from official repos)
+    # Hyprland core packages (9 packages - all from official repos)
     local hypr_packages=(
         hyprland                        # Main compositor
         hyprcursor                      # Cursor management
@@ -159,6 +159,7 @@ install_hyprland() {
         hyprpaper                       # Wallpaper manager
         hyprpicker                      # Color picker
         hyprshot                        # Screenshot utility
+        hyprpolkitagent                 # Polkit authentication agent
         xdg-desktop-portal-hyprland     # Desktop portal integration
     )
 
@@ -349,10 +350,69 @@ EOF
                 log_success "Created local.conf (empty - using default settings)"
             fi
 
+            # Create monitors.conf for monitor-specific configuration
+            local monitors_conf="${HOME}/.config/hypr/monitors.conf"
+            log_info "Creating monitors configuration file..."
+
+            if [[ ! -f "$monitors_conf" ]]; then
+                cat > "$monitors_conf" << 'EOF'
+# =====================================================
+# Monitor Configuration (Environment-specific)
+# =====================================================
+# This file is auto-generated during installation and not tracked by git
+# Edit according to your hardware setup
+#
+# To check your monitor configuration:
+#   hyprctl monitors
+#
+# For more examples, see:
+#   ~/.config/hypr/monitors.conf.example
+# =====================================================
+
+# =====================================================
+# Monitor Setup
+# =====================================================
+# Example: Single monitor (uncomment and edit)
+# monitor=HDMI-A-1,1920x1080@60,0x0,1
+
+# Example: Dual monitor (uncomment and edit)
+# monitor=DP-1,2560x1440@144,0x0,1
+# monitor=HDMI-A-1,1920x1080@60,2560x0,1
+
+# =====================================================
+# Workspace Assignment
+# =====================================================
+# Example: Assign workspaces to specific monitors
+# workspace=1,monitor:DP-1
+# workspace=2,monitor:DP-1
+# workspace=3,monitor:DP-1
+# workspace=4,monitor:DP-1
+# workspace=5,monitor:DP-1
+#
+# workspace=6,monitor:HDMI-A-1
+# workspace=7,monitor:HDMI-A-1
+# workspace=8,monitor:HDMI-A-1
+# workspace=9,monitor:HDMI-A-1
+# workspace=10,monitor:HDMI-A-1
+
+# =====================================================
+# Auto-detect: Uncomment to use first available monitor
+# =====================================================
+# monitor=,preferred,auto,1
+EOF
+                log_success "Created monitors.conf with default examples"
+                log_info "Edit ~/.config/hypr/monitors.conf to configure your monitors"
+                log_info "Or copy from ~/.config/hypr/monitors.conf.example for more examples"
+            else
+                log_info "monitors.conf already exists, skipping creation"
+            fi
+
             log_info "Next steps:"
-            log_info "  1. Configure Hyprland: ~/.config/hypr/hyprland.conf"
-            log_info "  2. Start Hyprland: 'Hyprland' (from TTY)"
-            log_info "  3. Or use a display manager (GDM, SDDM, etc.)"
+            log_info "  1. Configure monitors: ~/.config/hypr/monitors.conf"
+            log_info "     Check current monitors: hyprctl monitors"
+            log_info "  2. Configure keybindings: ~/.config/hypr/hyprland.conf"
+            log_info "  3. Start Hyprland: 'Hyprland' (from TTY)"
+            log_info "  4. Or use a display manager (GDM, SDDM, etc.)"
             log_info ""
             log_info "Documentation: https://wiki.hyprland.org"
         else

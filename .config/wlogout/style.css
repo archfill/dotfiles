@@ -17,6 +17,9 @@ button {
     background-position: center;
     background-size: 25%;
     color: #cdd6f4;
+    font-family: "HackGen35 Console NF", "JetBrainsMono Nerd Font", "Noto Sans CJK JP", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
     margin: 10px;
     transition: all 0.3s ease;
 }

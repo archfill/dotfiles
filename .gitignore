@@ -146,6 +146,7 @@ go.work
 
 ### Hyprland ###
 .config/hypr/local.conf
+.config/hypr/monitors.conf
 
 ### Git ###
 *.orig
