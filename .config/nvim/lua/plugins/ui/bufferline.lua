@@ -9,7 +9,7 @@ return {
     priority = 700,
     keys = {
       {
-        "x",
+        "Q",
         function()
           local current_buf = vim.api.nvim_get_current_buf()
           if vim.api.nvim_buf_is_valid(current_buf) then
@@ -19,7 +19,7 @@ return {
         desc = "Close current buffer",
       },
       { "H", "<cmd>bprevious<cr>", desc = "Previous buffer" },
-      { "L", "<cmd>bnext<cr>", desc = "Next buffer" },
+      { "L", "<cmd>bnext<cr>",     desc = "Next buffer" },
       {
         "<leader>bd",
         function()
@@ -30,7 +30,7 @@ return {
         end,
         desc = "Delete buffer",
       },
-      { "<leader>bo", "<cmd>%bd|e#|bd#<cr>", desc = "Close other buffers" },
+      { "<leader>bo", "<cmd>%bd|e#|bd#<cr>",                               desc = "Close other buffers" },
       {
         "<S-Left>",
         function()
@@ -45,15 +45,15 @@ return {
         end,
         desc = "Move buffer right",
       },
-      { "<leader>1", "<cmd>lua require('nvim-cokeline.api').pick(1)<cr>", desc = "Buffer 1" },
-      { "<leader>2", "<cmd>lua require('nvim-cokeline.api').pick(2)<cr>", desc = "Buffer 2" },
-      { "<leader>3", "<cmd>lua require('nvim-cokeline.api').pick(3)<cr>", desc = "Buffer 3" },
-      { "<leader>4", "<cmd>lua require('nvim-cokeline.api').pick(4)<cr>", desc = "Buffer 4" },
-      { "<leader>5", "<cmd>lua require('nvim-cokeline.api').pick(5)<cr>", desc = "Buffer 5" },
-      { "<leader>6", "<cmd>lua require('nvim-cokeline.api').pick(6)<cr>", desc = "Buffer 6" },
-      { "<leader>7", "<cmd>lua require('nvim-cokeline.api').pick(7)<cr>", desc = "Buffer 7" },
-      { "<leader>8", "<cmd>lua require('nvim-cokeline.api').pick(8)<cr>", desc = "Buffer 8" },
-      { "<leader>9", "<cmd>lua require('nvim-cokeline.api').pick(9)<cr>", desc = "Buffer 9" },
+      { "<leader>1",  "<cmd>lua require('nvim-cokeline.api').pick(1)<cr>", desc = "Buffer 1" },
+      { "<leader>2",  "<cmd>lua require('nvim-cokeline.api').pick(2)<cr>", desc = "Buffer 2" },
+      { "<leader>3",  "<cmd>lua require('nvim-cokeline.api').pick(3)<cr>", desc = "Buffer 3" },
+      { "<leader>4",  "<cmd>lua require('nvim-cokeline.api').pick(4)<cr>", desc = "Buffer 4" },
+      { "<leader>5",  "<cmd>lua require('nvim-cokeline.api').pick(5)<cr>", desc = "Buffer 5" },
+      { "<leader>6",  "<cmd>lua require('nvim-cokeline.api').pick(6)<cr>", desc = "Buffer 6" },
+      { "<leader>7",  "<cmd>lua require('nvim-cokeline.api').pick(7)<cr>", desc = "Buffer 7" },
+      { "<leader>8",  "<cmd>lua require('nvim-cokeline.api').pick(8)<cr>", desc = "Buffer 8" },
+      { "<leader>9",  "<cmd>lua require('nvim-cokeline.api').pick(9)<cr>", desc = "Buffer 9" },
     },
     event = "BufReadPost",
     dependencies = {
@@ -69,7 +69,7 @@ return {
           return buffer.is_focused and "#1e1e2e" or "#181825" -- Base / Mantle
         end,
       },
-      
+
       -- 🔧 Modern Tab Components with Enhanced Visual Feedback
       components = {
         -- Left padding with beautiful separator
@@ -81,24 +81,24 @@ return {
             return buffer.is_focused and "#1e1e2e" or "#181825"
           end,
         },
-        
+
         -- Devicon with enhanced colors
         {
-          text = function(buffer) 
-            return " " .. buffer.devicon.icon 
+          text = function(buffer)
+            return " " .. buffer.devicon.icon
           end,
-          fg = function(buffer) 
+          fg = function(buffer)
             return buffer.is_focused and buffer.devicon.color or "#6c7086" -- Surface2 when unfocused
           end,
           bg = function(buffer)
             return buffer.is_focused and "#1e1e2e" or "#181825"
           end,
         },
-        
+
         -- Filename with smart styling
         {
-          text = function(buffer) 
-            return " " .. buffer.filename 
+          text = function(buffer)
+            return " " .. buffer.filename
           end,
           fg = function(buffer)
             if buffer.is_focused then
@@ -114,7 +114,7 @@ return {
             return buffer.is_focused and "bold" or nil
           end,
         },
-        
+
         -- Modified indicator with beautiful styling
         {
           text = function(buffer)
@@ -127,7 +127,7 @@ return {
             return buffer.is_focused and "#1e1e2e" or "#181825"
           end,
         },
-        
+
         -- Readonly indicator
         {
           text = function(buffer)
@@ -138,7 +138,7 @@ return {
             return buffer.is_focused and "#1e1e2e" or "#181825"
           end,
         },
-        
+
         -- Beautiful close button (only on focused buffer)
         {
           text = function(buffer)
@@ -156,7 +156,7 @@ return {
             end
           end,
         },
-        
+
         -- Right separator (Safe Implementation)
         {
           text = function(buffer, buffers)
@@ -177,7 +177,7 @@ return {
           end,
         },
       },
-      
+
       -- 🌲 Enhanced Sidebar for Neo-tree
       sidebar = {
         filetype = "neo-tree",
@@ -190,7 +190,7 @@ return {
           },
         }
       },
-      
+
       -- 🔢 Beautiful Tab Numbers (Safe Implementation)
       tabs = {
         placement = "right",
@@ -209,25 +209,26 @@ return {
           },
         },
       },
-      
+
       -- 🎯 Enhanced Pick Letter Display
       pick = {
         use_filename = true,
         letters = "etovxqpdwfghjklmnprbciuaoszuy1234567890",
       },
-      
+
       -- 🎨 Additional Styling Options (Enhanced Safety)
       show_if_buffers_are_at_least = 1, -- 単一ファイルでもタブ表示
       buffers = {
         filter_valid = function(buffer)
           -- より厳密なバッファ検証
-          return buffer 
-            and buffer.type ~= "terminal" 
-            and buffer.number 
-            and vim.api.nvim_buf_is_valid(buffer.number)
+          return buffer
+              and buffer.type ~= "terminal"
+              and buffer.number
+              and vim.api.nvim_buf_is_valid(buffer.number)
         end,
         new_buffers_position = "next", -- Insert new buffers next to current
       },
     },
   },
 }
+

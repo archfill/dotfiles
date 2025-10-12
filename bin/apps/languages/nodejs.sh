@@ -452,6 +452,85 @@ install_essential_nodejs_tools() {
     log_success "Essential Node.js tools installation completed"
 }
 
+# Setup Neovim Node.js provider with Volta compatibility
+setup_neovim_provider() {
+    log_info "Setting up Neovim Node.js provider for Volta compatibility..."
+
+    # Parse command line options
+    parse_install_options "$@"
+
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would setup Neovim provider"
+        return 0
+    fi
+
+    if ! command -v volta >/dev/null 2>&1; then
+        log_info "Volta not available, skipping Neovim provider setup"
+        return 0
+    fi
+
+    # Install yarn if not already installed (required for Neovim compatibility)
+    # Note: Yarn Classic (1.x) is required for Neovim compatibility
+    if ! command -v yarn >/dev/null 2>&1; then
+        log_info "Installing Yarn 1.x (Classic) for Neovim provider compatibility..."
+        if [[ "$DRY_RUN" != "true" ]]; then
+            if volta install yarn@1; then
+                log_success "Yarn 1.x installed successfully"
+            else
+                log_warning "Failed to install Yarn 1.x"
+                return 1
+            fi
+        else
+            log_info "[DRY RUN] Would install yarn@1"
+        fi
+    else
+        log_skip_reason "Yarn" "Already installed"
+    fi
+
+    # Create Yarn symlink for Neovim compatibility
+    # This allows Neovim to discover Volta-managed packages
+    if [[ "$DRY_RUN" != "true" ]]; then
+        log_info "Creating Yarn symlink for Neovim compatibility..."
+
+        local yarn_global_dir="$HOME/.config/yarn/global"
+        local volta_shared_dir="$HOME/.volta/tools/shared"
+
+        # Remove old directory and create new one
+        rm -rf "$yarn_global_dir"
+        mkdir -p "$yarn_global_dir"
+
+        # Create symlink
+        if ln -s "$volta_shared_dir" "$yarn_global_dir/node_modules"; then
+            log_success "Yarn symlink created: $yarn_global_dir/node_modules -> $volta_shared_dir"
+        else
+            log_warning "Failed to create Yarn symlink"
+            return 1
+        fi
+    else
+        log_info "[DRY RUN] Would create Yarn symlink"
+    fi
+
+    # Install neovim npm package
+    if ! npm list -g neovim >/dev/null 2>&1; then
+        log_info "Installing neovim npm package..."
+        if [[ "$DRY_RUN" != "true" ]]; then
+            if npm install -g neovim; then
+                log_success "neovim package installed successfully"
+            else
+                log_warning "Failed to install neovim package"
+                return 1
+            fi
+        else
+            log_info "[DRY RUN] Would install neovim package"
+        fi
+    else
+        log_skip_reason "neovim package" "Already installed"
+    fi
+
+    log_success "Neovim Node.js provider setup completed"
+    log_info "Neovim can now use Volta-managed Node.js packages"
+}
+
 # Optimize Node.js package management and project setup
 optimize_nodejs_package_management() {
     log_info "Optimizing Node.js package management..."
@@ -529,7 +608,10 @@ main() {
         
         # Install essential development tools
         install_essential_nodejs_tools "$@"
-        
+
+        # Setup Neovim Node.js provider
+        setup_neovim_provider "$@"
+
         # Optimize package management
         if [[ "$QUICK_CHECK" != "true" ]]; then
             optimize_nodejs_package_management "$@"
@@ -546,7 +628,10 @@ main() {
     
     # Install essential development tools
     install_essential_nodejs_tools "$@"
-    
+
+    # Setup Neovim Node.js provider
+    setup_neovim_provider "$@"
+
     # Optimize package management (skip in quick mode)
     if [[ "$QUICK_CHECK" != "true" ]]; then
         optimize_nodejs_package_management "$@"

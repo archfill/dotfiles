@@ -116,13 +116,7 @@ return {
         vim.notify("mason-lspconfig.nvim が見つかりません", vim.log.levels.ERROR)
         return
       end
-      
-      local lspconfig_ok, lspconfig = pcall(require, "lspconfig")
-      if not lspconfig_ok then
-        vim.notify("nvim-lspconfig が見つかりません", vim.log.levels.ERROR)
-        return
-      end
-      
+
       -- masonが利用可能か確認
       local mason_ok, mason = pcall(require, "mason")
       if not mason_ok then
@@ -137,35 +131,34 @@ return {
           ensure_installed = {
             -- 既存言語
             "lua_ls",      -- Lua
-            "pyright",     -- Python  
+            "pyright",     -- Python
             "jsonls",      -- JSON
-            
+
             -- 緊急追加（設定不整合修正）
-            "tsserver",    -- TypeScript/JavaScript
+            "ts_ls",       -- TypeScript/JavaScript (renamed from tsserver)
             "yamlls",      -- YAML
             "bashls",      -- Bash/Shell
-            
+
             -- 主要言語追加
             "rust_analyzer", -- Rust
             "gopls",       -- Go
             "clangd",      -- C/C++
             "html",        -- HTML
             "cssls",       -- CSS
-            
+
             -- Tier1言語追加
             "intelephense", -- PHP
             "solargraph",  -- Ruby
             "sqls",        -- SQL
             "terraformls", -- Terraform/HCL
             "kotlin_language_server", -- Kotlin
-            
+
             -- 既存言語不足対応
             "marksman",    -- Markdown
             "dockerls",    -- Docker
-            
+
             -- 外部依存言語（条件付き対応）
-            "jdtls",       -- Java
-            "dartls",      -- Dart/Flutter
+            -- Note: jdtls と dartls は ensure_installed から除外（条件付きセットアップのため）
           },
           automatic_enable = true,  -- New API in mason-lspconfig 2.0
         })
@@ -176,20 +169,19 @@ return {
         return
       end
       
-      -- ===== モダンなLSPサーバー設定 (mason-lspconfig 2.0対応) =====
-      
-      -- 基本サーバー設定関数
+      -- ===== モダンなLSPサーバー設定 (Neovim 0.11+ vim.lsp.config対応) =====
+
+      -- サーバー設定関数（vim.lsp.config使用）
       local function setup_server_safe(server_name, config)
-        if lspconfig[server_name] and type(lspconfig[server_name].setup) == "function" then
-          local ok, err = pcall(function()
-            lspconfig[server_name].setup(config or {})
-          end)
-          if not ok then
-            vim.notify(
-              string.format("LSP サーバー '%s' の設定に失敗しました: %s", server_name, tostring(err)),
-              vim.log.levels.WARN
-            )
-          end
+        local ok, err = pcall(function()
+          vim.lsp.config(server_name, config or {})
+        end)
+
+        if not ok then
+          vim.notify(
+            string.format("LSP サーバー '%s' の設定に失敗しました: %s", server_name, tostring(err)),
+            vim.log.levels.WARN
+          )
         end
       end
       
@@ -233,9 +225,9 @@ return {
       })
       
       -- ===== 開発スタックサーバー =====
-      
+
       -- TypeScript/JavaScript（ESLint統合）
-      setup_server_safe("tsserver", {
+      setup_server_safe("ts_ls", {
         settings = {
           typescript = {
             inlayHints = {
@@ -446,9 +438,7 @@ return {
         setup_server_safe("jdtls", {
           cmd = { "jdtls", "-data", workspace_dir },
           filetypes = { "java" },
-          root_dir = require("lspconfig.util").root_pattern(
-            ".git", "mvnw", "gradlew", "pom.xml", "build.gradle"
-          ),
+          root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" },
           settings = {
             java = {
               configuration = {
@@ -488,7 +478,7 @@ return {
         setup_server_safe("dartls", {
           cmd = { "dart", "language-server", "--protocol=lsp" },
           filetypes = { "dart" },
-          root_dir = require("lspconfig.util").root_pattern("pubspec.yaml"),
+          root_markers = { "pubspec.yaml" },
           init_options = {
             onlyAnalyzeProjectsWithOpenFiles = true,
             suggestFromUnimportedLibraries = true,

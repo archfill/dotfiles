@@ -14,29 +14,29 @@ return {
       -- { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" }, -- → snacks.picker.buffers
       -- { "<leader>fm", function() require("telescope.builtin").oldfiles() end, desc = "Recent Files" }, -- → snacks.picker.recent
       -- { "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old Files" }, -- → snacks.picker.recent
-      
+
       -- ===== SPECIALIZED OPERATIONS (Telescope Maintained) =====
-      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
+      { "<leader>fh",  "<cmd>Telescope help_tags<cr>",                                                                                      desc = "Help Tags" },
 
       -- ===== ADVANCED FILE OPERATIONS =====
-      { "<leader>fd", function() require("telescope.builtin").find_files({ cwd = "~/.dotfiles" }) end, desc = "Find Dotfiles" },
-      { "<leader>fn", function() require("telescope.builtin").find_files({ cwd = "~/.config/nvim" }) end, desc = "Find Neovim Config" },
-      { "<leader>ft", function() require("telescope.builtin").live_grep({ default_text = "TODO\\|FIXME\\|HACK\\|BUG" }) end, desc = "Find TODOs" },
+      { "<leader>fd",  function() require("telescope.builtin").find_files({ cwd = "~/.dotfiles" }) end,                                     desc = "Find Dotfiles" },
+      { "<leader>fn",  function() require("telescope.builtin").find_files({ cwd = "~/.config/nvim" }) end,                                  desc = "Find Neovim Config" },
+      { "<leader>ft",  function() require("telescope.builtin").live_grep({ default_text = "TODO\\|FIXME\\|HACK\\|BUG" }) end,               desc = "Find TODOs" },
 
       -- ===== CORE EXTENSIONS =====
-      { "<leader>fB", function() require("telescope").extensions.file_browser.file_browser({ path = "%:p:h", select_buffer = true }) end, desc = "File Browser" },
-      { "<leader>fp", function() require("telescope").extensions.project.project({}) end, desc = "Projects" },
-      { "<leader>fs", function() require("telescope").extensions.symbols.symbols() end, desc = "Symbols & Emoji" },
-      { "<leader>fu", function() require("telescope").extensions.undo.undo() end, desc = "Undo Tree" },
-      { "<leader>fH", function() require("telescope").extensions.heading.heading() end, desc = "Document Headings" },
+      { "<leader>fB",  function() require("telescope").extensions.file_browser.file_browser({ path = "%:p:h", select_buffer = true }) end,  desc = "File Browser" },
+      { "<leader>fp",  function() require("telescope").extensions.project.project({}) end,                                                  desc = "Projects" },
+      { "<leader>fs",  function() require("telescope").extensions.symbols.symbols() end,                                                    desc = "Symbols & Emoji" },
+      { "<leader>fu",  function() require("telescope").extensions.undo.undo() end,                                                          desc = "Undo Tree" },
+      { "<leader>fH",  function() require("telescope").extensions.heading.heading() end,                                                    desc = "Document Headings" },
 
       -- ===== HIGH PRIORITY EXTENSIONS =====
-      { "<leader>fF", function() require("telescope").extensions.frecency.frecency() end, desc = "Frecency Files (Smart)" },
-      { "<leader>fy", function() require("telescope").extensions.yanky.history() end, desc = "Yank History" },
-      { "<leader>fM", function() require("telescope").extensions.media_files.media_files() end, desc = "Media Files" },
-      { "<leader>fX", function() require("telescope").extensions.tabs.list() end, desc = "Tabs" },
-      { "<leader>fC", function() require("telescope").extensions.cmdline.cmdline() end, desc = "Command Line" },
-      { "<leader>fS", function() require("telescope").extensions.session.session() end, desc = "Sessions" },
+      { "<leader>fF",  function() require("telescope").extensions.frecency.frecency() end,                                                  desc = "Frecency Files (Smart)" },
+      { "<leader>fy",  function() require("telescope").extensions.yanky.history() end,                                                      desc = "Yank History" },
+      { "<leader>fM",  function() require("telescope").extensions.media_files.media_files() end,                                            desc = "Media Files" },
+      { "<leader>fX",  function() require("telescope").extensions.tabs.list() end,                                                          desc = "Tabs" },
+      { "<leader>fC",  function() require("telescope").extensions.cmdline.cmdline() end,                                                    desc = "Command Line" },
+      { "<leader>fS",  function() require("telescope").extensions.session.session() end,                                                    desc = "Sessions" },
 
       -- ===== UTILITY SEARCHES (Migrated to snacks.nvim) =====
       -- { "<leader>fr", "<cmd>Telescope registers<cr>", desc = "Registers" }, -- → snacks.picker.registers
@@ -47,28 +47,29 @@ return {
       -- { "<leader>fq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" }, -- → snacks.picker.qflist
 
       -- ===== COMMAND OPERATIONS (Partial Migration) =====
-      { "<leader>f:", "<cmd>Telescope commands<cr>", desc = "Commands" },
+      { "<leader>f:",  "<cmd>Telescope commands<cr>",                                                                                       desc = "Commands" },
       -- { "<leader>f;", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- → snacks.picker (:<leader>:)
-      { "<leader>f/", "<cmd>Telescope search_history<cr>", desc = "Search History" },
-      { "<leader>f?", function() require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({})) end, desc = "Buffer Fuzzy Find" },
+      { "<leader>f/",  "<cmd>Telescope search_history<cr>",                                                                                 desc = "Search History" },
+      { "<leader>f?",  function() require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes")
+        .get_dropdown({})) end,                                                                                                             desc = "Buffer Fuzzy Find" },
       -- { "<leader>-", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- → snacks.picker
 
       -- ===== LSP OPERATIONS =====
-      { "<leader>ld", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
-      { "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "LSP References" },
-      { "<leader>ls", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
-      { "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<cr>", desc = "Workspace Symbols" },
+      { "<leader>ld",  "<cmd>Telescope diagnostics<cr>",                                                                                    desc = "Diagnostics" },
+      { "<leader>lr",  "<cmd>Telescope lsp_references<cr>",                                                                                 desc = "LSP References" },
+      { "<leader>ls",  "<cmd>Telescope lsp_document_symbols<cr>",                                                                           desc = "Document Symbols" },
+      { "<leader>lS",  "<cmd>Telescope lsp_workspace_symbols<cr>",                                                                          desc = "Workspace Symbols" },
 
 
       -- ===== TELESCOPE META =====
-      { "<leader>fT", "<cmd>Telescope builtin<cr>", desc = "Telescope Builtins" },
+      { "<leader>fT",  "<cmd>Telescope builtin<cr>",                                                                                        desc = "Telescope Builtins" },
 
       -- ===== FLUTTER DEVELOPMENT =====
-      { "<leader>flc", "<cmd>Telescope flutter commands<cr>", desc = "Flutter Commands" },
-      { "<leader>flv", "<cmd>Telescope flutter fvm<cr>", desc = "Flutter FVM" },
+      { "<leader>flc", "<cmd>Telescope flutter commands<cr>",                                                                               desc = "Flutter Commands" },
+      { "<leader>flv", "<cmd>Telescope flutter fvm<cr>",                                                                                    desc = "Flutter FVM" },
     },
     cmd = { "Telescope" },
-    dependencies = { 
+    dependencies = {
       "nvim-lua/plenary.nvim",
       -- ===== CORE EXTENSIONS =====
       -- 高性能ソーター拡張
@@ -91,7 +92,7 @@ return {
         dependencies = { "nvim-telescope/telescope-file-browser.nvim" },
       },
       -- 最近使用ファイル (OPTIONAL)
-      { "smartpde/telescope-recent-files", enabled = false },
+      { "smartpde/telescope-recent-files",  enabled = false },
       -- アンドゥツリー (ESSENTIAL)
       "debugloop/telescope-undo.nvim",
       -- 見出し検索 (ESSENTIAL)
@@ -128,7 +129,7 @@ return {
     opts = function()
       local actions = require("telescope.actions")
       local action_layout = require("telescope.actions.layout")
-      
+
       -- ================================================================
       -- UNIFIED FLOATING DESIGN STANDARDS (Snacks Compatible)
       -- ================================================================
@@ -138,7 +139,7 @@ return {
       -- - Layout: center/horizontal floating strategies
       -- - Navigation: C-j/C-k, Tab/S-Tab for selection
       -- - Visual: prompt_prefix 🔍, selection_caret ▶
-      
+
       return {
         defaults = {
           -- Performance optimizations
@@ -150,20 +151,20 @@ return {
           vimgrep_arguments = {
             "rg",
             "--color=never",
-            "--no-heading", 
+            "--no-heading",
             "--with-filename",
             "--line-number",
             "--column",
             "--smart-case",
             "--hidden",
           },
-          
+
           -- Unified Floating Layout Configuration
           layout_strategy = "horizontal", -- Default to horizontal floating
           layout_config = {
-            horizontal = { 
-              width = 0.85, 
-              height = 0.8, 
+            horizontal = {
+              width = 0.85,
+              height = 0.8,
               preview_width = 0.6,
               -- Center floating positioning
               anchor = "center",
@@ -174,9 +175,9 @@ return {
               height = 0.7,
               anchor = "center",
             },
-            vertical = { 
-              width = 0.8, 
-              height = 0.9, 
+            vertical = {
+              width = 0.8,
+              height = 0.9,
               preview_height = 0.5,
               anchor = "center",
               prompt_position = "top",
@@ -184,14 +185,14 @@ return {
             -- Global floating settings
             mirror = false,
           },
-          
+
           -- Enhanced Floating Window Styling
           borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
           color_devicons = true,
           prompt_prefix = "🔍 ",
           selection_caret = "▶ ",
           winblend = 5, -- Subtle transparency for modern floating feel
-          
+
           -- Enhanced keymaps
           mappings = {
             i = {
@@ -215,7 +216,7 @@ return {
             },
           },
         },
-        
+
         -- Picker-specific configurations - UNIFIED FLOATING DESIGN
         pickers = {
           find_files = {
@@ -229,7 +230,7 @@ return {
             hidden = true,
           },
           live_grep = {
-            layout_strategy = "horizontal", 
+            layout_strategy = "horizontal",
             layout_config = {
               width = 0.9,
               height = 0.8,
@@ -300,7 +301,7 @@ return {
             borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
           },
         },
-        
+
         -- Extensions configuration
         extensions = {
           fzf = {
@@ -330,7 +331,7 @@ return {
           },
           project = {
             base_dirs = {
-              { "~/dotfiles", max_depth = 2 },
+              { "~/dotfiles",    max_depth = 2 },
               { vim.fn.getcwd(), max_depth = 1 },
             },
             layout_strategy = "center",
@@ -350,7 +351,7 @@ return {
             borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
           },
           yanky = {
-            layout_strategy = "center", 
+            layout_strategy = "center",
             layout_config = {
               width = 0.7,
               height = 0.6,
@@ -365,28 +366,37 @@ return {
               ["dotfiles"] = vim.fn.expand("~/dotfiles"),
             },
           },
+          possession = {
+            layout_strategy = "center",
+            layout_config = {
+              width = 0.7,
+              height = 0.6,
+            },
+            borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+          },
         },
       }
     end,
     config = function(_, opts)
       -- Essential telescope setup with extensions
       local telescope = require("telescope")
-      
+
       -- Setup with opts
       telescope.setup(opts)
-      
+
       -- Load essential extensions only
       local essential_extensions = {
         "fzf",
-        "ui-select", 
+        "ui-select",
         "file_browser",
         "project",
         "undo",
         "heading",
         "frecency",
         "yanky",
+        "possession",
       }
-      
+
       -- Safe extension loading
       for _, ext in ipairs(essential_extensions) do
         local ok, _ = pcall(telescope.load_extension, ext)
@@ -397,4 +407,3 @@ return {
     end,
   },
 }
-

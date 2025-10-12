@@ -7,20 +7,44 @@
 vim.g.vscode_mode = vim.g.vscode or false
 
 -- ================================================================
--- 廃止API互換性レイヤー (vim.tbl_flatten deprecation warning suppression)
+-- エラー・警告ログキャプチャ（デバッグ用）
 -- ================================================================
--- vim.tbl_flattenの廃止警告を抑制（プラグイン互換性のため）
--- lualine.nvim等のプラグインが更新されるまでの一時的措置
-vim.defer_fn(function()
-  local original_notify = vim.notify
-  vim.notify = function(msg, level, opts)
-    -- vim.tbl_flattenの廃止警告を無効化
-    if type(msg) == "string" and msg:match("vim%.tbl_flatten.*deprecated") then
-      return
-    end
-    return original_notify(msg, level, opts)
+-- 全ての通知をファイルに記録（:EditErrorLog で確認可能）
+local error_log_file = vim.fn.stdpath("state") .. "/error-log.txt"
+local original_notify = vim.notify
+
+vim.notify = function(msg, level, opts)
+  -- ファイルサイズチェック（1MB制限）
+  local stat = vim.loop.fs_stat(error_log_file)
+  if stat and stat.size > 1024 * 1024 then
+    -- 古いログをバックアップして新規作成
+    os.rename(error_log_file, error_log_file .. ".old")
   end
-end, 0)
+
+  -- ファイルに記録
+  local log_entry = string.format(
+    "[%s] [%s] %s\n",
+    os.date("%Y-%m-%d %H:%M:%S"),
+    level == vim.log.levels.ERROR and "ERROR" or
+    level == vim.log.levels.WARN and "WARN" or
+    level == vim.log.levels.INFO and "INFO" or "DEBUG",
+    msg
+  )
+
+  local file = io.open(error_log_file, "a")
+  if file then
+    file:write(log_entry)
+    file:close()
+  end
+
+  -- 元の通知を実行
+  return original_notify(msg, level, opts)
+end
+
+-- エラーログを開くコマンド
+vim.api.nvim_create_user_command("EditErrorLog", function()
+  vim.cmd("edit " .. error_log_file)
+end, { desc = "Open error log file" })
 
 -- Shell設定
 vim.o.sh = "zsh"

@@ -232,7 +232,7 @@ return {
           max_typos = function(keyword)
             return math.floor(#keyword / 4)
           end,
-          use_frecency = true,
+          frecency = { enabled = true },
           use_proximity = true,
           sorts = {
             "exact",

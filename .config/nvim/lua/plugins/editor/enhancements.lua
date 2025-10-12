@@ -271,13 +271,13 @@ return {
   {
     "jedrzejboczar/possession.nvim",
     keys = {
-      { "<leader>sl", "<cmd>PossessionLoad<cr>", desc = "Load session" },
+      { "<leader>sl", "<cmd>Telescope possession list<cr>", desc = "Load session (Telescope)" },
       { "<leader>ss", "<cmd>PossessionSave<cr>", desc = "Save session" },
       { "<leader>sd", "<cmd>PossessionDelete<cr>", desc = "Delete session" },
       { "<leader>sc", "<cmd>PossessionClose<cr>", desc = "Close session" },
     },
     cmd = { "PossessionSave", "PossessionLoad", "PossessionDelete", "PossessionClose" },
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
     opts = {
       session_dir = vim.fn.expand("~/.local/share/nvim/sessions/"),
       silent = false,
@@ -291,6 +291,24 @@ return {
         tmp_name = "tmp",
         on_load = true,
         on_quit = true,
+      },
+      hooks = {
+        before_load = function(name, user_data)
+          -- ダッシュボードなどの特殊バッファのみ削除
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_valid(buf) then
+              local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
+              local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
+              -- ダッシュボード、空バッファ、特殊バッファのみ削除
+              if buftype == "nofile" or filetype == "dashboard" or filetype == "snacks_dashboard"
+                 or (buftype == "" and vim.api.nvim_buf_get_name(buf) == "") then
+                vim.api.nvim_set_option_value("modified", false, { buf = buf })
+                pcall(vim.api.nvim_buf_delete, buf, { force = true })
+              end
+            end
+          end
+          return user_data
+        end,
       },
     },
     config = function(_, opts)
