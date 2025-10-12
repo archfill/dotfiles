@@ -45,4 +45,10 @@ vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = false, desc = "Exi
 
 -- Search and highlight management
 -- ESC連打でハイライト解除 (競合解決: qからhに変更)
-vim.keymap.set("n", "<leader>h", ":nohlsearch<CR><Esc>", { noremap = false, silent = true, desc = "Clear search highlight" })
+vim.keymap.set(
+	"n",
+	"<leader>h",
+	":nohlsearch<CR><Esc>",
+	{ noremap = false, silent = true, desc = "Clear search highlight" }
+)
+

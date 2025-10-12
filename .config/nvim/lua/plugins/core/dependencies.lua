@@ -3,21 +3,22 @@
 -- ================================================================
 
 return {
-  -- Icons - Essential for many plugins
-  {
-    "nvim-tree/nvim-web-devicons",
-    priority = 850,
-    lazy = false,
-    opts = {
-      override = {},
-      default = true,
-    },
-  },
+	-- Icons - Essential for many plugins
+	{
+		"nvim-tree/nvim-web-devicons",
+		priority = 850,
+		lazy = false,
+		opts = {
+			override = {},
+			default = true,
+		},
+	},
 
-  -- NUI - Core UI library
-  {
-    "MunifTanjim/nui.nvim",
-    priority = 820,
-    lazy = false,
-  },
+	-- NUI - Core UI library
+	{
+		"MunifTanjim/nui.nvim",
+		priority = 820,
+		lazy = false,
+	},
 }
+

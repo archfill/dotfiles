@@ -79,4 +79,3 @@ for _, category in ipairs(plugin_categories) do
 end
 
 return all_plugins
-

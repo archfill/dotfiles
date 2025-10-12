@@ -3,9 +3,10 @@
 -- ================================================================
 
 return {
-  -- denops
-  { 
-    "vim-denops/denops.vim", 
-    event = "VeryLazy" 
-  },
+	-- denops
+	{
+		"vim-denops/denops.vim",
+		event = "VeryLazy",
+	},
 }
+

@@ -1,5 +1,5 @@
 -- ================================================================
--- CORE: Neovim Options Configuration  
+-- CORE: Neovim Options Configuration
 -- ================================================================
 -- Fundamental Neovim settings and platform-specific configurations
 
@@ -14,36 +14,37 @@ local error_log_file = vim.fn.stdpath("state") .. "/error-log.txt"
 local original_notify = vim.notify
 
 vim.notify = function(msg, level, opts)
-  -- ファイルサイズチェック（1MB制限）
-  local stat = vim.loop.fs_stat(error_log_file)
-  if stat and stat.size > 1024 * 1024 then
-    -- 古いログをバックアップして新規作成
-    os.rename(error_log_file, error_log_file .. ".old")
-  end
+	-- ファイルサイズチェック（1MB制限）
+	local stat = vim.loop.fs_stat(error_log_file)
+	if stat and stat.size > 1024 * 1024 then
+		-- 古いログをバックアップして新規作成
+		os.rename(error_log_file, error_log_file .. ".old")
+	end
 
-  -- ファイルに記録
-  local log_entry = string.format(
-    "[%s] [%s] %s\n",
-    os.date("%Y-%m-%d %H:%M:%S"),
-    level == vim.log.levels.ERROR and "ERROR" or
-    level == vim.log.levels.WARN and "WARN" or
-    level == vim.log.levels.INFO and "INFO" or "DEBUG",
-    msg
-  )
+	-- ファイルに記録
+	local log_entry = string.format(
+		"[%s] [%s] %s\n",
+		os.date("%Y-%m-%d %H:%M:%S"),
+		level == vim.log.levels.ERROR and "ERROR"
+			or level == vim.log.levels.WARN and "WARN"
+			or level == vim.log.levels.INFO and "INFO"
+			or "DEBUG",
+		msg
+	)
 
-  local file = io.open(error_log_file, "a")
-  if file then
-    file:write(log_entry)
-    file:close()
-  end
+	local file = io.open(error_log_file, "a")
+	if file then
+		file:write(log_entry)
+		file:close()
+	end
 
-  -- 元の通知を実行
-  return original_notify(msg, level, opts)
+	-- 元の通知を実行
+	return original_notify(msg, level, opts)
 end
 
 -- エラーログを開くコマンド
 vim.api.nvim_create_user_command("EditErrorLog", function()
-  vim.cmd("edit " .. error_log_file)
+	vim.cmd("edit " .. error_log_file)
 end, { desc = "Open error log file" })
 
 -- Shell設定
@@ -138,14 +139,15 @@ vim.cmd("filetype plugin indent on")
 -- Node.js設定（遅延実行）
 -- ================================================================
 vim.defer_fn(function()
-    if vim.fn.executable("volta") == 1 then
-        vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
-    end
+	if vim.fn.executable("volta") == 1 then
+		vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
+	end
 end, 100)
 
 -- ================================================================
 -- プラットフォーム固有設定
 -- ================================================================
 if vim.fn.has("wsl") == 1 then
-    require("core.platform")
+	require("core.platform")
 end
+

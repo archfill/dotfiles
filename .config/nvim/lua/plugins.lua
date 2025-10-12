@@ -65,3 +65,4 @@ require("lazy").setup(final_plugins, {
 		},
 	},
 })
+
