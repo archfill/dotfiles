@@ -7,8 +7,8 @@
 # ==========================================
 # Font Configuration
 # ==========================================
-# HackGen Console NF（パッチ済みNerd Font版）+ フォールバック
-font-family = "HackGen Console NF"
+# HackGen35 Console NF（3:5比率版、英数字大きめ）+ フォールバック
+font-family = "HackGen35 Console NF"
 font-family = "JetBrainsMono Nerd Font"
 font-family = "Noto Sans CJK JP"
 # Console版は十分太いのでthickenは無効化
@@ -105,7 +105,7 @@ selection-foreground = "#abb2bf"
 # ==========================================
 # ウィンドウタイトルのカスタマイズ
 title = "Ghostty Terminal"
-window-title-font-family = "HackGen Console NF"
+window-title-font-family = "HackGen35 Console NF"
 
 # より高度なシェル統合（tmux使用者向け）
 # $TMUX変数をチェックしてネストされたtmuxを防止

@@ -237,6 +237,7 @@ install_common_packages_arch() {
         urlscan
         khard
         bun-bin
+        ghostty
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
