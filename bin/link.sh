@@ -60,6 +60,11 @@ if [[ -f "${DOTFILES_DIR}/.config/tmux/tmux.conf" ]] && [[ ! -L "${HOME}/.config
     create_symlink "${DOTFILES_DIR}/.config/tmux/tmux.conf" "${HOME}/.tmux.conf"
 fi
 
+# aicommit2設定: .config/aicommit2/config → ~/.aicommit2
+if [[ -f "${DOTFILES_DIR}/.config/aicommit2/config" ]]; then
+    create_symlink "${DOTFILES_DIR}/.config/aicommit2/config" "${HOME}/.aicommit2"
+fi
+
 # tmuxディレクトリの作成（必要な場合）
 TMUX_DIR="${HOME}/.tmux"
 if [[ ! -d "$TMUX_DIR" ]]; then
