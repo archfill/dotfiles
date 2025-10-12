@@ -1,13 +1,14 @@
 {
   "layer": "top",
   "position": "top",
-  "height": 30,
-  "spacing": 4,
+  "height": 34,
+  "spacing": 0,
   "modules-left": [
     "custom/launcher",
     "hyprland/workspaces",
     "hyprland/submap",
-    "wlr/taskbar"
+    "wlr/taskbar",
+    "hyprland/window"
   ],
   "modules-center": [
     "mpris",
@@ -21,8 +22,6 @@
     "network",
     "cpu",
     "memory",
-    "temperature",
-    "disk",
     "backlight",
     "battery",
     "tray",
@@ -94,8 +93,8 @@
   },
   "clock": {
     "timezone": "Asia/Tokyo",
-    "format": "{:%a %Y-%m-%d %H:%M}",
-    "format-alt": "{:%Y年%m月%d日 (%a) %H:%M:%S}",
+    "format": "\uf017 {:%Y-%m-%d %H:%M}",
+    "format-alt": "\uf017 {:%Y年%m月%d日 %H:%M}",
     "tooltip-format": "<big>{:%Y年 %B}</big>\n<tt><small>{calendar}</small></tt>",
     "on-click": "gnome-calendar",
     "calendar": {
@@ -114,18 +113,18 @@
     }
   },
   "cpu": {
-    "format": " {usage}%",
+    "format": "\uf4bc {usage}%",
     "format-alt": " {avg_frequency}GHz",
     "tooltip-format": "使用率: {usage}%\n平均周波数: {avg_frequency}GHz\nコア別:\n{load}",
     "interval": 2,
-    "on-click": "ghostty -e htop"
+    "on-click": "ghostty -e btop"
   },
   "memory": {
-    "format": " {percentage}%",
+    "format": "\uefc5 {percentage}%",
     "format-alt": " {used:0.1f}G/{total:0.1f}G",
     "tooltip-format": "使用中: {used:0.2f}GB / {total:0.2f}GB\n使用率: {percentage}%\nスワップ: {swapUsed:0.2f}GB / {swapTotal:0.2f}GB ({swapPercentage}%)",
     "interval": 2,
-    "on-click": "ghostty -e htop"
+    "on-click": "ghostty -e btop"
   },
   "backlight": {
     "device": "intel_backlight",
@@ -162,9 +161,9 @@
     ]
   },
   "network": {
-    "format-wifi": "📶",
-    "format-ethernet": "🔌",
-    "format-disconnected": "⚠️",
+    "format-wifi": "\uf1eb",
+    "format-ethernet": "\udb80\ude01",
+    "format-disconnected": "\udb80\udf19",
     "tooltip-format": "{ifname}: {ipaddr}/{cidr}\nゲートウェイ: {gwaddr}\n信号強度: {signalStrength}%\nSSID: {essid}\n速度: ↓{bandwidthDownBits} ↑{bandwidthUpBits}",
     "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}\nゲートウェイ: {gwaddr}\n速度: ↓{bandwidthDownBits} ↑{bandwidthUpBits}",
     "tooltip-format-disconnected": "ネットワーク接続なし",
@@ -174,22 +173,19 @@
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
-    "format-muted": " ミュート",
+    "format-muted": "\udb81\udf5f Muted",
     "format-bluetooth": "{icon} {volume}%",
-    "format-bluetooth-muted": " {icon} ミュート",
+    "format-bluetooth-muted": " {icon} Muted",
     "format-source": " {volume}%",
     "format-source-muted": "",
     "format-icons": {
-      "headphone": "",
-      "hands-free": "",
-      "headset": "",
-      "phone": "",
-      "portable": "",
-      "car": "",
+      "headphone": "󰋋",
+      "headset": "󰋎",
+      "phone": "󰏲",
       "default": [
-        "",
-        "",
-        ""
+        "󰓃",
+        "󰓃",
+        "󰓃"
       ]
     },
     "tooltip-format": "{desc}\n音量: {volume}%",
@@ -203,47 +199,23 @@
     "icon-size": 21,
     "spacing": 10
   },
-  "temperature": {
-    "hwmon-path": "/sys/class/hwmon/hwmon1/temp1_input",
-    "critical-threshold": 80,
-    "format-critical": " {temperatureC}°C",
-    "format": " {temperatureC}°C",
-    "format-alt": " {temperatureF}°F",
-    "tooltip-format": "温度: {temperatureC}°C ({temperatureF}°F)\n警告閾値: 80°C",
-    "interval": 2,
-    "on-click": "ghostty -e sensors",
-    "on-click-right": "ghostty -e watch -n 1 sensors"
-  },
-  "disk": {
-    "interval": 30,
-    "format": " {percentage_used}%",
-    "format-alt": " {free}",
-    "path": "/",
-    "tooltip-format": "使用済み: {used} / 合計: {total}\n空き容量: {free} ({percentage_free}%)\nマウントポイント: {path}",
-    "on-click": "thunar /",
-    "on-click-right": "ghostty -e df -h",
-    "states": {
-      "warning": 70,
-      "critical": 90
-    }
-  },
   "bluetooth": {
-    "format": " {status}",
-    "format-connected": " {device_alias}",
+    "format": "\udb80\udcb2",
+    "format-connected": "\udb80\udcaf",
     "format-connected-battery": " {device_alias} {device_battery_percentage}%",
     "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
     "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
     "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
-    "on-click": "ghostty -e bluetoothctl"
+    "on-click": "overskride"
   },
   "custom/updates": {
-    "format": " {}",
+    "format": "󱧕 {}",
     "interval": 3600,
-    "exec": "checkupdates 2>/dev/null | wc -l || echo 0",
+    "exec": "(checkupdates; yay -Qua) 2>/dev/null | wc -l || echo 0",
     "exec-if": "exit 0",
     "on-click": "ghostty -e yay -Syu",
-    "tooltip-format": "利用可能なアップデート: {}個"
+    "tooltip-format": "Available updates: {}"
   },
   "custom/power": {
     "format": "⏻",
@@ -253,8 +225,8 @@
   "idle_inhibitor": {
     "format": "{icon}",
     "format-icons": {
-      "activated": "☕",
-      "deactivated": "💤"
+      "activated": "󰅶",
+      "deactivated": "󰒲"
     },
     "tooltip-format-activated": "カフェインモード: ON\n自動スリープ無効化中",
     "tooltip-format-deactivated": "カフェインモード: OFF\n自動スリープ有効",

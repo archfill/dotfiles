@@ -45,6 +45,7 @@ BASIC_CONFIGS=(
     ".config/waybar"
     ".config/fuzzel"
     ".config/swaync"
+    ".config/wlogout"
 )
 
 # 基本設定ファイルのシンボリックリンク作成

@@ -175,12 +175,18 @@ install_hyprland() {
         satty           # Screenshot editor/annotation
     )
 
-    # Optional but recommended packages (4 packages)
+    # Optional but recommended packages (10 packages)
     local optional_packages=(
         pavucontrol     # Audio control GUI
         brightnessctl   # Brightness control
         playerctl       # Media player control (MPRIS)
-        network-manager-applet  # Network management GUI
+        networkmanager  # Network management daemon (provides nmtui)
+        network-manager-applet  # Network management GUI (provides nm-connection-editor)
+        btop            # Modern system monitor (for Waybar CPU/Memory modules)
+        gnome-calendar  # Calendar application (for Waybar clock module)
+        papirus-icon-theme  # Icon theme (for Waybar taskbar module)
+        pacman-contrib  # Pacman tools (provides checkupdates for Waybar updates module)
+        wireplumber     # PipeWire session manager (provides wpctl for audio control)
     )
 
     # NVIDIA-specific packages (2 packages - conditional)
@@ -191,6 +197,12 @@ install_hyprland() {
             libva-nvidia-driver     # Hardware acceleration for NVIDIA
         )
     fi
+
+    # AUR packages (2 packages - conditional on yay availability)
+    local aur_packages=(
+        wlogout         # Wayland logout menu
+        overskride      # Bluetooth manager (GTK4, Hyprland-recommended)
+    )
 
     if [[ "$DRY_RUN" != "true" ]]; then
         # Install core Hyprland packages
@@ -215,6 +227,15 @@ install_hyprland() {
             sudo pacman -S --needed --noconfirm "${nvidia_packages[@]}"
         fi
 
+        # Install AUR packages if yay is available
+        if command -v yay >/dev/null 2>&1; then
+            log_info "Installing ${#aur_packages[@]} AUR packages..."
+            yay -S --needed --noconfirm "${aur_packages[@]}"
+        else
+            log_warning "yay not found. Skipping AUR packages: ${aur_packages[*]}"
+            log_info "Install yay to enable AUR package installation"
+        fi
+
         # Verify installation
         if command -v Hyprland >/dev/null 2>&1; then
             log_success "Hyprland installed successfully: $(Hyprland --version | head -1)"
@@ -226,6 +247,9 @@ install_hyprland() {
             log_info "  - Optional: ${#optional_packages[@]} packages"
             if [[ ${#nvidia_packages[@]} -gt 0 ]]; then
                 log_info "  - NVIDIA: ${#nvidia_packages[@]} packages"
+            fi
+            if command -v yay >/dev/null 2>&1; then
+                log_info "  - AUR: ${#aur_packages[@]} packages"
             fi
             log_info ""
 
@@ -241,6 +265,7 @@ install_hyprland() {
                 ".config/waybar"
                 ".config/fuzzel"
                 ".config/swaync"
+                ".config/wlogout"
             )
 
             for config_path in "${hyprland_configs[@]}"; do
@@ -342,6 +367,9 @@ EOF
         log_info "  - ${#optional_packages[@]} optional packages"
         if [[ ${#nvidia_packages[@]} -gt 0 ]]; then
             log_info "  - ${#nvidia_packages[@]} NVIDIA packages"
+        fi
+        if command -v yay >/dev/null 2>&1; then
+            log_info "  - ${#aur_packages[@]} AUR packages"
         fi
     fi
 

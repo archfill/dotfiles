@@ -1,191 +1,266 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: "HackGen Console NF", "JetBrainsMono Nerd Font", "Noto Sans CJK JP", sans-serif;
-    font-size: 13px;
+    font-family: "HackGen35 Console NF", "JetBrainsMono Nerd Font", "Noto Sans CJK JP", sans-serif;
+    font-size: 14px;
+    font-weight: bold;
     min-height: 0;
 }
 
 window#waybar {
-    background: linear-gradient(90deg,
-        rgba(30, 30, 46, 0.95) 0%,
-        rgba(49, 50, 68, 0.95) 50%,
-        rgba(30, 30, 46, 0.95) 100%);
+    background: rgba(30, 30, 46, 0.85);
     color: #cdd6f4;
+    margin: 8px 12px 0 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 tooltip {
     background: rgba(30, 30, 46, 0.95);
-    border: 1px solid rgba(137, 180, 250, 0.5);
     border-radius: 8px;
+    padding: 10px 14px;
 }
 
 tooltip label {
     color: #cdd6f4;
 }
 
+/* ========================================
+   ワークスペース - モダンピルデザイン
+   ======================================== */
+#workspaces {
+    margin: 3px 3px;
+    padding: 2px 4px;
+    background: transparent;
+}
+
 #workspaces button {
-    padding: 0 8px;
-    min-width: 0;
+    padding: 0;
+    min-width: 32px;
+    min-height: 32px;
     color: #6c7086;
     background: transparent;
-    border: none;
+    border-radius: 6px;
     margin: 0 2px;
-    font-size: 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#workspaces button.empty {
+    color: #45475a;
+    background: transparent;
 }
 
 #workspaces button.active {
-    color: #89b4fa;
-    font-size: 24px;
+    color: #1e1e2e;
+    background: rgba(137, 180, 250, 0.7);
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #workspaces button.urgent {
-    color: #f38ba8;
-    background: rgba(243, 139, 168, 0.25);
-    border: 2px solid rgba(243, 139, 168, 0.6);
-    box-shadow: 0 0 16px rgba(243, 139, 168, 0.6);
+    color: #1e1e2e;
+    background: rgba(243, 139, 168, 0.7);
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #workspaces button:hover {
-    background: rgba(137, 180, 250, 0.15);
+    background: rgba(137, 180, 250, 0.18);
+    color: #b4befe;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   左側モジュール
+   ======================================== */
+#custom-launcher {
+    margin: 3px 3px;
+    padding: 4px 12px;
     color: #89b4fa;
-    border: 2px solid rgba(137, 180, 250, 0.3);
+    background: transparent;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#custom-launcher:hover {
+    background: rgba(137, 180, 250, 0.25);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #window {
-    margin: 0 4px;
-    padding: 0 8px;
-    color: #cdd6f4;
+    margin: 3px 3px;
+    padding: 4px 12px;
+    color: #1e1e2e;
+    background: rgba(203, 166, 247, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* ウィンドウがないときは完全に非表示 */
+window#waybar.empty #window {
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    opacity: 0;
+}
+
+#submap {
+    margin: 3px 3px;
+    padding: 4px 12px;
+    color: #1e1e2e;
+    background: rgba(249, 226, 175, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#taskbar {
+    margin: 3px 3px;
+}
+
+#taskbar button {
+    padding: 3px 8px;
+    margin: 0 2px;
+    border-radius: 6px;
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#taskbar button.active {
+    background: rgba(137, 180, 250, 0.7);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#taskbar button:hover {
+    background: rgba(137, 180, 250, 0.2);
+}
+
+/* ========================================
+   中央モジュール
+   ======================================== */
 #mpris {
-    padding: 0 12px;
-    margin: 0 8px;
-    color: #cba6f7;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#mpris:hover {
-    background: rgba(203, 166, 247, 0.15);
-}
-
-#mpris.paused {
-    color: #6c7086;
-}
-
-#mpris.playing {
-    color: #a6e3a1;
+    margin: 3px 3px;
+    padding: 4px 12px;
+    color: #1e1e2e;
+    background: rgba(203, 166, 247, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #clock {
-    padding: 0 12px;
-    color: #89b4fa;
-    font-weight: bold;
+    margin: 3px 3px;
+    padding: 4px 14px;
+    color: #1e1e2e;
+    background: rgba(137, 180, 250, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-#cpu {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #f9e2af;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#cpu:hover {
-    background: rgba(249, 226, 175, 0.15);
-}
-
-#memory {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #a6e3a1;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#memory:hover {
-    background: rgba(166, 227, 161, 0.15);
-}
-
-#backlight {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #fab387;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#backlight:hover {
-    background: rgba(250, 179, 135, 0.15);
-}
-
+/* ========================================
+   右側モジュール - 統一デザイン
+   ======================================== */
+#custom-updates,
+#idle_inhibitor,
+#pulseaudio,
+#bluetooth,
+#network,
+#cpu,
+#memory,
+#backlight,
 #battery {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #a6e3a1;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
+    margin: 3px 3px;
+    padding: 4px 10px;
+    color: #1e1e2e;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#battery:hover {
-    background: rgba(166, 227, 161, 0.15);
+/* アップデート */
+#custom-updates {
+    background: rgba(249, 226, 175, 0.7);
 }
 
-#battery.charging {
-    color: #a6e3a1;
+/* カフェインモード */
+#idle_inhibitor {
+    background: rgba(108, 112, 134, 0.5);
+    font-size: 18px;
 }
 
-#battery.warning:not(.charging) {
-    color: #f9e2af;
+#idle_inhibitor.activated {
+    background: rgba(249, 226, 175, 0.7);
 }
 
-#battery.critical:not(.charging) {
-    color: #f38ba8;
-}
-
-#network {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #89dceb;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#network:hover {
-    background: rgba(137, 220, 235, 0.15);
-}
-
-#network.disconnected {
-    color: #f38ba8;
-}
-
+/* オーディオ */
 #pulseaudio {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #cba6f7;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#pulseaudio:hover {
-    background: rgba(203, 166, 247, 0.15);
+    background: rgba(137, 180, 250, 0.7);
 }
 
 #pulseaudio.muted {
-    color: #6c7086;
+    background: rgba(108, 112, 134, 0.5);
 }
 
+/* Bluetooth */
+#bluetooth {
+    background: rgba(137, 220, 235, 0.7);
+    font-size: 18px;
+}
+
+#bluetooth.disconnected {
+    background: rgba(108, 112, 134, 0.5);
+}
+
+/* ネットワーク */
+#network {
+    background: rgba(137, 220, 235, 0.7);
+    font-size: 18px;
+}
+
+#network.disconnected {
+    background: rgba(243, 139, 168, 0.7);
+}
+
+/* CPU */
+#cpu {
+    background: rgba(250, 179, 135, 0.7);
+}
+
+/* メモリ */
+#memory {
+    background: rgba(148, 226, 213, 0.7);
+}
+
+/* バックライト */
+#backlight {
+    background: rgba(250, 179, 135, 0.7);
+}
+
+/* バッテリー */
+#battery {
+    background: rgba(166, 227, 161, 0.7);
+}
+
+#battery.charging {
+    background: rgba(166, 227, 161, 0.7);
+}
+
+#battery.warning:not(.charging) {
+    background: rgba(249, 226, 175, 0.7);
+}
+
+#battery.critical:not(.charging) {
+    background: rgba(243, 139, 168, 0.7);
+}
+
+/* トレイ */
 #tray {
-    padding: 0 8px;
+    margin: 3px 3px;
+    padding: 4px 8px;
+    background: transparent;
+    border-radius: 8px;
 }
 
 #tray > .passive {
@@ -194,125 +269,22 @@ tooltip label {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-}
-
-#idle_inhibitor {
-    padding: 0 8px;
-    color: #6c7086;
-    transition: all 0.3s ease-in-out;
-}
-
-#idle_inhibitor.activated {
-    color: #f9e2af;
-    background: rgba(249, 226, 175, 0.15);
-    border-radius: 10px;
-}
-
-#temperature {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #fab387;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#temperature:hover {
-    background: rgba(250, 179, 135, 0.15);
-}
-
-#temperature.critical {
-    color: #f38ba8;
     background: rgba(243, 139, 168, 0.2);
+    border-radius: 6px;
 }
 
-#disk {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #cba6f7;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#disk:hover {
-    background: rgba(203, 166, 247, 0.15);
-}
-
-#disk.warning {
-    color: #f9e2af;
-    background: rgba(249, 226, 175, 0.2);
-}
-
-#disk.critical {
-    color: #f38ba8;
-    background: rgba(243, 139, 168, 0.2);
-}
-
-#bluetooth {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #89dceb;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#bluetooth:hover {
-    background: rgba(137, 220, 235, 0.15);
-}
-
-#bluetooth.disconnected {
-    color: #6c7086;
-}
-
-#custom-launcher {
-    padding: 0 12px;
-    color: #89b4fa;
-    font-size: 16px;
-}
-
-#custom-updates {
-    padding: 0 10px;
-    margin: 0 2px;
-    color: #a6e3a1;
-    background: rgba(30, 30, 46, 0.4);
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-#custom-updates:hover {
-    background: rgba(166, 227, 161, 0.15);
-}
-
+/* 電源ボタン */
 #custom-power {
-    padding: 0 12px;
+    margin: 3px 3px;
+    padding: 4px 12px;
     color: #f38ba8;
-    font-size: 16px;
-}
-
-#submap {
-    padding: 0 10px;
-    color: #f9e2af;
-    background: rgba(249, 226, 175, 0.1);
-    border-radius: 8px;
-}
-
-#taskbar {
-    padding: 0 4px;
-}
-
-#taskbar button {
-    padding: 0 6px;
-    margin: 0 2px;
-    border-radius: 8px;
     background: transparent;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#taskbar button.active {
-    background: rgba(137, 180, 250, 0.2);
-}
-
-#taskbar button:hover {
-    background: rgba(137, 180, 250, 0.1);
+#custom-power:hover {
+    background: rgba(243, 139, 168, 0.25);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
