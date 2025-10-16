@@ -208,13 +208,95 @@ uninstall() {
     log_success "Neovim $version uninstalled"
 }
 
+# ===== アクティブバージョンの取得 =====
+get_active_version() {
+    local nvim_link="$NVIM_BIN_DIR/nvim"
+
+    if [[ ! -L "$nvim_link" ]]; then
+        echo "none"
+        return 1
+    fi
+
+    local target=$(readlink "$nvim_link")
+    case "$target" in
+        *nvim-stable)
+            echo "stable"
+            return 0
+            ;;
+        *nvim-nightly)
+            echo "nightly"
+            return 0
+            ;;
+        *)
+            echo "unknown"
+            return 1
+            ;;
+    esac
+}
+
+# ===== デフォルトバージョンの設定 =====
+set_default_version() {
+    local version="$1"
+    local source_bin=""
+
+    if [[ "$version" == "stable" ]]; then
+        source_bin="$NVIM_STABLE_BIN"
+    elif [[ "$version" == "nightly" ]]; then
+        source_bin="$NVIM_NIGHTLY_BIN"
+    else
+        log_error "Invalid version: $version (use stable or nightly)"
+        return 1
+    fi
+
+    # バイナリが存在するか確認
+    if [[ ! -x "$source_bin" ]]; then
+        log_error "Neovim $version is not installed"
+        log_info "Install it first: make neovim-install VERSION=$version"
+        return 1
+    fi
+
+    local nvim_link="$NVIM_BIN_DIR/nvim"
+
+    # 既存のシンボリックリンクを削除
+    if [[ -L "$nvim_link" ]] || [[ -f "$nvim_link" ]]; then
+        rm -f "$nvim_link"
+    fi
+
+    # 新しいシンボリックリンクを作成
+    ln -sf "$source_bin" "$nvim_link"
+
+    if [[ $? -eq 0 ]]; then
+        log_success "Switched to Neovim $version"
+        log_info "Active version: $("$nvim_link" --version 2>/dev/null | head -1)"
+        return 0
+    else
+        log_error "Failed to create symlink"
+        return 1
+    fi
+}
+
 # ===== ステータス表示 =====
 show_status() {
     echo "=== Neovim Installer Status ==="
     echo ""
 
+    # アクティブバージョンを表示
+    local active_version=$(get_active_version)
+    if [[ "$active_version" != "none" ]]; then
+        echo "Active version: $active_version"
+        echo ""
+    else
+        echo "Active version: none (no symlink configured)"
+        echo ""
+    fi
+
     for version in stable nightly; do
-        echo "[$version]"
+        local status_marker=""
+        if [[ "$version" == "$active_version" ]]; then
+            status_marker=" (active)"
+        fi
+
+        echo "[$version]$status_marker"
         if check_version "$version" 2>/dev/null; then
             echo ""
         else
@@ -262,6 +344,19 @@ main() {
         "status")
             show_status
             ;;
+        "default")
+            if [[ -z "$version" ]]; then
+                log_error "Version required: stable or nightly"
+                exit 1
+            fi
+
+            if [[ "$version" != "stable" && "$version" != "nightly" ]]; then
+                log_error "Invalid version: $version (use stable or nightly)"
+                exit 1
+            fi
+
+            set_default_version "$version"
+            ;;
         *)
             cat << 'EOF'
 Neovim Installer for macOS (stable/nightly versions)
@@ -272,11 +367,13 @@ Commands:
   install <version>    Download and install Neovim (stable or nightly)
   uninstall <version>  Uninstall Neovim version
   check <version>      Check installed version
+  default <version>    Set default Neovim version (creates nvim symlink)
   status               Show installation status
 
 Examples:
   neovim_installer.sh install stable
   neovim_installer.sh install nightly
+  neovim_installer.sh default nightly
   neovim_installer.sh check stable
   neovim_installer.sh status
 
