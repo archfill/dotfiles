@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# neovim_installer.sh
-# Neovim stable/nightly版インストーラー（macOS専用）
-# Linux環境では bin/appimages/neovim.sh を使用してください
+# neovim-macos.sh
+# Neovim installer for macOS using Homebrew
+# Supports stable and nightly versions
 
 # 共有ライブラリの読み込み
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,144 +16,139 @@ setup_error_handling
 # 設定の読み込み
 load_config
 
-# ===== 定数定義 =====
-readonly NVIM_BIN_DIR="$HOME/.local/bin"
-readonly NVIM_STABLE_BIN="$NVIM_BIN_DIR/nvim-stable"
-readonly NVIM_NIGHTLY_BIN="$NVIM_BIN_DIR/nvim-nightly"
-readonly NVIM_DOWNLOAD_DIR="$HOME/.local/share/nvim-downloads"
-
-# GitHub Release URLs
-readonly STABLE_RELEASE_URL="https://github.com/neovim/neovim/releases/latest/download"
-readonly NIGHTLY_RELEASE_URL="https://github.com/neovim/neovim/releases/download/nightly"
-
 # ===== プラットフォームチェック =====
 check_platform() {
     if [[ "$(uname -s)" != "Darwin" ]]; then
         log_error "This script is for macOS only"
-        log_info "For Linux (AppImage), use: bin/appimages/neovim.sh"
+        log_info "For Linux (AppImage), use: bin/install-methods/appimage/neovim.sh"
         exit 1
     fi
 }
 
-# ===== プラットフォーム検出 =====
-detect_platform_architecture() {
-    local arch=$(uname -m)
-    echo "macos:${arch}"
+# ===== Homebrewチェック =====
+check_homebrew() {
+    if ! command -v brew >/dev/null 2>&1; then
+        log_error "Homebrew is not installed"
+        log_info "Install Homebrew: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+        return 1
+    fi
+    return 0
 }
 
-# ===== ダウンロードURL生成 =====
-get_download_url() {
-    local version="$1"  # stable or nightly
-    local arch=$(uname -m)
-
-    # macOS用tar.gzダウンロードURL
-    local base_url=""
-    if [[ "$version" == "stable" ]]; then
-        base_url="$STABLE_RELEASE_URL"
-    else
-        base_url="$NIGHTLY_RELEASE_URL"
+# ===== インストール済みバージョンの取得 =====
+get_installed_version() {
+    if ! brew list neovim >/dev/null 2>&1; then
+        echo "none"
+        return 1
     fi
 
-    case "$arch" in
-        x86_64)
-            echo "${base_url}/nvim-macos-x86_64.tar.gz"
-            ;;
-        arm64)
-            echo "${base_url}/nvim-macos-arm64.tar.gz"
-            ;;
-        *)
-            log_error "Unsupported architecture: $arch"
-            return 1
-            ;;
-    esac
+    local version_output
+    version_output=$(brew list --versions neovim 2>/dev/null | head -1)
+
+    if [[ "$version_output" == *"HEAD"* ]]; then
+        echo "nightly"
+    else
+        echo "stable"
+    fi
 }
 
-# ===== バイナリのダウンロードとインストール =====
-download_and_install() {
+# ===== バージョン情報の表示 =====
+show_version_info() {
+    if command -v nvim >/dev/null 2>&1; then
+        nvim --version | head -3
+    else
+        echo "Neovim is not installed or not in PATH"
+    fi
+}
+
+# ===== インストール =====
+install_neovim() {
     local version="$1"
 
     check_platform
 
-    local download_url
-    download_url=$(get_download_url "$version") || return 1
+    if ! check_homebrew; then
+        return 1
+    fi
 
-    log_info "Downloading Neovim $version for macOS from: $download_url"
+    # 既存インストールをチェック
+    local current_version
+    current_version=$(get_installed_version)
 
-    # ダウンロードディレクトリ作成
-    mkdir -p "$NVIM_DOWNLOAD_DIR"
-    mkdir -p "$NVIM_BIN_DIR"
+    if [[ "$current_version" != "none" ]]; then
+        if [[ "$current_version" == "$version" ]]; then
+            log_warning "Neovim $version is already installed"
+            log_info "To reinstall, run: make neovim-uninstall VERSION=$version && make neovim-install VERSION=$version"
+            log_info "To update, run: make neovim-update"
+            return 0
+        else
+            log_warning "Neovim $current_version is currently installed"
+            log_info "To switch to $version, first uninstall the current version:"
+            log_info "  make neovim-uninstall VERSION=$current_version"
+            return 1
+        fi
+    fi
 
-    # バイナリの配置先
-    local target_bin=""
+    log_info "Installing Neovim $version via Homebrew..."
+
     if [[ "$version" == "stable" ]]; then
-        target_bin="$NVIM_STABLE_BIN"
+        if brew install neovim; then
+            log_success "Neovim stable installed successfully"
+            show_version_info
+            return 0
+        else
+            log_error "Failed to install Neovim stable"
+            return 1
+        fi
+    elif [[ "$version" == "nightly" ]]; then
+        if brew install --HEAD neovim; then
+            log_success "Neovim nightly installed successfully"
+            show_version_info
+            return 0
+        else
+            log_error "Failed to install Neovim nightly"
+            return 1
+        fi
     else
-        target_bin="$NVIM_NIGHTLY_BIN"
+        log_error "Invalid version: $version (use stable or nightly)"
+        return 1
     fi
+}
 
-    # macOS: tar.gzをダウンロード・展開
-    local archive_file="$NVIM_DOWNLOAD_DIR/nvim-${version}.tar.gz"
-    local extract_dir="$NVIM_DOWNLOAD_DIR/nvim-${version}-extracted"
+# ===== アンインストール =====
+uninstall_neovim() {
+    local version="$1"
 
-    # 既存のファイルを削除
-    rm -rf "$archive_file" "$extract_dir"
+    check_platform
 
-    # ダウンロード
-    if ! curl -L -o "$archive_file" "$download_url"; then
-        log_error "Failed to download Neovim $version"
+    if ! check_homebrew; then
         return 1
     fi
 
-    log_success "Downloaded to: $archive_file"
+    local current_version
+    current_version=$(get_installed_version)
 
-    # 展開
-    log_info "Extracting archive..."
-    mkdir -p "$extract_dir"
-    if ! tar -xzf "$archive_file" -C "$extract_dir" --strip-components=1; then
-        log_error "Failed to extract archive"
-        return 1
+    if [[ "$current_version" == "none" ]]; then
+        log_info "Neovim is not installed"
+        return 0
     fi
 
-    if [[ ! -f "$extract_dir/bin/nvim" ]]; then
-        log_error "nvim binary not found in extracted archive"
-        return 1
+    # version指定がある場合は、現在のバージョンと一致するかチェック
+    if [[ "$version" != "all" ]]; then
+        if [[ "$current_version" != "$version" ]]; then
+            log_warning "Neovim $version is not installed (current: $current_version)"
+            log_info "To uninstall the current version, run: make neovim-uninstall VERSION=$current_version"
+            return 1
+        fi
     fi
 
-    # 既存のバイナリを削除
-    rm -f "$target_bin"
+    log_info "Uninstalling Neovim $current_version..."
 
-    # バイナリをコピー
-    cp "$extract_dir/bin/nvim" "$target_bin"
-    chmod +x "$target_bin"
-
-    # 共有ライブラリとランタイムファイルもコピー
-    local nvim_runtime_dir="$HOME/.local/share/nvim-${version}"
-    rm -rf "$nvim_runtime_dir"
-    mkdir -p "$nvim_runtime_dir"
-
-    # runtimeディレクトリをコピー
-    if [[ -d "$extract_dir/share/nvim/runtime" ]]; then
-        cp -r "$extract_dir/share/nvim/runtime" "$nvim_runtime_dir/"
-    fi
-
-    # libディレクトリをコピー（必要な場合）
-    if [[ -d "$extract_dir/lib" ]]; then
-        cp -r "$extract_dir/lib" "$nvim_runtime_dir/"
-    fi
-
-    # クリーンアップ
-    rm -rf "$archive_file" "$extract_dir"
-
-    log_info "Installing to: $target_bin"
-
-    # バージョン確認
-    if [[ -x "$target_bin" ]]; then
-        local installed_version=$("$target_bin" --version 2>/dev/null | head -1 || echo "Unknown")
-        log_success "Installed Neovim $version: $installed_version"
-        log_info "Binary location: $target_bin"
+    if brew uninstall neovim; then
+        log_success "Neovim uninstalled successfully"
         return 0
     else
-        log_error "Installation failed: binary not executable"
+        log_error "Failed to uninstall Neovim"
         return 1
     fi
 }
@@ -161,149 +156,146 @@ download_and_install() {
 # ===== バージョン確認 =====
 check_version() {
     local version="$1"
-    local bin_path=""
 
-    if [[ "$version" == "stable" ]]; then
-        bin_path="$NVIM_STABLE_BIN"
-    else
-        bin_path="$NVIM_NIGHTLY_BIN"
+    check_platform
+
+    if ! check_homebrew; then
+        return 1
     fi
 
-    if [[ -x "$bin_path" ]]; then
-        log_info "Neovim $version version:"
-        "$bin_path" --version | head -3
+    local current_version
+    current_version=$(get_installed_version)
+
+    if [[ "$current_version" == "none" ]]; then
+        log_info "Neovim is not installed"
+        return 1
+    fi
+
+    if [[ "$version" == "$current_version" ]]; then
+        log_info "Neovim $version is installed:"
+        show_version_info
         return 0
     else
-        log_info "Neovim $version is not installed"
-        return 1
-    fi
-}
-
-# ===== アンインストール =====
-uninstall() {
-    local version="$1"
-    local bin_path=""
-    local runtime_dir=""
-
-    if [[ "$version" == "stable" ]]; then
-        bin_path="$NVIM_STABLE_BIN"
-        runtime_dir="$HOME/.local/share/nvim-stable"
-    else
-        bin_path="$NVIM_NIGHTLY_BIN"
-        runtime_dir="$HOME/.local/share/nvim-nightly"
-    fi
-
-    log_info "Uninstalling Neovim $version..."
-
-    if [[ -f "$bin_path" ]]; then
-        rm -f "$bin_path"
-        log_success "Removed binary: $bin_path"
-    fi
-
-    if [[ -d "$runtime_dir" ]]; then
-        rm -rf "$runtime_dir"
-        log_success "Removed runtime: $runtime_dir"
-    fi
-
-    log_success "Neovim $version uninstalled"
-}
-
-# ===== アクティブバージョンの取得 =====
-get_active_version() {
-    local nvim_link="$NVIM_BIN_DIR/nvim"
-
-    if [[ ! -L "$nvim_link" ]]; then
-        echo "none"
-        return 1
-    fi
-
-    local target=$(readlink "$nvim_link")
-    case "$target" in
-        *nvim-stable)
-            echo "stable"
-            return 0
-            ;;
-        *nvim-nightly)
-            echo "nightly"
-            return 0
-            ;;
-        *)
-            echo "unknown"
-            return 1
-            ;;
-    esac
-}
-
-# ===== デフォルトバージョンの設定 =====
-set_default_version() {
-    local version="$1"
-    local source_bin=""
-
-    if [[ "$version" == "stable" ]]; then
-        source_bin="$NVIM_STABLE_BIN"
-    elif [[ "$version" == "nightly" ]]; then
-        source_bin="$NVIM_NIGHTLY_BIN"
-    else
-        log_error "Invalid version: $version (use stable or nightly)"
-        return 1
-    fi
-
-    # バイナリが存在するか確認
-    if [[ ! -x "$source_bin" ]]; then
-        log_error "Neovim $version is not installed"
-        log_info "Install it first: make neovim-install VERSION=$version"
-        return 1
-    fi
-
-    local nvim_link="$NVIM_BIN_DIR/nvim"
-
-    # 既存のシンボリックリンクを削除
-    if [[ -L "$nvim_link" ]] || [[ -f "$nvim_link" ]]; then
-        rm -f "$nvim_link"
-    fi
-
-    # 新しいシンボリックリンクを作成
-    ln -sf "$source_bin" "$nvim_link"
-
-    if [[ $? -eq 0 ]]; then
-        log_success "Switched to Neovim $version"
-        log_info "Active version: $("$nvim_link" --version 2>/dev/null | head -1)"
-        return 0
-    else
-        log_error "Failed to create symlink"
+        log_info "Neovim $current_version is installed (not $version)"
         return 1
     fi
 }
 
 # ===== ステータス表示 =====
 show_status() {
-    echo "=== Neovim Installer Status ==="
+    check_platform
+
+    echo "=== Neovim Status (Homebrew) ==="
     echo ""
 
-    # アクティブバージョンを表示
-    local active_version=$(get_active_version)
-    if [[ "$active_version" != "none" ]]; then
-        echo "Active version: $active_version"
-        echo ""
-    else
-        echo "Active version: none (no symlink configured)"
-        echo ""
+    if ! check_homebrew; then
+        echo "Homebrew is not installed"
+        return 1
     fi
 
-    for version in stable nightly; do
-        local status_marker=""
-        if [[ "$version" == "$active_version" ]]; then
-            status_marker=" (active)"
-        fi
+    local current_version
+    current_version=$(get_installed_version)
 
-        echo "[$version]$status_marker"
-        if check_version "$version" 2>/dev/null; then
-            echo ""
-        else
-            echo "  Not installed"
-            echo ""
+    if [[ "$current_version" == "none" ]]; then
+        echo "Status: Not installed"
+        echo ""
+        echo "Install commands:"
+        echo "  make neovim-install VERSION=stable"
+        echo "  make neovim-install VERSION=nightly"
+    else
+        echo "Status: Installed ($current_version)"
+        echo ""
+        show_version_info
+        echo ""
+        echo "Available commands:"
+        echo "  make neovim-update              # Update current version"
+        echo "  make neovim-uninstall VERSION=$current_version  # Uninstall"
+
+        local other_version="stable"
+        if [[ "$current_version" == "stable" ]]; then
+            other_version="nightly"
         fi
-    done
+        echo "  make neovim-uninstall VERSION=$current_version && make neovim-install VERSION=$other_version  # Switch to $other_version"
+    fi
+}
+
+# ===== デフォルトバージョンの設定 =====
+set_default_version() {
+    local version="$1"
+
+    # Homebrewでは1つのバージョンのみインストール可能
+    # このコマンドは互換性のために残すが、実際には何もしない
+
+    check_platform
+
+    if ! check_homebrew; then
+        return 1
+    fi
+
+    local current_version
+    current_version=$(get_installed_version)
+
+    if [[ "$current_version" == "none" ]]; then
+        log_error "Neovim is not installed"
+        log_info "Install it first: make neovim-install VERSION=$version"
+        return 1
+    fi
+
+    if [[ "$current_version" == "$version" ]]; then
+        log_success "Neovim $version is already active"
+        show_version_info
+        return 0
+    else
+        log_warning "Cannot switch version without reinstalling"
+        log_info "Current: $current_version, Requested: $version"
+        log_info "To switch:"
+        log_info "  1. Uninstall current: make neovim-uninstall VERSION=$current_version"
+        log_info "  2. Install new: make neovim-install VERSION=$version"
+        return 1
+    fi
+}
+
+# ===== アップデート =====
+update_neovim() {
+    check_platform
+
+    if ! check_homebrew; then
+        return 1
+    fi
+
+    local current_version
+    current_version=$(get_installed_version)
+
+    if [[ "$current_version" == "none" ]]; then
+        log_error "Neovim is not installed"
+        return 1
+    fi
+
+    log_info "Updating Neovim $current_version..."
+
+    if [[ "$current_version" == "nightly" ]]; then
+        # nightly版は再インストールで最新を取得
+        if brew reinstall --HEAD neovim; then
+            log_success "Neovim nightly updated successfully"
+            show_version_info
+            return 0
+        else
+            log_error "Failed to update Neovim nightly"
+            return 1
+        fi
+    else
+        # stable版は通常のupgrade
+        if brew upgrade neovim; then
+            log_success "Neovim stable updated successfully"
+            show_version_info
+            return 0
+        else
+            # 既に最新の場合もあるので、エラーではない
+            log_info "Neovim is already up-to-date"
+            show_version_info
+            return 0
+        fi
+    fi
 }
 
 # ===== メイン処理 =====
@@ -323,15 +315,20 @@ main() {
                 exit 1
             fi
 
-            download_and_install "$version"
+            install_neovim "$version"
             ;;
         "uninstall")
             if [[ -z "$version" ]]; then
-                log_error "Version required: stable or nightly"
+                log_error "Version required: stable, nightly, or all"
                 exit 1
             fi
 
-            uninstall "$version"
+            if [[ "$version" != "stable" && "$version" != "nightly" && "$version" != "all" ]]; then
+                log_error "Invalid version: $version (use stable, nightly, or all)"
+                exit 1
+            fi
+
+            uninstall_neovim "$version"
             ;;
         "check")
             if [[ -z "$version" ]]; then
@@ -357,28 +354,39 @@ main() {
 
             set_default_version "$version"
             ;;
+        "update")
+            update_neovim
+            ;;
         *)
             cat << 'EOF'
-Neovim Installer for macOS (stable/nightly versions)
+Neovim Installer for macOS (Homebrew)
 
-Usage: neovim_installer.sh [COMMAND] [VERSION]
+Usage: neovim-macos.sh [COMMAND] [VERSION]
 
 Commands:
-  install <version>    Download and install Neovim (stable or nightly)
-  uninstall <version>  Uninstall Neovim version
+  install <version>    Install Neovim (stable or nightly)
+  uninstall <version>  Uninstall Neovim (stable, nightly, or all)
   check <version>      Check installed version
-  default <version>    Set default Neovim version (creates nvim symlink)
+  default <version>    Set default Neovim version (requires reinstall)
   status               Show installation status
+  update               Update current Neovim version
 
 Examples:
-  neovim_installer.sh install stable
-  neovim_installer.sh install nightly
-  neovim_installer.sh default nightly
-  neovim_installer.sh check stable
-  neovim_installer.sh status
+  neovim-macos.sh install stable
+  neovim-macos.sh install nightly
+  neovim-macos.sh status
+  neovim-macos.sh update
+  neovim-macos.sh uninstall all
 
-Note: This script is for macOS only.
-      For Linux (AppImage), use: bin/appimages/neovim.sh
+Makefile Usage:
+  make neovim-install VERSION=stable
+  make neovim-install VERSION=nightly
+  make neovim-status
+  make neovim-update
+  make neovim-uninstall VERSION=all
+
+Note: Homebrew can only have one version installed at a time.
+      To switch versions, uninstall the current version first.
 EOF
             exit 1
             ;;
