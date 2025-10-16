@@ -87,14 +87,23 @@ automatically-unhide-macos-hidden-apps = false
     # All possible commands: https://nikitabobko.github.io/AeroSpace/commands
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
-    # You can uncomment the following lines to open up terminal with alt + enter shortcut
-    # (like in i3)
-    # alt-enter = '''exec-and-forget osascript -e '
-    # tell application "Terminal"
-    #     do script
-    #     activate
-    # end tell'
-    # '''
+    # Open terminal with alt + enter (like in i3/Hyprland)
+    alt-enter = 'exec-and-forget open -na Ghostty'
+
+    # Open Alfred (app launcher) - like Hyprland's Super+D for fuzzel
+    alt-d = 'exec-and-forget open -a Alfred'
+
+    # Open Finder (file manager) - like Hyprland's Super+E for nautilus
+    alt-e = 'exec-and-forget open -a Finder'
+
+    # Close focused window - like Hyprland's Super+Q
+    alt-q = 'close'
+
+    # Toggle floating - like Hyprland's Super+V
+    alt-v = 'layout floating tiling'
+
+    # Toggle fullscreen - like Hyprland's Super+F
+    alt-f = 'fullscreen'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
     alt-slash = 'layout tiles horizontal vertical'
@@ -137,6 +146,13 @@ automatically-unhide-macos-hidden-apps = false
     alt-shift-7 = 'move-node-to-workspace 7'
     alt-shift-8 = 'move-node-to-workspace 8'
     alt-shift-9 = 'move-node-to-workspace 9'
+
+    # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-monitor
+    # Move window to another monitor (vim-like) - like Hyprland's Super+Ctrl+H/J/K/L
+    alt-ctrl-h = 'move-node-to-monitor left'
+    alt-ctrl-j = 'move-node-to-monitor down'
+    alt-ctrl-k = 'move-node-to-monitor up'
+    alt-ctrl-l = 'move-node-to-monitor right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
     alt-tab = 'workspace-back-and-forth'
