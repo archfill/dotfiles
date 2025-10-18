@@ -148,7 +148,8 @@ Enter your choice [1-4] (default: 1):
 - **サブディスプレイの配置（上下左右）を選択可能**
 - Hyprland `monitors.conf` を自動生成
 - Waybar `monitors.env` を自動生成 + ビルド
-- Waybar を自動再起動
+- **Hyprpaper `hyprpaper.conf` を自動生成（既存の壁紙を保持）**
+- Waybar と Hyprpaper を自動再起動
 
 **出力例:**
 ```
@@ -239,6 +240,11 @@ make monitors
 # または自動検出（メニューをスキップ）
 make monitors-auto
 ```
+
+このコマンドで以下が自動的に更新されます：
+- ✅ `monitors.conf` - モニター設定
+- ✅ `waybar/config.jsonc` - Waybar設定
+- ✅ `hyprpaper.conf` - 壁紙設定（既存の壁紙を保持）
 
 **方法2: スクリプト直接実行**
 ```bash
