@@ -148,6 +148,10 @@ go.work
 .config/hypr/local.conf
 .config/hypr/monitors.conf
 
+### Waybar ###
+.config/waybar/config.jsonc
+.config/waybar/monitors.env
+
 ### Git ###
 *.orig
 *.rej

@@ -352,57 +352,27 @@ EOF
 
             # Create monitors.conf for monitor-specific configuration
             local monitors_conf="${HOME}/.config/hypr/monitors.conf"
+            local monitors_example="${HOME}/.config/hypr/monitors.conf.example"
             log_info "Creating monitors configuration file..."
 
             if [[ ! -f "$monitors_conf" ]]; then
-                cat > "$monitors_conf" << 'EOF'
-# =====================================================
-# Monitor Configuration (Environment-specific)
-# =====================================================
-# This file is auto-generated during installation and not tracked by git
-# Edit according to your hardware setup
-#
-# To check your monitor configuration:
-#   hyprctl monitors
-#
-# For more examples, see:
-#   ~/.config/hypr/monitors.conf.example
-# =====================================================
-
-# =====================================================
-# Monitor Setup
-# =====================================================
-# Example: Single monitor (uncomment and edit)
-# monitor=HDMI-A-1,1920x1080@60,0x0,1
-
-# Example: Dual monitor (uncomment and edit)
-# monitor=DP-1,2560x1440@144,0x0,1
-# monitor=HDMI-A-1,1920x1080@60,2560x0,1
-
-# =====================================================
-# Workspace Assignment
-# =====================================================
-# Example: Assign workspaces to specific monitors
-# workspace=1,monitor:DP-1
-# workspace=2,monitor:DP-1
-# workspace=3,monitor:DP-1
-# workspace=4,monitor:DP-1
-# workspace=5,monitor:DP-1
-#
-# workspace=6,monitor:HDMI-A-1
-# workspace=7,monitor:HDMI-A-1
-# workspace=8,monitor:HDMI-A-1
-# workspace=9,monitor:HDMI-A-1
-# workspace=10,monitor:HDMI-A-1
-
-# =====================================================
-# Auto-detect: Uncomment to use first available monitor
-# =====================================================
-# monitor=,preferred,auto,1
-EOF
-                log_success "Created monitors.conf with default examples"
-                log_info "Edit ~/.config/hypr/monitors.conf to configure your monitors"
-                log_info "Or copy from ~/.config/hypr/monitors.conf.example for more examples"
+                if [[ -f "$monitors_example" ]]; then
+                    cp "$monitors_example" "$monitors_conf"
+                    log_success "Created monitors.conf from monitors.conf.example (single display default)"
+                    log_info ""
+                    log_info "⚠️  IMPORTANT: Configure your monitors!"
+                    log_info "  1. Check your monitors: hyprctl monitors"
+                    log_info "  2. Edit: ~/.config/hypr/monitors.conf"
+                    log_info "  3. Update MONITOR_MAIN to your actual monitor name (e.g., DP-6, HDMI-A-2)"
+                    log_info ""
+                    log_info "For dual display examples, see:"
+                    log_info "  ~/.config/hypr/examples/monitors.conf.dual"
+                else
+                    log_warning "monitors.conf.example not found, creating basic config"
+                    echo "# Monitor configuration - Edit this file" > "$monitors_conf"
+                    echo "# Check monitors with: hyprctl monitors" >> "$monitors_conf"
+                    echo "monitor=,preferred,auto,1" >> "$monitors_conf"
+                fi
             else
                 log_info "monitors.conf already exists, skipping creation"
             fi

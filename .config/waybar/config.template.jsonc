@@ -49,17 +49,17 @@
     "on-click": "activate",
     // ワークスペース割り当て
     // build-config.shで自動調整:
-    //   - シングル: DP-6 に 1-10
-    //   - デュアル: DP-6 に 1-5, HDMI-A-2 に 6-10
+    //   - シングル: ${MONITOR_MAIN} に 1-10
+    //   - デュアル: ${MONITOR_MAIN} に 1-5, ${MONITOR_SUB} に 6-10
     "persistent-workspaces": {
-      "DP-6": [
+      "${MONITOR_MAIN}": [
         1,
         2,
         3,
         4,
         5
       ],
-      "HDMI-A-2": [
+      "${MONITOR_SUB}": [
         6,
         7,
         8,
