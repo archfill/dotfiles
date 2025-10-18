@@ -93,9 +93,29 @@ Enter your choice [1-4] (default: 1):
 
 デュアルディスプレイの場合、セカンダリモニターの向きも選択します（デフォルト: Portrait Left）。
 
+**ステップ3: サブディスプレイの配置選択（デュアルモードのみ）**
+
+サブディスプレイをメインディスプレイに対してどこに配置するか選択できます：
+
+```
+═══════════════════════════════════════════════════════════
+  Secondary Monitor Position
+═══════════════════════════════════════════════════════════
+
+Select where to place the secondary monitor:
+
+  1) Left of primary (default)
+  2) Right of primary
+  3) Above primary
+  4) Below primary
+
+Enter your choice [1-4] (default: 1):
+```
+
 **自動検出モードのデフォルト:**
 - プライマリモニター: Landscape (0°)
 - セカンダリモニター: Portrait Left (270°)
+- セカンダリ配置: Left of primary（メインの左側）
 
 #### コマンドラインオプション
 
@@ -125,6 +145,7 @@ Enter your choice [1-4] (default: 1):
 - 接続されているモニターを自動検出
 - シングル/デュアルを自動判定（またはユーザー選択）
 - **各モニターの向き（landscape/portrait）を個別に選択可能**
+- **サブディスプレイの配置（上下左右）を選択可能**
 - Hyprland `monitors.conf` を自動生成
 - Waybar `monitors.env` を自動生成 + ビルド
 - Waybar を自動再起動
@@ -302,6 +323,45 @@ hyprctl reload
 
 **自動検出モードのデフォルト:**
 - `make monitors-auto` を実行すると、セカンダリモニターは自動的に Portrait Left (270°) に設定されます
+
+### Q: サブディスプレイの配置（上下左右）を変更したい
+
+**A:** インタラクティブモードで配置を選択できます。
+
+**方法1: インタラクティブモード（推奨）**
+```bash
+make monitors
+```
+
+ステップ3で配置を選択：
+- **Left of primary** - メインの左側（デフォルト）
+- **Right of primary** - メインの右側
+- **Above primary** - メインの上
+- **Below primary** - メインの下
+
+**方法2: 手動で座標を編集**
+```bash
+# monitors.confを編集
+nvim ~/.config/hypr/monitors.conf
+
+# 座標を変更（例: 右側に配置）
+# Primary: 0x0 (左)
+# Secondary: 3440x0 (プライマリの幅分右にオフセット)
+
+# Hyprlandを再読み込み
+hyprctl reload
+```
+
+**配置例:**
+```bash
+# 左右配置（横並び）
+monitor=HDMI-A-2,1920x1080@60,0x0,1,transform,3      # 左
+monitor=DP-6,3440x1440@99,1080x0,1                   # 右 (x=1080はセカンダリの表示幅)
+
+# 上下配置（縦並び）
+monitor=HDMI-A-2,1920x1080@60,0x0,1,transform,3      # 上
+monitor=DP-6,3440x1440@99,0x1920,1                   # 下 (y=1920はセカンダリの表示高さ)
+```
 
 ### Q: 複数のモニター設定例が欲しい
 

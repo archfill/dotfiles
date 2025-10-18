@@ -22,6 +22,7 @@ MODE=""           # Display mode: "single", "dual", or "" (auto-detect)
 AUTO_MODE=false   # Skip interactive menu if true
 PRIMARY_TRANSFORM=0    # Primary monitor orientation: 0=landscape, 1=90°, 2=180°, 3=270°
 SECONDARY_TRANSFORM=0  # Secondary monitor orientation: 0=landscape, 1=90°, 2=180°, 3=270°
+SECONDARY_POSITION="left"  # Secondary monitor position: "left", "right", "above", "below"
 
 # =====================================================
 # Colors and Logging
@@ -265,6 +266,63 @@ show_orientation_menu() {
     echo "$selected_transform"
 }
 
+show_position_menu() {
+    local default_position="${1:-left}"
+
+    echo ""
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BOLD}  Secondary Monitor Position${NC}"
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo ""
+    echo -e "${BOLD}Select where to place the secondary monitor:${NC}"
+    echo ""
+    echo -e "  ${GREEN}1)${NC} Left of primary (default)"
+    echo -e "  ${CYAN}2)${NC} Right of primary"
+    echo -e "  ${CYAN}3)${NC} Above primary"
+    echo -e "  ${CYAN}4)${NC} Below primary"
+    echo ""
+
+    local default_choice=1
+    case $default_position in
+        left)  default_choice=1 ;;
+        right) default_choice=2 ;;
+        above) default_choice=3 ;;
+        below) default_choice=4 ;;
+    esac
+
+    echo -ne "${BOLD}Enter your choice [1-4] (default: ${default_choice}): ${NC}"
+
+    read -r choice
+    choice=${choice:-$default_choice}
+    echo ""
+
+    local selected_position="left"
+    case $choice in
+        1)
+            log_info "Selected: Left of primary"
+            selected_position="left"
+            ;;
+        2)
+            log_info "Selected: Right of primary"
+            selected_position="right"
+            ;;
+        3)
+            log_info "Selected: Above primary"
+            selected_position="above"
+            ;;
+        4)
+            log_info "Selected: Below primary"
+            selected_position="below"
+            ;;
+        *)
+            log_warning "Invalid choice: $choice, using default (left)"
+            selected_position="left"
+            ;;
+    esac
+
+    echo "$selected_position"
+}
+
 show_interactive_menu() {
     local recommended_mode
     if [[ $MONITOR_COUNT -eq 1 ]]; then
@@ -361,12 +419,16 @@ if [[ "$AUTO_MODE" == "false" ]]; then
 
         # Default secondary to portrait left (270°) as user preference
         SECONDARY_TRANSFORM=$(show_orientation_menu "$SECONDARY_MONITOR" 3 false)
+
+        # Secondary monitor position selection
+        SECONDARY_POSITION=$(show_position_menu "left")
     fi
 else
     # Auto mode: use defaults
     # Primary: landscape (0), Secondary: portrait left (270°) for user's setup
     if [[ "$MODE" == "dual" ]]; then
         SECONDARY_TRANSFORM=3  # Portrait left (270°)
+        SECONDARY_POSITION="left"  # Default to left
     fi
 fi
 
@@ -440,9 +502,62 @@ else
     SECONDARY_WIDTH=$(echo "$SECONDARY_INFO" | jq -r '.width')
     SECONDARY_HEIGHT=$(echo "$SECONDARY_INFO" | jq -r '.height')
     SECONDARY_REFRESH=$(echo "$SECONDARY_INFO" | jq -r '.refreshRate | floor')
-    SECONDARY_X=$(echo "$SECONDARY_INFO" | jq -r '.x')
-    SECONDARY_Y=$(echo "$SECONDARY_INFO" | jq -r '.y')
     # SECONDARY_TRANSFORM is already set by user selection or default (0)
+
+    # Calculate actual display dimensions considering transform
+    # Transform 1 (90°) and 3 (270°) swap width and height
+    PRIMARY_DISPLAY_WIDTH=$PRIMARY_WIDTH
+    PRIMARY_DISPLAY_HEIGHT=$PRIMARY_HEIGHT
+    if [[ $PRIMARY_TRANSFORM -eq 1 ]] || [[ $PRIMARY_TRANSFORM -eq 3 ]]; then
+        PRIMARY_DISPLAY_WIDTH=$PRIMARY_HEIGHT
+        PRIMARY_DISPLAY_HEIGHT=$PRIMARY_WIDTH
+    fi
+
+    SECONDARY_DISPLAY_WIDTH=$SECONDARY_WIDTH
+    SECONDARY_DISPLAY_HEIGHT=$SECONDARY_HEIGHT
+    if [[ $SECONDARY_TRANSFORM -eq 1 ]] || [[ $SECONDARY_TRANSFORM -eq 3 ]]; then
+        SECONDARY_DISPLAY_WIDTH=$SECONDARY_HEIGHT
+        SECONDARY_DISPLAY_HEIGHT=$SECONDARY_WIDTH
+    fi
+
+    # Calculate monitor positions based on selected placement
+    PRIMARY_X=0
+    PRIMARY_Y=0
+    SECONDARY_X=0
+    SECONDARY_Y=0
+
+    case $SECONDARY_POSITION in
+        left)
+            # Secondary on left, primary on right
+            SECONDARY_X=0
+            SECONDARY_Y=0
+            PRIMARY_X=$SECONDARY_DISPLAY_WIDTH
+            PRIMARY_Y=0
+            ;;
+        right)
+            # Primary on left, secondary on right
+            PRIMARY_X=0
+            PRIMARY_Y=0
+            SECONDARY_X=$PRIMARY_DISPLAY_WIDTH
+            SECONDARY_Y=0
+            ;;
+        above)
+            # Secondary above, primary below
+            SECONDARY_X=0
+            SECONDARY_Y=0
+            PRIMARY_X=0
+            PRIMARY_Y=$SECONDARY_DISPLAY_HEIGHT
+            ;;
+        below)
+            # Primary above, secondary below
+            PRIMARY_X=0
+            PRIMARY_Y=0
+            SECONDARY_X=0
+            SECONDARY_Y=$PRIMARY_DISPLAY_HEIGHT
+            ;;
+    esac
+
+    log_info "Secondary position: $SECONDARY_POSITION"
 
     # Build monitor config strings
     PRIMARY_CONFIG="${PRIMARY_MONITOR},${PRIMARY_WIDTH}x${PRIMARY_HEIGHT}@${PRIMARY_REFRESH},${PRIMARY_X}x${PRIMARY_Y},1"
