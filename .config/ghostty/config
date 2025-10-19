@@ -54,9 +54,10 @@ unfocused-split-opacity = 0.7
 # ==========================================
 # Shell Integration
 # ==========================================
-shell-integration = zsh
+# 注: tmuxを直接起動する場合、shell-integrationは競合するため無効化
+# shell-integration = zsh
 # より安全で人気の設定
-shell-integration-features = "no-cursor,sudo,no-title"
+# shell-integration-features = "no-cursor,sudo,no-title"
 
 # OSC 52クリップボードサポート（SSH/リモート作業用）
 clipboard-read = allow
@@ -108,8 +109,10 @@ title = "Ghostty Terminal"
 window-title-font-family = "HackGen35 Console NF"
 
 # より高度なシェル統合（tmux使用者向け）
-# $TMUX変数をチェックしてネストされたtmuxを防止
-command = zsh --login -c "if [ -z \"$TMUX\" ] && command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
+# 専用スクリプトでtmuxセッションを管理
+# このスクリプトはAlacrittyとも共有
+# 注: ghosttyはチルダ(~)を展開しないため、環境変数を使用
+command = ${HOME}/.config/scripts/tmux-session.sh
 
 # ==========================================
 # Optional: Custom Shaders
