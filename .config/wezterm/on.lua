@@ -174,7 +174,7 @@ end
 local function get_battery_status()
 	local results = {}
 	for _, b in ipairs(wezterm.battery_info()) do
-		if not b.state == "Empty" then
+		if b.state ~= "Empty" then
 			table.insert(results, string.format("%.0f%%", b.state_of_charge * 100))
 		end
 	end
