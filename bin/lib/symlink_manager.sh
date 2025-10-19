@@ -178,12 +178,66 @@ remove_symlink() {
     fi
 }
 
+# Alacrittyのos-specific.tomlシンボリックリンク作成
+create_alacritty_os_specific_link() {
+    local platform="$1"
+    local alacritty_dir="${DOTFILES_DIR}/.config/alacritty"
+    local os_specific_link="${alacritty_dir}/os-specific.toml"
+    local target_file=""
+
+    case "$platform" in
+        "macos")
+            target_file="macos.toml"
+            ;;
+        "linux")
+            target_file="linux.toml"
+            ;;
+        "cygwin"|"windows")
+            target_file="windows.toml"
+            ;;
+        *)
+            log_warning "Unknown platform for Alacritty: $platform"
+            return 1
+            ;;
+    esac
+
+    # Alacrittyディレクトリの存在確認
+    if [[ ! -d "$alacritty_dir" ]]; then
+        log_warning "Alacritty config directory not found: $alacritty_dir"
+        return 1
+    fi
+
+    # ターゲットファイルの存在確認
+    if [[ ! -f "${alacritty_dir}/${target_file}" ]]; then
+        log_error "Alacritty platform config not found: ${target_file}"
+        return 1
+    fi
+
+    # 既存のシンボリックリンクまたはファイルを削除
+    if [[ -L "$os_specific_link" ]]; then
+        rm "$os_specific_link"
+    elif [[ -e "$os_specific_link" ]]; then
+        log_warning "os-specific.toml exists but is not a symlink, removing"
+        rm "$os_specific_link"
+    fi
+
+    # 相対パスでシンボリックリンクを作成
+    cd "$alacritty_dir" || return 1
+    ln -s "$target_file" "os-specific.toml"
+    cd - > /dev/null || return 1
+
+    log_success "Created Alacritty os-specific link: os-specific.toml -> ${target_file}"
+}
+
 # プラットフォーム固有のシンボリックリンク作成
 create_platform_specific_symlinks() {
     local platform
     platform="$(detect_platform)"
 
     log_info "Creating platform-specific symlinks for: $platform"
+
+    # Alacrittyのos-specific.tomlリンク作成（全プラットフォーム共通）
+    create_alacritty_os_specific_link "$platform"
 
     case "$platform" in
         "macos")
