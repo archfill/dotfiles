@@ -229,6 +229,54 @@ create_alacritty_os_specific_link() {
     log_success "Created Alacritty os-specific link: os-specific.toml -> ${target_file}"
 }
 
+# Ghosttyのplatformシンボリックリンク作成
+create_ghostty_platform_link() {
+    local platform="$1"
+    local ghostty_dir="${DOTFILES_DIR}/.config/ghostty"
+    local platform_link="${ghostty_dir}/platform"
+    local target_file=""
+
+    case "$platform" in
+        "macos")
+            target_file="macos"
+            ;;
+        "linux")
+            target_file="linux"
+            ;;
+        *)
+            log_warning "Unknown platform for Ghostty: $platform"
+            return 1
+            ;;
+    esac
+
+    # Ghosttyディレクトリの存在確認
+    if [[ ! -d "$ghostty_dir" ]]; then
+        log_warning "Ghostty config directory not found: $ghostty_dir"
+        return 1
+    fi
+
+    # ターゲットファイルの存在確認
+    if [[ ! -f "${ghostty_dir}/${target_file}" ]]; then
+        log_error "Ghostty platform config not found: ${target_file}"
+        return 1
+    fi
+
+    # 既存のシンボリックリンクまたはファイルを削除
+    if [[ -L "$platform_link" ]]; then
+        rm "$platform_link"
+    elif [[ -e "$platform_link" ]]; then
+        log_warning "platform file exists but is not a symlink, removing"
+        rm "$platform_link"
+    fi
+
+    # 相対パスでシンボリックリンクを作成
+    cd "$ghostty_dir" || return 1
+    ln -s "$target_file" "platform"
+    cd - > /dev/null || return 1
+
+    log_success "Created Ghostty platform link: platform -> ${target_file}"
+}
+
 # プラットフォーム固有のシンボリックリンク作成
 create_platform_specific_symlinks() {
     local platform
@@ -238,6 +286,9 @@ create_platform_specific_symlinks() {
 
     # Alacrittyのos-specific.tomlリンク作成（全プラットフォーム共通）
     create_alacritty_os_specific_link "$platform"
+
+    # Ghosttyのplatformリンク作成（全プラットフォーム共通）
+    create_ghostty_platform_link "$platform"
 
     case "$platform" in
         "macos")

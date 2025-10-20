@@ -123,11 +123,12 @@ command = ${HOME}/.config/scripts/tmux-session.sh
 # ==========================================
 # Platform-Specific Configuration
 # ==========================================
-# プラットフォーム固有の設定を読み込み（存在する場合のみ）
-# macOS: .config/ghostty/macos
-# Linux: .config/ghostty/linux
-config-file = ?${XDG_CONFIG_HOME:-~/.config}/ghostty/macos
-config-file = ?${XDG_CONFIG_HOME:-~/.config}/ghostty/linux
+# プラットフォーム固有の設定を読み込み
+# シンボリックリンク 'platform' を使用:
+#   Linux: platform -> linux
+#   macOS: platform -> macos
+# リンクの作成は bin/link.sh で自動的に行われます
+config-file = platform
 
 # ==========================================
 # Notes
