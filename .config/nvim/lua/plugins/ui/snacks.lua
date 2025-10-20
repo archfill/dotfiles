@@ -160,6 +160,9 @@ return {
 			-- ================================================================
 			dashboard = {
 				enabled = true,
+				-- Layout configuration
+				width = 80, -- Dashboard width (characters)
+				pane_gap = 4, -- Gap between panes (not used in single pane)
 				preset = {
 					-- 🎨 Beautiful Modern Header with Gradient Effect
 					header = [[
@@ -170,8 +173,7 @@ return {
     ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
     ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
     ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
-
-    ✨ Beautiful • 🚀 Powerful • 🎯 Professional • 💡 Innovative ✨]],
+]],
 					-- Essential Actions - Clean & Focused
 					keys = {
 						--  Core Operations (Essential)
@@ -191,70 +193,67 @@ return {
 					},
 				},
 				sections = {
-					-- 🎨 Central Header Section
-					{ section = "header", gap = 1, padding = 1 },
+					-- ===== TWO PANE LAYOUT =====
 
-					-- 🎯 Main Action Panel - Clean & Focused
-					{ section = "keys", gap = 1, padding = 1 },
+					-- LEFT PANE: Header & Quick Actions
 
-					-- ===== RIGHT SIDEBAR: Essential Information Only =====
-
-					-- 📁 Recent Files - Essential for workflow
+					-- Header
 					{
-						pane = 2,
-						icon = " ",
-						title = "Recent Files",
-						section = "recent_files",
-						indent = 2,
-						padding = 1,
-						limit = 6, -- Reduced from 8 for cleaner look
+						section = "header",
 					},
 
-					-- 🗂️ Projects - Essential for development
+					-- Quick Actions
 					{
-						pane = 2,
-						icon = " ",
-						title = "Projects",
-						section = "projects",
-						indent = 2,
-						padding = 1,
-						limit = 4, -- Reduced from 6 for cleaner look
-					},
-
-					-- 🌿 Git Status - Simplified & Essential
-					{
-						pane = 2,
-						icon = " ",
-						title = "Git Status",
-						section = "terminal",
-						enabled = function()
-							return vim.fn.isdirectory(".git") == 1
-								or vim.fn.system("git rev-parse --git-dir 2>/dev/null"):match("%.git")
-						end,
-						cmd = "branch_name=$(git branch --show-current 2>/dev/null) && echo '🌱 '${branch_name:-main} && echo '' && git status --porcelain 2>/dev/null | head -3 || echo '✨ Clean working directory'",
-						height = 5, -- Reduced height for cleaner look
-						padding = 1,
-						ttl = 5 * 60,
-						indent = 2,
-					},
-
-					-- ⚡ Quick Info - Unified essential info
-					{
-						pane = 2,
-						icon = "⚡",
-						title = "System Info",
-						section = "terminal",
-						cmd = "nvim_version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' 2>/dev/null) && plugin_count=$(find ~/.local/share/nvim/lazy -maxdepth 1 -type d 2>/dev/null | wc -l 2>/dev/null || echo '0') && current_time=$(date +'%H:%M' 2>/dev/null) && echo '📝 Neovim '${nvim_version:-'Latest'} && echo '🔌 '${plugin_count}' plugins' && echo '🕐 '${current_time:-'Now'} && echo '✨ Ready to code!'",
-						height = 5, -- Compact unified info
+						icon = "󰜎",
+						title = "Quick Actions",
+						section = "keys",
+						gap = 1,
 						padding = 1,
 						indent = 2,
 					},
 
-					-- 🎉 Startup Completion - Clean finish
+					-- Startup Completion
 					{
 						section = "startup",
 						gap = 1,
 						padding = 1,
+					},
+
+					-- RIGHT PANE: System Info & Files
+
+					-- System Info
+					{
+						pane = 2,
+						icon = "󰍛",
+						title = "System Info",
+						section = "terminal",
+						cmd = "fastfetch --logo small --pipe false --structure Title:Separator:OS:Kernel:Uptime:Shell:WM:CPU:GPU:Memory",
+						height = 11, -- Exact height for all output lines
+						padding = 1,
+						ttl = 5 * 60, -- Cache for 5 minutes
+						indent = 2,
+					},
+
+					-- Recent Files
+					{
+						pane = 2,
+						icon = "󰋚",
+						title = "Recent Files",
+						section = "recent_files",
+						indent = 2,
+						padding = 1,
+						limit = 6,
+					},
+
+					-- Projects
+					{
+						pane = 2,
+						icon = "󰉋",
+						title = "Projects",
+						section = "projects",
+						indent = 2,
+						padding = 1,
+						limit = 4,
 					},
 				},
 			},

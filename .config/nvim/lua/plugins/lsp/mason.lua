@@ -118,13 +118,12 @@ return {
 			{ "[d", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
 			{ "]d", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
 		},
-		event = { "BufReadPre", "BufNewFile" },
+		event = { "BufReadPost", "BufNewFile" },
 		dependencies = {
 			"williamboman/mason.nvim",
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
-			-- pluginconfigから完全移行 - 401行の企業レベル設定を統合
 
 			-- ===== FLOATING WINDOW CONFIGURATION =====
 			-- Diagnostics floating window設定

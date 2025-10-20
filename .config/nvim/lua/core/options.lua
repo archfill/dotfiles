@@ -6,47 +6,6 @@
 -- VSCode環境検出
 vim.g.vscode_mode = vim.g.vscode or false
 
--- ================================================================
--- エラー・警告ログキャプチャ（デバッグ用）
--- ================================================================
--- 全ての通知をファイルに記録（:EditErrorLog で確認可能）
-local error_log_file = vim.fn.stdpath("state") .. "/error-log.txt"
-local original_notify = vim.notify
-
-vim.notify = function(msg, level, opts)
-	-- ファイルサイズチェック（1MB制限）
-	local stat = vim.loop.fs_stat(error_log_file)
-	if stat and stat.size > 1024 * 1024 then
-		-- 古いログをバックアップして新規作成
-		os.rename(error_log_file, error_log_file .. ".old")
-	end
-
-	-- ファイルに記録
-	local log_entry = string.format(
-		"[%s] [%s] %s\n",
-		os.date("%Y-%m-%d %H:%M:%S"),
-		level == vim.log.levels.ERROR and "ERROR"
-			or level == vim.log.levels.WARN and "WARN"
-			or level == vim.log.levels.INFO and "INFO"
-			or "DEBUG",
-		msg
-	)
-
-	local file = io.open(error_log_file, "a")
-	if file then
-		file:write(log_entry)
-		file:close()
-	end
-
-	-- 元の通知を実行
-	return original_notify(msg, level, opts)
-end
-
--- エラーログを開くコマンド
-vim.api.nvim_create_user_command("EditErrorLog", function()
-	vim.cmd("edit " .. error_log_file)
-end, { desc = "Open error log file" })
-
 -- Shell設定
 vim.o.sh = "zsh"
 
@@ -79,7 +38,7 @@ vim.o.showcmd = true
 
 -- 行番号表示
 vim.o.number = true
-vim.o.relativenumber = true
+vim.o.relativenumber = false -- デフォルト無効（大規模ファイル対応）
 
 -- カーソル設定
 vim.o.cursorline = false
@@ -134,6 +93,9 @@ vim.opt.clipboard:append({ "unnamedplus" })
 
 -- ファイルタイプ検出
 vim.cmd("filetype plugin indent on")
+
+-- パフォーマンス最適化
+vim.o.updatetime = 250 -- デフォルト4000ms → 250ms（LSP診断の反応速度向上）
 
 -- ================================================================
 -- Node.js設定（遅延実行）
