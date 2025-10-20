@@ -204,6 +204,7 @@ window#waybar.empty #window {
 #network,
 #cpu,
 #memory,
+#custom-disk,
 #backlight,
 #battery {
     margin: 3px 3px;
@@ -266,6 +267,19 @@ window#waybar.empty #window {
 /* メモリ */
 #memory {
     background: rgba(148, 226, 213, 0.7);
+}
+
+/* ディスク */
+#custom-disk {
+    background: rgba(180, 190, 254, 0.7);
+}
+
+#custom-disk.warning {
+    background: rgba(249, 226, 175, 0.7);
+}
+
+#custom-disk.critical {
+    background: rgba(243, 139, 168, 0.7);
 }
 
 /* バックライト */
