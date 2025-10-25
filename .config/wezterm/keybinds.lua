@@ -22,8 +22,54 @@ end
 ---------------------------------------------------------------
 --- keybinds
 ---------------------------------------------------------------
--- Disabled tmux_keybinds to use external tmux
--- M.tmux_keybinds = {}
+-- Windows専用: tmux風キーバインド（macOS/Linuxは外部tmux使用）
+M.tmux_keybinds = {}
+
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+	M.tmux_keybinds = {
+		-- Pane splitting
+		{ key = "-", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+		{ key = "\\", mods = "LEADER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+		{ key = "|", mods = "LEADER|SHIFT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+
+		-- Tab management
+		{ key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
+		{ key = "n", mods = "LEADER", action = act.ActivateTabRelative(1) },
+		{ key = "p", mods = "LEADER", action = act.ActivateTabRelative(-1) },
+		{ key = "x", mods = "LEADER", action = act.CloseCurrentPane({ confirm = true }) },
+
+		-- Tab selection by number
+		{ key = "1", mods = "LEADER", action = act.ActivateTab(0) },
+		{ key = "2", mods = "LEADER", action = act.ActivateTab(1) },
+		{ key = "3", mods = "LEADER", action = act.ActivateTab(2) },
+		{ key = "4", mods = "LEADER", action = act.ActivateTab(3) },
+		{ key = "5", mods = "LEADER", action = act.ActivateTab(4) },
+		{ key = "6", mods = "LEADER", action = act.ActivateTab(5) },
+		{ key = "7", mods = "LEADER", action = act.ActivateTab(6) },
+		{ key = "8", mods = "LEADER", action = act.ActivateTab(7) },
+		{ key = "9", mods = "LEADER", action = act.ActivateTab(8) },
+
+		-- Pane navigation (vim-style)
+		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
+		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
+		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
+		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
+
+		-- Pane zoom toggle
+		{ key = "m", mods = "LEADER", action = act.TogglePaneZoomState },
+
+		-- Pane resize mode
+		{
+			key = "r",
+			mods = "LEADER",
+			action = act.ActivateKeyTable({
+				name = "resize_pane",
+				one_shot = false,
+				timeout_milliseconds = 1000,
+			}),
+		},
+	}
+end
 
 M.default_keybinds = {
 	-- Basic clipboard operations
@@ -48,12 +94,18 @@ M.default_keybinds = {
 }
 
 function M.create_keybinds()
-	-- Return only default keybinds since tmux_keybinds is disabled
-	return M.default_keybinds
+	-- Merge default keybinds with tmux-style keybinds (Windows only)
+	local keybinds = {}
+	for _, bind in ipairs(M.default_keybinds) do
+		table.insert(keybinds, bind)
+	end
+	for _, bind in ipairs(M.tmux_keybinds) do
+		table.insert(keybinds, bind)
+	end
+	return keybinds
 end
 
 M.key_tables = {
-	-- Removed resize_pane table to avoid conflicts with tmux
 	copy_mode = {
 		{
 			key = "Escape",
@@ -197,6 +249,20 @@ M.key_tables = {
 		{ key = "r", mods = "CTRL", action = act.CopyMode("CycleMatchType") },
 		{ key = "/", mods = "NONE", action = act.CopyMode("ClearPattern") },
 		{ key = "u", mods = "CTRL", action = act.CopyMode("ClearPattern") },
+	},
+	-- Pane resize mode (Windows専用, LEADER+rで起動)
+	resize_pane = {
+		{ key = "h", action = act.AdjustPaneSize({ "Left", 5 }) },
+		{ key = "j", action = act.AdjustPaneSize({ "Down", 5 }) },
+		{ key = "k", action = act.AdjustPaneSize({ "Up", 5 }) },
+		{ key = "l", action = act.AdjustPaneSize({ "Right", 5 }) },
+		{ key = "LeftArrow", action = act.AdjustPaneSize({ "Left", 5 }) },
+		{ key = "DownArrow", action = act.AdjustPaneSize({ "Down", 5 }) },
+		{ key = "UpArrow", action = act.AdjustPaneSize({ "Up", 5 }) },
+		{ key = "RightArrow", action = act.AdjustPaneSize({ "Right", 5 }) },
+		-- Exit resize mode
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "Enter", action = "PopKeyTable" },
 	},
 }
 
