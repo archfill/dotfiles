@@ -120,6 +120,14 @@ install_hyprland() {
     # Parse command line options
     parse_install_options "$@"
 
+    # WSL check - Hyprland is not supported in WSL
+    if is_wsl; then
+        log_warning "Hyprland installation is skipped on WSL"
+        log_info "Hyprland requires native Linux graphics stack (Wayland)"
+        log_info "WSL does not support Wayland compositors like Hyprland"
+        return 0
+    fi
+
     # Platform check
     local distro
     distro="$(get_os_distribution)"

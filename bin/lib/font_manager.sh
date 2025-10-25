@@ -203,7 +203,7 @@ init_font_configs() {
     FONT_CONFIGS["fira-code-nf"]="FiraCode Nerd Font|ryanoasis/nerd-fonts|font-fira-code-nerd-font|ttf-fira-code"
 
     # 日本語対応高品質フォント
-    FONT_CONFIGS["plemoljp"]="PlemolJP|yuru7/PlemolJP|font-plemol-jp|ttf-plemoljp"
+    FONT_CONFIGS["plemoljp"]="PlemolJP|yuru7/PlemolJP|font-plemol-jp|ttf-plemoljp-bin"
     FONT_CONFIGS["udev-gothic"]="UDEV Gothic|yuru7/udev-gothic|font-udev-gothic|ttf-udev-gothic"
     FONT_CONFIGS["cica"]="Cica|miiton/Cica|font-cica|ttf-cica"
 
