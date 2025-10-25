@@ -16,7 +16,19 @@ fi
 
 # Voltaがインストールされているかチェック
 is_volta_installed() {
-    command -v volta >/dev/null 2>&1
+    if command -v volta >/dev/null 2>&1; then
+        local volta_path
+        volta_path=$(command -v volta 2>/dev/null)
+
+        # WSL環境でWindows側のvoltaを無視
+        if is_wsl && is_windows_path "$volta_path"; then
+            return 1
+        fi
+
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Voltaのバージョンを取得

@@ -38,14 +38,14 @@ detect_platform() {
         echo "$_CACHED_PLATFORM"
         return 0
     fi
-    
+
     case "$(uname -s)" in
         Darwin*)    _CACHED_PLATFORM="macos" ;;
         Linux*)     _CACHED_PLATFORM="linux" ;;
         CYGWIN*)    _CACHED_PLATFORM="cygwin" ;;
         *)          _CACHED_PLATFORM="unknown" ;;
     esac
-    
+
     echo "$_CACHED_PLATFORM"
 }
 
@@ -60,17 +60,17 @@ detect_architecture() {
         echo "$_CACHED_ARCHITECTURE"
         return 0
     fi
-    
+
     local arch
     arch="$(uname -m)"
-    
+
     case "$arch" in
         x86_64|amd64)   _CACHED_ARCHITECTURE="x86_64" ;;
         arm64|aarch64)  _CACHED_ARCHITECTURE="arm64" ;;
         i386|i686)      _CACHED_ARCHITECTURE="i386" ;;
         *)              _CACHED_ARCHITECTURE="$arch" ;;
     esac
-    
+
     echo "$_CACHED_ARCHITECTURE"
 }
 
@@ -129,7 +129,7 @@ detect_detailed_platform() {
     local platform arch distro
     platform="$(detect_platform)"
     arch="$(detect_architecture)"
-    
+
     if [[ "$platform" == "linux" ]]; then
         distro="$(get_os_distribution)"
         echo "$platform:$distro:$arch"
@@ -153,6 +153,35 @@ is_cygwin() {
 
 is_termux() {
     [[ -n "${TERMUX_VERSION:-}" ]] || [[ -d "/data/data/com.termux" ]]
+}
+
+# WSL環境検出（キャッシュ対応）
+declare -g _CACHED_IS_WSL=""
+is_wsl() {
+    # キャッシュがあれば使用
+    if [[ -n "$_CACHED_IS_WSL" ]]; then
+        [[ "$_CACHED_IS_WSL" == "true" ]]
+        return $?
+    fi
+
+    # WSL環境判定
+    if [[ -f /proc/version ]] && grep -qiE "(microsoft|wsl)" /proc/version 2>/dev/null; then
+        _CACHED_IS_WSL="true"
+        return 0
+    elif [[ -n "${WSL_DISTRO_NAME:-}" ]] || [[ -n "${WSL_INTEROP:-}" ]]; then
+        _CACHED_IS_WSL="true"
+        return 0
+    else
+        _CACHED_IS_WSL="false"
+        return 1
+    fi
+}
+
+# Windowsパス判定（WSL環境でのWindows側コマンド検出用）
+is_windows_path() {
+    local path="$1"
+    # /mnt/c/, /c/, C:\ などのWindowsパスを検出
+    [[ "$path" =~ ^/mnt/[a-zA-Z]/ ]] || [[ "$path" =~ ^/[a-zA-Z]/ ]] || [[ "$path" =~ ^[a-zA-Z]:[\\/] ]]
 }
 
 is_x86_64() {

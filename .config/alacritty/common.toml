@@ -135,13 +135,9 @@ semantic_escape_chars = ''',│`|:"' ()[]{}<>'''
 # ============================================================================
 # Terminal Shell
 # ============================================================================
-# tmuxセッションマネージャーを使用（Ghosttyと共有）
-# 既存の"main"セッションに接続、または新規作成
-# 注: Alacrittyはshell.programでチルダ展開をサポートしないため、
-#     zsh経由でスクリプトを実行
-[terminal.shell]
-program = "/bin/zsh"
-args = ["-l", "-c", "exec ~/.config/scripts/tmux-session.sh"]
+# Note: Shell configuration is platform-specific.
+# See linux.toml and macos.toml for Unix shell settings.
+# Windows uses the default shell (PowerShell/cmd.exe).
 
 # ============================================================================
 # Debug Settings

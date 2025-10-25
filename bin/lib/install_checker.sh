@@ -19,8 +19,17 @@ source "${DOTFILES_DIR}/bin/lib/common.sh"
 is_command_available() {
     local command_name="$1"
     local version_flag="${2:---version}"
-    
+
     if command -v "$command_name" >/dev/null 2>&1; then
+        local command_path
+        command_path=$(command -v "$command_name" 2>/dev/null)
+
+        # WSL環境でWindows側のコマンドを無視
+        if is_wsl && is_windows_path "$command_path"; then
+            log_info "$command_name found at Windows path ($command_path), ignoring in WSL"
+            return 1
+        fi
+
         local version_output
         version_output=$($command_name $version_flag 2>/dev/null | head -1 || echo "unknown")
         log_info "$command_name is available: $version_output"
@@ -325,6 +334,13 @@ should_skip_installation_advanced() {
     # Ruby専用のシステム判定ロジック（クロスプラットフォーム対応）
     if [[ "$component_name" == "Ruby" ]]; then
         local ruby_path=$(which ruby 2>/dev/null)
+
+        # WSL環境でWindows側のRubyを無視
+        if is_wsl && is_windows_path "$ruby_path"; then
+            log_info "Ruby: Windows Ruby detected at $ruby_path, rbenv installation needed for WSL"
+            return 1  # インストールを強制
+        fi
+
         case "$ruby_path" in
             "/usr/bin/ruby"|"/bin/ruby"|"/System/"*)
                 log_info "Ruby: System Ruby detected at $ruby_path, rbenv installation recommended"
