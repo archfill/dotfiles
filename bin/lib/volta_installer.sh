@@ -65,7 +65,9 @@ install_volta() {
     log_info "Installing Volta JavaScript toolchain manager..."
     
     # Voltaの公式インストーラーを実行
-    if curl -fsSL https://get.volta.sh | bash; then
+    # --skip-setupオプションでシェル設定ファイルへの自動追加を無効化
+    # dotfilesリポジトリで.zshenvに既に設定が含まれているため
+    if curl -fsSL https://get.volta.sh | bash -s -- --skip-setup; then
         log_success "Volta installer completed"
     else
         log_error "Failed to download or execute Volta installer"

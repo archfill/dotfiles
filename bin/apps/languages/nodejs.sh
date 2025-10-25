@@ -330,28 +330,31 @@ install_nodejs_toolchain_enhanced() {
     
     # Check if Node.js is already installed and current
     local target_node_version="${NODE_VERSION:-lts}"
-    
+    local skip_nodejs=false
+
     if [[ "$FORCE_INSTALL" != "true" ]] && command -v node >/dev/null 2>&1; then
         local current_node_version
         current_node_version=$(node --version 2>/dev/null | sed 's/v//' || echo "unknown")
-        
+
         if [[ "$target_node_version" == "lts" ]]; then
             log_skip_reason "Node.js" "Already installed: $current_node_version"
-            return 0
+            skip_nodejs=true
         fi
     fi
-    
+
     if [[ "$DRY_RUN" != "true" ]]; then
-        # Install Node.js
-        log_info "Installing Node.js $target_node_version..."
-        if volta install "node@$target_node_version"; then
-            log_success "Node.js installed successfully"
-        else
-            log_error "Failed to install Node.js"
-            return 1
+        # Install Node.js (if not skipped)
+        if [[ "$skip_nodejs" != "true" ]]; then
+            log_info "Installing Node.js $target_node_version..."
+            if volta install "node@$target_node_version"; then
+                log_success "Node.js installed successfully"
+            else
+                log_error "Failed to install Node.js"
+                return 1
+            fi
         fi
-        
-        # Install or update npm
+
+        # Install or update npm (always executed)
         local npm_version="${NPM_VERSION:-latest}"
         log_info "Installing npm $npm_version..."
         if volta install "npm@$npm_version"; then
