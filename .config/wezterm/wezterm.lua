@@ -83,16 +83,17 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 
 	-- Windows固有のローカル設定
 	LOCAL_CONFIG = {
-		-- Windows Terminal統合最適化
-		win32_system_backdrop = "Auto",
 		-- IME設定強化
 		ime_preedit_rendering = "System",
 		-- Windows固有のキーバインド
 		send_composed_key_when_left_alt_is_pressed = false,
 		send_composed_key_when_right_alt_is_pressed = true,
-		-- Windows GPU最適化設定
-		webgpu_preferred_adapter = gpus and gpus[1] or nil,
-		front_end = "WebGpu",
+		-- Windows GPU設定
+		-- 注意: WebGpuでは window_background_opacity（透過）が動作しない
+		-- 透過を使用する場合はOpenGLを使用すること
+		-- webgpu_preferred_adapter = gpus and gpus[1] or nil,
+		-- front_end = "WebGpu",
+		front_end = "OpenGL",
 		-- Windows最適化：DirectWriteレンダリング
 		freetype_load_target = "Normal",
 		freetype_render_target = "Normal",
@@ -283,7 +284,7 @@ local config = {
 	-- exit_behavior = "CloseOnCleanExit",
 	-- tab_bar_at_bottom = false,
 	-- window_close_confirmation = "AlwaysPrompt",
-	window_background_opacity = 0.95,
+	window_background_opacity = 0.90,  -- グローバル透過設定（全OS共通）
 	macos_window_background_blur = 30,
 	-- ウィンドウ装飾（OS別で上書き）
 	window_decorations = "TITLE | RESIZE",
@@ -295,7 +296,7 @@ local config = {
 	scrollback_lines = 10000,
 	-- 入力遅延最適化：最小限の効果的設定
 	native_macos_fullscreen_mode = false,
-	automatically_reload_config = false,
+	automatically_reload_config = true,
 	-- 最も効果的な入力最適化
 	skip_close_confirmation_for_processes_named = {"nvim", "vim", "nano"},
 	-- レンダリング最適化
