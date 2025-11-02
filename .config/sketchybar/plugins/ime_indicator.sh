@@ -48,32 +48,41 @@ if [[ -z "$current_input_source" ]]; then
     ' 2>/dev/null)
 fi
 
+# Catppuccin Mocha colors
+TEXT_COLOR="0xffffffff"        # White text
+ICON_COLOR="0xffffffff"        # White icon
+BG_RED="0xccf38ba8"           # Red (Japanese)
+BG_GREEN="0xcca6e3a1"         # Green (English)
+BG_PEACH="0xccfab387"         # Peach (Korean)
+BG_SAPPHIRE="0xcc74c7ec"      # Sapphire (Chinese)
+BG_GRAY="0xcc6c7086"          # Gray (Unknown)
+
 # Determine display text and color based on input source
 case "$current_input_source" in
     *"Google IME Japanese"*|*"Japanese"*|*"Hiragana"*|*"ひらがな"*|*"日本語"*)
         DISPLAY_TEXT="JP"
         ICON="􀇳"
-        BG_COLOR="0x80ff6b6b"  # Red background for Japanese
+        BG_COLOR="$BG_RED"
         ;;
     *"ABC"*|*"English"*|*"US"*|*"英字"*)
         DISPLAY_TEXT="EN"
         ICON="􀇳"
-        BG_COLOR="0x803fb950"  # Green background for English
+        BG_COLOR="$BG_GREEN"
         ;;
     *"Korean"*|*"한국어"*)
         DISPLAY_TEXT="KR"
         ICON="􀇳"
-        BG_COLOR="0x80f0a060"  # Orange background for Korean
+        BG_COLOR="$BG_PEACH"
         ;;
     *"Chinese"*|*"中文"*)
         DISPLAY_TEXT="CN"
         ICON="􀇳"
-        BG_COLOR="0x8060a0f0"  # Blue background for Chinese
+        BG_COLOR="$BG_SAPPHIRE"
         ;;
     *)
         DISPLAY_TEXT="??"
         ICON="􀇳"
-        BG_COLOR="0x80808080"  # Gray background for unknown
+        BG_COLOR="$BG_GRAY"
         ;;
 esac
 
@@ -82,5 +91,5 @@ sketchybar --set $NAME \
     icon="$ICON" \
     label="$DISPLAY_TEXT" \
     background.color="$BG_COLOR" \
-    icon.color=0xffffffff \
-    label.color=0xffffffff
+    icon.color="$ICON_COLOR" \
+    label.color="$TEXT_COLOR"

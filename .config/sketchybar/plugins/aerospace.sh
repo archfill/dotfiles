@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
 # Aerospace Workspace Plugin for SketchyBar
-# Handles workspace indicator highlighting based on current focus
+# Theme: Catppuccin Mocha
+
+# Catppuccin Mocha colors
+COLOR_ACTIVE_BG="0xcc89b4fa"     # Blue (active workspace)
+COLOR_ACTIVE_ICON="0xff1e1e2e"   # Base (dark icon on blue)
+COLOR_OCCUPIED_BG="0xcc313244"   # Surface0 (has windows)
+COLOR_OCCUPIED_ICON="0xffcdd6f4" # Text
+COLOR_EMPTY_ICON="0xff6c7086"    # Overlay0 (empty workspace)
 
 WORKSPACE_ID="$1"
 # Set NAME environment variable for sketchybar commands
@@ -25,17 +32,17 @@ if is_focused "$WORKSPACE_ID"; then
     # Focused workspace - show with active background
     sketchybar --set "$NAME" \
         background.drawing=on \
-        background.color=0xffffffff \
-        icon.color=0xff000000
+        background.color="$COLOR_ACTIVE_BG" \
+        icon.color="$COLOR_ACTIVE_ICON"
 elif has_windows "$WORKSPACE_ID"; then
     # Has windows but not focused - show with dim background
     sketchybar --set "$NAME" \
         background.drawing=on \
-        background.color=0x40ffffff \
-        icon.color=0xffffffff
+        background.color="$COLOR_OCCUPIED_BG" \
+        icon.color="$COLOR_OCCUPIED_ICON"
 else
     # Empty workspace - hide background
     sketchybar --set "$NAME" \
         background.drawing=off \
-        icon.color=0x80ffffff
+        icon.color="$COLOR_EMPTY_ICON"
 fi

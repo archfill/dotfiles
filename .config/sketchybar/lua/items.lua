@@ -15,7 +15,10 @@ for _, ws in ipairs(workspaces) do
 
 	space:set({
 		position = "left",
-		icon = ws,
+		icon = {
+			string = ws,
+			color = colors.text,
+		},
 		background = {
 			color = colors.item_bg,
 			corner_radius = 5,
@@ -48,7 +51,10 @@ end
 local chevron = sbar.add("item", "chevron")
 chevron:set({
 	position = "left",
-	icon = "",
+	icon = {
+		string = "",
+		color = colors.text,
+	},
 	label = {
 		drawing = "off",
 	},
@@ -61,6 +67,9 @@ front_app:set({
 	icon = {
 		drawing = "off",
 	},
+	label = {
+		color = colors.text,
+	},
 	script = plugin_dir .. "/front_app.sh",
 })
 
@@ -68,13 +77,96 @@ front_app:subscribe("front_app_switched", function(env)
 	-- This will be handled by the shell script
 end)
 
+-- Center items
+-- Spotify Player
+local spotify = sbar.add("item", "spotify")
+spotify:set({
+	position = "center",
+	update_freq = 2,
+	icon = {
+		string = "",
+		color = colors.spotify,
+	},
+	label = {
+		color = colors.text,
+	},
+	script = plugin_dir .. "/spotify.sh",
+	drawing = "off",  -- Hidden by default, shown when playing
+})
+
 -- Right side items
+-- CPU Monitor
+local cpu = sbar.add("item", "cpu")
+cpu:set({
+	position = "right",
+	update_freq = 3,
+	icon = {
+		string = "󰻠",
+		color = colors.cpu_normal,
+	},
+	label = {
+		color = colors.text,
+	},
+	script = plugin_dir .. "/cpu.sh",
+})
+
+-- Memory Monitor
+local memory = sbar.add("item", "memory")
+memory:set({
+	position = "right",
+	update_freq = 5,
+	icon = {
+		string = "󰍛",
+		color = colors.memory_normal,
+	},
+	label = {
+		color = colors.text,
+	},
+	script = plugin_dir .. "/memory.sh",
+})
+
+-- Network Speed
+local network = sbar.add("item", "network")
+network:set({
+	position = "right",
+	update_freq = 2,
+	icon = {
+		string = "󰖟",
+		color = colors.network,
+	},
+	label = {
+		color = colors.text,
+	},
+	script = plugin_dir .. "/network.sh",
+})
+
+-- Weather
+local weather = sbar.add("item", "weather")
+weather:set({
+	position = "right",
+	update_freq = 1800,  -- Update every 30 minutes
+	icon = {
+		string = "󰖐",
+		color = colors.weather,
+	},
+	label = {
+		color = colors.text,
+	},
+	script = plugin_dir .. "/weather.sh",
+})
+
 -- Clock
 local clock = sbar.add("item", "clock")
 clock:set({
 	position = "right",
 	update_freq = 10,
-	icon = "",
+	icon = {
+		string = "",
+		color = colors.clock,
+	},
+	label = {
+		color = colors.text,
+	},
 	script = plugin_dir .. "/clock.sh",
 })
 
@@ -82,6 +174,12 @@ clock:set({
 local volume = sbar.add("item", "volume")
 volume:set({
 	position = "right",
+	icon = {
+		color = colors.volume,
+	},
+	label = {
+		color = colors.text,
+	},
 	script = plugin_dir .. "/volume.sh",
 })
 
@@ -94,6 +192,12 @@ local battery = sbar.add("item", "battery")
 battery:set({
 	position = "right",
 	update_freq = 120,
+	icon = {
+		color = colors.battery_full,
+	},
+	label = {
+		color = colors.text,
+	},
 	script = plugin_dir .. "/battery.sh",
 })
 
@@ -105,10 +209,17 @@ end)
 local amphetamine = sbar.add("item", "amphetamine")
 amphetamine:set({
 	position = "right",
-	icon = "󰾫",
+	icon = {
+		string = "󰾫",
+		color = colors.peach,
+	},
+	label = {
+		color = colors.text,
+	},
 	update_freq = 5,
 	script = plugin_dir .. "/amphetamine.sh",
 	background = {
+		color = colors.item_bg,
 		corner_radius = 5,
 		height = 25,
 	},
@@ -118,7 +229,13 @@ amphetamine:set({
 local ime_indicator = sbar.add("item", "ime_indicator")
 ime_indicator:set({
 	position = "right",
-	icon = "󱌘",
+	icon = {
+		string = "󱌘",
+		color = colors.white,
+	},
+	label = {
+		color = colors.text,
+	},
 	update_freq = 1,
 	script = plugin_dir .. "/ime_indicator.sh",
 	background = {
@@ -127,4 +244,3 @@ ime_indicator:set({
 		height = 25,
 	},
 })
-

@@ -1,7 +1,15 @@
 #!/bin/bash
 
 # Amphetamine status indicator for SketchyBar
-# Checks if Amphetamine is running and active
+# Theme: Catppuccin Mocha
+
+# Catppuccin Mocha colors
+COLOR_ACTIVE="0xffa6e3a1"      # Green (active)
+COLOR_INACTIVE="0xffcdd6f4"    # Text (inactive)
+COLOR_GRAY="0xff6c7086"        # Overlay0 (not running)
+BG_ACTIVE="0xcca6e3a1"         # Green background
+BG_INACTIVE="0xcc313244"       # Surface0
+BG_GRAY="0xcc313244"           # Surface0
 
 # Check if Amphetamine process is running
 if pgrep -x "Amphetamine" > /dev/null; then
@@ -11,19 +19,19 @@ if pgrep -x "Amphetamine" > /dev/null; then
     if [[ "$amphetamine_assertion" -gt 0 ]]; then
         # Session is likely active (system sleep prevented)
         ICON="󰛨"  # Coffee cup icon - active
-        COLOR="0xff91d42a"  # Green color for active
-        BACKGROUND_COLOR="0x4091d42a"  # Semi-transparent green background
+        COLOR="$COLOR_ACTIVE"
+        BACKGROUND_COLOR="$BG_ACTIVE"
     else
         # Amphetamine is running but no active session detected
         ICON="󰾫"  # Sleep icon - inactive
-        COLOR="0xffffffff"  # White color for inactive
-        BACKGROUND_COLOR="0x40ffffff"  # Semi-transparent white background
+        COLOR="$COLOR_INACTIVE"
+        BACKGROUND_COLOR="$BG_INACTIVE"
     fi
 else
     # Amphetamine is not running
     ICON="󰾫"  # Sleep icon
-    COLOR="0xff787880"  # Gray color for not running
-    BACKGROUND_COLOR="0x40787880"  # Semi-transparent gray background
+    COLOR="$COLOR_GRAY"
+    BACKGROUND_COLOR="$BG_GRAY"
 fi
 
 sketchybar --set amphetamine \
