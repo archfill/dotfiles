@@ -5,13 +5,9 @@
 -- Complete separation of VSCode and terminal environments
 
 -- ===== 互換性レイヤー（最優先で適用） =====
--- vim.tbl_flatten → vim.flatten 互換性レイヤー（Neovim 0.10+）
-if vim.fn.has("nvim-0.10") == 1 and vim.flatten then
-	---@diagnostic disable-next-line: duplicate-set-field
-	vim.tbl_flatten = function(t)
-		return vim.flatten(t)
-	end
-end
+-- vim.tbl_flatten → vim.flatten 互換性レイヤー（古いNeovim対応）
+-- Neovim 0.10+では vim.flatten が標準、vim.tbl_flatten は非推奨
+-- Neovim 0.12使用中のため、このレイヤーは不要（削除済み）
 
 -- ===== Tree-sitter設定 =====
 -- HEAD版でbundled Tree-sitterが有効化済み

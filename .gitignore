@@ -144,9 +144,19 @@ go.work
 .config/nvim/plugin/packer_compiled.lua
 .config/nvim/lua/config/local.lua
 
+### Alacritty ###
+.config/alacritty/os-specific.toml
+
+### Ghostty ###
+.config/ghostty/platform
+
 ### Hyprland ###
 .config/hypr/local.conf
 .config/hypr/monitors.conf
+
+### Waybar ###
+.config/waybar/config.jsonc
+.config/waybar/monitors.env
 
 ### Git ###
 *.orig

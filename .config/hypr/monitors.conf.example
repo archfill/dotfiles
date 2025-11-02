@@ -1,46 +1,34 @@
 # =====================================================
-# Monitor Configuration Template
+# Monitor Configuration (Environment-specific)
 # =====================================================
-# This file provides examples for various monitor setups
+# This file is auto-generated during installation and not tracked by git
 # Copy this file to monitors.conf and edit according to your hardware
 #
 # Usage:
 #   cp ~/.config/hypr/monitors.conf.example ~/.config/hypr/monitors.conf
 #   vim ~/.config/hypr/monitors.conf
 #
-# Check your monitor names:
+# To check your monitor configuration:
 #   hyprctl monitors
 # =====================================================
 
 # =====================================================
-# Example 1: Single Monitor (Laptop or Desktop)
+# Default: Single Monitor Setup
 # =====================================================
-# Uncomment and edit for single monitor setup
+# Edit the monitor name to match your hardware
 
-# monitor=eDP-1,1920x1080@60,0x0,1              # Laptop internal display
-# monitor=HDMI-A-1,1920x1080@60,0x0,1           # Desktop monitor
-# monitor=DP-1,2560x1440@144,0x0,1              # High refresh desktop
+# Monitor configuration
+# Syntax: monitor=NAME,RESOLUTION@REFRESH,POSITION,SCALE
+monitor=DP-1,preferred,auto,1
 
-# No workspace assignment needed (default: all workspaces on one monitor)
-
-# =====================================================
-# Example 2: Dual Monitor (Horizontal Layout)
-# =====================================================
-# Uncomment and edit for dual monitor horizontal setup
-
-# # Left monitor (1920x1080)
-# monitor=HDMI-A-1,1920x1080@60,0x0,1
-#
-# # Right monitor (2560x1440) positioned to the right
-# monitor=DP-1,2560x1440@144,1920x0,1
-#
-# # Workspace assignment
-# workspace=1,monitor:HDMI-A-1
-# workspace=2,monitor:HDMI-A-1
-# workspace=3,monitor:HDMI-A-1
-# workspace=4,monitor:HDMI-A-1
-# workspace=5,monitor:HDMI-A-1
-#
+# Workspace assignment (optional for single monitor)
+# All workspaces will default to the single monitor
+# Uncomment to explicitly assign:
+# workspace=1,monitor:DP-1
+# workspace=2,monitor:DP-1
+# workspace=3,monitor:DP-1
+# workspace=4,monitor:DP-1
+# workspace=5,monitor:DP-1
 # workspace=6,monitor:DP-1
 # workspace=7,monitor:DP-1
 # workspace=8,monitor:DP-1
@@ -48,127 +36,35 @@
 # workspace=10,monitor:DP-1
 
 # =====================================================
-# Example 3: Dual Monitor (Vertical Layout)
+# Common Monitor Names (for reference)
 # =====================================================
-# Uncomment and edit for dual monitor vertical setup
-
-# # Top monitor
-# monitor=DP-1,2560x1440@144,0x0,1
+# Desktop:
+#   - HDMI-A-1, HDMI-A-2
+#   - DP-1, DP-2, DP-3, DP-4, DP-5, DP-6
 #
-# # Bottom monitor positioned below
-# monitor=HDMI-A-1,1920x1080@60,0x1440,1
+# Laptop:
+#   - eDP-1 (internal display)
 #
-# # Workspace assignment
-# workspace=1,monitor:DP-1
-# workspace=2,monitor:DP-1
-# workspace=3,monitor:DP-1
-# workspace=4,monitor:DP-1
-# workspace=5,monitor:DP-1
-#
-# workspace=6,monitor:HDMI-A-1
-# workspace=7,monitor:HDMI-A-1
-# workspace=8,monitor:HDMI-A-1
-# workspace=9,monitor:HDMI-A-1
-# workspace=10,monitor:HDMI-A-1
+# Use 'hyprctl monitors' to find your exact monitor name
+# =====================================================
 
 # =====================================================
-# Example 4: Dual Monitor with Portrait (One Rotated)
+# Resolution Options (for reference)
 # =====================================================
-# Uncomment and edit for dual monitor with one in portrait mode
-
-# # Portrait monitor (left, rotated 90° counter-clockwise)
-# # transform: 0=normal, 1=90°, 2=180°, 3=270°
-# monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3
+# Common resolutions:
+#   - 1920x1080@60   (Full HD, 60Hz)
+#   - 2560x1440@144  (QHD, 144Hz)
+#   - 3440x1440@165  (Ultrawide QHD, 165Hz)
+#   - 3840x2160@60   (4K, 60Hz)
 #
-# # Main monitor (right, landscape)
-# monitor=DP-1,3440x1440@165,1080x0,1
-#
-# # Workspace assignment
-# workspace=1,monitor:DP-1
-# workspace=2,monitor:DP-1
-# workspace=3,monitor:DP-1
-# workspace=4,monitor:DP-1
-# workspace=5,monitor:DP-1
-#
-# workspace=6,monitor:HDMI-A-1
-# workspace=7,monitor:HDMI-A-1
-# workspace=8,monitor:HDMI-A-1
-# workspace=9,monitor:HDMI-A-1
-# workspace=10,monitor:HDMI-A-1
+# Use 'preferred' to auto-detect the best resolution
+# Use 'auto' for position to auto-arrange monitors
+# =====================================================
 
 # =====================================================
-# Example 5: Triple Monitor Setup
+# For dual/multi-monitor setup:
 # =====================================================
-# Uncomment and edit for triple monitor setup
-
-# # Left monitor
-# monitor=HDMI-A-1,1920x1080@60,0x0,1
-#
-# # Center monitor (main)
-# monitor=DP-1,2560x1440@144,1920x0,1
-#
-# # Right monitor
-# monitor=DP-2,1920x1080@60,4480x0,1
-#
-# # Workspace assignment (3-3-4 split)
-# workspace=1,monitor:HDMI-A-1
-# workspace=2,monitor:HDMI-A-1
-# workspace=3,monitor:HDMI-A-1
-#
-# workspace=4,monitor:DP-1
-# workspace=5,monitor:DP-1
-# workspace=6,monitor:DP-1
-#
-# workspace=7,monitor:DP-2
-# workspace=8,monitor:DP-2
-# workspace=9,monitor:DP-2
-# workspace=10,monitor:DP-2
-
-# =====================================================
-# Example 6: Laptop + External Monitor (Docked)
-# =====================================================
-# Uncomment and edit for laptop with external monitor
-
-# # External monitor (left, main)
-# monitor=HDMI-A-1,2560x1440@60,0x0,1
-#
-# # Laptop internal display (right)
-# monitor=eDP-1,1920x1080@60,2560x0,1
-#
-# # Workspace assignment
-# workspace=1,monitor:HDMI-A-1
-# workspace=2,monitor:HDMI-A-1
-# workspace=3,monitor:HDMI-A-1
-# workspace=4,monitor:HDMI-A-1
-# workspace=5,monitor:HDMI-A-1
-#
-# workspace=6,monitor:eDP-1
-# workspace=7,monitor:eDP-1
-# workspace=8,monitor:eDP-1
-# workspace=9,monitor:eDP-1
-# workspace=10,monitor:eDP-1
-
-# =====================================================
-# Monitor Configuration Syntax
-# =====================================================
-# monitor=NAME,RESOLUTION@REFRESH,POSITION,SCALE[,transform,TRANSFORM]
-#
-# NAME: Monitor identifier (use 'hyprctl monitors' to find)
-# RESOLUTION: Width x Height (e.g., 1920x1080, 2560x1440, 3840x2160)
-# REFRESH: Refresh rate in Hz (e.g., 60, 144, 165, 240)
-# POSITION: X,Y coordinates (e.g., 0x0, 1920x0, 0x1080)
-# SCALE: Scaling factor (1 = 100%, 1.5 = 150%, 2 = 200%)
-# TRANSFORM: Rotation (0=normal, 1=90°, 2=180°, 3=270°)
-#
-# Examples:
-#   monitor=DP-1,1920x1080@60,0x0,1                    # Basic setup
-#   monitor=HDMI-A-1,2560x1440@144,1920x0,1.5          # HiDPI with scaling
-#   monitor=eDP-1,1920x1080@60,0x0,1,transform,1       # Rotated 90°
-#
-# Workspace Assignment:
-#   workspace=NUMBER,monitor:NAME
-#
-# Examples:
-#   workspace=1,monitor:DP-1          # Workspace 1 on DP-1
-#   workspace=2,monitor:HDMI-A-1      # Workspace 2 on HDMI-A-1
+# See examples in:
+#   - examples/monitors.conf.dual     (Dual monitor examples)
+#   - examples/monitors.conf.all-examples (All examples)
 # =====================================================

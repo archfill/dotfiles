@@ -1,0 +1,135 @@
+# ============================================================================
+# Alacritty macOS-Specific Configuration
+# ============================================================================
+# Settings and keybindings specific to macOS environments
+# ============================================================================
+
+# ============================================================================
+# macOS-Specific Font Settings
+# ============================================================================
+[font]
+size = 16
+
+# ============================================================================
+# macOS-Specific Shell Configuration
+# ============================================================================
+# tmuxセッションマネージャーを使用（Ghosttyと共有）
+# 既存の"main"セッションに接続、または新規作成
+# 注: Alacrittyはshell.programでチルダ展開をサポートしないため、
+#     zsh経由でスクリプトを実行
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-l", "-c", "exec ~/.config/scripts/tmux-session.sh"]
+
+# ============================================================================
+# macOS-Specific Keyboard Bindings
+# ============================================================================
+
+# --- Clipboard Operations (Command) ---
+[[keyboard.bindings]]
+key = "V"
+mods = "Command"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Command"
+action = "Copy"
+
+# --- Window Management (Command) ---
+[[keyboard.bindings]]
+key = "H"
+mods = "Command"
+action = "Hide"
+
+[[keyboard.bindings]]
+key = "Q"
+mods = "Command"
+action = "Quit"
+
+[[keyboard.bindings]]
+key = "W"
+mods = "Command"
+action = "Quit"
+
+# --- Font Size (Command) ---
+[[keyboard.bindings]]
+key = "Equals"
+mods = "Command"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Plus"
+mods = "Command"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Command"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Command"
+action = "ResetFontSize"
+
+# --- Function Keys + Command ---
+[[keyboard.bindings]]
+key = "F1"
+mods = "Command"
+chars = "\u001B[1;3P"
+
+[[keyboard.bindings]]
+key = "F2"
+mods = "Command"
+chars = "\u001B[1;3Q"
+
+[[keyboard.bindings]]
+key = "F3"
+mods = "Command"
+chars = "\u001B[1;3R"
+
+[[keyboard.bindings]]
+key = "F4"
+mods = "Command"
+chars = "\u001B[1;3S"
+
+[[keyboard.bindings]]
+key = "F5"
+mods = "Command"
+chars = "\u001B[15;3~"
+
+[[keyboard.bindings]]
+key = "F6"
+mods = "Command"
+chars = "\u001B[17;3~"
+
+[[keyboard.bindings]]
+key = "F7"
+mods = "Command"
+chars = "\u001B[18;3~"
+
+[[keyboard.bindings]]
+key = "F8"
+mods = "Command"
+chars = "\u001B[19;3~"
+
+[[keyboard.bindings]]
+key = "F9"
+mods = "Command"
+chars = "\u001B[20;3~"
+
+[[keyboard.bindings]]
+key = "F10"
+mods = "Command"
+chars = "\u001B[21;3~"
+
+[[keyboard.bindings]]
+key = "F11"
+mods = "Command"
+chars = "\u001B[23;3~"
+
+[[keyboard.bindings]]
+key = "F12"
+mods = "Command"
+chars = "\u001B[24;3~"

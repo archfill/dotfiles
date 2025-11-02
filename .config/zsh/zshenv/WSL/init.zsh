@@ -5,6 +5,35 @@
 if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi "microsoft\|wsl" /proc/version 2>/dev/null; then
     export WSL_ENV=1
 
+    # ===== WSL PATH Priority Fix =====
+    # WSLではWindows側のPATHが自動的に追加されるため、
+    # Linux側のツール（~/.volta, ~/.cargo, ~/.local/bin等）を優先させる
+    #
+    # 戦略: Windows側のパスを一時的に保存し、後で追加し直す
+    local windows_path=""
+    local linux_path=""
+
+    # 現在のPATHをWindows側とLinux側に分離
+    IFS=':' read -rA path_entries <<< "$PATH"
+    for entry in "${path_entries[@]}"; do
+        if [[ "$entry" =~ ^/mnt/[a-zA-Z]/ ]] || [[ "$entry" =~ ^/[a-zA-Z]/ ]] || [[ "$entry" =~ ^[a-zA-Z]:[\\/] ]]; then
+            # Windows側のパス
+            [[ -n "$windows_path" ]] && windows_path="$windows_path:"
+            windows_path="${windows_path}${entry}"
+        else
+            # Linux側のパス
+            [[ -n "$linux_path" ]] && linux_path="$linux_path:"
+            linux_path="${linux_path}${entry}"
+        fi
+    done
+
+    # PATHを再構築: Linux側を優先、Windows側は後ろに
+    if [[ -n "$linux_path" && -n "$windows_path" ]]; then
+        export PATH="${linux_path}:${windows_path}"
+    elif [[ -n "$linux_path" ]]; then
+        export PATH="${linux_path}"
+    fi
+
     # WSL固有環境変数の読み込み
     [[ -f "${HOME}/.config/wsl/environment" ]] && source "${HOME}/.config/wsl/environment"
 

@@ -6,34 +6,35 @@
   "position": "top",
   "height": 34,
   "spacing": 0,
+
   // ============================================================
   // モジュール配置
   // ============================================================
   "modules-left": [
-    "custom/launcher", // アプリランチャー
-    "hyprland/workspaces", // ワークスペース一覧
-    "hyprland/submap", // サブマップ表示
-    "wlr/taskbar", // タスクバー
-    "hyprland/window" // ウィンドウタイトル
+    "custom/launcher",         // アプリランチャー
+    "hyprland/workspaces",     // ワークスペース一覧
+    "hyprland/submap",         // サブマップ表示
+    "wlr/taskbar",             // タスクバー
+    "hyprland/window"          // ウィンドウタイトル
   ],
   "modules-center": [
-    "mpris", // メディアプレイヤー情報
-    "clock" // 時計・カレンダー
+    "mpris",                   // メディアプレイヤー情報
+    "clock"                    // 時計・カレンダー
   ],
   "modules-right": [
-    "custom/updates", // システムアップデート
-    "idle_inhibitor", // アイドル抑制（カフェインモード）
-    "pulseaudio", // 音量コントロール
-    "bluetooth", // Bluetooth
-    "network", // ネットワーク
-    "cpu", // CPU使用率
-    "memory", // メモリ使用率
-    "custom/disk", // ディスク使用率
-    "backlight", // 画面輝度
-    "battery", // バッテリー
-    "tray", // システムトレイ
-    "custom/power" // 電源メニュー
+    "custom/updates",          // システムアップデート
+    "idle_inhibitor",          // アイドル抑制（カフェインモード）
+    "pulseaudio",              // 音量コントロール
+    "bluetooth",               // Bluetooth
+    "network",                 // ネットワーク
+    "cpu",                     // CPU使用率
+    "memory",                  // メモリ使用率
+    "backlight",               // 画面輝度
+    "battery",                 // バッテリー
+    "tray",                    // システムトレイ
+    "custom/power"             // 電源メニュー
   ],
+
   // ============================================================
   // 左側モジュール設定
   // ============================================================
@@ -48,17 +49,17 @@
     "on-click": "activate",
     // ワークスペース割り当て
     // build-config.shで自動調整:
-    //   - シングル: DP-6 に 1-10
-    //   - デュアル: DP-6 に 1-5, HDMI-A-2 に 6-10
+    //   - シングル: ${MONITOR_MAIN} に 1-10
+    //   - デュアル: ${MONITOR_MAIN} に 1-5, ${MONITOR_SUB} に 6-10
     "persistent-workspaces": {
-      "DP-6": [
+      "${MONITOR_MAIN}": [
         1,
         2,
         3,
         4,
         5
       ],
-      "HDMI-A-2": [
+      "${MONITOR_SUB}": [
         6,
         7,
         8,
@@ -105,6 +106,7 @@
     "on-click": "fuzzel",
     "tooltip": false
   },
+
   // ============================================================
   // 中央モジュール設定
   // ============================================================
@@ -129,6 +131,7 @@
       }
     }
   },
+
   // ============================================================
   // 右側モジュール設定
   // ============================================================
@@ -278,12 +281,5 @@
     "on-click-middle": "playerctl previous",
     "on-scroll-up": "playerctl volume 0.05+",
     "on-scroll-down": "playerctl volume 0.05-"
-  },
-  "custom/disk": {
-    "format": "󰋊 {}",
-    "interval": 30,
-    "exec": "/home/archfill/.config/waybar/scripts/disk.sh",
-    "return-type": "json",
-    "on-click": "ghostty -e btop"
   }
 }

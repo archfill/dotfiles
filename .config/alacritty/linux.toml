@@ -1,0 +1,58 @@
+# ============================================================================
+# Alacritty Linux-Specific Configuration
+# ============================================================================
+# Settings and keybindings specific to Linux environments
+# ============================================================================
+
+# ============================================================================
+# Linux-Specific Font Settings
+# ============================================================================
+[font]
+size = 14
+
+# ============================================================================
+# Linux-Specific Shell Configuration
+# ============================================================================
+# tmuxセッションマネージャーを使用（Ghosttyと共有）
+# 既存の"main"セッションに接続、または新規作成
+# 注: Alacrittyはshell.programでチルダ展開をサポートしないため、
+#     zsh経由でスクリプトを実行
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-l", "-c", "exec ~/.config/scripts/tmux-session.sh"]
+
+# ============================================================================
+# Linux-Specific Keyboard Bindings
+# ============================================================================
+
+# --- Clipboard Operations (Control+Shift) ---
+[[keyboard.bindings]]
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+# --- Font Size (Control) ---
+[[keyboard.bindings]]
+key = "Equals"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Plus"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Control"
+action = "ResetFontSize"

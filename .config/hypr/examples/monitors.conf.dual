@@ -1,0 +1,127 @@
+# =====================================================
+# Dual Monitor Configuration Examples
+# =====================================================
+# Copy this file to monitors.conf and uncomment your preferred setup
+#
+# Usage:
+#   cp ~/.config/hypr/examples/monitors.conf.dual ~/.config/hypr/monitors.conf
+#   vim ~/.config/hypr/monitors.conf
+#
+# To check your monitor configuration:
+#   hyprctl monitors
+# =====================================================
+
+# =====================================================
+# Example 1: Horizontal Dual Monitor
+# =====================================================
+# Left monitor + Right monitor (side by side)
+
+# Main monitor (left)
+monitor=DP-1,2560x1440@144,0x0,1
+
+# Sub monitor (right) - positioned at x=2560 (width of left monitor)
+monitor=HDMI-A-1,1920x1080@60,2560x0,1
+
+# Workspace assignment
+workspace=1,monitor:DP-1
+workspace=2,monitor:DP-1
+workspace=3,monitor:DP-1
+workspace=4,monitor:DP-1
+workspace=5,monitor:DP-1
+
+workspace=6,monitor:HDMI-A-1
+workspace=7,monitor:HDMI-A-1
+workspace=8,monitor:HDMI-A-1
+workspace=9,monitor:HDMI-A-1
+workspace=10,monitor:HDMI-A-1
+
+# =====================================================
+# Example 2: Portrait + Landscape (One Rotated)
+# =====================================================
+# Uncomment for dual monitor with one in portrait mode
+
+# # Portrait monitor (left, rotated 90° counter-clockwise)
+# # transform: 0=normal, 1=90°, 2=180°, 3=270°
+# monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3
+#
+# # Main monitor (right, landscape)
+# monitor=DP-1,3440x1440@165,1080x0,1
+#
+# # Workspace assignment
+# workspace=1,monitor:DP-1
+# workspace=2,monitor:DP-1
+# workspace=3,monitor:DP-1
+# workspace=4,monitor:DP-1
+# workspace=5,monitor:DP-1
+#
+# workspace=6,monitor:HDMI-A-1
+# workspace=7,monitor:HDMI-A-1
+# workspace=8,monitor:HDMI-A-1
+# workspace=9,monitor:HDMI-A-1
+# workspace=10,monitor:HDMI-A-1
+
+# =====================================================
+# Example 3: Vertical Dual Monitor (Stacked)
+# =====================================================
+# Top monitor + Bottom monitor
+
+# # Top monitor
+# monitor=DP-1,2560x1440@144,0x0,1
+#
+# # Bottom monitor - positioned at y=1440 (height of top monitor)
+# monitor=HDMI-A-1,1920x1080@60,0x1440,1
+#
+# # Workspace assignment
+# workspace=1,monitor:DP-1
+# workspace=2,monitor:DP-1
+# workspace=3,monitor:DP-1
+# workspace=4,monitor:DP-1
+# workspace=5,monitor:DP-1
+#
+# workspace=6,monitor:HDMI-A-1
+# workspace=7,monitor:HDMI-A-1
+# workspace=8,monitor:HDMI-A-1
+# workspace=9,monitor:HDMI-A-1
+# workspace=10,monitor:HDMI-A-1
+
+# =====================================================
+# Example 4: Laptop + External Monitor (Docked)
+# =====================================================
+# External monitor + Laptop internal display
+
+# # External monitor (left, main)
+# monitor=HDMI-A-1,2560x1440@60,0x0,1
+#
+# # Laptop internal display (right) - positioned at x=2560
+# monitor=eDP-1,1920x1080@60,2560x0,1
+#
+# # Workspace assignment
+# workspace=1,monitor:HDMI-A-1
+# workspace=2,monitor:HDMI-A-1
+# workspace=3,monitor:HDMI-A-1
+# workspace=4,monitor:HDMI-A-1
+# workspace=5,monitor:HDMI-A-1
+#
+# workspace=6,monitor:eDP-1
+# workspace=7,monitor:eDP-1
+# workspace=8,monitor:eDP-1
+# workspace=9,monitor:eDP-1
+# workspace=10,monitor:eDP-1
+
+# =====================================================
+# Monitor Configuration Syntax
+# =====================================================
+# monitor=NAME,RESOLUTION@REFRESH,POSITION,SCALE[,transform,TRANSFORM]
+#
+# NAME:       Monitor identifier (use 'hyprctl monitors' to find)
+# RESOLUTION: Width x Height (e.g., 1920x1080, 2560x1440, 3840x2160)
+# REFRESH:    Refresh rate in Hz (e.g., 60, 144, 165, 240)
+# POSITION:   X,Y coordinates (e.g., 0x0, 1920x0, 0x1080)
+# SCALE:      Scaling factor (1 = 100%, 1.5 = 150%, 2 = 200%)
+# TRANSFORM:  Rotation (0=normal, 1=90°, 2=180°, 3=270°)
+#
+# Examples:
+#   monitor=DP-1,1920x1080@60,0x0,1                    # Basic setup
+#   monitor=HDMI-A-1,2560x1440@144,1920x0,1.5          # HiDPI with scaling
+#   monitor=eDP-1,1920x1080@60,0x0,1,transform,1       # Rotated 90°
+# =====================================================

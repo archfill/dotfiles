@@ -1,0 +1,19 @@
+# ============================================================================
+# Alacritty Main Configuration
+# ============================================================================
+# This file imports platform-specific and common configurations
+#
+# Platform-specific configuration is automatically selected via symlink:
+#   os-specific.toml -> linux.toml   (Linux - Control+Shift keybindings)
+#   os-specific.toml -> macos.toml   (macOS - Command key keybindings)
+#   os-specific.toml -> windows.toml (Windows - Control+Shift keybindings)
+#
+# The symlink is automatically created by bin/link.sh based on your platform.
+# This approach prevents git diff when switching platforms.
+# ============================================================================
+
+[general]
+import = [
+    "common.toml",
+    "os-specific.toml"
+]

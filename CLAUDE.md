@@ -336,6 +336,72 @@ curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/i
 
 ## 📝 Recent Changes
 
+### 2025-10-25: Windows設定管理の最適化（ターミナル設定の分離）
+
+**背景:**
+- Windows Terminal設定にデバイス固有情報（ユーザー名、WSLディストリビューション名、パス等）が含まれる
+- デバイス間で共有すると設定が壊れるリスクがある
+- WezTermとAlacrittyはポータブルな設定が可能
+
+**問題点:**
+`windows_terminal.json`に含まれるデバイス固有情報：
+- デフォルトプロファイルのGUID
+- WSLディストリビューション名とユーザー名（例: `//wsl$/Arch/home/archfill`）
+- ユーザー固有のパス（例: `C:\Users\uiyiu\scoop\...`）
+- デバイス固有のフォント設定
+
+**変更内容:**
+
+1. **Windows Terminal設定を管理対象から除外**
+   - `windows_terminal.json` → `windows_terminal.template.json`（参考用テンプレート）
+   - `setup.ps1`からWindows Terminal設定のシンボリックリンク作成を削除
+   - `status.ps1`からWindows Terminalチェックを削除
+   - 各デバイスで個別に設定することを推奨
+
+2. **ポータブルなターミナルエミュレータの個別管理スクリプト追加**
+
+   **`windows/link-wezterm.ps1`** - WezTerm設定専用
+   - ソース: `$env:USERPROFILE\dotfiles\.config\wezterm\`
+   - ターゲット: `$env:USERPROFILE\.config\wezterm\`
+   - 環境変数と相対パスを使用したポータブルな設定
+   - `.config`ディレクトリの自動作成
+   - 既存設定の自動バックアップ
+
+   **`windows/link-alacritty.ps1`** - Alacritty設定専用
+   - ソース: `$env:USERPROFILE\dotfiles\.config\alacritty\`
+   - ターゲット: `$env:APPDATA\alacritty\`
+   - プラットフォーム固有設定（`windows.toml`）をサポート
+   - 既存設定の自動バックアップ
+
+3. **ドキュメントの更新**
+   - `windows/README.md`にWindows Terminal除外の理由を明記
+   - テンプレートファイルの使用方法を説明
+   - setup.ps1の管理対象を明確化
+
+**影響:**
+- ✅ デバイス固有設定の誤上書きを防止
+- ✅ ポータブルな設定（WezTerm/Alacritty）は個別管理可能
+- ✅ Windows Terminalは各デバイスで自由にカスタマイズ
+- ✅ テンプレートで共通設定（カラースキーム等）は共有
+
+**実行方法:**
+```powershell
+# 基本セットアップ（WSL, PS7, GlazeWM, Zebar）
+cd $env:USERPROFILE\dotfiles\windows
+.\setup.ps1
+
+# オプション: WezTerm設定
+.\link-wezterm.ps1
+
+# オプション: Alacritty設定
+.\link-alacritty.ps1
+```
+
+**設計哲学:**
+デバイス固有の設定は管理しない = より柔軟で安全なdotfiles管理
+
+---
+
 ### 2025-10-08: toolboxリポジトリ設計とnpm管理の追加
 
 **背景:**

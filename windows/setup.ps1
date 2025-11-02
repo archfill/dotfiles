@@ -31,60 +31,6 @@ if (-not $isAdmin) {
 $dotfilesDir = "$env:USERPROFILE\dotfiles\windows"
 $homeDir = $env:USERPROFILE
 
-# Windows Terminal設定パスの動的検出
-function Get-WindowsTerminalSettingsPath {
-    try {
-        # PowerShell 5.1でGet-AppxPackageを実行
-        $packages = powershell -Command "Get-AppxPackage -Name '*WindowsTerminal*' | Select-Object Name, PackageFamilyName" 2>$null
-
-        if ($packages) {
-            foreach ($pkg in $packages) {
-                if ($pkg.Name -like "*WindowsTerminal*") {
-                    $settingsPath = Join-Path $env:LOCALAPPDATA "Packages\$($pkg.PackageFamilyName)\LocalState\settings.json"
-                    if (Test-Path (Split-Path $settingsPath -Parent) -ErrorAction SilentlyContinue) {
-                        return $settingsPath
-                    }
-                }
-            }
-        }
-    } catch {
-        Write-Host "Failed to query AppX packages: $($_.Exception.Message)" -ForegroundColor Gray
-    }
-
-    # 手動でよく使われるパスをチェック
-    $commonPaths = @(
-        # Store版のよくあるパス
-        "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
-        "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json",
-        # 非パッケージ版
-        "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
-    )
-
-    foreach ($path in $commonPaths) {
-        if (Test-Path (Split-Path $path -Parent) -ErrorAction SilentlyContinue) {
-            return $path
-        }
-    }
-
-    # 最後の手段：Packagesディレクトリを検索
-    try {
-        $packagesDir = "$env:LOCALAPPDATA\Packages"
-        if (Test-Path $packagesDir) {
-            $terminalDirs = Get-ChildItem $packagesDir -Directory | Where-Object { $_.Name -like "*WindowsTerminal*" }
-            foreach ($dir in $terminalDirs) {
-                $settingsPath = Join-Path $dir.FullName "LocalState\settings.json"
-                if (Test-Path (Split-Path $settingsPath -Parent)) {
-                    return $settingsPath
-                }
-            }
-        }
-    } catch {
-        Write-Host "Failed to search Packages directory: $($_.Exception.Message)" -ForegroundColor Gray
-    }
-
-    return $null
-}
-
 # .wslconfig のシンボリックリンク作成
 $wslconfigSource = "$dotfilesDir\.wslconfig"
 $wslconfigTarget = "$homeDir\.wslconfig"
@@ -112,45 +58,6 @@ if (Test-Path $wslconfigSource) {
     }
 } else {
     Write-Host "⚠️  .wslconfig source file not found: $wslconfigSource" -ForegroundColor Yellow
-}
-
-# Windows Terminal設定のシンボリックリンク作成
-Write-Host "`nSetting up Windows Terminal..." -ForegroundColor Cyan
-
-$wtSettingsSource = "$dotfilesDir\windows_terminal.json"
-$wtSettingsTarget = Get-WindowsTerminalSettingsPath
-
-if (-not $wtSettingsTarget) {
-    Write-Host "⚠️  Windows Terminal not found or not installed" -ForegroundColor Yellow
-} elseif (-not (Test-Path $wtSettingsSource)) {
-    Write-Host "⚠️  Windows Terminal source file not found: $wtSettingsSource" -ForegroundColor Yellow
-} else {
-    # 設定ディレクトリが存在しない場合は作成
-    $wtSettingsDir = Split-Path $wtSettingsTarget -Parent
-    if (-not (Test-Path $wtSettingsDir)) {
-        New-Item -ItemType Directory -Path $wtSettingsDir -Force | Out-Null
-    }
-
-    # 既存の設定ファイルがある場合のバックアップ
-    if (Test-Path $wtSettingsTarget) {
-        if (-not (Get-Item $wtSettingsTarget).LinkType) {
-            $backupPath = "$wtSettingsTarget.backup.$((Get-Date).ToString('yyyyMMdd-HHmmss'))"
-            Move-Item $wtSettingsTarget $backupPath
-            Write-Host "Existing Windows Terminal settings backed up to: $backupPath" -ForegroundColor Yellow
-        } else {
-            Remove-Item $wtSettingsTarget -Force
-        }
-    }
-
-    # シンボリックリンク作成
-    try {
-        New-Item -ItemType SymbolicLink -Path $wtSettingsTarget -Target $wtSettingsSource -Force | Out-Null
-        Write-Host "✓ Windows Terminal settings symlink created" -ForegroundColor Green
-        Write-Host "  Source: $wtSettingsSource" -ForegroundColor Gray
-        Write-Host "  Target: $wtSettingsTarget" -ForegroundColor Gray
-    } catch {
-        Write-Host "❌ Failed to create Windows Terminal symlink: $($_.Exception.Message)" -ForegroundColor Red
-    }
 }
 
 # PowerShell 7プロファイルのシンボリックリンク作成
@@ -293,7 +200,7 @@ if (Test-Path $zebarConfigSource) {
 }
 
 Write-Host "`n Setup completed successfully!" -ForegroundColor Green
-Write-Host "WSL, Windows Terminal, PowerShell 7 profile, GlazeWM, and Zebar are now managed by dotfiles" -ForegroundColor Green
+Write-Host "WSL, PowerShell 7 profile, GlazeWM, and Zebar are now managed by dotfiles" -ForegroundColor Green
 Write-Host "Restart PowerShell 7 to fix encoding issues" -ForegroundColor Cyan
 Write-Host "" -ForegroundColor Gray
 Write-Host "💡 Next steps for GlazeWM and Zebar:" -ForegroundColor Yellow
@@ -301,6 +208,10 @@ Write-Host "  • Install GlazeWM from GitHub releases" -ForegroundColor Gray
 Write-Host "  • Install Zebar from GitHub releases" -ForegroundColor Gray
 Write-Host "  • Start GlazeWM to enable tiling window management" -ForegroundColor Gray
 Write-Host "  • Start Zebar to enable status bar" -ForegroundColor Gray
+Write-Host "" -ForegroundColor Gray
+Write-Host "💡 Optional terminal emulator setup:" -ForegroundColor Yellow
+Write-Host "  • Run .\link-wezterm.ps1 to setup WezTerm config" -ForegroundColor Gray
+Write-Host "  • Run .\link-alacritty.ps1 to setup Alacritty config" -ForegroundColor Gray
 
 # 管理者権限で実行された場合は結果確認のために待機
 if ($isAdmin) {

@@ -81,6 +81,9 @@ alias mwatch='mise watch'            # Watch for config changes
 alias mtasks='mise tasks'            # List available tasks
 alias mrun='mise run'                # Run task from config
 
+## npm aliases
+alias claude-install='npm install -g @anthropic-ai/claude-code'
+
 ## ghq aliases
 alias ghq-list='ghq list'
 alias ghq-root='ghq root'

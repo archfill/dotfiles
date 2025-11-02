@@ -9,8 +9,6 @@ return {
 		event = { "BufReadPost", "BufNewFile" },
 		build = ":TSUpdate",
 		config = function()
-			-- pluginconfigから完全移行 - 94行の詳細設定を統合
-
 			-- 安全なTree-sitter設定ロード
 			local has_treesitter, treesitter_configs = pcall(require, "nvim-treesitter.configs")
 			if not has_treesitter then
@@ -19,7 +17,23 @@ return {
 			end
 
 			local function ts_disable(_, bufnr)
-				return vim.api.nvim_buf_line_count(bufnr) > 5000
+				-- nvim-treesitterのバグ対策: bufnrがnilの場合がある
+				if not bufnr then
+					bufnr = 0 -- カレントバッファを使用
+				end
+
+				-- ファイルサイズベースの早期チェック（500KB以上で無効化）
+				local filename = vim.api.nvim_buf_get_name(bufnr)
+				if filename ~= "" then
+					local ok, stats = pcall(vim.loop.fs_stat, filename)
+					if ok and stats and stats.size > 500000 then
+						return true
+					end
+				end
+
+				-- 行数ベースのチェック（5000行以上で無効化）
+				local lines = vim.api.nvim_buf_line_count(bufnr)
+				return lines > 5000
 			end
 
 			-- Tree-sitter設定
@@ -98,28 +112,59 @@ return {
 					enable = true,
 					disable = { "python", "yaml" }, -- 特定言語のみ無効化
 				},
-
-				-- Tree-sitter textobjects（一時的に無効化）
-				-- textobjects = {
-				--   select = {
-				--     enable = true,
-				--     lookahead = true,
-				--     keymaps = {
-				--       ["af"] = "@function.outer",
-				--       ["if"] = "@function.inner",
-				--       ["ac"] = "@class.outer",
-				--       ["ic"] = "@class.inner",
-				--     },
-				--   },
-				-- },
 			})
 
-			-- インストール済みパーサーの状態をログ出力
-			vim.defer_fn(function()
-				local installed_parsers = require("nvim-treesitter.info").installed_parsers()
-				vim.notify(string.format("Tree-sitter loaded with %d parsers", #installed_parsers), vim.log.levels.INFO)
-			end, 1000)
+			-- 大規模ファイルでTreeSitterを自動停止
+			-- 複数のイベントで確実にチェック
+			local ts_group = vim.api.nvim_create_augroup("TreeSitterAutoDisable", { clear = true })
+
+			local function check_and_disable_ts(bufnr)
+				bufnr = bufnr or vim.api.nvim_get_current_buf()
+
+				-- バッファの有効性チェック
+				if not vim.api.nvim_buf_is_valid(bufnr) then
+					return
+				end
+
+				-- ファイルサイズチェック
+				local filename = vim.api.nvim_buf_get_name(bufnr)
+				if filename ~= "" then
+					local ok, stats = pcall(vim.loop.fs_stat, filename)
+					if ok and stats and stats.size > 500000 then
+						vim.treesitter.stop(bufnr)
+						vim.notify(
+							string.format(
+								"TreeSitter: Disabled for large file (%s, %.1fMB)",
+								vim.fn.fnamemodify(filename, ":t"),
+								stats.size / 1024 / 1024
+							),
+							vim.log.levels.INFO
+						)
+						return
+					end
+				end
+
+				-- 行数チェック
+				local lines = vim.api.nvim_buf_line_count(bufnr)
+				if lines > 5000 then
+					vim.treesitter.stop(bufnr)
+					vim.notify(
+						string.format("TreeSitter: Disabled for large file (%d lines)", lines),
+						vim.log.levels.INFO
+					)
+				end
+			end
+
+			-- ファイル読み込み時にチェック
+			vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+				group = ts_group,
+				callback = function(args)
+					-- 遅延実行で確実にTreeSitterが起動した後にチェック
+					vim.defer_fn(function()
+						check_and_disable_ts(args.buf)
+					end, 100)
+				end,
+			})
 		end,
 	},
 }
-

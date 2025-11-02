@@ -81,18 +81,28 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   DEFAULT_PROG = get_wsl_default()
   FONT_SIZE = 12.0
 
+	-- Windows専用: Leader Key設定（tmux風）
+	LEADER_CONFIG = {
+		key = 'a',
+		mods = 'CTRL',
+		timeout_milliseconds = 1000,
+	}
+
 	-- Windows固有のローカル設定
 	LOCAL_CONFIG = {
-		-- Windows Terminal統合最適化
-		win32_system_backdrop = "Auto",
+		-- Windows専用: ステータスバーを常に表示（Leader Keyインジケーター表示のため）
+		hide_tab_bar_if_only_one_tab = false,
 		-- IME設定強化
 		ime_preedit_rendering = "System",
 		-- Windows固有のキーバインド
 		send_composed_key_when_left_alt_is_pressed = false,
 		send_composed_key_when_right_alt_is_pressed = true,
-		-- Windows GPU最適化設定
-		webgpu_preferred_adapter = gpus and gpus[1] or nil,
-		front_end = "WebGpu",
+		-- Windows GPU設定
+		-- 注意: WebGpuでは window_background_opacity（透過）が動作しない
+		-- 透過を使用する場合はOpenGLを使用すること
+		-- webgpu_preferred_adapter = gpus and gpus[1] or nil,
+		-- front_end = "WebGpu",
+		front_end = "OpenGL",
 		-- Windows最適化：DirectWriteレンダリング
 		freetype_load_target = "Normal",
 		freetype_render_target = "Normal",
@@ -113,6 +123,9 @@ if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "a
 	-- Configs for OSX only
 	-- font_dirs    = { '$HOME/.dotfiles/.fonts' }
 	FONT_SIZE = 16.0
+
+	-- macOS: 外部tmuxを使用するためLeader Keyは無効
+	LEADER_CONFIG = nil
 
 	--- load local_config
 	-- Write settings you don't want to make public, such as ssh_domains
@@ -135,6 +148,9 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	-- Configs for Linux only
 	-- font_dirs    = { '$HOME/.dotfiles/.fonts' }
 	FONT_SIZE = 12.0
+
+	-- Linux: 外部tmuxを使用するためLeader Keyは無効
+	LEADER_CONFIG = nil
 
 	--- load local_config
 	-- Write settings you don't want to make public, such as ssh_domains
@@ -217,9 +233,10 @@ local config = {
 		top = 20,
 		bottom = 20,
 	},
-	use_fancy_tab_bar = true,
+	use_fancy_tab_bar = false,  -- Retroスタイル（カスタマイズ性が高い）
 	tab_bar_at_bottom = false,
 	show_new_tab_button_in_tab_bar = false,
+	tab_max_width = 32,  -- タブの最大幅を設定
 	colors = {
 		-- Modern color overrides for Catppuccin Mocha
 		foreground = "#CDD6F4",
@@ -254,19 +271,20 @@ local config = {
 		},
 		
 		tab_bar = {
-			background = "#11111B",
+			-- Retroスタイル用: より深い背景色でコントラスト向上
+			background = "#181825",  -- Catppuccin Mantle
 			active_tab = {
-				bg_color = "#89B4FA",
-				fg_color = "#1E1E2E",
+				bg_color = "#89B4FA",  -- Blue - アクティブタブ
+				fg_color = "#1E1E2E",  -- Base - 暗いテキストで高コントラスト
 				intensity = "Bold",
 			},
 			inactive_tab = {
-				bg_color = "#313244",
-				fg_color = "#CDD6F4",
+				bg_color = "#313244",  -- Surface0 - 非アクティブ
+				fg_color = "#A6ADC8",  -- Subtext0 - 少し暗めのテキスト
 			},
 			inactive_tab_hover = {
-				bg_color = "#45475A",
-				fg_color = "#CDD6F4",
+				bg_color = "#45475A",  -- Surface1 - ホバー時
+				fg_color = "#CDD6F4",  -- Text - 明るいテキスト
 				intensity = "Bold",
 			},
 			new_tab = {
@@ -283,7 +301,7 @@ local config = {
 	-- exit_behavior = "CloseOnCleanExit",
 	-- tab_bar_at_bottom = false,
 	-- window_close_confirmation = "AlwaysPrompt",
-	window_background_opacity = 0.95,
+	window_background_opacity = 0.90,  -- グローバル透過設定（全OS共通）
 	macos_window_background_blur = 30,
 	-- ウィンドウ装飾（OS別で上書き）
 	window_decorations = "TITLE | RESIZE",
@@ -295,7 +313,7 @@ local config = {
 	scrollback_lines = 10000,
 	-- 入力遅延最適化：最小限の効果的設定
 	native_macos_fullscreen_mode = false,
-	automatically_reload_config = false,
+	automatically_reload_config = true,
 	-- 最も効果的な入力最適化
 	skip_close_confirmation_for_processes_named = {"nvim", "vim", "nano"},
 	-- レンダリング最適化
@@ -306,6 +324,8 @@ local config = {
 	-- Enable ligatures and advanced font features
 	harfbuzz_features = { "calt=1", "clig=1", "liga=1" },
 	disable_default_key_bindings = true,
+	-- Leader key (Windows専用: tmux風操作, macOS/Linux: 外部tmux使用)
+	leader = LEADER_CONFIG,
 	-- visual_bell = {
 	-- 	fade_in_function = "EaseIn",
 	-- 	fade_in_duration_ms = 150,

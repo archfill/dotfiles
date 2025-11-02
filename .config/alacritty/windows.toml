@@ -1,0 +1,61 @@
+# ============================================================================
+# Alacritty Windows-Specific Configuration
+# ============================================================================
+# Settings and keybindings specific to Windows environments
+# Note: ConPTY backend is now enabled by default in modern Alacritty
+# ============================================================================
+
+# ============================================================================
+# Windows-Specific Font Settings
+# ============================================================================
+[font]
+size = 16
+
+# ============================================================================
+# Windows-Specific Shell Configuration
+# ============================================================================
+# WSL (Windows Subsystem for Linux) を使用
+# ユーザー: archfill
+# tmuxは使用せず、zshを直接起動
+#
+# 特定のWSLディストリビューションを指定する場合:
+#   args = ["-d", "Ubuntu", "-u", "archfill", "-e", "zsh", "-l"]
+[terminal.shell]
+program = "wsl.exe"
+args = ["--cd", "~", "-u", "archfill", "-e", "zsh", "-l"]
+
+# ============================================================================
+# Windows-Specific Keyboard Bindings
+# ============================================================================
+
+# --- Clipboard Operations (Control+Shift) ---
+[[keyboard.bindings]]
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+# --- Font Size (Control) ---
+[[keyboard.bindings]]
+key = "Equals"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Plus"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Control"
+action = "ResetFontSize"

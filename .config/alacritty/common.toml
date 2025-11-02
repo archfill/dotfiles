@@ -1,0 +1,573 @@
+# ============================================================================
+# Alacritty Common Configuration
+# ============================================================================
+# Cross-platform settings shared across Linux, macOS, and Windows
+# Colorscheme: Iceberg Dark
+# ============================================================================
+
+# ============================================================================
+# General Settings
+# ============================================================================
+[general]
+live_config_reload = true
+
+# ============================================================================
+# Environment Variables
+# ============================================================================
+[env]
+TERM = "xterm-256color"
+
+# ============================================================================
+# Window Configuration
+# ============================================================================
+[window]
+# Window dimensions (0 = use default)
+dimensions = { columns = 0, lines = 0 }
+
+# Padding around terminal content
+padding = { x = 2, y = 2 }
+dynamic_padding = false
+
+# Window decorations
+decorations = "full"
+dynamic_title = true
+
+# Background opacity (0.0 - 1.0)
+opacity = 0.9
+
+# Startup mode: "Windowed", "Maximized", "Fullscreen"
+startup_mode = "Maximized"
+
+# ============================================================================
+# Scrolling
+# ============================================================================
+[scrolling]
+history = 10000
+multiplier = 3
+
+# ============================================================================
+# Font Configuration
+# ============================================================================
+# Note: Font size is configured per-platform in os-specific files
+# (linux.toml, macos.toml, windows.toml)
+
+[font.normal]
+family = "HackGen Console NF"
+
+[font.bold]
+family = "HackGen Console NF"
+
+[font.italic]
+family = "HackGen Console NF"
+
+[font.offset]
+x = 0
+y = 0
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+# ============================================================================
+# Colors (Catppuccin Mocha)
+# ============================================================================
+# Catppuccin is a community-driven pastel theme
+# https://github.com/catppuccin/catppuccin
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+[colors.normal]
+black   = "#45475a"
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#bac2de"
+
+[colors.bright]
+black   = "#585b70"
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#a6adc8"
+
+# ============================================================================
+# Bell
+# ============================================================================
+[bell]
+animation = "EaseOutExpo"
+duration = 0
+color = "#ffffff"
+
+# ============================================================================
+# Cursor
+# ============================================================================
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+# ============================================================================
+# Mouse
+# ============================================================================
+[mouse]
+hide_when_typing = false
+
+[[mouse.bindings]]
+mouse = "Middle"
+action = "PasteSelection"
+
+# ============================================================================
+# Selection
+# ============================================================================
+[selection]
+save_to_clipboard = false
+semantic_escape_chars = ''',│`|:"' ()[]{}<>'''
+
+# ============================================================================
+# Terminal Shell
+# ============================================================================
+# Note: Shell configuration is platform-specific.
+# See linux.toml and macos.toml for Unix shell settings.
+# Windows uses the default shell (PowerShell/cmd.exe).
+
+# ============================================================================
+# Debug Settings
+# ============================================================================
+[debug]
+render_timer = false
+persistent_logging = false
+
+# ============================================================================
+# Platform-Independent Keyboard Bindings
+# ============================================================================
+
+# --- Generic Actions ---
+[[keyboard.bindings]]
+key = "Paste"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "Copy"
+action = "Copy"
+
+# --- Navigation: Home/End ---
+[[keyboard.bindings]]
+key = "Home"
+chars = "\u001BOH"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+key = "Home"
+chars = "\u001B[H"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+key = "End"
+chars = "\u001BOF"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+key = "End"
+chars = "\u001B[F"
+mode = "~AppCursor"
+
+# --- Navigation: Page Up/Down ---
+[[keyboard.bindings]]
+key = "PageUp"
+mods = "Shift"
+chars = "\u001B[5;2~"
+
+[[keyboard.bindings]]
+key = "PageUp"
+mods = "Control"
+chars = "\u001B[5;5~"
+
+[[keyboard.bindings]]
+key = "PageUp"
+chars = "\u001B[5~"
+
+[[keyboard.bindings]]
+key = "PageDown"
+mods = "Shift"
+chars = "\u001B[6;2~"
+
+[[keyboard.bindings]]
+key = "PageDown"
+mods = "Control"
+chars = "\u001B[6;5~"
+
+[[keyboard.bindings]]
+key = "PageDown"
+chars = "\u001B[6~"
+
+# --- Tab ---
+[[keyboard.bindings]]
+key = "Tab"
+mods = "Shift"
+chars = "\u001B[Z"
+
+# --- Backspace ---
+[[keyboard.bindings]]
+key = "Back"
+chars = "\u007F"
+
+[[keyboard.bindings]]
+key = "Back"
+mods = "Alt"
+chars = "\u001B\u007F"
+
+# --- Insert/Delete ---
+[[keyboard.bindings]]
+key = "Insert"
+chars = "\u001B[2~"
+
+[[keyboard.bindings]]
+key = "Delete"
+chars = "\u001B[3~"
+
+# --- Arrow Keys ---
+[[keyboard.bindings]]
+key = "Left"
+mods = "Shift"
+chars = "\u001B[1;2D"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Control"
+chars = "\u001B[1;5D"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Alt"
+chars = "\u001B[1;3D"
+
+[[keyboard.bindings]]
+key = "Left"
+chars = "\u001B[D"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+key = "Left"
+chars = "\u001BOD"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Shift"
+chars = "\u001B[1;2C"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Control"
+chars = "\u001B[1;5C"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Alt"
+chars = "\u001B[1;3C"
+
+[[keyboard.bindings]]
+key = "Right"
+chars = "\u001B[C"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+key = "Right"
+chars = "\u001BOC"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+key = "Up"
+mods = "Shift"
+chars = "\u001B[1;2A"
+
+[[keyboard.bindings]]
+key = "Up"
+mods = "Control"
+chars = "\u001B[1;5A"
+
+[[keyboard.bindings]]
+key = "Up"
+mods = "Alt"
+chars = "\u001B[1;3A"
+
+[[keyboard.bindings]]
+key = "Up"
+chars = "\u001B[A"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+key = "Up"
+chars = "\u001BOA"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Shift"
+chars = "\u001B[1;2B"
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Control"
+chars = "\u001B[1;5B"
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Alt"
+chars = "\u001B[1;3B"
+
+[[keyboard.bindings]]
+key = "Down"
+chars = "\u001B[B"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+key = "Down"
+chars = "\u001BOB"
+mode = "AppCursor"
+
+# --- Function Keys (F1-F12) ---
+[[keyboard.bindings]]
+key = "F1"
+chars = "\u001BOP"
+
+[[keyboard.bindings]]
+key = "F2"
+chars = "\u001BOQ"
+
+[[keyboard.bindings]]
+key = "F3"
+chars = "\u001BOR"
+
+[[keyboard.bindings]]
+key = "F4"
+chars = "\u001BOS"
+
+[[keyboard.bindings]]
+key = "F5"
+chars = "\u001B[15~"
+
+[[keyboard.bindings]]
+key = "F6"
+chars = "\u001B[17~"
+
+[[keyboard.bindings]]
+key = "F7"
+chars = "\u001B[18~"
+
+[[keyboard.bindings]]
+key = "F8"
+chars = "\u001B[19~"
+
+[[keyboard.bindings]]
+key = "F9"
+chars = "\u001B[20~"
+
+[[keyboard.bindings]]
+key = "F10"
+chars = "\u001B[21~"
+
+[[keyboard.bindings]]
+key = "F11"
+chars = "\u001B[23~"
+
+[[keyboard.bindings]]
+key = "F12"
+chars = "\u001B[24~"
+
+# --- Function Keys + Shift ---
+[[keyboard.bindings]]
+key = "F1"
+mods = "Shift"
+chars = "\u001B[1;2P"
+
+[[keyboard.bindings]]
+key = "F2"
+mods = "Shift"
+chars = "\u001B[1;2Q"
+
+[[keyboard.bindings]]
+key = "F3"
+mods = "Shift"
+chars = "\u001B[1;2R"
+
+[[keyboard.bindings]]
+key = "F4"
+mods = "Shift"
+chars = "\u001B[1;2S"
+
+[[keyboard.bindings]]
+key = "F5"
+mods = "Shift"
+chars = "\u001B[15;2~"
+
+[[keyboard.bindings]]
+key = "F6"
+mods = "Shift"
+chars = "\u001B[17;2~"
+
+[[keyboard.bindings]]
+key = "F7"
+mods = "Shift"
+chars = "\u001B[18;2~"
+
+[[keyboard.bindings]]
+key = "F8"
+mods = "Shift"
+chars = "\u001B[19;2~"
+
+[[keyboard.bindings]]
+key = "F9"
+mods = "Shift"
+chars = "\u001B[20;2~"
+
+[[keyboard.bindings]]
+key = "F10"
+mods = "Shift"
+chars = "\u001B[21;2~"
+
+[[keyboard.bindings]]
+key = "F11"
+mods = "Shift"
+chars = "\u001B[23;2~"
+
+[[keyboard.bindings]]
+key = "F12"
+mods = "Shift"
+chars = "\u001B[24;2~"
+
+# --- Function Keys + Control ---
+[[keyboard.bindings]]
+key = "F1"
+mods = "Control"
+chars = "\u001B[1;5P"
+
+[[keyboard.bindings]]
+key = "F2"
+mods = "Control"
+chars = "\u001B[1;5Q"
+
+[[keyboard.bindings]]
+key = "F3"
+mods = "Control"
+chars = "\u001B[1;5R"
+
+[[keyboard.bindings]]
+key = "F4"
+mods = "Control"
+chars = "\u001B[1;5S"
+
+[[keyboard.bindings]]
+key = "F5"
+mods = "Control"
+chars = "\u001B[15;5~"
+
+[[keyboard.bindings]]
+key = "F6"
+mods = "Control"
+chars = "\u001B[17;5~"
+
+[[keyboard.bindings]]
+key = "F7"
+mods = "Control"
+chars = "\u001B[18;5~"
+
+[[keyboard.bindings]]
+key = "F8"
+mods = "Control"
+chars = "\u001B[19;5~"
+
+[[keyboard.bindings]]
+key = "F9"
+mods = "Control"
+chars = "\u001B[20;5~"
+
+[[keyboard.bindings]]
+key = "F10"
+mods = "Control"
+chars = "\u001B[21;5~"
+
+[[keyboard.bindings]]
+key = "F11"
+mods = "Control"
+chars = "\u001B[23;5~"
+
+[[keyboard.bindings]]
+key = "F12"
+mods = "Control"
+chars = "\u001B[24;5~"
+
+# --- Function Keys + Alt ---
+[[keyboard.bindings]]
+key = "F1"
+mods = "Alt"
+chars = "\u001B[1;6P"
+
+[[keyboard.bindings]]
+key = "F2"
+mods = "Alt"
+chars = "\u001B[1;6Q"
+
+[[keyboard.bindings]]
+key = "F3"
+mods = "Alt"
+chars = "\u001B[1;6R"
+
+[[keyboard.bindings]]
+key = "F4"
+mods = "Alt"
+chars = "\u001B[1;6S"
+
+[[keyboard.bindings]]
+key = "F5"
+mods = "Alt"
+chars = "\u001B[15;6~"
+
+[[keyboard.bindings]]
+key = "F6"
+mods = "Alt"
+chars = "\u001B[17;6~"
+
+[[keyboard.bindings]]
+key = "F7"
+mods = "Alt"
+chars = "\u001B[18;6~"
+
+[[keyboard.bindings]]
+key = "F8"
+mods = "Alt"
+chars = "\u001B[19;6~"
+
+[[keyboard.bindings]]
+key = "F9"
+mods = "Alt"
+chars = "\u001B[20;6~"
+
+[[keyboard.bindings]]
+key = "F10"
+mods = "Alt"
+chars = "\u001B[21;6~"
+
+[[keyboard.bindings]]
+key = "F11"
+mods = "Alt"
+chars = "\u001B[23;6~"
+
+[[keyboard.bindings]]
+key = "F12"
+mods = "Alt"
+chars = "\u001B[24;6~"
+
+# --- Numpad Enter ---
+[[keyboard.bindings]]
+key = "NumpadEnter"
+chars = "\n"

@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -21,6 +21,7 @@ help: ## Show this help message
 	@echo "  make test          # Run all tests"
 	@echo "  make links         # Create symlinks only"
 	@echo "  make config        # Setup Git configuration"
+	@echo "  make monitors      # Configure monitors (interactive)"
 
 # 基本セットアップ
 init: ## Complete dotfiles initialization and setup
@@ -130,6 +131,22 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "ℹ️  No NVIDIA GPU detected"; \
 	fi
+
+monitors: ## Auto-detect and configure monitors interactively (recommended)
+	@echo "Detecting monitors and showing configuration menu..."
+	@bash ~/.config/hypr/auto-detect-monitors.sh
+
+monitors-auto: ## Auto-detect and configure monitors without confirmation
+	@echo "Auto-detecting and configuring monitors..."
+	@bash ~/.config/hypr/auto-detect-monitors.sh --auto
+
+monitors-single: ## Force single display mode
+	@echo "Configuring for single display mode..."
+	@bash ~/.config/hypr/auto-detect-monitors.sh --mode single
+
+monitors-dual: ## Force dual display mode
+	@echo "Configuring for dual display mode..."
+	@bash ~/.config/hypr/auto-detect-monitors.sh --mode dual
 
 # ===== Neovim管理システム =====
 neovim-install: ## Install Neovim version (usage: make neovim-install VERSION=stable/nightly)
