@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -456,6 +456,243 @@ sketchybar-test: ## Test SketchyBar Lua configuration (usage: make sketchybar-te
 		bash bin/sketchybar-test.sh $(MODE); \
 	else \
 		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+# AeroSpace関連コマンド (Window Manager for macOS)
+aerospace-install: ## Install AeroSpace window manager with borders and sketchybar
+	@echo "🚀 Installing AeroSpace window manager ecosystem..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo ""; \
+		echo "📦 Installing components:"; \
+		echo "  • AeroSpace (window manager)"; \
+		echo "  • Borders (window borders)"; \
+		echo "  • SketchyBar (status bar)"; \
+		echo ""; \
+		if ! command -v brew >/dev/null 2>&1; then \
+			echo "❌ Homebrew is not installed. Please install Homebrew first."; \
+			exit 1; \
+		fi; \
+		echo "Installing AeroSpace..."; \
+		brew install --cask nikitabobko/tap/aerospace || true; \
+		echo "Installing Borders..."; \
+		brew install borders || true; \
+		echo "Installing SketchyBar..."; \
+		if ! command -v sketchybar >/dev/null 2>&1; then \
+			brew tap FelixKratz/formulae && brew install sketchybar; \
+		fi; \
+		bash bin/install-methods/binary/sketchybar.sh; \
+		echo ""; \
+		echo "✅ AeroSpace ecosystem installed successfully!"; \
+		echo ""; \
+		echo "📝 Configuration files:"; \
+		echo "  • AeroSpace: ~/.aerospace.toml"; \
+		echo "  • Borders: ~/.config/borders/bordersrc"; \
+		echo "  • SketchyBar: ~/.config/sketchybar/"; \
+		echo ""; \
+		echo "💡 Next steps:"; \
+		echo "  • Start services: make aerospace-start"; \
+		echo "  • Check status: make aerospace-status"; \
+		echo "  • Add to login items: System Settings > General > Login Items"; \
+	else \
+		echo "❌ AeroSpace is only available on macOS"; \
+		exit 1; \
+	fi
+
+aerospace-uninstall: ## Uninstall AeroSpace, borders, and optionally sketchybar
+	@echo "🗑️  Uninstalling AeroSpace ecosystem..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo ""; \
+		read -p "⚠️  This will uninstall AeroSpace and Borders. Continue? (y/N): " confirm; \
+		if [[ "$$confirm" != "y" && "$$confirm" != "Y" ]]; then \
+			echo "❌ Cancelled."; \
+			exit 0; \
+		fi; \
+		echo ""; \
+		echo "Stopping services..."; \
+		$(MAKE) aerospace-stop 2>/dev/null || true; \
+		echo ""; \
+		echo "Removing from login items..."; \
+		osascript -e 'tell application "System Events" to delete login item "AeroSpace"' 2>/dev/null || true; \
+		echo ""; \
+		echo "Uninstalling AeroSpace..."; \
+		brew uninstall --cask aerospace 2>/dev/null || true; \
+		echo "Uninstalling Borders..."; \
+		brew uninstall borders 2>/dev/null || true; \
+		echo ""; \
+		read -p "Also uninstall SketchyBar? (y/N): " uninstall_sketchybar; \
+		if [[ "$$uninstall_sketchybar" == "y" || "$$uninstall_sketchybar" == "Y" ]]; then \
+			echo "Uninstalling SketchyBar..."; \
+			brew services stop sketchybar 2>/dev/null || true; \
+			bash bin/install-methods/binary/sketchybar.sh uninstall 2>/dev/null || true; \
+			brew uninstall sketchybar 2>/dev/null || true; \
+			echo "✅ SketchyBar uninstalled"; \
+		fi; \
+		echo ""; \
+		echo "✅ AeroSpace ecosystem uninstalled successfully!"; \
+		echo ""; \
+		echo "📝 Configuration files are preserved at:"; \
+		echo "  • ~/.aerospace.toml"; \
+		echo "  • ~/.config/borders/"; \
+		echo "  • ~/.config/sketchybar/"; \
+		echo ""; \
+		echo "💡 To remove configs: rm -rf ~/.aerospace.toml ~/.config/borders ~/.config/sketchybar"; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+aerospace-start: ## Start AeroSpace, borders, and sketchybar services
+	@echo "▶️  Starting AeroSpace ecosystem..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo ""; \
+		if command -v aerospace >/dev/null 2>&1; then \
+			if pgrep -x "AeroSpace" >/dev/null; then \
+				echo "⚠️  AeroSpace is already running"; \
+			else \
+				echo "Starting AeroSpace..."; \
+				open -a AeroSpace; \
+				sleep 1; \
+			fi; \
+		else \
+			echo "❌ AeroSpace is not installed. Run 'make aerospace-install' first."; \
+			exit 1; \
+		fi; \
+		if command -v borders >/dev/null 2>&1; then \
+			if pgrep -x borders >/dev/null; then \
+				echo "⚠️  Borders is already running"; \
+			else \
+				echo "Starting Borders..."; \
+				~/.config/borders/bordersrc & \
+				sleep 0.5; \
+			fi; \
+		fi; \
+		if command -v sketchybar >/dev/null 2>&1; then \
+			if pgrep -x "sketchybar" >/dev/null; then \
+				echo "⚠️  SketchyBar is already running"; \
+			else \
+				echo "Starting SketchyBar..."; \
+				sketchybar & \
+				sleep 0.5; \
+			fi; \
+		fi; \
+		echo ""; \
+		echo "✅ Services started!"; \
+		sleep 1; \
+		$(MAKE) aerospace-status; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+aerospace-stop: ## Stop AeroSpace, borders, and sketchybar services
+	@echo "⏹️  Stopping AeroSpace ecosystem..."
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo ""; \
+		if pgrep -x "AeroSpace" >/dev/null; then \
+			echo "Stopping AeroSpace..."; \
+			killall AeroSpace 2>/dev/null || true; \
+		fi; \
+		if pgrep -x borders >/dev/null; then \
+			echo "Stopping Borders..."; \
+			killall borders 2>/dev/null || true; \
+		fi; \
+		if pgrep -x "sketchybar" >/dev/null; then \
+			echo "Stopping SketchyBar..."; \
+			killall sketchybar 2>/dev/null || true; \
+		fi; \
+		echo ""; \
+		echo "✅ All services stopped!"; \
+	else \
+		echo "❌ This command is only for macOS"; \
+		exit 1; \
+	fi
+
+aerospace-restart: ## Restart AeroSpace, borders, and sketchybar services
+	@echo "🔄 Restarting AeroSpace ecosystem..."
+	@$(MAKE) aerospace-stop
+	@sleep 1
+	@$(MAKE) aerospace-start
+
+aerospace-status: ## Show status of AeroSpace ecosystem
+	@echo "📊 AeroSpace Ecosystem Status"
+	@echo "=============================="
+	@echo ""
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		echo "🪟 AeroSpace (Window Manager):"; \
+		if command -v aerospace >/dev/null 2>&1; then \
+			if pgrep -x "AeroSpace" >/dev/null; then \
+				pid=$$(pgrep -x "AeroSpace"); \
+				echo "  Status: ✅ Running (PID: $$pid)"; \
+				if command -v aerospace >/dev/null 2>&1; then \
+					version=$$(aerospace --version 2>/dev/null || echo "unknown"); \
+					echo "  Version: $$version"; \
+				fi; \
+			else \
+				echo "  Status: ⏸️  Stopped"; \
+			fi; \
+		else \
+			echo "  Status: ❌ Not installed"; \
+		fi; \
+		echo ""; \
+		echo "🎨 Borders (Window Borders):"; \
+		if command -v borders >/dev/null 2>&1; then \
+			if pgrep -x borders >/dev/null; then \
+				pid=$$(pgrep -x borders); \
+				echo "  Status: ✅ Running (PID: $$pid)"; \
+			else \
+				echo "  Status: ⏸️  Stopped"; \
+			fi; \
+		else \
+			echo "  Status: ❌ Not installed"; \
+		fi; \
+		echo ""; \
+		echo "📊 SketchyBar (Status Bar):"; \
+		if command -v sketchybar >/dev/null 2>&1; then \
+			if pgrep -x "sketchybar" >/dev/null; then \
+				pid=$$(pgrep -x "sketchybar"); \
+				echo "  Status: ✅ Running (PID: $$pid)"; \
+				version=$$(sketchybar --version 2>/dev/null || echo "unknown"); \
+				echo "  Version: $$version"; \
+			else \
+				echo "  Status: ⏸️  Stopped"; \
+			fi; \
+		else \
+			echo "  Status: ❌ Not installed"; \
+		fi; \
+		echo ""; \
+		echo "📝 Configuration Files:"; \
+		if [[ -f ~/.aerospace.toml ]]; then \
+			echo "  • ~/.aerospace.toml ✅"; \
+		else \
+			echo "  • ~/.aerospace.toml ❌ Missing"; \
+		fi; \
+		if [[ -f ~/.config/borders/bordersrc ]]; then \
+			echo "  • ~/.config/borders/bordersrc ✅"; \
+		else \
+			echo "  • ~/.config/borders/bordersrc ❌ Missing"; \
+		fi; \
+		if [[ -d ~/.config/sketchybar ]]; then \
+			echo "  • ~/.config/sketchybar/ ✅"; \
+		else \
+			echo "  • ~/.config/sketchybar/ ❌ Missing"; \
+		fi; \
+		echo ""; \
+		echo "🔧 Login Items:"; \
+		if osascript -e 'tell application "System Events" to get the name of every login item' 2>/dev/null | grep -q "AeroSpace"; then \
+			echo "  • AeroSpace: ✅ Enabled"; \
+		else \
+			echo "  • AeroSpace: ⏸️  Not in login items"; \
+		fi; \
+		echo ""; \
+		echo "💡 Available commands:"; \
+		echo "  • make aerospace-start     - Start all services"; \
+		echo "  • make aerospace-stop      - Stop all services"; \
+		echo "  • make aerospace-restart   - Restart all services"; \
+		echo "  • make aerospace-install   - Install AeroSpace ecosystem"; \
+		echo "  • make aerospace-uninstall - Uninstall AeroSpace ecosystem"; \
+	else \
+		echo "❌ AeroSpace is only available on macOS"; \
 		exit 1; \
 	fi
 
