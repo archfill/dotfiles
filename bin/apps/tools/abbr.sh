@@ -91,7 +91,7 @@ install_abbr() {
             Darwin)
                 log_info "Installing zsh-abbr via Homebrew on macOS..."
                 if command -v brew >/dev/null 2>&1; then
-                    brew install zsh-abbr
+                    brew install olets/tap/zsh-abbr
                     log_success "zsh-abbr installed successfully"
                 else
                     log_error "Homebrew not found. Please install Homebrew first."
