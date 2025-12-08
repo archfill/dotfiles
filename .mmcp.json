@@ -1,55 +1,19 @@
 {
-  "agents": [
-    "claude-code",
-    "claude-desktop",
-    "codex-cli",
-    "gemini-cli"
-  ],
+  "agents": ["claude-code", "claude-desktop", "codex-cli", "gemini-cli"],
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp@latest"
-      ],
-      "env": {}
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ],
-      "env": {}
-    },
-    "git": {
-      "command": "uvx",
-      "args": [
-        "mcp-server-git"
-      ],
+      "args": ["-y", "@upstash/context7-mcp@latest"],
       "env": {}
     },
     "mcp-deepwiki": {
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-deepwiki@latest"
-      ],
+      "args": ["-y", "mcp-deepwiki@latest"],
       "env": {}
     },
-    "memory": {
+    "chrome-devtools": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ],
-      "env": {}
-    },
-    "playwright": {
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest"
-      ],
+      "args": ["-y", "chrome-devtools-mcp@latest"],
       "env": {}
     }
   }
