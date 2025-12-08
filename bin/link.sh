@@ -72,6 +72,12 @@ if [[ -d "${DOTFILES_DIR}/.config/claude/commands" ]]; then
     create_symlink "${DOTFILES_DIR}/.config/claude/commands" "${HOME}/.claude/commands"
 fi
 
+# Claude Code設定: .config/claude/agents/ → ~/.claude/agents/
+if [[ -d "${DOTFILES_DIR}/.config/claude/agents" ]]; then
+    mkdir -p "${HOME}/.claude"
+    create_symlink "${DOTFILES_DIR}/.config/claude/agents" "${HOME}/.claude/agents"
+fi
+
 # tmuxディレクトリの作成（必要な場合）
 TMUX_DIR="${HOME}/.tmux"
 if [[ ! -d "$TMUX_DIR" ]]; then
