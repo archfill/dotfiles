@@ -10,11 +10,6 @@
       "command": "npx",
       "args": ["-y", "mcp-deepwiki@latest"],
       "env": {}
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"],
-      "env": {}
     }
   }
 }
