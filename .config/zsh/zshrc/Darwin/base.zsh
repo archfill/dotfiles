@@ -1,35 +1,25 @@
 # macOS-specific base configurations
 
-# AWS CLI completion (dynamic path detection)
+# AWS CLI completion (Zsh native)
 setup_aws_completion() {
-  local aws_completers=(
-    "/opt/homebrew/bin/aws_completer"     # Apple Silicon Homebrew
-    "/usr/local/bin/aws_completer"        # Intel Homebrew
-    "$(command -v aws_completer 2>/dev/null)"  # PATH lookup
-  )
-  
-  for completer in "${aws_completers[@]}"; do
-    if [ -f "$completer" ]; then
-      complete -C "$completer" aws
-      return 0
-    fi
-  done
+  local aws_completer
+  aws_completer=$(command -v aws_completer 2>/dev/null)
+
+  if [[ -n "$aws_completer" ]]; then
+    autoload -Uz bashcompinit && bashcompinit
+    complete -C "$aws_completer" aws
+  fi
 }
 
-# Terraform completion (dynamic path detection)
+# Terraform completion (Zsh native)
 setup_terraform_completion() {
-  local terraform_paths=(
-    "/opt/homebrew/bin/terraform"        # Apple Silicon Homebrew
-    "/usr/local/bin/terraform"           # Intel Homebrew
-    "$(command -v terraform 2>/dev/null)"     # PATH lookup
-  )
-  
-  for terraform in "${terraform_paths[@]}"; do
-    if [ -f "$terraform" ]; then
-      complete -o nospace -C "$terraform" terraform
-      return 0
-    fi
-  done
+  local terraform
+  terraform=$(command -v terraform 2>/dev/null)
+
+  if [[ -n "$terraform" ]]; then
+    autoload -Uz bashcompinit && bashcompinit
+    complete -o nospace -C "$terraform" terraform
+  fi
 }
 
 # Initialize completions
