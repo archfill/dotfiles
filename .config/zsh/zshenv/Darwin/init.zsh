@@ -26,3 +26,9 @@ fi
 if [[ -d "/opt/homebrew/opt/mysql-client/bin" ]]; then
   add_to_path "/opt/homebrew/opt/mysql-client/bin"
 fi
+
+# ===== OrbStack (Docker/Container runtime) =====
+# Provides docker, docker-compose, kubectl commands
+# Note: OrbStack installer adds this to .zprofile by default, but we put it here
+# to ensure availability in all shell types (including non-login shells like VSCode)
+[[ -f ~/.orbstack/shell/init.zsh ]] && source ~/.orbstack/shell/init.zsh
