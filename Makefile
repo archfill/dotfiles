@@ -149,45 +149,14 @@ monitors-dual: ## Force dual display mode
 	@bash ~/.config/hypr/auto-detect-monitors.sh --mode dual
 
 # ===== Neovim管理システム =====
-neovim-install: ## Install Neovim version (usage: make neovim-install VERSION=stable/nightly)
-	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make neovim-install VERSION=<stable|nightly>"; \
-		echo "Examples:"; \
-		echo "  make neovim-install VERSION=stable"; \
-		echo "  make neovim-install VERSION=nightly"; \
-		echo ""; \
-		bash ./bin/neovim-unified-manager.sh status; \
-	else \
-		echo "Installing Neovim $(VERSION) version..."; \
-		bash ./bin/neovim-unified-manager.sh install "$(VERSION)"; \
-	fi
+neovim-install: ## Install Neovim version (fzf selection or VERSION=stable/nightly)
+	@bash ./bin/neovim-unified-manager.sh install "$(VERSION)"
 
-neovim-switch: ## Switch Neovim version (usage: make neovim-switch VERSION=stable/nightly)
-	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make neovim-switch VERSION=<stable|nightly>"; \
-		echo "Examples:"; \
-		echo "  make neovim-switch VERSION=stable"; \
-		echo "  make neovim-switch VERSION=nightly"; \
-		echo ""; \
-		bash ./bin/neovim-unified-manager.sh status; \
-	else \
-		echo "Switching to Neovim $(VERSION)..."; \
-		bash ./bin/neovim-unified-manager.sh switch "$(VERSION)"; \
-	fi
+neovim-switch: ## Switch Neovim version (fzf selection or VERSION=stable/nightly)
+	@bash ./bin/neovim-unified-manager.sh switch "$(VERSION)"
 
-neovim-uninstall: ## Uninstall Neovim version (usage: make neovim-uninstall VERSION=stable/nightly/all)
-	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make neovim-uninstall VERSION=<stable|nightly|all>"; \
-		echo "Examples:"; \
-		echo "  make neovim-uninstall VERSION=stable"; \
-		echo "  make neovim-uninstall VERSION=nightly"; \
-		echo "  make neovim-uninstall VERSION=all"; \
-		echo ""; \
-		bash ./bin/neovim-unified-manager.sh status; \
-	else \
-		echo "Uninstalling Neovim $(VERSION)..."; \
-		bash ./bin/neovim-unified-manager.sh uninstall "$(VERSION)"; \
-	fi
+neovim-uninstall: ## Uninstall Neovim version (fzf selection or VERSION=stable/nightly/all)
+	@bash ./bin/neovim-unified-manager.sh uninstall "$(VERSION)"
 
 neovim-status: ## Show unified status of all Neovim versions
 	@bash ./bin/neovim-unified-manager.sh status

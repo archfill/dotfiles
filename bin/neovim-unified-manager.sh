@@ -82,12 +82,58 @@ map_command() {
 }
 
 # =============================================================================
+# fzfでバージョン選択
+# =============================================================================
+
+select_version_with_fzf() {
+    local command="$1"
+    local options
+
+    case "$command" in
+        install|switch)
+            options="stable\nnightly"
+            ;;
+        uninstall)
+            options="stable\nnightly\nall"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+
+    if command -v fzf >/dev/null 2>&1; then
+        echo -e "$options" | fzf --prompt="Select Neovim version to $command: " --height=10 --reverse
+    else
+        return 1
+    fi
+}
+
+# =============================================================================
 # メイン処理
 # =============================================================================
 
 main() {
     local command="${1:-status}"
-    local version="${2:-stable}"
+    local version="${2:-}"
+
+    # バージョンが必要なコマンドでバージョン未指定の場合、fzfで選択
+    if [[ -z "$version" ]]; then
+        case "$command" in
+            install|switch|uninstall)
+                version=$(select_version_with_fzf "$command")
+                if [[ -z "$version" ]]; then
+                    log_info "Cancelled."
+                    exit 0
+                fi
+                ;;
+            status|update)
+                # これらのコマンドはバージョン不要
+                ;;
+            *)
+                version="stable"
+                ;;
+        esac
+    fi
 
     # プラットフォーム別スクリプトを取得
     local script

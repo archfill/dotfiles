@@ -73,7 +73,7 @@ install_neovim() {
 
     # 既存インストールをチェック
     local current_version
-    current_version=$(get_installed_version)
+    current_version=$(get_installed_version) || true
 
     if [[ "$current_version" != "none" ]]; then
         if [[ "$current_version" == "$version" ]]; then
@@ -101,7 +101,7 @@ install_neovim() {
             return 1
         fi
     elif [[ "$version" == "nightly" ]]; then
-        if brew install --HEAD neovim; then
+        if brew install neovim --HEAD; then
             log_success "Neovim nightly installed successfully"
             show_version_info
             return 0
@@ -126,7 +126,7 @@ uninstall_neovim() {
     fi
 
     local current_version
-    current_version=$(get_installed_version)
+    current_version=$(get_installed_version) || true
 
     if [[ "$current_version" == "none" ]]; then
         log_info "Neovim is not installed"
@@ -164,7 +164,7 @@ check_version() {
     fi
 
     local current_version
-    current_version=$(get_installed_version)
+    current_version=$(get_installed_version) || true
 
     if [[ "$current_version" == "none" ]]; then
         log_info "Neovim is not installed"
@@ -194,7 +194,7 @@ show_status() {
     fi
 
     local current_version
-    current_version=$(get_installed_version)
+    current_version=$(get_installed_version) || true
 
     if [[ "$current_version" == "none" ]]; then
         echo "Status: Not installed"
@@ -219,12 +219,9 @@ show_status() {
     fi
 }
 
-# ===== デフォルトバージョンの設定 =====
+# ===== バージョン切り替え =====
 set_default_version() {
     local version="$1"
-
-    # Homebrewでは1つのバージョンのみインストール可能
-    # このコマンドは互換性のために残すが、実際には何もしない
 
     check_platform
 
@@ -233,26 +230,42 @@ set_default_version() {
     fi
 
     local current_version
-    current_version=$(get_installed_version)
+    current_version=$(get_installed_version) || true
 
     if [[ "$current_version" == "none" ]]; then
-        log_error "Neovim is not installed"
-        log_info "Install it first: make neovim-install VERSION=$version"
-        return 1
+        log_info "Neovim is not installed. Installing $version..."
+        install_neovim "$version"
+        return $?
     fi
 
     if [[ "$current_version" == "$version" ]]; then
         log_success "Neovim $version is already active"
         show_version_info
         return 0
-    else
-        log_warning "Cannot switch version without reinstalling"
-        log_info "Current: $current_version, Requested: $version"
-        log_info "To switch:"
-        log_info "  1. Uninstall current: make neovim-uninstall VERSION=$current_version"
-        log_info "  2. Install new: make neovim-install VERSION=$version"
+    fi
+
+    # 異なるバージョンの場合、アンインストール→インストール
+    log_info "Switching from $current_version to $version..."
+    log_info ""
+
+    # アンインストール
+    log_info "Step 1: Uninstalling Neovim $current_version..."
+    if ! uninstall_neovim "$current_version"; then
+        log_error "Failed to uninstall Neovim $current_version"
         return 1
     fi
+
+    log_info ""
+
+    # インストール
+    log_info "Step 2: Installing Neovim $version..."
+    if ! install_neovim "$version"; then
+        log_error "Failed to install Neovim $version"
+        return 1
+    fi
+
+    log_success "Successfully switched to Neovim $version"
+    return 0
 }
 
 # ===== アップデート =====
@@ -264,7 +277,7 @@ update_neovim() {
     fi
 
     local current_version
-    current_version=$(get_installed_version)
+    current_version=$(get_installed_version) || true
 
     if [[ "$current_version" == "none" ]]; then
         log_error "Neovim is not installed"
@@ -274,14 +287,16 @@ update_neovim() {
     log_info "Updating Neovim $current_version..."
 
     if [[ "$current_version" == "nightly" ]]; then
-        # nightly版は再インストールで最新を取得
-        if brew reinstall --HEAD neovim; then
+        # nightly版は--fetch-HEADでアップデート
+        if brew upgrade neovim --fetch-HEAD; then
             log_success "Neovim nightly updated successfully"
             show_version_info
             return 0
         else
-            log_error "Failed to update Neovim nightly"
-            return 1
+            # 既に最新の場合もあるので、エラーではない
+            log_info "Neovim nightly is already up-to-date"
+            show_version_info
+            return 0
         fi
     else
         # stable版は通常のupgrade
