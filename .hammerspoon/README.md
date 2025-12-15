@@ -250,8 +250,68 @@ local wifi = hs.wifi.currentNetwork()
 
 このdotfilesでは以下の設定を使用：
 
-- **場所:** `.hammerspoon/init.lua`
-- **方式:** シンプルな1ファイル構成 + データ駆動設計
-- **ホットキー:** Hyper + E → Ghosttyトグル
+- **場所:** `.hammerspoon/`
+- **方式:** モジュラー構成 + データ駆動設計
+- **Hyper Key:** Ctrl + Cmd + Alt + Shift (Karabiner-Elementsで設定)
 
-新しいアプリを追加する場合は、`appLaunchers`テーブルに追加するだけ。
+### ディレクトリ構成
+
+```
+.hammerspoon/
+├── init.lua              # ブートストラップ
+├── config.lua            # 設定値
+├── modules/
+│   ├── apps.lua          # アプリ起動 + ウィンドウスイッチャー
+│   ├── windows.lua       # ウィンドウ管理
+│   ├── groups.lua        # ウィンドウグループ
+│   ├── fzf.lua           # FZFウィンドウスイッチャー
+│   └── reload.lua        # 設定リロード
+├── utils/
+│   └── helpers.lua       # ヘルパー関数
+└── Spoons/
+    ├── FzfFilter.spoon/
+    └── FzfWindowSwitcher.spoon/
+```
+
+### キーバインド一覧
+
+| キー | 機能 | モジュール |
+|------|------|-----------|
+| **アプリ起動** |||
+| Hyper + E | Ghostty 起動/非表示 | apps |
+| **ウィンドウスイッチャー** |||
+| Hyper + C | ウィンドウ切替 (UI表示) | apps |
+| Hyper + W | FZF ウィンドウスイッチャー | fzf |
+| **ウィンドウ管理** |||
+| Hyper + F | 最大化トグル | windows |
+| Hyper + H | 左のウィンドウにフォーカス | windows |
+| Hyper + J | 下のウィンドウにフォーカス | windows |
+| Hyper + K | 上のウィンドウにフォーカス | windows |
+| Hyper + L | 右のウィンドウにフォーカス | windows |
+| **ウィンドウグループ** |||
+| Hyper + G | グループに追加/削除 | groups |
+| Hyper + N | 次のウィンドウ | groups |
+| Hyper + P | 前のウィンドウ | groups |
+| **システム** |||
+| Hyper + R | 設定リロード | reload |
+
+### 設定のカスタマイズ
+
+`config.lua` で設定を変更可能：
+
+```lua
+-- アプリランチャー追加
+config.appLaunchers = {
+    { key = "e", app = "Ghostty" },
+    { key = "b", app = "Arc" },  -- 追加
+}
+
+-- ウィンドウグループのキー変更
+config.groups = {
+    keys = {
+        toggle = "g",
+        next = "n",
+        prev = "p",
+    },
+}
+```

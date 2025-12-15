@@ -29,3 +29,11 @@ reload.init(config, helpers)
 -- Window management (temporary maximize toggle, positioning)
 local windows = require("modules.windows")
 windows.init(config, helpers)
+
+-- FZF window switcher (fzf-powered window selection)
+local fzf = require("modules.fzf")
+fzf.init(config, helpers)
+
+-- Window groups (Hyprland-style stacking)
+local groups = require("modules.groups")
+groups.init(config, helpers)

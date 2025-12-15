@@ -34,6 +34,56 @@ local function toggleMaximize()
 	end
 end
 
+-- Window filter for directional focus (created once, reused)
+local windowFilter = nil
+
+--- Get or create window filter for current space
+--- @return hs.window.filter
+local function getWindowFilter()
+	if not windowFilter then
+		-- Create filter: current space only, exclude problematic windows
+		windowFilter = hs.window.filter.new()
+			:setCurrentSpace(true)
+			:setDefaultFilter({})
+			:rejectApp("Finder") -- Exclude Finder (often has invisible desktop window)
+	end
+	return windowFilter
+end
+
+--- Focus window in direction (like yabai/hyprland)
+--- Uses hs.window.filter for better performance and filtering
+--- @param direction string Direction: "west", "east", "north", "south"
+local function focusDirection(direction)
+	local wf = getWindowFilter()
+
+	-- Get current window
+	local win = hs.window.focusedWindow()
+	if not win then
+		-- Try frontmost app
+		local frontApp = hs.application.frontmostApplication()
+		if frontApp then
+			local appWindows = frontApp:allWindows()
+			if #appWindows > 0 then
+				win = appWindows[1]
+			end
+		end
+	end
+
+	-- Use window filter's focus methods
+	local success = false
+	if direction == "west" then
+		success = wf:focusWindowWest(win, false, false)
+	elseif direction == "east" then
+		success = wf:focusWindowEast(win, false, false)
+	elseif direction == "north" then
+		success = wf:focusWindowNorth(win, false, false)
+	elseif direction == "south" then
+		success = wf:focusWindowSouth(win, false, false)
+	end
+
+	return success
+end
+
 --- Initialize window management hotkeys
 --- @param config table Configuration table with hyper key and window settings
 --- @param helpers table Helper functions
@@ -80,6 +130,16 @@ function windows.init(config, helpers)
 				win:moveToUnit({ x = 0, y = 0.5, w = 1, h = 0.5 })
 			end
 		end)
+	end
+
+	-- Directional focus (like yabai/hyprland mod+hjkl)
+	if windowConfig.enableDirectionalFocus ~= false then
+		local keys = windowConfig.directionalFocusKeys or { h = "west", j = "south", k = "north", l = "east" }
+		for key, direction in pairs(keys) do
+			hs.hotkey.bind(hyper, key, function()
+				focusDirection(direction)
+			end)
+		end
 	end
 end
 
