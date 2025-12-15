@@ -39,9 +39,8 @@ link ".config/karabiner/assets/complex_modifications/aquaskk_iterm2.json"
 # skhd
 # link ".config/skhd"
 
-# hammerspoon
-HAMMERSPOON_DIR=${HOME}/.hammerspoon
-if [ ! -e $HAMMERSPOON_DIR ]; then
-  mkdir -p $HAMMERSPOON_DIR
+# hammerspoon (link entire directory)
+if [[ -e "${HOME}/.hammerspoon" && ! -L "${HOME}/.hammerspoon" ]]; then
+  rm -rf "${HOME}/.hammerspoon"
 fi
-link ".hammerspoon/init.lua"
+link ".hammerspoon"

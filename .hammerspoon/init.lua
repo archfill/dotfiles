@@ -1,35 +1,31 @@
-hs.hotkey.bind({ "ctrl", "shift" }, "k", function()
-	local kitty = hs.application.get("kitty")
-	if kitty == nil then
-		hs.application.launchOrFocus("/Applications/kitty.app")
-	elseif kitty:isFrontmost() then
-		kitty:hide()
-	else
-		hs.application.launchOrFocus("/Applications/kitty.app")
-	end
-end)
+-- Hammerspoon Configuration
+-- Modular, Extensible, Data-Driven
+--
+-- Structure:
+--   init.lua       - Bootstrap (this file)
+--   config.lua     - Configuration values
+--   modules/       - Feature modules
+--   utils/         - Helper functions
 
-hs.hotkey.bind({ "ctrl", "shift" }, "u", function()
-	local kitty = hs.application.get("Alacritty")
-	if kitty == nil then
-		hs.application.launchOrFocus("/Applications/Alacritty.app")
-	elseif kitty:isFrontmost() then
-		kitty:hide()
-	else
-		hs.application.launchOrFocus("/Applications/Alacritty.app")
-	end
-end)
+--------------------------------------------------------------------------------
+-- Load Dependencies
+--------------------------------------------------------------------------------
 
-hs.hotkey.bind({ "ctrl", "shift" }, "z", function()
-	local kitty = hs.application.get("WezTerm")
-	if kitty == nil then
-		hs.application.launchOrFocus("/Applications/WezTerm.app")
-	elseif kitty:isFrontmost() then
-		kitty:hide()
-	else
-		hs.application.launchOrFocus("/Applications/WezTerm.app")
-	end
-end)
+local config = require("config")
+local helpers = require("utils.helpers")
 
--- stackline = require("stackline")
--- stackline:init()
+--------------------------------------------------------------------------------
+-- Load Modules
+--------------------------------------------------------------------------------
+
+-- Application launcher (Hyper + key to toggle apps)
+local apps = require("modules.apps")
+apps.init(config, helpers)
+
+-- Config reload functionality
+local reload = require("modules.reload")
+reload.init(config, helpers)
+
+-- Window management (temporary maximize toggle, positioning)
+local windows = require("modules.windows")
+windows.init(config, helpers)
