@@ -15,11 +15,12 @@ config.hyper = { "ctrl", "cmd", "alt", "shift" }
 --------------------------------------------------------------------------------
 
 -- Add new apps here: { key = "x", app = "AppName" }
+-- Optional: position = "right" | "left" | "maximize" (applied on first launch only)
 config.appLaunchers = {
-	{ key = "e", app = "Ghostty" },
+	{ key = "e", app = "Ghostty", position = "left" },
 	-- Examples:
 	-- { key = "b", app = "Arc" },
-	-- { key = "t", app = "WezTerm" },
+	-- { key = "t", app = "WezTerm", position = "left" },
 	-- { key = "s", app = "Slack" },
 }
 

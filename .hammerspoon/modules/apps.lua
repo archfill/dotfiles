@@ -13,7 +13,7 @@ function apps.init(config, helpers)
 	-- App launchers (Hyper + key to toggle specific app)
 	for _, launcher in ipairs(config.appLaunchers) do
 		hs.hotkey.bind(config.hyper, launcher.key, function()
-			helpers.toggleApp(launcher.app)
+			helpers.toggleApp(launcher.app, launcher.position)
 		end)
 	end
 
