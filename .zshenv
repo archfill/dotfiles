@@ -13,8 +13,8 @@ export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
 
 # ===== Performance Library & Helper Functions =====
 # Load performance optimization library or define fallback functions
-if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
+if [[ -f "${ZDOTDIR}/lib/performance.zsh" ]]; then
+  source "${ZDOTDIR}/lib/performance.zsh"
 else
   # Fallback functions if performance library fails to load
   command_exists() { command -v "$1" &>/dev/null; }

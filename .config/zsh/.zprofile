@@ -15,8 +15,8 @@
 # Load performance optimization library if not already loaded
 # Note: This should already be loaded from .zshenv, but we check just in case
 if ! command -v command_exists &>/dev/null; then
-  if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
+  if [[ -f "${ZDOTDIR}/lib/performance.zsh" ]]; then
+    source "${ZDOTDIR}/lib/performance.zsh"
   else
     # Fallback functions if performance library fails to load
     command_exists() { command -v "$1" &>/dev/null; }

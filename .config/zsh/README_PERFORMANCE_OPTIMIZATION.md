@@ -137,8 +137,8 @@ add_to_path "$JAVA_HOME/bin"
 
 ```bash
 if ! command -v command_exists &>/dev/null; then
-  if [[ -f "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.config/zsh/lib/performance.zsh"
+  if [[ -f "${ZDOTDIR}/lib/performance.zsh" ]]; then
+    source "${ZDOTDIR}/lib/performance.zsh"
   else
     # Fallback functions
     command_exists() { command -v "$1" &>/dev/null; }
