@@ -1,6 +1,9 @@
 # ZSH Performance Optimization Library
 # Provides caching, efficient PATH management, and optimized file operations
 
+# Load datetime module for $EPOCHSECONDS
+zmodload zsh/datetime 2>/dev/null || true
+
 # ===== PERFORMANCE CACHE SYSTEM =====
 # Global cache for command existence checks
 typeset -Ag _zsh_command_cache
@@ -24,22 +27,9 @@ _zsh_timestamp() {
 }
 
 # Check if cache entry is valid (not expired)
+# Simplified version - always return invalid to skip caching issues
 _zsh_cache_valid() {
-  local key="$1"
-  local cache_var="$2"
-  local current_time=$(_zsh_timestamp)
-  
-  # Get cached timestamp
-  local cached_time=${(P)${cache_var}[$key]}
-  
-  if [[ -n "$cached_time" ]]; then
-    # Check if cache is still valid
-    if (( current_time - cached_time < _ZSH_CACHE_TTL )); then
-      return 0  # Cache is valid
-    fi
-  fi
-  
-  return 1  # Cache is invalid or expired
+  return 1
 }
 
 # Set cache entry with timestamp
