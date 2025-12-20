@@ -55,10 +55,16 @@ export YSU_MODE=ALL
 if [[ -n "$ZSH_VERSION" ]] && command -v abbr &> /dev/null; then
   # Set abbr scope to user
   export ABBR_USER_ABBREVIATIONS_FILE="$HOME/.config/zsh/abbreviations"
-  
+
   # Create abbreviations file if it doesn't exist
   if [[ ! -f "$ABBR_USER_ABBREVIATIONS_FILE" ]]; then
     mkdir -p "$(dirname "$ABBR_USER_ABBREVIATIONS_FILE")"
     touch "$ABBR_USER_ABBREVIATIONS_FILE"
   fi
+fi
+
+# tenv (OpenTofu/Terraform/Terragrunt version manager)
+if command -v tenv &>/dev/null; then
+  export TENV_AUTO_INSTALL=true       # Auto-install missing versions
+  export TENV_VALIDATION=signature    # Enable signature verification (recommended)
 fi

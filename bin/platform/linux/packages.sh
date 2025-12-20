@@ -68,6 +68,86 @@ install_mise_debian() {
     return 0
 }
 
+# Install tenv for Debian/Ubuntu (binary installation)
+install_tenv_debian() {
+    log_info "Installing tenv for Debian/Ubuntu..."
+
+    # Parse command line options
+    parse_install_options "$@"
+
+    # Check if tenv should be skipped
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v tenv >/dev/null 2>&1; then
+        log_skip_reason "tenv" "Already installed: $(tenv --version 2>/dev/null | head -1 || echo 'version unknown')"
+        return 0
+    fi
+
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would install tenv"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Detect architecture
+        local arch
+        case "$(uname -m)" in
+            x86_64)  arch="amd64" ;;
+            aarch64) arch="arm64" ;;
+            armv7l)  arch="armv7" ;;
+            *)
+                log_error "Unsupported architecture: $(uname -m)"
+                return 1
+                ;;
+        esac
+
+        # Get latest version from GitHub API
+        local version
+        version=$(curl -s https://api.github.com/repos/tofuutils/tenv/releases/latest | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
+
+        if [[ -z "$version" ]]; then
+            log_error "Failed to get latest tenv version"
+            return 1
+        fi
+
+        log_info "Installing tenv v${version} for ${arch}..."
+
+        # Create local bin directory
+        mkdir -p "$HOME/.local/bin"
+
+        # Download and extract
+        local temp_dir
+        temp_dir=$(mktemp -d)
+        local tarball="tenv_v${version}_Linux_${arch}.tar.gz"
+        local url="https://github.com/tofuutils/tenv/releases/download/v${version}/${tarball}"
+
+        if curl -sL "$url" -o "${temp_dir}/${tarball}"; then
+            tar -xzf "${temp_dir}/${tarball}" -C "${temp_dir}"
+            # Install binaries
+            for bin in tenv terraform tofu terragrunt terramate atmos; do
+                if [[ -f "${temp_dir}/${bin}" ]]; then
+                    install -m 755 "${temp_dir}/${bin}" "$HOME/.local/bin/${bin}"
+                fi
+            done
+            rm -rf "${temp_dir}"
+
+            # Verify installation
+            if command -v tenv >/dev/null 2>&1 || [[ -x "$HOME/.local/bin/tenv" ]]; then
+                log_success "tenv installed successfully: $("$HOME/.local/bin/tenv" --version 2>/dev/null | head -1 || echo "v${version}")"
+            else
+                log_warning "tenv installed to ~/.local/bin - ensure it's in your PATH"
+            fi
+        else
+            log_error "Failed to download tenv"
+            rm -rf "${temp_dir}"
+            return 1
+        fi
+    else
+        log_info "[DRY RUN] Would download and install tenv binary"
+    fi
+
+    return 0
+}
+
 install_common_packages_debian() {
     log_info "Installing packages for Debian/Ubuntu..."
 
@@ -124,8 +204,13 @@ install_common_packages_debian() {
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
 
+    # Install mise (via official APT repository)
+    install_mise_debian "$@"
+
+    # Install tenv (via binary installation)
+    install_tenv_debian "$@"
+
     # Note: uv is now installed via bin/apps/languages/python.sh
-    # mise is installed in this script for Debian/Ubuntu (via official APT repository)
 }
 
 # Install yay (AUR helper) with skip logic
@@ -192,6 +277,7 @@ install_common_packages_arch() {
     # Official repository packages (installed via pacman)
     local official_packages=(
         mise
+        tenv
         ripgrep
         git-delta
         wget

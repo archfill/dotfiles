@@ -87,6 +87,7 @@ dev_apps=(
   'go'
   'openjdk'
   'openjdk@11'
+  'tenv'
 )
 
 # Development utilities
