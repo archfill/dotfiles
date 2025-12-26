@@ -86,6 +86,9 @@ alias claude-install='npm install -g @anthropic-ai/claude-code'
 alias gemini-install='npm install -g @google/gemini-cli'
 alias codex-install='npm install -g @openai/codex'
 
+## Claude Code utilities
+alias cpclaudemd='cp -i ~/git/claude-configs/templates/CLAUDE-workflow.md ./CLAUDE.md'
+
 ## ghq aliases
 alias ghq-list='ghq list'
 alias ghq-root='ghq root'
