@@ -82,7 +82,6 @@ alias mtasks='mise tasks'            # List available tasks
 alias mrun='mise run'                # Run task from config
 
 ## npm aliases
-alias claude-install='npm install -g @anthropic-ai/claude-code'
 alias gemini-install='npm install -g @google/gemini-cli'
 alias codex-install='npm install -g @openai/codex'
 
