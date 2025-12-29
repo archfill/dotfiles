@@ -47,34 +47,14 @@ fi
 [[ -d "/usr/local/bin" ]] && add_to_path "/usr/local/bin"
 [[ -d "${HOME}/.local/bin" ]] && add_to_path "${HOME}/.local/bin"
 
-# ===== Go (g version manager + official) =====
-# Go environment variables (with defaults)
+# ===== Go (mise + workspace) =====
+# Go workspace environment variables (mise manages Go binary via sdk.zsh)
+# g version manager removed in 2025年12月, migrated to mise
 init_env_var "GOPATH" "$HOME/go"
 init_env_var "GOBIN" "$GOPATH/bin"
 
-# Source g environment if available (highest priority for version management)
-source_if_exists "$HOME/.g/env"
-
-# Add Go binaries to PATH
+# Add Go workspace bin to PATH (for go install binaries)
 add_to_path "$GOBIN"
-
-# Fallback GOROOT detection for manual installations
-if [[ -z "${GOROOT:-}" ]]; then
-  local go_paths=(
-    "$HOME/.local/go"
-    "/usr/local/go"
-    "/opt/homebrew/opt/go/libexec"
-    "/usr/lib/go"
-  )
-
-  for go_path in "${go_paths[@]}"; do
-    if dir_exists "$go_path" && [[ -x "$go_path/bin/go" ]]; then
-      init_env_var "GOROOT" "$go_path"
-      add_to_path "$GOROOT/bin"
-      break
-    fi
-  done
-fi
 
 # ===== Rust (rustup + Cargo) =====
 # Rust environment variables (with defaults)

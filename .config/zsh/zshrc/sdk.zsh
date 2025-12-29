@@ -98,9 +98,10 @@ fi
 # Note: Rust environment variables and PATH are now configured in ~/.config/zsh/.zprofile
 # This ensures they are available in both interactive and non-interactive shells
 
-# ===== Go (g version manager + official) - Already configured in zprofile =====
-# Note: Go environment variables and PATH are now configured in ~/.config/zsh/.zprofile
-# This ensures they are available in both interactive and non-interactive shells
+# ===== Go (mise) - Already configured in zshenv =====
+# Note: Go environment variables and PATH are now configured in ~/.zshenv
+# mise manages Go binary; GOPATH/GOBIN for user workspace binaries
+# g version manager removed in 2025年12月, migrated to mise
 
 # ===== PHP (APT installed) - Optimized =====
 # PHP is now installed via APT package manager instead of phpenv

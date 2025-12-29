@@ -277,7 +277,7 @@ For more help:
 - **Python**: uv package manager (modern pyenv replacement)
 - **Node.js**: mise version manager (replaces nvm/volta)
 - **Rust**: rustup with essential tools (clippy, rustfmt)
-- **Go**: g version manager with development tools
+- **Go**: mise version manager with development tools
 - **Java**: mise version manager (Temurin JDK)
 
 ### Development Environment

@@ -263,7 +263,7 @@ Hyprland
 - **Python**: uv パッケージマネージャー（pyenv の現代的代替）
 - **Node.js**: mise バージョン管理（nvm/volta 代替）
 - **Rust**: rustup と基本ツール（clippy、rustfmt）
-- **Go**: g バージョン管理、開発ツール
+- **Go**: mise バージョン管理、開発ツール
 - **Java**: mise バージョン管理（Temurin JDK）
 
 ### 開発環境

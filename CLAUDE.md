@@ -127,7 +127,7 @@ bin/
 ├── apps/                           # クロスプラットフォーム開発ツール (19スクリプト)
 │   │
 │   ├── languages/                  # プログラミング言語 (8スクリプト)
-│   │   ├── go.sh                   # Go (g version manager)
+│   │   ├── go.sh                   # Go (mise)
 │   │   ├── rust.sh                 # Rust (rustup)
 │   │   ├── java.sh                 # Java 21 LTS (mise)
 │   │   ├── python.sh               # Python (uv)

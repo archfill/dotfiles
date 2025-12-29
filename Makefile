@@ -785,9 +785,9 @@ rust-setup: ## Install Rust stable toolchain via rustup
 	@echo "Installing Rust stable toolchain via rustup..."
 	@bash ./bin/apps/02-rust-rustup.sh
 
-go-setup: ## Install Go latest via g version manager
-	@echo "Installing Go latest via g version manager..."
-	@bash ./bin/apps/01-go-g.sh
+go-setup: ## Install Go latest via mise
+	@echo "Installing Go latest via mise..."
+	@bash ./bin/apps/languages/go.sh
 
 php-setup: ## Install PHP 8.3 via APT package manager
 	@echo "Installing PHP 8.3 via APT package manager..."
@@ -841,7 +841,7 @@ dev-environment: init all-sdks ## Complete development environment setup (dotfil
 	@echo "  • Dotfiles configuration"
 	@echo "  • Java 21 LTS (mise)"
 	@echo "  • Rust stable (rustup)"
-	@echo "  • Go latest (g)"
+	@echo "  • Go latest (mise)"
 	@echo "  • PHP 8.3 (phpenv)"
 	@echo "  • Ruby 3.2 (rbenv)"
 	@echo "  • Terraform CLI"
