@@ -129,7 +129,7 @@ bin/
 │   ├── languages/                  # プログラミング言語 (8スクリプト)
 │   │   ├── go.sh                   # Go (g version manager)
 │   │   ├── rust.sh                 # Rust (rustup)
-│   │   ├── java.sh                 # Java 21 LTS (SDKMAN!)
+│   │   ├── java.sh                 # Java 21 LTS (mise)
 │   │   ├── python.sh               # Python (uv)
 │   │   ├── nodejs.sh               # Node.js (mise)
 │   │   ├── php.sh                  # PHP 8.3

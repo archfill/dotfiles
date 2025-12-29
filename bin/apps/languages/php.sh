@@ -314,7 +314,7 @@ main() {
         return 0
     fi
 
-    # Set PAGER environment variable to avoid SDKMAN issues
+    # Set PAGER environment variable to avoid interactive pager issues
     export PAGER="${PAGER:-cat}"
 
     # Parse command line options

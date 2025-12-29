@@ -777,9 +777,9 @@ macos-test: ## Run macOS-specific environment tests
 
 # ===== Development SDKs Management =====
 # Individual SDK setup commands
-java-setup: ## Install Java 21 LTS via SDKMAN!
-	@echo "Installing Java 21 LTS via SDKMAN!..."
-	@bash ./bin/apps/03-java-sdkman.sh
+java-setup: ## Install Java 21 LTS via mise
+	@echo "Installing Java 21 LTS via mise..."
+	@bash ./bin/apps/languages/java.sh
 
 rust-setup: ## Install Rust stable toolchain via rustup
 	@echo "Installing Rust stable toolchain via rustup..."
@@ -839,7 +839,7 @@ dev-environment: init all-sdks ## Complete development environment setup (dotfil
 	@echo ""
 	@echo "📋 What was installed:"
 	@echo "  • Dotfiles configuration"
-	@echo "  • Java 21 LTS (SDKMAN!)"
+	@echo "  • Java 21 LTS (mise)"
 	@echo "  • Rust stable (rustup)"
 	@echo "  • Go latest (g)"
 	@echo "  • PHP 8.3 (phpenv)"

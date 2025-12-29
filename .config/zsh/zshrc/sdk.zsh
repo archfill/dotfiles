@@ -32,26 +32,25 @@ if ! command -v command_exists &>/dev/null; then
   fi
 fi
 
-# ===== SDKMAN! (Java, Maven, Gradle) - Configuration =====
-# Note: SDKMAN initialization is handled in .zshrc (not here) because:
-# - SDKMAN is primarily an interactive tool with zsh-specific features
-# - Avoids duplicate loading and improves performance
-#
-# JAVA_HOME auto-detection for SDKMAN (runs after SDKMAN initialization)
-setup_sdkman_java_home() {
-  # Only run if SDKMAN is available and JAVA_HOME is not already set by SDKMAN
-  if command_exists sdk && [[ -z "${JAVA_HOME:-}" ]]; then
+# ===== Java (mise) - Configuration =====
+# Note: Java is now managed by mise (polyglot version manager)
+# mise handles JAVA_HOME automatically when java is installed via mise
+# SDKMAN! has been replaced by mise as of 2025年12月
+
+# JAVA_HOME auto-detection for mise
+setup_mise_java_home() {
+  # Only run if mise is available and JAVA_HOME is not already set
+  if command_exists mise && [[ -z "${JAVA_HOME:-}" ]]; then
     local java_home_path
-    java_home_path="$(sdk home java current 2>/dev/null || echo '')"
+    java_home_path="$(mise where java 2>/dev/null || echo '')"
     if [[ -n "$java_home_path" ]] && dir_exists "$java_home_path"; then
       export JAVA_HOME="$java_home_path"
-      # Optional: echo "JAVA_HOME set via SDKMAN: $JAVA_HOME" (disabled for performance)
     fi
   fi
 }
 
 # Run JAVA_HOME setup (conditional, non-blocking)
-setup_sdkman_java_home 2>/dev/null || true
+setup_mise_java_home 2>/dev/null || true
 
 # Fallback JAVA_HOME detection for manual installations - Optimized
 if [[ -z "${JAVA_HOME:-}" ]]; then

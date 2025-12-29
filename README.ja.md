@@ -264,7 +264,7 @@ Hyprland
 - **Node.js**: mise バージョン管理（nvm/volta 代替）
 - **Rust**: rustup と基本ツール（clippy、rustfmt）
 - **Go**: g バージョン管理、開発ツール
-- **Java**: SDKMAN! による JDK 管理
+- **Java**: mise バージョン管理（Temurin JDK）
 
 ### 開発環境
 
