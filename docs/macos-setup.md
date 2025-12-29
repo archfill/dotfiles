@@ -64,10 +64,12 @@ xcode-select --install
 パッケージ管理にはHomebrewを使用します。
 
 #### Apple Silicon Mac (M1/M2)
+
 - インストール先: `/opt/homebrew`
 - PATH: `/opt/homebrew/bin`
 
 #### Intel Mac
+
 - インストール先: `/usr/local`
 - PATH: `/usr/local/bin`
 
@@ -82,16 +84,19 @@ xcode-select --install
 ### インストールされるパッケージ
 
 #### 最小セット（minimal）
+
 ```bash
 # 必須開発ツール
 git curl wget jq yq fzf ripgrep bat tmux make coreutils openssl readline xz zlib
 
 # プログラミング言語・ツール
-uv volta deno go openjdk openjdk@11
+uv mise deno go openjdk openjdk@11
 ```
 
 #### 基本セット（essential）
+
 最小セット + 以下：
+
 ```bash
 # 開発ユーティリティ
 ghq lazygit the_silver_searcher awscli stripe
@@ -101,7 +106,9 @@ wezterm aquaskk hammerspoon kitty android-platform-tools google-cloud-sdk brewle
 ```
 
 #### 完全セット（full）
+
 基本セット + 以下：
+
 ```bash
 # macOS専用ツール
 yabai skhd displayplacer dmg2img wakeonlan
@@ -233,7 +240,7 @@ make debug
 
 - ✅ macOS 14 (Sonoma) - Apple Silicon
 - ✅ macOS 14 (Sonoma) - Intel
-- ✅ macOS 13 (Ventura) - Apple Silicon  
+- ✅ macOS 13 (Ventura) - Apple Silicon
 - ✅ macOS 13 (Ventura) - Intel
 - ✅ macOS 12 (Monterey) - Apple Silicon
 - ✅ macOS 12 (Monterey) - Intel

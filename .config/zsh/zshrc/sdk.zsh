@@ -151,8 +151,8 @@ if command_exists mise; then
   export MISE_LEGACY_VERSION_FILE=1    # Support .node-version, .python-version, etc.
 fi
 
-# ===== Node.js (volta - already configured) =====
-# Note: volta is already configured in separate files
+# ===== Node.js (mise - already configured) =====
+# Note: Node.js is managed by mise (configured above)
 # This is just for reference and compatibility
 
 # ===== Python (uv - already configured) =====
@@ -294,7 +294,7 @@ function sdk_status() {
   # Node.js (optimized)
   if command_exists node; then
     echo "✅ Node.js: $(node --version)"
-    command_exists volta && echo "   Manager: volta $(volta --version)"
+    command_exists mise && echo "   Manager: mise $(mise --version | head -1)"
   else
     echo "❌ Node.js: Not installed"
   fi

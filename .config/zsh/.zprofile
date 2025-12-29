@@ -47,9 +47,6 @@ fi
 #   yaskkserv2 --google-japanese-input=notfound --google-suggest --google-cache-filename=$HOME/.config/skk/yaskkserv2.cache $HOME/.config/skk/dictionary.yaskkserv2
 # fi
 
-# ===== Volta Completion (Interactive Only) =====
-# Completion files should be loaded in .zprofile or .zshrc (interactive shells)
-[[ -f ~/.config/zsh/completions/_volta ]] && fpath+=(~/.config/zsh/completions)
 
 # Google Cloud SDK configuration - optimized with caching
 setup_google_cloud_sdk() {

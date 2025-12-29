@@ -9,7 +9,7 @@ export DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
 
 # Modern package managers are used instead:
 # - uv for Python (replaces pyenv)
-# - volta for Node.js (replaces nvm)
+# - mise for Node.js and other tools (replaces nvm/volta)
 
 # ===== Performance Library & Helper Functions =====
 # Load performance optimization library or define fallback functions
@@ -34,18 +34,18 @@ else
   init_env_var() { [[ -z "${(P)1}" ]] && export "$1"="$2"; }
 fi
 
+# ===== Platform-specific Setup (Homebrew, etc.) =====
+# Load platform package managers FIRST so that version managers (mise, etc.)
+# can override system binaries by being added to PATH later
+if [ -f "$ZDOTDIR/zshenv/$(uname)/init.zsh" ]; then
+  . "$ZDOTDIR/zshenv/$(uname)/init.zsh"
+fi
+
 # ===== Basic PATH Setup =====
 # Essential directories for user binaries
 [[ -d "${HOME}/bin" ]] && add_to_path "${HOME}/bin"
 [[ -d "/usr/local/bin" ]] && add_to_path "/usr/local/bin"
 [[ -d "${HOME}/.local/bin" ]] && add_to_path "${HOME}/.local/bin"
-
-# ===== Node.js Version Management - Volta =====
-# Volta (modern unified solution for Node.js)
-if dir_exists "$HOME/.volta"; then
-  init_env_var "VOLTA_HOME" "$HOME/.volta"
-  add_to_path "$VOLTA_HOME/bin"
-fi
 
 # ===== Go (g version manager + official) =====
 # Go environment variables (with defaults)
@@ -115,8 +115,5 @@ setup_android_sdk "$HOME/AndroidTools" || \
 setup_android_sdk "$HOME/Library/Android" || \
 setup_android_sdk "$HOME/Android/Sdk"  # Common Linux location
 
-if [ -f "$ZDOTDIR/zshenv/`uname`/init.zsh" ]; then . "$ZDOTDIR/zshenv/`uname`/init.zsh"; fi
+# ===== Local Overrides =====
 if [ -f "$HOME/zshenv_local.zsh" ]; then . "$HOME/zshenv_local.zsh"; fi
-
-# Note: Cargo environment is already sourced above (line 85: source_if_exists "$CARGO_HOME/env")
-# . "$HOME/.cargo/env"  # Removed duplicate

@@ -5,9 +5,11 @@
 ## ライブラリ一覧
 
 ### `common.sh` - 基本ユーティリティ
+
 プラットフォーム検出、ログ出力、エラーハンドリングなど、すべてのスクリプトで共通して使用される基本機能を提供します。
 
 **主要機能：**
+
 - `setup_error_handling()` - 統一されたエラーハンドリング設定
 - `log_info()`, `log_success()`, `log_warning()`, `log_error()` - ログ出力
 - `detect_platform()` - プラットフォーム検出（macos/linux/cygwin）
@@ -17,6 +19,7 @@
 - `detect_package_manager()` - パッケージマネージャー検出
 
 **使用例：**
+
 ```bash
 source "${SCRIPT_DIR}/lib/common.sh"
 setup_error_handling
@@ -27,20 +30,24 @@ fi
 ```
 
 ### `config_loader.sh` - 設定管理
+
 バージョン管理、個人設定、環境変数の読み込みを統一的に行います。
 
 **主要機能：**
+
 - `load_config()` - 設定ファイルの一括読み込み
 - `validate_config()` - 設定値の検証
 - `show_config()` - 現在の設定表示（デバッグ用）
 - `init_config()` - 初期設定ファイルの作成
 
 **設定ファイル：**
+
 - `config/versions.conf` - ツールバージョン設定
 - `config/personal.conf` - 個人設定（Git除外）
 - `.env.local` - 環境変数（Git除外）
 
 **使用例：**
+
 ```bash
 source "${SCRIPT_DIR}/lib/config_loader.sh"
 load_config
@@ -50,40 +57,29 @@ echo "Git user: ${USER_NAME} <${USER_EMAIL}>"
 ```
 
 ### `uv_installer.sh` - Python環境管理
+
 uvインストールと設定を統一的に管理します。
 
 **主要機能：**
+
 - `install_uv()` - プラットフォーム別uvインストール
 - `verify_uv_installation()` - インストール確認
 - `cleanup_old_python_tools()` - 古いPythonツールのクリーンアップ
 
 **使用例：**
+
 ```bash
 source "${SCRIPT_DIR}/lib/uv_installer.sh"
 install_uv
 verify_uv_installation
 ```
 
-### `volta_installer.sh` - JavaScript環境管理
-Voltaインストールと設定を統一的に管理します。
-
-**主要機能：**
-- `install_volta()` - VoltaのインストールとPATH設定
-- `install_nodejs_toolchain()` - Node.js LTSとnpmのインストール
-- `setup_volta_complete()` - 完全なVoltaセットアップ
-- `is_volta_installed()` - Voltaインストール状況の確認
-- `setup_volta_environment()` - 環境変数とシェル設定の構成
-
-**使用例：**
-```bash
-source "${SCRIPT_DIR}/lib/volta_installer.sh"
-setup_volta_complete  # Volta + Node.js toolchainの完全セットアップ
-```
-
 ### `symlink_manager.sh` - シンボリックリンク管理
+
 dotfilesのシンボリックリンク作成を統一的に管理します。
 
 **主要機能：**
+
 - `create_symlink()` - 汎用シンボリックリンク作成
 - `create_symlink_from_dotfiles()` - dotfilesからのリンク作成
 - `create_symlinks_batch()` - バッチリンク作成
@@ -91,6 +87,7 @@ dotfilesのシンボリックリンク作成を統一的に管理します。
 - `create_platform_specific_symlinks()` - プラットフォーム固有リンク
 
 **使用例：**
+
 ```bash
 source "${SCRIPT_DIR}/lib/symlink_manager.sh"
 
@@ -165,7 +162,7 @@ vi config/personal.conf
 
 - **ファイル名**: `snake_case.sh`
 - **関数名**: `verb_noun_format()`
-- **変数名**: 
+- **変数名**:
   - 定数: `UPPER_SNAKE_CASE`
   - ローカル変数: `lower_snake_case`
   - 環境変数: `UPPER_SNAKE_CASE` (export)

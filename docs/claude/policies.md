@@ -35,11 +35,13 @@
 ### 📋 2025年6月30日実施済み修正内容
 
 **修正対象スクリプト**:
-1. **`bin/lib/volta_installer.sh`**: Volta環境変数の自動追加を無効化
+
+1. **`bin/lib/volta_installer.sh`**: ※2025年12月にmiseへ移行のため削除
 2. **`bin/apps/52-flutter.sh`**: Flutter/Dart PATHの自動追加を削除
 3. **`bin/apps/php-apt.sh`**: Composer PATH追加処理を削除（既に削除済み）
 
 **修正後の動作**:
+
 - セットアップスクリプト実行後もシェル設定ファイルは変更されない
 - 必要なPATH設定は手動設定案内メッセージで提供
 - ツールのインストール自体は正常に継続
@@ -47,11 +49,13 @@
 ### 🔍 今後の保守ルール
 
 **新規スクリプト作成時**:
+
 - シェル設定ファイルへの書き込み処理を含めてはならない
 - 環境変数設定は一時的（現在セッションのみ）に留める
 - 手動設定案内の提供を標準とする
 
 **既存スクリプト修正時**:
+
 - シェル設定変更処理が含まれていないか必ず確認
 - 発見した場合は即座に手動設定案内に変更
 - CLAUDE.mdに修正内容を記録
@@ -62,8 +66,7 @@
 
 ```bash
 # ~/.config/zsh/zshrc/paths.zsh などで管理
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
+# Note: mise (Node.js管理) は自動的にPATHを管理するため設定不要
 
 export PATH="$HOME/fvm/default/bin:$PATH"      # FVM Flutter
 export PATH="$HOME/.pub-cache/bin:$PATH"       # Dart pub cache
@@ -87,6 +90,7 @@ export PATH="$HOME/.composer/vendor/bin:$PATH" # Composer global tools
 **CRITICAL**: Any modifications MUST include corresponding updates to README files.
 
 ### When to Update READMEs
+
 - New commands added to Makefile
 - New scripts or libraries created
 - Configuration changes affecting user workflow
@@ -94,6 +98,7 @@ export PATH="$HOME/.composer/vendor/bin:$PATH" # Composer global tools
 - New platform support or features
 
 ### Update Process
+
 1. Modify functionality/add features
 2. Test changes with `make test`
 3. Update README.md (English) and README.ja.md (Japanese)

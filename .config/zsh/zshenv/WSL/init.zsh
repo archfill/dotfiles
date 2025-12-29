@@ -7,7 +7,7 @@ if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi "microsoft\|wsl" /proc/version 2>
 
     # ===== WSL PATH Priority Fix =====
     # WSLではWindows側のPATHが自動的に追加されるため、
-    # Linux側のツール（~/.volta, ~/.cargo, ~/.local/bin等）を優先させる
+    # Linux側のツール（~/.cargo, ~/.local/bin等）を優先させる
     #
     # 戦略: Windows側のパスを一時的に保存し、後で追加し直す
     local windows_path=""

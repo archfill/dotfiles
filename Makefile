@@ -746,7 +746,7 @@ macos-setup-essential: ## Setup essential macOS development environment
 		echo ""; \
 		echo "📋 This will install:"; \
 		echo "  • Essential development tools"; \
-		echo "  • Programming languages (uv, volta, etc.)"; \
+		echo "  • Programming languages (uv, mise, etc.)"; \
 		echo "  • Core utilities and GUI apps"; \
 		echo ""; \
 		DOTFILES_INSTALL_MODE=essential bash ./bin/init.sh; \
@@ -846,7 +846,7 @@ dev-environment: init all-sdks ## Complete development environment setup (dotfil
 	@echo "  • Ruby 3.2 (rbenv)"
 	@echo "  • Terraform CLI"
 	@echo "  • Docker Engine setup"
-	@echo "  • Node.js (volta - existing)"
+	@echo "  • Node.js (mise - existing)"
 	@echo "  • Python (uv - existing)"
 	@echo "  • Flutter SDK (existing)"
 	@echo ""

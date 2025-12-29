@@ -81,7 +81,6 @@ essential_apps=(
 dev_apps=(
   'mise'
   'uv'
-  'volta'
   'deno'
   'bun'
   'go'

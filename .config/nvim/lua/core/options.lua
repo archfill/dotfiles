@@ -101,8 +101,12 @@ vim.o.updatetime = 250 -- デフォルト4000ms → 250ms（LSP診断の反応�
 -- Node.js設定（遅延実行）
 -- ================================================================
 vim.defer_fn(function()
-	if vim.fn.executable("volta") == 1 then
-		vim.g.node_host_prog = vim.call("system", 'volta which neovim-node-host | tr -d "\n"')
+	-- mise経由でneovim-node-hostを検索
+	if vim.fn.executable("mise") == 1 then
+		local node_host = vim.fn.system('mise which neovim-node-host 2>/dev/null | tr -d "\n"')
+		if node_host ~= "" and vim.fn.filereadable(node_host) == 1 then
+			vim.g.node_host_prog = node_host
+		end
 	end
 end, 100)
 

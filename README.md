@@ -11,7 +11,7 @@ Cross-platform dotfiles for modern development environments with Japanese langua
 - **Multi-Platform**: macOS, Linux, Windows (Cygwin), Android (Termux)
 - **Modern Tools**: Neovim, WezTerm, Zsh with optimized configurations
 - **Japanese Support**: SKK input method, textlint for technical writing
-- **Development Ready**: Python (uv), Node.js (volta), Flutter, Docker support
+- **Development Ready**: Python (uv), Node.js (mise), Flutter, Docker support
 
 ## 🚀 Quick Start
 
@@ -47,12 +47,12 @@ make help     # Show all commands
 
 ## 🌍 Platform Support
 
-| Platform | Package Manager | Window Manager | Special Features |
-|----------|----------------|----------------|------------------|
-| macOS    | Homebrew       | yabai/skhd     | Unified setup    |
-| Linux    | apt/pacman/dnf | i3/polybar/Hyprland | Systemd services, Wayland |
-| Windows  | Scoop/WSL      | Native         | WSL2 config management |
-| Android  | Termux         | Native         | Mobile optimization |
+| Platform | Package Manager | Window Manager      | Special Features          |
+| -------- | --------------- | ------------------- | ------------------------- |
+| macOS    | Homebrew        | yabai/skhd          | Unified setup             |
+| Linux    | apt/pacman/dnf  | i3/polybar/Hyprland | Systemd services, Wayland |
+| Windows  | Scoop/WSL       | Native              | WSL2 config management    |
+| Android  | Termux          | Native              | Mobile optimization       |
 
 ### Windows WSL Configuration
 
@@ -85,6 +85,7 @@ make hyprland-status
 #### What Gets Installed
 
 **Core Hyprland Packages (8):**
+
 - `hyprland` - Main compositor
 - `hyprcursor` - Cursor management
 - `hypridle` - Idle daemon
@@ -95,21 +96,25 @@ make hyprland-status
 - `xdg-desktop-portal-hyprland` - Desktop portal integration
 
 **Essential Wayland Tools (4):**
+
 - `waybar` - Status bar with customizable modules
 - `fuzzel` - Fast application launcher
 - `swaync` - Notification daemon with notification center
 - `wl-clipboard` - Clipboard utilities
 
 **Screenshot Tools (1):**
+
 - `satty` - Screenshot editor/annotation
 
 **Optional Packages (4):**
+
 - `pavucontrol` - Audio control GUI
 - `brightnessctl` - Brightness control
 - `playerctl` - Media player control (MPRIS)
 - `network-manager-applet` - Network management GUI
 
 **NVIDIA-Specific Packages (2, if NVIDIA GPU detected):**
+
 - `egl-wayland` - Wayland EGL support for NVIDIA
 - `libva-nvidia-driver` - Hardware acceleration for NVIDIA
 
@@ -118,16 +123,19 @@ make hyprland-status
 The installation script automatically detects your GPU and creates `~/.config/hypr/local.conf`:
 
 **NVIDIA GPU (RTX 4070, etc.):**
+
 - Automatically configures 7 environment variables for optimal performance
 - Includes VA-API hardware acceleration support
 - Enables Electron/Chromium Wayland support (VSCode, Discord, etc.)
 - Configures VRR/G-Sync control
 
 **Intel/AMD GPU:**
+
 - Creates empty `local.conf` using default Wayland settings
 - No additional configuration needed
 
 **Multi-PC Setup:**
+
 - `local.conf` is git-ignored (environment-specific)
 - Same dotfiles work across different GPU configurations
 - No git diff conflicts when using different hardware
@@ -135,6 +143,7 @@ The installation script automatically detects your GPU and creates `~/.config/hy
 #### Post-Installation Steps
 
 **For All Users:**
+
 1. Review configuration: `~/.config/hypr/hyprland.conf`
 2. Adjust keybindings if needed (default: Super/Windows key)
 3. Configure monitor layout if using multiple displays
@@ -144,6 +153,7 @@ The installation script automatically detects your GPU and creates `~/.config/hy
 After installation, the script displays a comprehensive setup guide. Key steps:
 
 1. **Kernel Parameters** (REQUIRED):
+
    ```bash
    sudo vim /etc/default/grub
    # Add to GRUB_CMDLINE_LINUX_DEFAULT:
@@ -154,6 +164,7 @@ After installation, the script displays a comprehensive setup guide. Key steps:
    ```
 
 2. **Modprobe Configuration** (RECOMMENDED):
+
    ```bash
    sudo tee /etc/modprobe.d/nvidia.conf <<EOF
    options nvidia_drm modeset=1
@@ -162,6 +173,7 @@ After installation, the script displays a comprehensive setup guide. Key steps:
    ```
 
 3. **Early KMS** (RECOMMENDED):
+
    ```bash
    sudo vim /etc/mkinitcpio.conf
    # Add: MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
@@ -181,11 +193,13 @@ For detailed NVIDIA setup instructions, see: https://wiki.hyprland.org/Nvidia/
 #### Starting Hyprland
 
 **From TTY:**
+
 ```bash
 Hyprland
 ```
 
 **With Display Manager:**
+
 - GDM, SDDM, or LightDM will automatically detect Hyprland
 - Select "Hyprland" from the session menu
 
@@ -204,43 +218,49 @@ All configuration files are symlinked via `make links`:
 
 #### Default Keybindings
 
-| Key | Action |
-|-----|--------|
-| `Super + Return` | Open terminal (ghostty) |
-| `Super + D` | Application launcher (fuzzel) |
-| `Super + Q` | Kill active window |
-| `Super + M` | Exit Hyprland |
-| `Super + F` | Fullscreen |
-| `Super + V` | Toggle floating |
-| `Super + 1-9` | Switch workspace |
-| `Super + Shift + 1-9` | Move window to workspace |
-| `Super + h/j/k/l` | Move focus (vim-like) |
-| `Super + N` | Toggle notification center |
-| `Print` | Screenshot region |
-| `Shift + Print` | Screenshot window |
-| `Ctrl + Print` | Screenshot with annotation |
+| Key                   | Action                        |
+| --------------------- | ----------------------------- |
+| `Super + Return`      | Open terminal (ghostty)       |
+| `Super + D`           | Application launcher (fuzzel) |
+| `Super + Q`           | Kill active window            |
+| `Super + M`           | Exit Hyprland                 |
+| `Super + F`           | Fullscreen                    |
+| `Super + V`           | Toggle floating               |
+| `Super + 1-9`         | Switch workspace              |
+| `Super + Shift + 1-9` | Move window to workspace      |
+| `Super + h/j/k/l`     | Move focus (vim-like)         |
+| `Super + N`           | Toggle notification center    |
+| `Print`               | Screenshot region             |
+| `Shift + Print`       | Screenshot window             |
+| `Ctrl + Print`        | Screenshot with annotation    |
 
 #### Troubleshooting
 
 **Black screen after launch:**
+
 - Check journal: `journalctl -b | grep hyprland`
 - Verify NVIDIA kernel parameter: `cat /sys/module/nvidia_drm/parameters/modeset` (should show `Y`)
 
 **Cursor invisible (NVIDIA):**
+
 - Already configured via `WLR_NO_HARDWARE_CURSORS=1` in `local.conf`
 
 **Electron apps not using Wayland:**
+
 - Already configured via `ELECTRON_OZONE_PLATFORM_HINT=auto` in `local.conf`
 
 **Screen tearing:**
+
 - Check VRR setting in `local.conf`: `__GL_VRR_ALLOWED=0`
 - Try `__GL_VRR_ALLOWED=1` if you have G-Sync/FreeSync monitor
 
 **Monitor not detected:**
+
 - List monitors: `hyprctl monitors`
 - Edit `~/.config/hypr/hyprland.conf` monitor section
 
 For more help:
+
 - Hyprland Wiki: https://wiki.hyprland.org
 - Hyprland Discord: https://discord.gg/hQ9XvMUjjr
 
@@ -253,13 +273,15 @@ For more help:
 ## 🛠️ Development Tools
 
 ### Programming Languages
+
 - **Python**: uv package manager (modern pyenv replacement)
-- **Node.js**: volta toolchain manager (replaces nvm/fnm)
+- **Node.js**: mise version manager (replaces nvm/volta)
 - **Rust**: rustup with essential tools (clippy, rustfmt)
 - **Go**: g version manager with development tools
 - **Java**: SDKMAN! for JDK management
 
 ### Development Environment
+
 - **Editor**: Neovim with LSP, completion, and debugging
 - **Terminal**: WezTerm with custom themes and SSH integration
 - **Git**: Advanced configurations with lazygit interface
