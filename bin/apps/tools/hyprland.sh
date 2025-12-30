@@ -158,13 +158,12 @@ install_hyprland() {
         log_info "NVIDIA GPU detected - Will install additional packages"
     fi
 
-    # Hyprland core packages (9 packages - all from official repos)
+    # Hyprland core packages (8 packages - all from official repos)
     local hypr_packages=(
         hyprland                        # Main compositor
         hyprcursor                      # Cursor management
         hypridle                        # Idle daemon
         hyprlock                        # Screen locker
-        hyprpaper                       # Wallpaper manager
         hyprpicker                      # Color picker
         hyprshot                        # Screenshot utility
         hyprpolkitagent                 # Polkit authentication agent
@@ -207,10 +206,12 @@ install_hyprland() {
         )
     fi
 
-    # AUR packages (2 packages - conditional on yay availability)
+    # AUR packages (4 packages - conditional on yay availability)
     local aur_packages=(
         wlogout         # Wayland logout menu
         overskride      # Bluetooth manager (GTK4, Hyprland-recommended)
+        clipse          # TUI clipboard manager
+        awww-git        # Animated wallpaper daemon for Wayland
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then

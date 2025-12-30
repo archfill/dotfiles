@@ -167,6 +167,9 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	-- Linux用フォントレンダリング最適化
 	LOCAL_CONFIG.freetype_load_target = "HorizontalLcd"
 	LOCAL_CONFIG.freetype_render_target = "HorizontalLcd"
+	-- Linux + Wayland + NVIDIA: ウィンドウが表示されない問題の対策（X11モードで動作）
+	LOCAL_CONFIG.front_end = "WebGpu"
+	LOCAL_CONFIG.enable_wayland = false
 end
 
 ---------------------------------------------------------------

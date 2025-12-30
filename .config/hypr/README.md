@@ -12,7 +12,6 @@
 ├── local.conf              # GPU固有環境変数（.gitignore）
 ├── hypridle.conf           # アイドル管理設定
 ├── hyprlock.conf           # スクリーンロック設定
-├── hyprpaper.conf          # 壁紙設定
 ├── examples/               # 設定例集
 │   ├── monitors.conf.dual  # デュアルディスプレイの例
 │   └── monitors.conf.all-examples  # 全例文集（シングル/デュアル/トリプル等）
@@ -53,6 +52,7 @@ cd ~/.config/hypr
 スクリプトを引数なしで実行すると、**インタラクティブメニュー**が表示されます：
 
 **ステップ1: ディスプレイモード選択**
+
 ```
 ═══════════════════════════════════════════════════════════
   Display Mode Selection
@@ -113,6 +113,7 @@ Enter your choice [1-4] (default: 1):
 ```
 
 **自動検出モードのデフォルト:**
+
 - プライマリモニター: Landscape (0°)
 - セカンダリモニター: Portrait Left (270°)
 - セカンダリ配置: Left of primary（メインの左側）
@@ -136,6 +137,7 @@ Enter your choice [1-4] (default: 1):
 ```
 
 **利用可能なオプション:**
+
 - `-h, --help` - ヘルプメッセージを表示
 - `-a, --auto, -y` - インタラクティブメニューをスキップして自動検出
 - `-m, --mode MODE` - 表示モードを強制 (`single` または `dual`)
@@ -148,10 +150,10 @@ Enter your choice [1-4] (default: 1):
 - **サブディスプレイの配置（上下左右）を選択可能**
 - Hyprland `monitors.conf` を自動生成
 - Waybar `monitors.env` を自動生成 + ビルド
-- **Hyprpaper `hyprpaper.conf` を自動生成（既存の壁紙を保持）**
-- Waybar と Hyprpaper を自動再起動
+- Waybar を自動再起動
 
 **出力例:**
+
 ```
 ℹ  Detecting connected monitors...
 ℹ  Found 2 monitor(s)
@@ -171,6 +173,7 @@ Enter your choice [1-4] (default: 1):
 `make init` 実行時に自動的に `monitors.conf.example` から `monitors.conf` が作成されます。
 
 手動で作成する場合:
+
 ```bash
 cd ~/.config/hypr
 cp monitors.conf.example monitors.conf
@@ -183,6 +186,7 @@ hyprctl monitors
 ```
 
 出力例:
+
 ```
 Monitor DP-6 (ID 1):
     3440x1440@99.98200 at 1920x0
@@ -202,12 +206,14 @@ nvim ~/.config/hypr/monitors.conf
 ```
 
 **シングルディスプレイの場合（デフォルト）:**
+
 ```bash
 # Monitor configuration
 monitor=DP-6,preferred,auto,1  # 実際のモニター名に変更
 ```
 
 **デュアルディスプレイの場合:**
+
 ```bash
 # 例をコピー
 cp ~/.config/hypr/examples/monitors.conf.dual ~/.config/hypr/monitors.conf
@@ -233,6 +239,7 @@ hyprctl reload
 **A:** モニター名が変わった可能性があります。自動検出スクリプトで再設定するのが最も簡単です。
 
 **方法1: makeコマンド経由（推奨）**
+
 ```bash
 # インタラクティブメニューで選択
 make monitors
@@ -242,11 +249,12 @@ make monitors-auto
 ```
 
 このコマンドで以下が自動的に更新されます：
+
 - ✅ `monitors.conf` - モニター設定
 - ✅ `waybar/config.jsonc` - Waybar設定
-- ✅ `hyprpaper.conf` - 壁紙設定（既存の壁紙を保持）
 
 **方法2: スクリプト直接実行**
+
 ```bash
 cd ~/.config/hypr
 ./auto-detect-monitors.sh
@@ -256,6 +264,7 @@ cd ~/.config/hypr
 ```
 
 **方法3: 手動修正**
+
 ```bash
 # 現在のモニター名を確認
 hyprctl monitors
@@ -272,6 +281,7 @@ hyprctl reload
 **A:** 自動検出スクリプトを実行して、希望のモードを選択します。
 
 **makeコマンド経由（推奨）:**
+
 ```bash
 # インタラクティブメニューで選択
 make monitors
@@ -283,6 +293,7 @@ make monitors-auto    # 自動検出
 ```
 
 **スクリプト直接実行:**
+
 ```bash
 # インタラクティブモード
 cd ~/.config/hypr
@@ -295,6 +306,7 @@ cd ~/.config/hypr
 ```
 
 **メニュー選択肢:**
+
 - `1) Auto` - 接続されているモニター数に基づいて自動判定
 - `2) Single` - プライマリモニターのみ使用
 - `3) Dual` - 両方のモニターを使用
@@ -304,17 +316,20 @@ cd ~/.config/hypr
 **A:** インタラクティブモードで各モニターの向きを個別に選択できます。
 
 **方法1: インタラクティブモード（推奨）**
+
 ```bash
 make monitors
 ```
 
 メニューでディスプレイモードを選択後、各モニターの向きを選択：
+
 - **Landscape (0°)** - 通常の横置き
 - **Portrait Right (90°)** - 右に90°回転
 - **Upside Down (180°)** - 180°反転
 - **Portrait Left (270°)** - 左に90°回転（縦置き推奨）
 
 **方法2: 手動で設定を編集**
+
 ```bash
 # monitors.confを編集
 nvim ~/.config/hypr/monitors.conf
@@ -328,6 +343,7 @@ hyprctl reload
 ```
 
 **自動検出モードのデフォルト:**
+
 - `make monitors-auto` を実行すると、セカンダリモニターは自動的に Portrait Left (270°) に設定されます
 
 ### Q: サブディスプレイの配置（上下左右）を変更したい
@@ -335,17 +351,20 @@ hyprctl reload
 **A:** インタラクティブモードで配置を選択できます。
 
 **方法1: インタラクティブモード（推奨）**
+
 ```bash
 make monitors
 ```
 
 ステップ3で配置を選択：
+
 - **Left of primary** - メインの左側（デフォルト）
 - **Right of primary** - メインの右側
 - **Above primary** - メインの上
 - **Below primary** - メインの下
 
 **方法2: 手動で座標を編集**
+
 ```bash
 # monitors.confを編集
 nvim ~/.config/hypr/monitors.conf
@@ -359,6 +378,7 @@ hyprctl reload
 ```
 
 **配置例:**
+
 ```bash
 # 左右配置（横並び）
 monitor=HDMI-A-2,1920x1080@60,0x0,1,transform,3      # 左
@@ -418,12 +438,14 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 ## 📝 Git管理
 
 ### 追跡されるファイル
+
 - `hyprland.conf` - メイン設定
 - `monitors.conf.example` - シングルディスプレイのデフォルト
-- `hypridle.conf`, `hyprlock.conf`, `hyprpaper.conf` - その他設定
+- `hypridle.conf`, `hyprlock.conf` - その他設定
 - `examples/` - 設定例集
 
 ### 追跡されないファイル（.gitignore）
+
 - `monitors.conf` - 環境固有のモニター設定
 - `local.conf` - GPU固有の環境変数
 

@@ -84,13 +84,12 @@ make hyprland-status
 
 #### What Gets Installed
 
-**Core Hyprland Packages (8):**
+**Core Hyprland Packages (7):**
 
 - `hyprland` - Main compositor
 - `hyprcursor` - Cursor management
 - `hypridle` - Idle daemon
 - `hyprlock` - Screen locker
-- `hyprpaper` - Wallpaper manager
 - `hyprpicker` - Color picker
 - `hyprshot` - Screenshot utility
 - `xdg-desktop-portal-hyprland` - Desktop portal integration
@@ -208,7 +207,6 @@ Hyprland
 All configuration files are symlinked via `make links`:
 
 - `~/.config/hypr/hyprland.conf` - Main configuration
-- `~/.config/hypr/hyprpaper.conf` - Wallpaper settings
 - `~/.config/hypr/hypridle.conf` - Idle management (screen dim, lock, suspend)
 - `~/.config/hypr/hyprlock.conf` - Lock screen appearance
 - `~/.config/waybar/` - Status bar configuration

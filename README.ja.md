@@ -70,13 +70,12 @@ make hyprland-status
 
 #### インストールされるパッケージ
 
-**Hyprland コアパッケージ (8個):**
+**Hyprland コアパッケージ (7個):**
 
 - `hyprland` - メインコンポジタ
 - `hyprcursor` - カーソル管理
 - `hypridle` - アイドルデーモン
 - `hyprlock` - スクリーンロック
-- `hyprpaper` - 壁紙マネージャー
 - `hyprpicker` - カラーピッカー
 - `hyprshot` - スクリーンショットユーティリティ
 - `xdg-desktop-portal-hyprland` - デスクトップポータル統合
@@ -194,7 +193,6 @@ Hyprland
 すべての設定ファイルは `make links` でシンボリックリンクされます：
 
 - `~/.config/hypr/hyprland.conf` - メイン設定
-- `~/.config/hypr/hyprpaper.conf` - 壁紙設定
 - `~/.config/hypr/hypridle.conf` - アイドル管理（画面減光、ロック、サスペンド）
 - `~/.config/hypr/hyprlock.conf` - ロック画面の外観
 - `~/.config/waybar/` - ステータスバー設定
