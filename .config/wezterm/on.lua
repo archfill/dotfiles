@@ -359,7 +359,7 @@ wezterm.on("trigger-nvim-with-scrollback", function(window, pane)
 		window:perform_action(
 			act({
 				SpawnCommandInNewTab = {
-					args = { os.getenv("HOME") .. "/.local/share/zsh/zinit/polaris/bin/nvim", name },
+					args = { "nvim", name },
 				},
 			}),
 			pane
