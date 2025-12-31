@@ -1,12 +1,13 @@
 #!/bin/bash
 # Hyprland Keybind Cheatsheet
-# Parses hyprland.conf and displays keybindings in fuzzel
+# Parses keybind config and displays keybindings in fuzzel
 
-CONFIG_FILE="$HOME/.config/hypr/hyprland.conf"
+CONFIG_DIR="$HOME/.config/hypr"
+KEYBINDS_FILE="$CONFIG_DIR/modules/keybinds.conf"
 
 # Parse keybindings from config
 parse_keybinds() {
-    grep -E "^bind[m]?\s*=" "$CONFIG_FILE" | while read -r line; do
+    grep -E "^bind[m]?\s*=" "$KEYBINDS_FILE" | while read -r line; do
         # Remove inline comments first
         line="${line%%#*}"
 
@@ -24,6 +25,7 @@ parse_keybinds() {
 
         # Format modifier keys
         mods="${mods//\$mainMod/Super}"
+        mods="${mods//\$hyper/Hyper}"
 
         # Create key display
         if [[ -n "$mods" ]]; then
