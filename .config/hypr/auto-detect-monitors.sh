@@ -656,16 +656,16 @@ fi
 log_success "Generated: $WAYBAR_MONITORS_ENV"
 
 # =====================================================
-# Build Waybar Config
+# Build Waybar Config (disabled - using direct config editing)
+# Moved to: ~/.config/hypr/scripts/build-config.sh
 # =====================================================
 
-if [[ -f "${WAYBAR_DIR}/build-config.sh" ]]; then
-    log_info "Building Waybar configuration..."
-    cd "$WAYBAR_DIR"
-    ./build-config.sh
-else
-    log_warning "Waybar build script not found, skipping"
-fi
+# if [[ -f "${SCRIPT_DIR}/scripts/build-config.sh" ]]; then
+#     log_info "Building Waybar configuration..."
+#     "${SCRIPT_DIR}/scripts/build-config.sh"
+# else
+#     log_warning "Waybar build script not found, skipping"
+# fi
 
 # =====================================================
 # Summary

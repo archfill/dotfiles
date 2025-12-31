@@ -94,10 +94,12 @@ make hyprland-status
 - `hyprshot` - Screenshot utility
 - `xdg-desktop-portal-hyprland` - Desktop portal integration
 
-**Essential Wayland Tools (4):**
+**Essential Wayland Tools (6):**
 
 - `waybar` - Status bar with customizable modules
-- `fuzzel` - Fast application launcher
+- `rofi` - Customizable application launcher
+- `rofi-calc` - Calculator plugin for rofi
+- `rofi-emoji` - Emoji picker plugin for rofi
 - `swaync` - Notification daemon with notification center
 - `wl-clipboard` - Clipboard utilities
 
@@ -210,27 +212,27 @@ All configuration files are symlinked via `make links`:
 - `~/.config/hypr/hypridle.conf` - Idle management (screen dim, lock, suspend)
 - `~/.config/hypr/hyprlock.conf` - Lock screen appearance
 - `~/.config/waybar/` - Status bar configuration
-- `~/.config/fuzzel/fuzzel.ini` - Application launcher
+- `~/.config/rofi/` - Application launcher
 - `~/.config/swaync/` - Notification center
 - `~/.config/hypr/local.conf` - Auto-generated, GPU-specific (git-ignored)
 
 #### Default Keybindings
 
-| Key                   | Action                        |
-| --------------------- | ----------------------------- |
-| `Super + Return`      | Open terminal (ghostty)       |
-| `Super + D`           | Application launcher (fuzzel) |
-| `Super + Q`           | Kill active window            |
-| `Super + M`           | Exit Hyprland                 |
-| `Super + F`           | Fullscreen                    |
-| `Super + V`           | Toggle floating               |
-| `Super + 1-9`         | Switch workspace              |
-| `Super + Shift + 1-9` | Move window to workspace      |
-| `Super + h/j/k/l`     | Move focus (vim-like)         |
-| `Super + N`           | Toggle notification center    |
-| `Print`               | Screenshot region             |
-| `Shift + Print`       | Screenshot window             |
-| `Ctrl + Print`        | Screenshot with annotation    |
+| Key                   | Action                      |
+| --------------------- | --------------------------- |
+| `Super + Return`      | Open terminal (ghostty)     |
+| `Super + D`           | Application launcher (rofi) |
+| `Super + Q`           | Kill active window          |
+| `Super + M`           | Exit Hyprland               |
+| `Super + F`           | Fullscreen                  |
+| `Super + V`           | Toggle floating             |
+| `Super + 1-9`         | Switch workspace            |
+| `Super + Shift + 1-9` | Move window to workspace    |
+| `Super + h/j/k/l`     | Move focus (vim-like)       |
+| `Super + N`           | Toggle notification center  |
+| `Print`               | Screenshot region           |
+| `Shift + Print`       | Screenshot window           |
+| `Ctrl + Print`        | Screenshot with annotation  |
 
 #### Troubleshooting
 

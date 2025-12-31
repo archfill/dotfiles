@@ -82,10 +82,10 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ waybar: Not installed"; \
 	fi
-	@if command -v fuzzel >/dev/null 2>&1; then \
-		echo "✅ fuzzel: $$(fuzzel --version 2>&1 | head -1)"; \
+	@if command -v rofi >/dev/null 2>&1; then \
+		echo "✅ rofi: $$(rofi -version 2>&1 | head -1)"; \
 	else \
-		echo "❌ fuzzel: Not installed"; \
+		echo "❌ rofi: Not installed"; \
 	fi
 	@if command -v swaync >/dev/null 2>&1; then \
 		echo "✅ swaync: installed"; \
@@ -104,10 +104,10 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ waybar config: missing"; \
 	fi
-	@if [ -f ~/.config/fuzzel/fuzzel.ini ]; then \
-		echo "✅ fuzzel config: exists"; \
+	@if [ -d ~/.config/rofi ]; then \
+		echo "✅ rofi config: exists"; \
 	else \
-		echo "❌ fuzzel config: missing"; \
+		echo "❌ rofi config: missing"; \
 	fi
 	@if [ -f ~/.config/swaync/config.json ]; then \
 		echo "✅ swaync config: exists"; \

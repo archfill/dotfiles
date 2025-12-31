@@ -80,10 +80,12 @@ make hyprland-status
 - `hyprshot` - スクリーンショットユーティリティ
 - `xdg-desktop-portal-hyprland` - デスクトップポータル統合
 
-**必須 Wayland ツール (4個):**
+**必須 Wayland ツール (6個):**
 
 - `waybar` - カスタマイズ可能なステータスバー
-- `fuzzel` - 高速アプリケーションランチャー
+- `rofi` - カスタマイズ可能なアプリケーションランチャー
+- `rofi-calc` - rofi 計算機プラグイン
+- `rofi-emoji` - rofi 絵文字ピッカー
 - `swaync` - 通知センター付き通知デーモン
 - `wl-clipboard` - クリップボードユーティリティ
 
@@ -196,27 +198,27 @@ Hyprland
 - `~/.config/hypr/hypridle.conf` - アイドル管理（画面減光、ロック、サスペンド）
 - `~/.config/hypr/hyprlock.conf` - ロック画面の外観
 - `~/.config/waybar/` - ステータスバー設定
-- `~/.config/fuzzel/fuzzel.ini` - アプリケーションランチャー
+- `~/.config/rofi/` - アプリケーションランチャー
 - `~/.config/swaync/` - 通知センター
 - `~/.config/hypr/local.conf` - 自動生成、GPU 固有（git 管理外）
 
 #### デフォルトキーバインド
 
-| キー                  | 動作                                 |
-| --------------------- | ------------------------------------ |
-| `Super + Return`      | ターミナル起動（ghostty）            |
-| `Super + D`           | アプリケーションランチャー（fuzzel） |
-| `Super + Q`           | アクティブウィンドウを閉じる         |
-| `Super + M`           | Hyprland 終了                        |
-| `Super + F`           | フルスクリーン                       |
-| `Super + V`           | フローティング切り替え               |
-| `Super + 1-9`         | ワークスペース切り替え               |
-| `Super + Shift + 1-9` | ウィンドウを別ワークスペースへ移動   |
-| `Super + h/j/k/l`     | フォーカス移動（vim スタイル）       |
-| `Super + N`           | 通知センター切り替え                 |
-| `Print`               | 領域スクリーンショット               |
-| `Shift + Print`       | ウィンドウスクリーンショット         |
-| `Ctrl + Print`        | 注釈付きスクリーンショット           |
+| キー                  | 動作                               |
+| --------------------- | ---------------------------------- |
+| `Super + Return`      | ターミナル起動（ghostty）          |
+| `Super + D`           | アプリケーションランチャー（rofi） |
+| `Super + Q`           | アクティブウィンドウを閉じる       |
+| `Super + M`           | Hyprland 終了                      |
+| `Super + F`           | フルスクリーン                     |
+| `Super + V`           | フローティング切り替え             |
+| `Super + 1-9`         | ワークスペース切り替え             |
+| `Super + Shift + 1-9` | ウィンドウを別ワークスペースへ移動 |
+| `Super + h/j/k/l`     | フォーカス移動（vim スタイル）     |
+| `Super + N`           | 通知センター切り替え               |
+| `Print`               | 領域スクリーンショット             |
+| `Shift + Print`       | ウィンドウスクリーンショット       |
+| `Ctrl + Print`        | 注釈付きスクリーンショット         |
 
 #### トラブルシューティング
 

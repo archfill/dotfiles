@@ -90,7 +90,7 @@ automatically-unhide-macos-hidden-apps = false
     # Open terminal with alt + enter (like in i3/Hyprland)
     alt-enter = 'exec-and-forget open -na Ghostty'
 
-    # Open Alfred (app launcher) - like Hyprland's Super+D for fuzzel
+    # Open Alfred (app launcher) - like Hyprland's Super+D for rofi
     alt-d = 'exec-and-forget open -a Alfred'
 
     # Open Finder (file manager) - like Hyprland's Super+E for nautilus

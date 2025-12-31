@@ -43,11 +43,12 @@ BASIC_CONFIGS=(
     ".mmcp.json"
     ".config/hypr"
     ".config/waybar"
-    ".config/fuzzel"
     ".config/swaync"
     ".config/wlogout"
     ".config/scripts"
     ".config/eww"
+    ".config/matugen"
+    ".config/rofi"
 )
 
 # 基本設定ファイルのシンボリックリンク作成
