@@ -324,6 +324,7 @@ install_common_packages_arch() {
         khard
         bun-bin
         ghostty
+        eww
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
