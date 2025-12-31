@@ -1,202 +1,92 @@
 /* ============================================================
-   Catppuccin Mocha カラーパレット (GTK3 @define-color)
+   カラーパレット読み込み (matugen - Material You)
    ============================================================ */
-@define-color ctp_rosewater #f5e0dc;
-@define-color ctp_flamingo #f2cdcd;
-@define-color ctp_pink #f5c2e7;
-@define-color ctp_mauve #cba6f7;
-@define-color ctp_red #f38ba8;
-@define-color ctp_maroon #eba0ac;
-@define-color ctp_peach #fab387;
-@define-color ctp_yellow #f9e2af;
-@define-color ctp_green #a6e3a1;
-@define-color ctp_teal #94e2d5;
-@define-color ctp_sky #89dceb;
-@define-color ctp_sapphire #74c7ec;
-@define-color ctp_blue #89b4fa;
-@define-color ctp_lavender #b4befe;
-
-@define-color ctp_text #cdd6f4;
-@define-color ctp_subtext1 #bac2de;
-@define-color ctp_subtext0 #a6adc8;
-
-@define-color ctp_overlay2 #9399b2;
-@define-color ctp_overlay1 #7f849c;
-@define-color ctp_overlay0 #6c7086;
-@define-color ctp_surface2 #585b70;
-@define-color ctp_surface1 #45475a;
-@define-color ctp_surface0 #313244;
-@define-color ctp_base #1e1e2e;
-@define-color ctp_mantle #181825;
-@define-color ctp_crust #11111b;
+@import "colors/matugen.css";
 
 /* ============================================================
    グローバルスタイル
    ============================================================ */
 * {
-    border: none;
-    border-radius: 0;
-    font-family: "HackGen35 Console NF", "JetBrainsMono Nerd Font", "Noto Sans CJK JP", sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    min-height: 0;
+  border: none;
+  border-radius: 0;
+
+  font-family: "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", sans-serif;
+  font-weight: bold;
+
+  min-height: 0;
+  padding: 0;
+  margin: 0;
 }
 
 window#waybar {
-    background: rgba(30, 30, 46, 0.85);
-    color: @ctp_text;
-    margin: 8px 12px 0 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  background: transparent;
 }
 
 tooltip {
-    background: rgba(30, 30, 46, 0.95);
-    border-radius: 8px;
-    padding: 10px 14px;
+  background: @bg0;
+  border: 1px solid @bg3;
+  border-radius: 12px;
 }
 
 tooltip label {
-    color: @ctp_text;
+  color: @fg0;
+  padding: 6px;
 }
 
 /* ========================================
    ワークスペース - モダンピルデザイン
    ======================================== */
 #workspaces {
-    margin: 3px 3px;
-    padding: 2px 4px;
-    background: transparent;
+  background-color: @bg0;
+  padding: 5px 3px;
+  margin: 0 0 0 12px;
+  border-radius: 18px;
+  border: 1px solid @bg1;
+  color: @fg0;
 }
 
 #workspaces button {
-    padding: 0;
-    min-width: 32px;
-    min-height: 32px;
-    color: @ctp_overlay0;
-    background: transparent;
-    border-radius: 6px;
-    margin: 0 2px;
-    font-size: 14px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#workspaces button.empty {
-    color: @ctp_surface1;
-    background: transparent;
+  padding: 0px 6px;
+  margin: 0px 3px;
+  border-radius: 50px;
+  color: transparent;
+  background-color: @bg1;
+  transition: all 0.3s ease-in-out;
 }
 
 #workspaces button.active {
-    color: @ctp_base;
-    background: rgba(137, 180, 250, 0.7);
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#workspaces button.urgent {
-    color: @ctp_base;
-    background: rgba(243, 139, 168, 0.7);
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: @blue;
+  color: @bg0;
+  min-width: 50px;
+  transition: all 0.3s ease-in-out;
+  font-size: 13px;
 }
 
 #workspaces button:hover {
-    background: rgba(137, 180, 250, 0.18);
-    color: @ctp_lavender;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: @purple;
+  color: @bg0;
+  border-radius: 16px;
+  min-width: 50px;
+  background-size: 400% 400%;
+}
+
+#workspaces button.urgent {
+  background-color: @red;
+  color: @bg0;
+  border-radius: 16px;
+  min-width: 50px;
+  background-size: 400% 400%;
+  transition: all 0.3s ease-in-out;
 }
 
 /* ========================================
-   左側モジュール
+   モジュール - 統一デザイン
    ======================================== */
-#custom-launcher {
-    margin: 3px 3px;
-    padding: 4px 12px;
-    color: @ctp_blue;
-    background: transparent;
-    border-radius: 8px;
-    font-size: 18px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#custom-launcher:hover {
-    background: rgba(137, 180, 250, 0.25);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#window {
-    margin: 3px 3px;
-    padding: 4px 12px;
-    color: @ctp_base;
-    background: rgba(203, 166, 247, 0.7);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* ウィンドウがないときは完全に非表示 */
-window#waybar.empty #window {
-    min-width: 0;
-    min-height: 0;
-    padding: 0;
-    margin: 0;
-    border: none;
-    opacity: 0;
-}
-
-#submap {
-    margin: 3px 3px;
-    padding: 4px 12px;
-    color: @ctp_base;
-    background: rgba(249, 226, 175, 0.7);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#taskbar {
-    margin: 3px 3px;
-}
-
-#taskbar button {
-    padding: 3px 8px;
-    margin: 0 2px;
-    border-radius: 6px;
-    background: transparent;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#taskbar button.active {
-    background: rgba(137, 180, 250, 0.7);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#taskbar button:hover {
-    background: rgba(137, 180, 250, 0.2);
-}
-
-/* ========================================
-   中央モジュール
-   ======================================== */
-#mpris {
-    margin: 3px 3px;
-    padding: 4px 12px;
-    color: @ctp_base;
-    background: rgba(203, 166, 247, 0.7);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#clock {
-    margin: 3px 3px;
-    padding: 4px 14px;
-    color: @ctp_base;
-    background: rgba(137, 180, 250, 0.7);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* ========================================
-   右側モジュール - 統一デザイン
-   ======================================== */
+#clock,
+#mpris,
+#submap,
+#taskbar,
+#tray,
 #custom-updates,
 #idle_inhibitor,
 #pulseaudio,
@@ -206,134 +96,85 @@ window#waybar.empty #window {
 #memory,
 #custom-disk,
 #backlight,
-#battery {
-    margin: 3px 3px;
-    padding: 4px 10px;
-    color: @ctp_base;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+#battery,
+#custom-notification {
+  background-color: @bg0;
+  padding: 0 15px 0 15px;
+  margin: 0 0 0 12px;
+  border-radius: 50px;
+  border: 1px solid @bg1;
 }
 
-/* アップデート */
-#custom-updates {
-    background: rgba(249, 226, 175, 0.7);
+/* ========================================
+   モジュール - 個別カラー
+   ======================================== */
+#clock {
+  color: @blue;
 }
 
-/* カフェインモード */
-#idle_inhibitor {
-    background: rgba(108, 112, 134, 0.5);
-    font-size: 18px;
+#mpris {
+  color: @pink;
 }
 
-#idle_inhibitor.activated {
-    background: rgba(249, 226, 175, 0.7);
+#submap {
+  color: @yellow;
 }
 
-/* オーディオ */
-#pulseaudio {
-    background: rgba(137, 180, 250, 0.7);
+#taskbar {
+  color: @fg0;
 }
 
-#pulseaudio.muted {
-    background: rgba(108, 112, 134, 0.5);
+#taskbar button {
+  padding: 0 4px;
+  margin: 0 2px;
 }
 
-/* Bluetooth */
-#bluetooth {
-    background: rgba(137, 220, 235, 0.7);
-    font-size: 18px;
-}
-
-#bluetooth.disconnected {
-    background: rgba(108, 112, 134, 0.5);
-}
-
-/* ネットワーク */
-#network {
-    background: rgba(137, 220, 235, 0.7);
-    font-size: 18px;
-}
-
-#network.disconnected {
-    background: rgba(243, 139, 168, 0.7);
-}
-
-/* CPU */
-#cpu {
-    background: rgba(250, 179, 135, 0.7);
-}
-
-/* メモリ */
-#memory {
-    background: rgba(148, 226, 213, 0.7);
-}
-
-/* ディスク */
-#custom-disk {
-    background: rgba(180, 190, 254, 0.7);
-}
-
-#custom-disk.warning {
-    background: rgba(249, 226, 175, 0.7);
-}
-
-#custom-disk.critical {
-    background: rgba(243, 139, 168, 0.7);
-}
-
-/* バックライト */
-#backlight {
-    background: rgba(250, 179, 135, 0.7);
-}
-
-/* バッテリー */
-#battery {
-    background: rgba(166, 227, 161, 0.7);
-}
-
-#battery.charging {
-    background: rgba(166, 227, 161, 0.7);
-}
-
-#battery.warning:not(.charging) {
-    background: rgba(249, 226, 175, 0.7);
-}
-
-#battery.critical:not(.charging) {
-    background: rgba(243, 139, 168, 0.7);
-}
-
-/* トレイ */
 #tray {
-    margin: 3px 3px;
-    padding: 4px 8px;
-    background: transparent;
-    border-radius: 8px;
+  color: @fg0;
+  margin: 0 12px;
 }
 
-#tray > .passive {
-    -gtk-icon-effect: dim;
+#idle_inhibitor {
+  color: @yellow;
 }
 
-#tray > .needs-attention {
-    -gtk-icon-effect: highlight;
-    background: rgba(243, 139, 168, 0.2);
-    border-radius: 6px;
+#pulseaudio {
+  color: @cyan;
 }
 
-/* 電源ボタン */
-#custom-power {
-    margin: 3px 3px;
-    padding: 4px 12px;
-    color: @ctp_red;
-    background: transparent;
-    border-radius: 8px;
-    font-size: 18px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+#bluetooth {
+  color: @blue;
 }
 
-#custom-power:hover {
-    background: rgba(243, 139, 168, 0.25);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+#network {
+  color: @sapphire;
+}
+
+#cpu {
+  color: @orange;
+}
+
+#memory {
+  color: @green;
+}
+
+#custom-disk {
+  color: @purple;
+}
+
+#battery {
+  color: @green;
+}
+
+#custom-updates {
+  color: @lavender;
+}
+
+#backlight {
+  color: @yellow;
+}
+
+#custom-notification {
+  color: @red;
+  margin: 0 12px 0 12px;
 }

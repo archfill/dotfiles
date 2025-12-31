@@ -2,288 +2,197 @@
   // ============================================================
   // グローバル設定
   // ============================================================
-  "layer": "top",
   "position": "top",
-  "height": 34,
-  "spacing": 0,
+  "margin-top": 15,
+  "reload_style_on_change": true,
   // ============================================================
   // モジュール配置
   // ============================================================
   "modules-left": [
-    "custom/launcher", // アプリランチャー
-    "hyprland/workspaces", // ワークスペース一覧
-    "hyprland/submap", // サブマップ表示
-    "wlr/taskbar", // タスクバー
-    "hyprland/window" // ウィンドウタイトル
+    "clock",
+    "mpris",
+    "hyprland/workspaces",
+    "wlr/taskbar",
+    "hyprland/submap"
   ],
-  "modules-center": [
-    "mpris", // メディアプレイヤー情報
-    "clock" // 時計・カレンダー
-  ],
+  "modules-center": ["tray"],
   "modules-right": [
-    "custom/updates", // システムアップデート
-    "idle_inhibitor", // アイドル抑制（カフェインモード）
-    "pulseaudio", // 音量コントロール
-    "bluetooth", // Bluetooth
-    "network", // ネットワーク
-    "cpu", // CPU使用率
-    "memory", // メモリ使用率
-    "custom/disk", // ディスク使用率
-    "backlight", // 画面輝度
-    "battery", // バッテリー
-    "tray", // システムトレイ
-    "custom/power" // 電源メニュー
+    "custom/updates",
+    "idle_inhibitor",
+    "pulseaudio",
+    "bluetooth",
+    "network",
+    "cpu",
+    "memory",
+    "custom/disk",
+    "backlight",
+    "battery",
+    "custom/notification"
   ],
   // ============================================================
-  // 左側モジュール設定
-  // ============================================================
-  "hyprland/workspaces": {
-    "format": "{icon}",
-    "format-icons": {
-      "active": "",
-      "default": "",
-      "empty": "",
-      "urgent": ""
-    },
-    "on-click": "activate",
-    // ワークスペース割り当て
-    // build-config.shで自動調整:
-    //   - シングル: DP-6 に 1-10
-    //   - デュアル: DP-6 に 1-5, HDMI-A-2 に 6-10
-    "persistent-workspaces": {
-      "DP-6": [
-        1,
-        2,
-        3,
-        4,
-        5
-      ],
-      "HDMI-A-2": [
-        6,
-        7,
-        8,
-        9,
-        10
-      ]
-    },
-    "all-outputs": false,
-    "show-special": false
-  },
-  "hyprland/window": {
-    "format": "{}",
-    "max-length": 50,
-    "separate-outputs": true,
-    "icon": true,
-    "icon-size": 16,
-    "tooltip": true,
-    "tooltip-format": "{title}",
-    "rewrite": {
-      "(.*) — Mozilla Firefox": "🌐 $1",
-      "(.*) - Visual Studio Code": " $1",
-      "(.*) - Chromium": "🌐 $1",
-      "(.*) - ghostty": " $1"
-    }
-  },
-  "hyprland/submap": {
-    "format": "<span style=\"italic\">  {}</span>",
-    "tooltip": false
-  },
-  "wlr/taskbar": {
-    "format": "{icon}",
-    "icon-size": 18,
-    "icon-theme": "Papirus-Dark",
-    "tooltip-format": "{title}",
-    "on-click": "activate",
-    "on-click-middle": "close",
-    "ignore-list": [],
-    "app_ids-mapping": {
-      "firefoxdeveloperedition": "firefox-developer-edition"
-    }
-  },
-  "custom/launcher": {
-    "format": "",
-    "on-click": "fuzzel",
-    "tooltip": false
-  },
-  // ============================================================
-  // 中央モジュール設定
+  // モジュール
   // ============================================================
   "clock": {
-    "timezone": "Asia/Tokyo",
-    "format": "\uf017 {:%Y-%m-%d %H:%M}",
-    "format-alt": "\uf017 {:%Y年%m月%d日 %H:%M}",
-    "tooltip-format": "<big>{:%Y年 %B}</big>\n<tt><small>{calendar}</small></tt>",
-    "on-click": "gnome-calendar",
-    "calendar": {
-      "mode": "year",
-      "mode-mon-col": 3,
-      "weeks-pos": "right",
-      "on-scroll": 1,
-      "on-click-right": "mode",
-      "format": {
-        "months": "<span color='#89b4fa'><b>{}</b></span>",
-        "days": "<span color='#cdd6f4'><b>{}</b></span>",
-        "weeks": "<span color='#a6e3a1'><b>W{}</b></span>",
-        "weekdays": "<span color='#f9e2af'><b>{}</b></span>",
-        "today": "<span color='#f38ba8'><b><u>{}</u></b></span>"
-      }
-    }
+    "interval": 60,
+    "format": "{:%H:%M}",
+    "max-length": 25
   },
-  // ============================================================
-  // 右側モジュール設定
-  // ============================================================
-  "cpu": {
-    "format": "\uf4bc {usage}%",
-    "format-alt": " {avg_frequency}GHz",
-    "tooltip-format": "使用率: {usage}%\n平均周波数: {avg_frequency}GHz\nコア別:\n{load}",
-    "interval": 2,
-    "on-click": "ghostty -e btop"
-  },
-  "memory": {
-    "format": "\uefc5 {percentage}%",
-    "format-alt": " {used:0.1f}G/{total:0.1f}G",
-    "tooltip-format": "使用中: {used:0.2f}GB / {total:0.2f}GB\n使用率: {percentage}%\nスワップ: {swapUsed:0.2f}GB / {swapTotal:0.2f}GB ({swapPercentage}%)",
-    "interval": 2,
-    "on-click": "ghostty -e btop"
-  },
-  "backlight": {
-    "device": "intel_backlight",
-    "format": "{icon} {percent}%",
-    "format-icons": [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
-    ],
-    "on-scroll-up": "brightnessctl set 5%+",
-    "on-scroll-down": "brightnessctl set 5%-"
-  },
-  "battery": {
-    "states": {
-      "warning": 30,
-      "critical": 15
-    },
-    "format": "{icon} {capacity}%",
-    "format-charging": " {capacity}%",
-    "format-plugged": " {capacity}%",
-    "format-alt": "{icon} {time}",
-    "format-icons": [
-      "",
-      "",
-      "",
-      "",
-      ""
-    ]
-  },
-  "network": {
-    "format-wifi": "\uf1eb",
-    "format-ethernet": "\udb80\ude01",
-    "format-disconnected": "\udb80\udf19",
-    "tooltip-format": "{ifname}: {ipaddr}/{cidr}\nゲートウェイ: {gwaddr}\n信号強度: {signalStrength}%\nSSID: {essid}\n速度: ↓{bandwidthDownBits} ↑{bandwidthUpBits}",
-    "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}\nゲートウェイ: {gwaddr}\n速度: ↓{bandwidthDownBits} ↑{bandwidthUpBits}",
-    "tooltip-format-disconnected": "ネットワーク接続なし",
-    "interval": 2,
-    "on-click": "nm-connection-editor",
-    "on-click-right": "ghostty -e nmtui"
-  },
-  "pulseaudio": {
-    "format": "{icon} {volume}%",
-    "format-muted": "\udb81\udf5f Muted",
-    "format-bluetooth": "{icon} {volume}%",
-    "format-bluetooth-muted": " {icon} Muted",
-    "format-source": " {volume}%",
-    "format-source-muted": "",
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
     "format-icons": {
-      "headphone": "󰋋",
-      "headset": "󰋎",
-      "phone": "󰏲",
-      "default": [
-        "󰓃",
-        "󰓃",
-        "󰓃"
-      ]
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "urgent": "",
+      "active": "",
+      "default": ""
     },
-    "tooltip-format": "{desc}\n音量: {volume}%",
-    "scroll-step": 5,
-    "on-click": "pavucontrol",
-    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
-    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    "sort-by-number": true,
+    "persistent-workspaces": {
+      "DP-6": [1, 2, 3, 4, 5],
+      "HDMI-A-2": [6, 7, 8, 9, 10]
+    }
   },
   "tray": {
     "icon-size": 21,
     "spacing": 10
   },
-  "bluetooth": {
-    "format": "\udb80\udcb2",
-    "format-connected": "\udb80\udcaf",
-    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
-    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
-    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
-    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
-    "on-click": "overskride"
+  "pulseaudio": {
+    "format": "{volume}% {icon}",
+    "format-bluetooth": "{volume}% {icon}",
+    "format-muted": "",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "phone-muted": "",
+      "portable": "",
+      "car": "",
+      "default": ["", ""]
+    },
+    "scroll-step": 1,
+    "on-click": "pavucontrol",
+    "ignored-sinks": ["Easy Effects Sink"]
   },
-  "custom/updates": {
-    "format": "󱧕 {}",
-    "interval": 3600,
-    "exec": "(checkupdates; yay -Qua) 2>/dev/null | wc -l || echo 0",
-    "exec-if": "exit 0",
-    "on-click": "ghostty -e yay -Syu",
-    "tooltip-format": "Available updates: {}"
+  "network": {
+    "interface": "enp34s0",
+    "format": "{ifname}",
+    "format-wifi": "{essid} ({signalStrength}%) ",
+    "format-ethernet": "{ipaddr}/{cidr} 󰊗",
+    "format-disconnected": "", //An empty format will hide the module.
+    "tooltip-format": "{ifname} via {gwaddr} 󰊗",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
+    "tooltip-format-ethernet": "{ifname} ",
+    "tooltip-format-disconnected": "Disconnected",
+    "max-length": 50
   },
-  "custom/power": {
-    "format": "⏻",
-    "on-click": "wlogout",
-    "tooltip": "電源メニュー"
+  "battery": {
+    "interval": 60,
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{capacity}% {icon}",
+    "format-icons": ["", "", "", "", ""],
+    "max-length": 25
+  },
+  "custom/notification": {
+    "tooltip": true,
+    "format": "<span size='16pt'>{icon}</span>",
+    "format-icons": {
+      "notification": "󱅫",
+      "none": "󰂜",
+      "dnd-notification": "󰂠",
+      "dnd-none": "󰪓",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰪑",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "mpris": {
+    "format": "DEFAULT: {player_icon} {dynamic}",
+    "format-paused": "DEFAULT: {status_icon} <i>{dynamic}</i>",
+    "player-icons": {
+      "default": "▶",
+      "mpv": "🎵"
+    },
+    "status-icons": {
+      "paused": "⏸"
+    },
+    "ignored-players": ["firefox", "brave"]
+  },
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 21,
+    "icon-theme": "Numix-Circle",
+    "tooltip-format": "{title}",
+    "on-click": "activate",
+    "on-click-middle": "close",
+    "ignore-list": ["Alacritty"],
+    "app_ids-mapping": {
+      "firefoxdeveloperedition": "firefox-developer-edition"
+    },
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "Foot Server": "Terminal",
+      ".*(steam_app_[0-9]+).*": "Game"
+    }
   },
   "idle_inhibitor": {
     "format": "{icon}",
     "format-icons": {
       "activated": "󰅶",
       "deactivated": "󰒲"
-    },
-    "tooltip-format-activated": "カフェインモード: ON\n自動スリープ無効化中",
-    "tooltip-format-deactivated": "カフェインモード: OFF\n自動スリープ有効",
-    "on-click-right": "hyprctl dispatch dpms toggle"
+    }
   },
-  "mpris": {
-    "format": "{player_icon} {dynamic}",
-    "format-paused": "{status_icon} <i>{dynamic}</i>",
-    "player-icons": {
-      "default": "🎵",
-      "spotify": "",
-      "firefox": "",
-      "chromium": ""
-    },
-    "status-icons": {
-      "playing": "▶",
-      "paused": "⏸"
-    },
-    "dynamic-order": [
-      "title",
-      "artist"
-    ],
-    "dynamic-separator": " - ",
-    "dynamic-len": 50,
-    "tooltip-format": "{player}\n{title}\n{artist}\n{album}",
-    "ignored-players": [],
-    "on-click": "playerctl play-pause",
-    "on-click-right": "playerctl next",
-    "on-click-middle": "playerctl previous",
-    "on-scroll-up": "playerctl volume 0.05+",
-    "on-scroll-down": "playerctl volume 0.05-"
+  "bluetooth": {
+    "format": " {status}",
+    "format-connected": " {device_alias}",
+    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+    // "format-device-preference": [ "device1", "device2" ], // preference list deciding the displayed device
+    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
+  },
+  "cpu": {
+    "interval": 10,
+    "format": "{}% ",
+    "max-length": 10
+  },
+  "memory": {
+    "interval": 30,
+    "format": "{used:0.1f}G/{total:0.1f}G "
   },
   "custom/disk": {
-    "format": "󰋊 {}",
     "interval": 30,
-    "exec": "/home/archfill/.config/waybar/scripts/disk.sh",
-    "return-type": "json",
-    "on-click": "ghostty -e btop"
+    "exec": "~/.config/hypr/scripts/waybar-disk.sh",
+    "format": "{} 󰋊"
+  },
+  "hyprland/submap": {
+    "format": "{}",
+    "tooltip": false
+  },
+  "custom/updates": {
+    "format": " {}",
+    "interval": 3600,
+    "exec": "checkupdates 2>/dev/null | wc -l",
+    "exec-if": "which checkupdates",
+    "tooltip": false
+  },
+  "backlight": {
+    "format": "{percent}% {icon}",
+    "format-icons": ["", ""]
   }
 }
