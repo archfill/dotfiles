@@ -1,0 +1,89 @@
+/* ============================================================
+   Rofi Wallpaper Picker Theme
+   ============================================================
+   Secondary color accent (cyan/teal)
+   ============================================================ */
+
+@import "colors.rasi"
+
+* {
+    font: "JetBrainsMono Nerd Font Propo 11";
+    background-color: transparent;
+    text-color: @on-surface;
+}
+
+window {
+    width: 500px;
+    transparency: "real";
+    background-color: @surface;
+    border: 2px solid;
+    border-color: @secondary;
+    border-radius: 12px;
+    padding: 16px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ inputbar, listview ];
+    spacing: 12px;
+}
+
+inputbar {
+    background-color: @surface-container;
+    border-radius: 8px;
+    padding: 10px 14px;
+    children: [ prompt, entry ];
+    spacing: 10px;
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @secondary;
+    font: "JetBrainsMono Nerd Font Propo Bold 12";
+}
+
+entry {
+    background-color: transparent;
+    text-color: @on-surface;
+    placeholder: "Search wallpapers...";
+    placeholder-color: @outline;
+}
+
+listview {
+    background-color: transparent;
+    lines: 12;
+    columns: 1;
+    fixed-height: true;
+    spacing: 2px;
+    scrollbar: false;
+}
+
+element {
+    background-color: transparent;
+    padding: 8px 12px;
+    border-radius: 6px;
+    spacing: 8px;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color: transparent;
+    text-color: @on-surface;
+}
+
+element selected.normal {
+    background-color: @secondary-container;
+    text-color: @on-secondary-container;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    vertical-align: 0.5;
+}
+
+scrollbar {
+    width: 0px;
+}
