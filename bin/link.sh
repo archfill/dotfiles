@@ -47,6 +47,7 @@ BASIC_CONFIGS=(
     ".config/swaync"
     ".config/wlogout"
     ".config/scripts"
+    ".config/eww"
 )
 
 # 基本設定ファイルのシンボリックリンク作成
