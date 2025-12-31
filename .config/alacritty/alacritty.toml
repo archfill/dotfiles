@@ -16,4 +16,6 @@
 import = [
     "common.toml",
     "os-specific.toml"
+    # Note: Linux uses matugen colors (imported in linux.toml)
+    #       macOS uses catppuccin colors (defined in common.toml)
 ]
