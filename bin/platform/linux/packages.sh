@@ -306,6 +306,7 @@ install_common_packages_arch() {
         bat
         jq
         wl-clipboard
+        cliphist
         xsel
         xclip
         sqlite
@@ -316,6 +317,7 @@ install_common_packages_arch() {
         imagemagick
         deno
         fastfetch
+        matugen
     )
 
     # AUR-only packages (installed via yay)

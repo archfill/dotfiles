@@ -170,10 +170,12 @@ install_hyprland() {
         xdg-desktop-portal-hyprland     # Desktop portal integration
     )
 
-    # Essential Wayland tools (4 packages)
+    # Essential Wayland tools (6 packages)
     local wayland_tools=(
         waybar          # Status bar
-        fuzzel          # Application launcher (fast, modern)
+        rofi            # Application launcher (customizable)
+        rofi-calc       # Calculator plugin for rofi
+        rofi-emoji      # Emoji picker plugin for rofi
         swaync          # Notification daemon with notification center
         wl-clipboard    # Clipboard utilities
     )
@@ -183,7 +185,7 @@ install_hyprland() {
         satty           # Screenshot editor/annotation
     )
 
-    # Optional but recommended packages (10 packages)
+    # Optional but recommended packages (13 packages)
     local optional_packages=(
         pavucontrol     # Audio control GUI
         brightnessctl   # Brightness control
@@ -195,6 +197,18 @@ install_hyprland() {
         papirus-icon-theme  # Icon theme (for Waybar taskbar module)
         pacman-contrib  # Pacman tools (provides checkupdates for Waybar updates module)
         wireplumber     # PipeWire session manager (provides wpctl for audio control)
+        gnome-keyring   # Secrets management (for credential storage)
+        nautilus        # File manager (GNOME Files)
+        cliphist        # Clipboard history manager (rofi integration)
+    )
+
+    # Japanese input method packages (5 packages)
+    local ime_packages=(
+        fcitx5          # Input method framework
+        fcitx5-configtool  # Configuration tool
+        fcitx5-gtk      # GTK module
+        fcitx5-qt       # Qt module
+        fcitx5-mozc     # Japanese input (Google Japanese Input OSS)
     )
 
     # NVIDIA-specific packages (2 packages - conditional)
@@ -210,9 +224,9 @@ install_hyprland() {
     local aur_packages=(
         wlogout         # Wayland logout menu
         overskride      # Bluetooth manager (GTK4, Hyprland-recommended)
-        clipse          # TUI clipboard manager
         awww-git        # Animated wallpaper daemon for Wayland
         eww             # Standalone widget system (for submap overlay)
+        hyprswitch      # Alt+Tab style window switcher
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
@@ -231,6 +245,10 @@ install_hyprland() {
         # Install optional packages
         log_info "Installing ${#optional_packages[@]} optional packages..."
         sudo pacman -S --needed --noconfirm "${optional_packages[@]}"
+
+        # Install Japanese input method packages
+        log_info "Installing ${#ime_packages[@]} Japanese input method packages..."
+        sudo pacman -S --needed --noconfirm "${ime_packages[@]}"
 
         # Install NVIDIA packages if needed
         if [[ ${#nvidia_packages[@]} -gt 0 ]]; then
@@ -256,6 +274,7 @@ install_hyprland() {
             log_info "  - Wayland tools: ${#wayland_tools[@]} packages"
             log_info "  - Screenshot: ${#screenshot_tools[@]} packages"
             log_info "  - Optional: ${#optional_packages[@]} packages"
+            log_info "  - Japanese IME: ${#ime_packages[@]} packages"
             if [[ ${#nvidia_packages[@]} -gt 0 ]]; then
                 log_info "  - NVIDIA: ${#nvidia_packages[@]} packages"
             fi
@@ -274,10 +293,11 @@ install_hyprland() {
             local hyprland_configs=(
                 ".config/hypr"
                 ".config/waybar"
-                ".config/fuzzel"
+                ".config/rofi"
                 ".config/swaync"
                 ".config/wlogout"
                 ".config/eww"
+                ".config/matugen"
             )
 
             for config_path in "${hyprland_configs[@]}"; do
@@ -406,6 +426,7 @@ EOF
         log_info "  - ${#wayland_tools[@]} Wayland tools"
         log_info "  - ${#screenshot_tools[@]} screenshot tools"
         log_info "  - ${#optional_packages[@]} optional packages"
+        log_info "  - ${#ime_packages[@]} Japanese IME packages"
         if [[ ${#nvidia_packages[@]} -gt 0 ]]; then
             log_info "  - ${#nvidia_packages[@]} NVIDIA packages"
         fi
