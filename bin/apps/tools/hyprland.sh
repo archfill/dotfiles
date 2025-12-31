@@ -206,12 +206,13 @@ install_hyprland() {
         )
     fi
 
-    # AUR packages (4 packages - conditional on yay availability)
+    # AUR packages (5 packages - conditional on yay availability)
     local aur_packages=(
         wlogout         # Wayland logout menu
         overskride      # Bluetooth manager (GTK4, Hyprland-recommended)
         clipse          # TUI clipboard manager
         awww-git        # Animated wallpaper daemon for Wayland
+        eww             # Standalone widget system (for submap overlay)
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
@@ -276,6 +277,7 @@ install_hyprland() {
                 ".config/fuzzel"
                 ".config/swaync"
                 ".config/wlogout"
+                ".config/eww"
             )
 
             for config_path in "${hyprland_configs[@]}"; do
