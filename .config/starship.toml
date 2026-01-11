@@ -176,7 +176,7 @@ renamed = "»${count}"
 modified = "!${count}"
 staged = "+${count}"
 untracked = "?${count}"
-stashed = "$${count}"
+stashed = "\\$${count}"
 
 [git_metrics]
 disabled = true

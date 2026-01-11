@@ -68,3 +68,8 @@ if command -v tenv &>/dev/null; then
   export TENV_AUTO_INSTALL=true       # Auto-install missing versions
   export TENV_VALIDATION=signature    # Enable signature verification (recommended)
 fi
+
+# OpenCode editor
+if [[ -d "$HOME/.opencode/bin" ]]; then
+  export PATH="$HOME/.opencode/bin:$PATH"
+fi

@@ -197,6 +197,11 @@ setup_flutter_environment() {
 # Initialize Flutter environment (with error handling)
 setup_flutter_environment 2>/dev/null || true
 
+# FVM completion
+if [[ -f "$HOME/.dart-cli-completion/fvm.zsh" ]]; then
+  . "$HOME/.dart-cli-completion/fvm.zsh"
+fi
+
 # ===== Terraform - Optimized =====
 # Terraform binary location detection (optimized)
 if ! command_exists terraform; then
