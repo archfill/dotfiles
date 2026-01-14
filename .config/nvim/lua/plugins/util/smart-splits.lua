@@ -17,6 +17,8 @@ return {
 					"qf",
 					"prompt",
 				},
+				-- tmux統合を無効化（Ghosttyネイティブ使用のため）
+				tmux_integration = false,
 			})
 		end,
 		keys = {

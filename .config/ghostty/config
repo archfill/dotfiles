@@ -54,14 +54,20 @@ unfocused-split-opacity = 0.7
 # ==========================================
 # Shell Integration
 # ==========================================
-# 注: tmuxを直接起動する場合、shell-integrationは競合するため無効化
-# shell-integration = zsh
-# より安全で人気の設定
-# shell-integration-features = "no-cursor,sudo,no-title"
+# tmux廃止済みのため、Shell Integrationを有効化
+shell-integration = zsh
+# 機能: カーソル変更、sudo環境変数保持、タブタイトル自動更新
+shell-integration-features = cursor,sudo,title
 
 # OSC 52クリップボードサポート（SSH/リモート作業用）
 clipboard-read = allow
 clipboard-write = allow
+# コピー設定の最適化
+clipboard-paste-protection = true
+clipboard-trim-trailing-spaces = true
+right-click-action = copy-or-paste
+# コピーノーティフィケーション無効化（Linuxのみ）
+app-notifications = no-clipboard-copy
 
 # ==========================================
 # Performance Settings
@@ -105,14 +111,16 @@ selection-foreground = "#abb2bf"
 # Additional Recommended Settings
 # ==========================================
 # ウィンドウタイトルのカスタマイズ
-title = "Ghostty Terminal"
+# 固定タイトルを無効化（Shell Integrationで動的タイトルを使用）
+# title = "Ghostty Terminal"
 window-title-font-family = "HackGen35 Console NF"
 
 # より高度なシェル統合（tmux使用者向け）
 # 専用スクリプトでtmuxセッションを管理
 # このスクリプトはAlacrittyとも共有
 # 注: ghosttyはチルダ(~)を展開しないため、環境変数を使用
-command = ${HOME}/.config/scripts/tmux-session.sh
+# tmux自動起動を無効化（Ghosttyネイティブ使用のため）
+# command = ${HOME}/.config/scripts/tmux-session.sh
 
 # ==========================================
 # Optional: Custom Shaders

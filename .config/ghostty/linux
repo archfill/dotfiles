@@ -26,6 +26,16 @@ keybind = ctrl+shift+comma=reload_config
 # 分割ペイン
 keybind = ctrl+d=new_split:right
 keybind = ctrl+shift+d=new_split:down
+# vim風ペイン移動
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:down
+keybind = ctrl+k=goto_split:up
+keybind = ctrl+l=goto_split:right
+# vim風ペインリサイズ
+keybind = ctrl+shift+h=resize_split:left,5
+keybind = ctrl+shift+j=resize_split:down,5
+keybind = ctrl+shift+k=resize_split:up,5
+keybind = ctrl+shift+l=resize_split:right,5
 # タブ移動
 keybind = ctrl+shift+left=previous_tab
 keybind = ctrl+shift+right=next_tab
@@ -39,6 +49,8 @@ keybind = ctrl+six=goto_tab:6
 keybind = ctrl+seven=goto_tab:7
 keybind = ctrl+eight=goto_tab:8
 keybind = ctrl+nine=goto_tab:9
+# タブオーバービュー（タブが多い時に便利）
+keybind = ctrl+shift+o=toggle_tab_overview
 
 # ==========================================
 # Linux Performance Optimization
