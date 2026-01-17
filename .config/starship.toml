@@ -184,10 +184,8 @@ disabled = true
 # Language versions with modern icons
 [python]
 symbol = "󰌠 "
-format = '[ $symbol$pyenv_prefix($version )(\($virtualenv\) )]($style)'
+format = '[ $symbol($version )(\($virtualenv\) )]($style)'
 style = "bg:surface1 fg:yellow bold"
-pyenv_version_name = true
-pyenv_prefix = "pyenv "
 python_binary = ["./venv/bin/python", "python", "python3", "python2"]
 detect_extensions = ["py"]
 version_format = "v${raw}"

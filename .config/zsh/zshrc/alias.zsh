@@ -67,9 +67,6 @@ alias tmux-start='tmux -u attach -t main'
 # alias python='uv run python'
 # alias pip='uv pip'
 alias pyproject-init='uv init'
-alias pyenv-install='uv python install'
-alias pyenv-versions='uv python list'
-alias pyenv-which='uv python which'
 
 ## mise aliases
 alias mup='mise install'             # Install all tools from config
