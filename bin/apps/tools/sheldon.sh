@@ -178,7 +178,7 @@ check_plugin_updates() {
                 if [[ -n "$local_commit" && -n "$remote_commit" && "$local_commit" != "$remote_commit" ]]; then
                     log_info "Plugin update available: $plugin_name"
                     echo "$plugin_name" >> "$update_cache/outdated_plugins"
-                    ((outdated_count++))
+                    outdated_count=$((outdated_count + 1))
                 fi
             fi
         fi

@@ -608,7 +608,7 @@ install_ruby_tools() {
         case $? in
           0|2)  # current >= required
             log_skip_reason "$gem_name" "Already installed with sufficient version: $current_version >= $min_version"
-            ((skipped_count++))
+            skipped_count=$((skipped_count + 1))
             continue
             ;;
         esac
@@ -626,14 +626,14 @@ install_ruby_tools() {
     
     if [[ "$DRY_RUN" == "true" ]]; then
       log_info "[DRY RUN] Would execute: gem install $gem_name --no-document"
-      ((installed_count++))
+      installed_count=$((installed_count + 1))
     else
       if gem install "$gem_name" --no-document 2>/dev/null; then
         log_success "Successfully installed gem: $gem_name"
-        ((installed_count++))
+        installed_count=$((installed_count + 1))
       else
         log_warning "Failed to install gem: $gem_name, but continuing..."
-        ((failed_count++))
+        failed_count=$((failed_count + 1))
       fi
     fi
   done

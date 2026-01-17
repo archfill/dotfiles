@@ -91,7 +91,7 @@ check_python_environment() {
     for tool in "${old_tools[@]}"; do
         if command -v "$tool" >/dev/null 2>&1; then
             log_info "Found existing tool: $tool"
-            ((found_tools++))
+            found_tools=$((found_tools + 1))
         fi
     done
     

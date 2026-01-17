@@ -86,7 +86,7 @@ check_build_tools_status() {
         local mvn_version
         mvn_version=$(mvn -version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
         log_info "Maven: $mvn_version"
-        ((installed_tools++))
+        installed_tools=$((installed_tools + 1))
     else
         log_info "Maven: not installed"
     fi
@@ -96,7 +96,7 @@ check_build_tools_status() {
         local gradle_version
         gradle_version=$(gradle -version 2>/dev/null | grep 'Gradle' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
         log_info "Gradle (global): $gradle_version"
-        ((installed_tools++))
+        installed_tools=$((installed_tools + 1))
     else
         log_info "Gradle: Use ./gradlew (Gradle Wrapper) per project"
     fi
@@ -198,23 +198,16 @@ install_maven_via_mise() {
 verify_java_installation() {
     log_info "Verifying Java installation..."
 
-    # Reload mise to ensure paths are updated
-    if command -v mise >/dev/null 2>&1; then
-        eval "$(mise activate bash)" 2>/dev/null || true
-    fi
+    # Get Java path from mise
+    local java_path
+    java_path=$(mise where java 2>/dev/null || echo "")
 
-    if command -v java >/dev/null 2>&1; then
+    if [[ -n "$java_path" && -x "$java_path/bin/java" ]]; then
         local java_version
-        java_version=$(java -version 2>&1 | head -1)
+        java_version=$("$java_path/bin/java" -version 2>&1 | head -1)
         log_success "Java installed successfully!"
         log_info "Java version: $java_version"
-
-        # Show JAVA_HOME
-        local java_home
-        java_home=$(mise where java 2>/dev/null || echo "")
-        if [[ -n "$java_home" ]]; then
-            log_info "JAVA_HOME (mise): $java_home"
-        fi
+        log_info "JAVA_HOME (mise): $java_path"
 
         # List installed versions
         log_info "Installed Java versions (mise):"

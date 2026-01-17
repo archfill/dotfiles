@@ -277,7 +277,7 @@ install_common_packages_arch() {
     # Official repository packages (installed via pacman)
     local official_packages=(
         mise
-        tenv
+        bun
         ripgrep
         git-delta
         wget
@@ -324,9 +324,9 @@ install_common_packages_arch() {
     local aur_packages=(
         urlscan
         khard
-        bun-bin
         ghostty
         eww
+        tenv-bin
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then

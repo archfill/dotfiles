@@ -227,23 +227,25 @@ install_go_tools() {
         # Skip if tool is already available
         if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
             log_skip_reason "$tool_name" "Already installed"
-            ((skipped_count++))
+            skipped_count=$((skipped_count + 1))
             continue
         fi
 
         log_info "Installing $tool_name ($tool_desc)..."
 
         if [[ "$DRY_RUN" != "true" ]]; then
-            if go install "$tool_package" >/dev/null 2>&1; then
+            local install_output
+            if install_output=$(go install "$tool_package" 2>&1); then
                 log_success "$tool_name installed successfully"
-                ((installed_count++))
+                installed_count=$((installed_count + 1))
             else
                 log_warning "Failed to install $tool_name (this is not critical)"
-                ((failed_count++))
+                log_warning "Error output: $install_output"
+                failed_count=$((failed_count + 1))
             fi
         else
             log_info "[DRY RUN] Would install $tool_name"
-            ((installed_count++))
+            installed_count=$((installed_count + 1))
         fi
     done
 

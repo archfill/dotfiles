@@ -143,19 +143,19 @@ install_essential_packages() {
     for package in "${packages[@]}"; do
         if npm list -g "$package" >/dev/null 2>&1; then
             log_skip_reason "$package" "Already installed"
-            ((skipped_count++))
+            skipped_count=$((skipped_count + 1))
         else
             if [[ "$DRY_RUN" != "true" ]]; then
                 log_info "Installing $package..."
                 if npm install -g "$package" 2>/dev/null; then
                     log_success "$package installed"
-                    ((installed_count++))
+                    installed_count=$((installed_count + 1))
                 else
                     log_warning "Failed to install $package"
                 fi
             else
                 log_info "[DRY RUN] Would install $package"
-                ((installed_count++))
+                installed_count=$((installed_count + 1))
             fi
         fi
     done

@@ -322,7 +322,7 @@ install_rust_tools() {
     # Skip if tool is already available and not forcing reinstall
     if [[ "$FORCE_INSTALL" != "true" ]] && echo "$installed_tools" | grep -q "^$tool_name$"; then
       log_skip_reason "$tool_name" "Already installed"
-      ((skipped_count++))
+      skipped_count=$((skipped_count + 1))
       continue
     fi
     
@@ -331,14 +331,14 @@ install_rust_tools() {
     if [[ "$DRY_RUN" != "true" ]]; then
       if cargo install "$tool_name"; then
         log_success "$tool_name installed successfully"
-        ((installed_count++))
+        installed_count=$((installed_count + 1))
       else
         log_warning "Failed to install $tool_name"
-        ((failed_count++))
+        failed_count=$((failed_count + 1))
       fi
     else
       log_info "[DRY RUN] Would install $tool_name"
-      ((installed_count++))
+      installed_count=$((installed_count + 1))
     fi
   done
   

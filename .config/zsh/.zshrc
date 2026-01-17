@@ -44,3 +44,6 @@ source-safe "$HOME/zshrc_local.zsh"
 # Note: Java and Maven are now managed by mise (configured in sdk.zsh)
 # mise provides unified version management for Java, Node.js, Python, etc.
 # SDKMAN! has been replaced by mise as of 2025年12月
+
+# bun completions
+[ -s "/home/archfill/.bun/_bun" ] && source "/home/archfill/.bun/_bun"

@@ -390,7 +390,7 @@ install_docker_tools() {
     # Skip if tool is already available and not forcing reinstall
     if [[ "$FORCE_INSTALL" != "true" ]] && command -v "$tool_name" >/dev/null 2>&1; then
       log_skip_reason "$tool_name" "Already installed"
-      ((skipped_count++))
+      skipped_count=$((skipped_count + 1))
       continue
     fi
     
@@ -406,14 +406,14 @@ install_docker_tools() {
     case "$tool_source" in
       github.com/*)
         if execute_if_not_dry_run "Install $tool_name via go install" install_go_tool "$tool_source" "$tool_version"; then
-          ((installed_count++))
+          installed_count=$((installed_count + 1))
         else
-          ((failed_count++))
+          failed_count=$((failed_count + 1))
         fi
         ;;
       *)
         log_warning "Unknown installation method for $tool_name"
-        ((failed_count++))
+        failed_count=$((failed_count + 1))
         ;;
     esac
   done

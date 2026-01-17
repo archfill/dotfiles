@@ -29,6 +29,19 @@ check_bun_environment() {
 
     local all_checks_passed=true
 
+    # Check for conflicting manual installations
+    if [[ -d "$HOME/.bun" ]]; then
+        local current_bun_path
+        current_bun_path=$(command -v bun 2>/dev/null)
+
+        # If pacman version is being used, warn about old installation
+        if [[ "$current_bun_path" == "/usr/bin/bun" ]] || [[ "$current_bun_path" == "/usr/sbin/bun" ]]; then
+            log_warning "Found manual Bun installation in ~/.bun"
+            log_warning "Bun is now managed by pacman"
+            log_info "To remove old installation and free up space: rm -rf ~/.bun"
+        fi
+    fi
+
     # Check Bun command availability
     if ! command -v bun >/dev/null 2>&1; then
         log_info "Bun not available"
@@ -163,8 +176,8 @@ main() {
         log_skip_reason "Bun" "Managed by Homebrew package manager"
         return 0
     elif [[ "$distro" == "arch" ]]; then
-        log_info "Arch Linux detected - Bun is managed by yay (bin/platform/linux/packages.sh)"
-        log_skip_reason "Bun" "Managed by yay (AUR: bun-bin)"
+        log_info "Arch Linux detected - Bun is managed by pacman (bin/platform/linux/packages.sh)"
+        log_skip_reason "Bun" "Managed by pacman package manager"
         return 0
     fi
 
