@@ -24,69 +24,13 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     'C:\\Users\\' .. os.getenv("USERNAME") .. '\\.dotfiles\\.fonts'
   }
 
-  -- WSL自動検出とデフォルト設定（改善版）
-  local function get_wsl_default()
-    -- まず標準的なWSLコマンドでデフォルトディストリビューションを確認
-    local handle = io.popen('wsl --status 2>nul')
-    if handle then
-      handle:close()
-    end
-
-    -- 利用可能なディストリビューション一覧を取得
-    local distro_handle = io.popen('wsl --list --quiet 2>nul')
-    if distro_handle then
-      local result = distro_handle:read('*a')
-      distro_handle:close()
-
-      if result and result ~= '' then
-        -- BOMや特殊文字を除去し、クリーンアップ
-        result = result:gsub('\239\187\191', '') -- UTF-8 BOM除去
-        result = result:gsub('\0', '') -- NULL文字除去
-
-        local distros = {}
-        for line in result:gmatch('[^\r\n]+') do
-          local clean_line = line:gsub('^%s*', ''):gsub('%s*$', '') -- 前後の空白除去
-          if clean_line and clean_line ~= '' then
-            -- デフォルトマーク(*)を除去してディストリビューション名を取得
-            local distro_name = clean_line:gsub('^%*%s*', ''):gsub('%s.*$', '')
-            if distro_name and distro_name ~= '' then
-              table.insert(distros, distro_name)
-            end
-          end
-        end
-
-        -- 利用可能なディストリビューションがある場合
-        if #distros > 0 then
-          -- 優先順位：Arch > Ubuntu > その他の最初のもの
-          for _, distro in ipairs(distros) do
-            if distro:lower():find('arch') then
-              return {'wsl.exe', '-d', distro}
-            end
-          end
-          for _, distro in ipairs(distros) do
-            if distro:lower():find('ubuntu') then
-              return {'wsl.exe', '-d', distro}
-            end
-          end
-          -- どちらもない場合は最初のディストリビューション
-          return {'wsl.exe', '-d', distros[1]}
-        end
-      end
-    end
-
-    -- WSLが利用できない場合の最終フォールバック
-    return {'cmd.exe'}
-  end
-
-  DEFAULT_PROG = get_wsl_default()
+  -- WSL Startup Optimization: defaulting to archlinux directly
+  -- to avoid the overhead of `wsl --status` and `wsl --list` checks.
+  DEFAULT_PROG = { 'wsl.exe', '--cd', '~', '-d', 'archlinux' }
   FONT_SIZE = 12.0
 
-	-- Windows専用: Leader Key設定（tmux風）
-	LEADER_CONFIG = {
-		key = 'a',
-		mods = 'CTRL',
-		timeout_milliseconds = 1000,
-	}
+	-- Windows専用: Leader Key廃止 (Altベースに変更)
+	LEADER_CONFIG = nil
 
 	-- Windows固有のローカル設定
 	LOCAL_CONFIG = {
@@ -101,11 +45,18 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 		-- 注意: WebGpuでは window_background_opacity（透過）が動作しない
 		-- 透過を使用する場合はOpenGLを使用すること
 		-- webgpu_preferred_adapter = gpus and gpus[1] or nil,
-		-- front_end = "WebGpu",
-		front_end = "OpenGL",
+		webgpu_preferred_adapter = gpus and gpus[1] or nil,
+		front_end = "WebGpu",
+		-- front_end = "OpenGL",
 		-- Windows最適化：DirectWriteレンダリング
 		freetype_load_target = "Normal",
 		freetype_render_target = "Normal",
+		-- Windows最適化：EGLを使用（OpenGLのパフォーマンス向上）
+		prefer_egl = true,
+		-- ハイパフォーマンスGPUを優先使用
+		webgpu_power_preference = "HighPerformance",
+		-- WebGpu使用時は透過を無効化（パフォーマンス優先）
+		window_background_opacity = 1.0,
 		-- WSLエラー対応：プロセス終了動作の最適化
 		exit_behavior = "Close",
 		-- WSL最適化設定
@@ -210,6 +161,8 @@ local config = {
 		{ family = "HackGen Console NF", weight = "Regular" },
 		{ family = "JetBrainsMono Nerd Font", weight = "Regular", harfbuzz_features = { "calt=1", "clig=1", "liga=1" } },
 		{ family = "UDEV Gothic 35NFLG" },
+		"Noto Color Emoji",  -- 絵文字用
+		"Segoe UI Emoji",    -- Windows標準フォールバック
 	}),
 	font_size = FONT_SIZE,
 	-- Font rendering improvements (using modern freetype settings)
@@ -313,7 +266,7 @@ local config = {
 	animation_fps = 120,
 	max_fps = 120,
 	-- 全OS共通：スクロールパフォーマンス
-	scrollback_lines = 10000,
+	scrollback_lines = 30000,
 	-- 入力遅延最適化：最小限の効果的設定
 	native_macos_fullscreen_mode = false,
 	automatically_reload_config = true,

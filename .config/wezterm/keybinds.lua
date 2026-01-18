@@ -27,47 +27,62 @@ M.tmux_keybinds = {}
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
 	M.tmux_keybinds = {
-		-- Pane splitting
-		{ key = "-", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-		{ key = "\\", mods = "LEADER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
-		{ key = "|", mods = "LEADER|SHIFT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+		-- Pane splitting: - (Vertical) and / (Horizontal)
+		{ key = "-", mods = "ALT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+		{ key = "/", mods = "ALT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 
-		-- Tab management
-		{ key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
-		{ key = "n", mods = "LEADER", action = act.ActivateTabRelative(1) },
-		{ key = "p", mods = "LEADER", action = act.ActivateTabRelative(-1) },
-		{ key = "x", mods = "LEADER", action = act.CloseCurrentPane({ confirm = true }) },
+		-- Tab management: Standard shortcuts
+		{ key = "t", mods = "CTRL|SHIFT", action = act.SpawnTab("CurrentPaneDomain") },
+		{ key = "w", mods = "CTRL|SHIFT", action = act.CloseCurrentPane({ confirm = true }) },
+		
+		-- Tab navigation (Ghostty style)
+		{ key = "RightArrow", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(1) },
+		{ key = "LeftArrow", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(-1) },
+		-- Tab selector (Ghostty style)
+		{ key = "o", mods = "CTRL|SHIFT", action = act.ShowTabNavigator },
+		-- Command Palette (VSCode style)
+		{ key = "p", mods = "CTRL|SHIFT", action = act.ActivateCommandPalette },
 
 		-- Tab selection by number
-		{ key = "1", mods = "LEADER", action = act.ActivateTab(0) },
-		{ key = "2", mods = "LEADER", action = act.ActivateTab(1) },
-		{ key = "3", mods = "LEADER", action = act.ActivateTab(2) },
-		{ key = "4", mods = "LEADER", action = act.ActivateTab(3) },
-		{ key = "5", mods = "LEADER", action = act.ActivateTab(4) },
-		{ key = "6", mods = "LEADER", action = act.ActivateTab(5) },
-		{ key = "7", mods = "LEADER", action = act.ActivateTab(6) },
-		{ key = "8", mods = "LEADER", action = act.ActivateTab(7) },
-		{ key = "9", mods = "LEADER", action = act.ActivateTab(8) },
+		{ key = "1", mods = "ALT", action = act.ActivateTab(0) },
+		{ key = "2", mods = "ALT", action = act.ActivateTab(1) },
+		{ key = "3", mods = "ALT", action = act.ActivateTab(2) },
+		{ key = "4", mods = "ALT", action = act.ActivateTab(3) },
+		{ key = "5", mods = "ALT", action = act.ActivateTab(4) },
+		{ key = "6", mods = "ALT", action = act.ActivateTab(5) },
+		{ key = "7", mods = "ALT", action = act.ActivateTab(6) },
+		{ key = "8", mods = "ALT", action = act.ActivateTab(7) },
+		{ key = "9", mods = "ALT", action = act.ActivateTab(8) },
 
 		-- Pane navigation (vim-style)
-		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
-		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
-		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
-		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
+		{ key = "h", mods = "ALT", action = act.ActivatePaneDirection("Left") },
+		{ key = "j", mods = "ALT", action = act.ActivatePaneDirection("Down") },
+		{ key = "k", mods = "ALT", action = act.ActivatePaneDirection("Up") },
+		{ key = "l", mods = "ALT", action = act.ActivatePaneDirection("Right") },
+		-- Pane Select (Visual selection)
+		{ key = "g", mods = "ALT", action = act.PaneSelect },
+
+		-- Pane resize (Same as Ghostty)
+		{ key = "h", mods = "CTRL|SHIFT", action = act.AdjustPaneSize({ "Left", 5 }) },
+		{ key = "j", mods = "CTRL|SHIFT", action = act.AdjustPaneSize({ "Down", 5 }) },
+		{ key = "k", mods = "CTRL|SHIFT", action = act.AdjustPaneSize({ "Up", 5 }) },
+		{ key = "l", mods = "CTRL|SHIFT", action = act.AdjustPaneSize({ "Right", 5 }) },
 
 		-- Pane zoom toggle
-		{ key = "m", mods = "LEADER", action = act.TogglePaneZoomState },
+		{ key = "m", mods = "ALT", action = act.TogglePaneZoomState },
 
-		-- Pane resize mode
+		-- Key Tables (Modes)
+		-- Resize Mode
 		{
 			key = "r",
-			mods = "LEADER",
+			mods = "ALT",
 			action = act.ActivateKeyTable({
 				name = "resize_pane",
 				one_shot = false,
-				timeout_milliseconds = 1000,
 			}),
 		},
+		-- Copy Mode (Alt + ;)
+		{ key = ";", mods = "ALT", action = act.ActivateCopyMode },
 	}
 end
 
