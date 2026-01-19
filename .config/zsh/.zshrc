@@ -47,3 +47,6 @@ source-safe "$HOME/zshrc_local.zsh"
 
 # bun completions
 [ -s "/home/archfill/.bun/_bun" ] && source "/home/archfill/.bun/_bun"
+
+# opencode
+export PATH=/home/archfill/.opencode/bin:$PATH
