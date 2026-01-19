@@ -69,3 +69,5 @@ function ghq-clone() {
   ghq-get "$@"
   return "$?"
 }
+
+vibe() { eval "$(command vibe "$@")" }
