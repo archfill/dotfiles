@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # PHP SDK installation script using APT (Ubuntu/Debian)
-# This script installs PHP 8.3 LTS version via package manager
+# This script installs PHP 8.4 LTS version via package manager
 
 # Load shared libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -64,74 +64,74 @@ check_composer_status() {
     fi
 }
 
-# Install PHP 8.3 via APT
+# Install PHP 8.4 via APT
 install_php_apt() {
-    log_info "Installing PHP 8.3 via APT..."
-    
+    log_info "Installing PHP 8.4 via APT..."
+
     # Parse command line options
     parse_install_options "$@"
-    
+
     # Quick check mode
     if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install PHP 8.3 via APT"
+        log_info "QUICK: Would install PHP 8.4 via APT"
         return 0
     fi
-    
-    # Check if PHP 8.3 should be skipped
+
+    # Check if PHP 8.4 should be skipped
     if [[ "$FORCE_INSTALL" != "true" ]] && check_php_status; then
-        log_skip_reason "PHP 8.3" "Already installed with correct version"
+        log_skip_reason "PHP 8.4" "Already installed with correct version"
         return 0
     fi
-    
+
     # Detect platform
     local platform
     platform=$(detect_platform)
-    
+
     if [[ "$platform" != "linux" ]]; then
         log_error "This script is designed for Linux (Ubuntu/Debian) only"
         return 1
     fi
-    
+
     # Check if we're on Ubuntu/Debian
     if ! command -v apt >/dev/null 2>&1; then
         log_error "APT package manager not found. This script requires Ubuntu/Debian."
         return 1
     fi
-    
+
     if [[ "$DRY_RUN" != "true" ]]; then
         # Update package index
         log_info "Updating package index..."
         sudo apt update
-        
-        # Install PHP 8.3 and essential extensions
-        log_info "Installing PHP 8.3 and essential extensions..."
+
+        # Install PHP 8.4 and essential extensions
+        log_info "Installing PHP 8.4 and essential extensions..."
         sudo apt install -y \
-            php8.3 \
-            php8.3-cli \
-            php8.3-common \
-            php8.3-curl \
-            php8.3-gd \
-            php8.3-intl \
-            php8.3-mbstring \
-            php8.3-mysql \
-            php8.3-opcache \
-            php8.3-readline \
-            php8.3-xml \
-            php8.3-zip \
-            php8.3-bcmath \
-            php8.3-bz2 \
-            php8.3-sqlite3 \
-            php8.3-soap \
-            php8.3-xsl
-        
-        # Set PHP 8.3 as default if multiple versions exist
+            php8.4 \
+            php8.4-cli \
+            php8.4-common \
+            php8.4-curl \
+            php8.4-gd \
+            php8.4-intl \
+            php8.4-mbstring \
+            php8.4-mysql \
+            php8.4-opcache \
+            php8.4-readline \
+            php8.4-xml \
+            php8.4-zip \
+            php8.4-bcmath \
+            php8.4-bz2 \
+            php8.4-sqlite3 \
+            php8.4-soap \
+            php8.4-xsl
+
+        # Set PHP 8.4 as default if multiple versions exist
         if command -v update-alternatives >/dev/null 2>&1; then
-            sudo update-alternatives --set php /usr/bin/php8.3 2>/dev/null || true
+            sudo update-alternatives --set php /usr/bin/php8.4 2>/dev/null || true
         fi
-        
-        log_success "PHP 8.3 installed successfully via APT"
+
+        log_success "PHP 8.4 installed successfully via APT"
     else
-        log_info "[DRY RUN] Would install PHP 8.3 via APT"
+        log_info "[DRY RUN] Would install PHP 8.4 via APT"
     fi
 }
 
@@ -321,7 +321,7 @@ main() {
     parse_install_options "$@"
     
     # Check if PHP installation should be skipped
-    if should_skip_installation_advanced "PHP" "php" "8.3" "--version"; then
+    if should_skip_installation_advanced "PHP" "php" "8.4" "--version"; then
         log_info "PHP is already installed, checking Composer and tools..."
         
         # Install/update Composer
@@ -339,7 +339,7 @@ main() {
         return 0
     fi
     
-    log_info "Installing PHP 8.3 via APT package manager..."
+    log_info "Installing PHP 8.4 via APT package manager..."
     
     # Install PHP via APT
     install_php_apt "$@"

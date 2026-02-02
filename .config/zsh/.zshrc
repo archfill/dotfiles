@@ -46,4 +46,4 @@ source-safe "$HOME/zshrc_local.zsh"
 # SDKMAN! has been replaced by mise as of 2025年12月
 
 # bun completions
-[ -s "/home/archfill/.bun/_bun" ] && source "/home/archfill/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"

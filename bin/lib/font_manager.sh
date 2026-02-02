@@ -197,7 +197,7 @@ init_font_configs() {
     # フォーマット: "表示名|GitHubリポジトリ|Homebrewパッケージ名|Linux/Archパッケージ名"
 
     # Nerd Fonts系 - モダンで高機能
-    FONT_CONFIGS["jetbrains-mono-nf"]="JetBrainsMono Nerd Font|ryanoasis/nerd-fonts|font-jetbrains-mono-nerd-font|ttf-jetbrains-mono-nerd"
+    FONT_CONFIGS["jetbrains-mono-nf"]="JetBrainsMono Nerd Font|ryanoasis/nerd-fonts|font-jetbrains-mono-nerd-font|JetBrainsMono"
     # Note: ttf-hackgen includes HackGen, HackGen Console, HackGen35, and their NF variants (6 fonts total)
     FONT_CONFIGS["hackgen-nf"]="HackGen Nerd Font|yuru7/HackGen|font-hackgen-nerd|ttf-hackgen"
     FONT_CONFIGS["fira-code-nf"]="FiraCode Nerd Font|ryanoasis/nerd-fonts|font-fira-code-nerd-font|ttf-fira-code"
@@ -565,18 +565,19 @@ download_cica() {
 # 汎用フォントダウンロード処理
 download_generic_font() {
     local repo="$1" version="$2" temp_dir="$3" font_dir="$4" install_name="$5"
-    
+
     # 汎用的なZIPファイル名のパターンを試行
     local zip_patterns=(
         "${install_name}_${version}.zip"
         "${install_name}-${version}.zip"
         "${version}.zip"
+        "${install_name}.zip"
     )
-    
+
     for pattern in "${zip_patterns[@]}"; do
         local download_url="https://github.com/${repo}/releases/download/${version}/${pattern}"
         log_info "Trying download from: $download_url"
-        
+
         if curl -fL -o "${temp_dir}/${pattern}" "$download_url" && \
            cd "$temp_dir" && \
            extract_archive "$pattern" "." && \
@@ -584,7 +585,7 @@ download_generic_font() {
             return 0
         fi
     done
-    
+
     log_error "Could not download font from any common patterns"
     return 1
 }
