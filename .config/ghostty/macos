@@ -59,3 +59,24 @@ keybind = cmd+nine=goto_tab:9
 # ==========================================
 # クイックターミナル機能（グローバルキーバインド）
 keybind = global:cmd+grave_accent=toggle_quick_terminal
+
+# ==========================================
+# macOS Vim-Style Pane Navigation
+# ==========================================
+# vim風ペイン移動（H/J/K/L）
+keybind = opt+h=goto_split:left
+keybind = opt+j=goto_split:down
+keybind = opt+k=goto_split:up
+keybind = opt+l=goto_split:right
+
+# vim風ペインリサイズ（Shift+H/J/K/L）
+keybind = opt+shift+h=resize_split:left,5
+keybind = opt+shift+j=resize_split:down,5
+keybind = opt+shift+k=resize_split:up,5
+keybind = opt+shift+l=resize_split:right,5
+
+# ==========================================
+# macOS Tab Overview
+# ==========================================
+# タブオーバービュー（全タブのサムネイル表示）
+keybind = cmd+shift+o=toggle_tab_overview
