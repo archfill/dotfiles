@@ -5,7 +5,8 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 # This file is sourced by .zshenv for Linux systems only
 
 # Load helper functions if not already available
-command -v dir_exists &>/dev/null || {
+command -v command_exists &>/dev/null || {
+  command_exists() { command -v "$1" &>/dev/null; }
   dir_exists() { [[ -d "$1" ]]; }
   add_to_path() {
     [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]] && export PATH="$1:$PATH"
@@ -27,3 +28,11 @@ add_to_path "/snap/bin"
 # ===== VTE Integration =====
 # Terminal emulator integration (for Tilix, GNOME Terminal, etc.)
 [[ -n "$TILIX_ID" || -n "$VTE_VERSION" ]] && source_if_exists "/etc/profile.d/vte.sh"
+
+# ===== Fcitx5 Input Method =====
+# Japanese input method with Mozc (only if fcitx5 is installed)
+if command_exists fcitx5; then
+  export GTK_IM_MODULE=fcitx
+  export QT_IM_MODULE=fcitx
+  export XMODIFIERS=@im=fcitx
+fi
