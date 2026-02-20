@@ -97,3 +97,4 @@ setup_android_sdk "$HOME/Android/Sdk"  # Common Linux location
 
 # ===== Local Overrides =====
 if [ -f "$HOME/zshenv_local.zsh" ]; then . "$HOME/zshenv_local.zsh"; fi
+. "$HOME/.cargo/env"
