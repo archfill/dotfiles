@@ -130,6 +130,9 @@ install_go_via_mise() {
         if mise use -g "go@${target_version}" 2>/dev/null; then
             log_success "Go installed successfully via mise"
 
+            # Activate mise environment so go is available in current shell
+            eval "$(mise env 2>/dev/null)" || true
+
             # Verify installation
             local installed_version
             installed_version=$(mise which go >/dev/null 2>&1 && go version 2>/dev/null | awk '{print $3}' | sed 's/go//')
@@ -355,8 +358,8 @@ main() {
             setup_go_workspace
         fi
 
-        # Install useful tools
-        install_go_tools "$@"
+        # Install useful tools (non-fatal if Go not in PATH yet)
+        install_go_tools "$@" || log_warning "Go tools installation skipped (Go may not be in PATH yet)"
 
         # Verify installation
         if [[ "$DRY_RUN" != "true" ]]; then
@@ -380,8 +383,8 @@ main() {
         setup_go_workspace
     fi
 
-    # Install useful tools
-    install_go_tools "$@"
+    # Install useful tools (non-fatal if Go not in PATH yet)
+    install_go_tools "$@" || log_warning "Go tools installation skipped (Go may not be in PATH yet)"
 
     # Cleanup old g installation (optional, after successful mise setup)
     if [[ "$DRY_RUN" != "true" ]]; then
