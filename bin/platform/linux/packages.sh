@@ -140,6 +140,77 @@ install_tenv_debian() {
     return 0
 }
 
+# Install fastfetch for Debian/Ubuntu (not in official repos)
+install_fastfetch_debian() {
+    log_info "Installing fastfetch for Debian/Ubuntu..."
+
+    # Parse command line options
+    parse_install_options "$@"
+
+    # Check if fastfetch should be skipped
+    if [[ "$FORCE_INSTALL" != "true" ]] && command -v fastfetch >/dev/null 2>&1; then
+        log_skip_reason "fastfetch" "Already installed: $(fastfetch --version 2>/dev/null | head -1 || echo 'version unknown')"
+        return 0
+    fi
+
+    # Quick check mode
+    if [[ "$QUICK_CHECK" == "true" ]]; then
+        log_info "QUICK: Would install fastfetch"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Detect architecture
+        local arch
+        case "$(uname -m)" in
+            x86_64)  arch="amd64" ;;
+            aarch64) arch="aarch64" ;;
+            *)
+                log_error "Unsupported architecture: $(uname -m)"
+                return 1
+                ;;
+        esac
+
+        # Get latest version from GitHub API
+        local version
+        version=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+
+        if [[ -z "$version" ]]; then
+            log_error "Failed to get latest fastfetch version"
+            return 1
+        fi
+
+        log_info "Installing fastfetch ${version} for ${arch}..."
+
+        # Download and install deb package
+        local temp_dir
+        temp_dir=$(mktemp -d)
+        local deb_package="fastfetch-linux-${arch}.deb"
+        local url="https://github.com/fastfetch-cli/fastfetch/releases/download/${version}/${deb_package}"
+
+        if curl -sL "$url" -o "${temp_dir}/${deb_package}"; then
+            sudo dpkg -i "${temp_dir}/${deb_package}"
+            rm -rf "${temp_dir}"
+
+            # Verify installation
+            if command -v fastfetch >/dev/null 2>&1; then
+                log_success "fastfetch installed successfully: $(fastfetch --version 2>/dev/null | head -1 || echo "${version}")"
+            else
+                log_error "fastfetch installation failed"
+                return 1
+            fi
+        else
+            log_error "Failed to download fastfetch deb package"
+            rm -rf "${temp_dir}"
+            return 1
+        fi
+    else
+        log_info "[DRY RUN] Would install fastfetch from GitHub releases"
+    fi
+
+    return 0
+}
+
 install_yazi_debian() {
     log_info "Installing yazi for Debian/Ubuntu..."
 
@@ -261,8 +332,10 @@ install_common_packages_debian() {
           poppler-utils \
           fd-find \
           imagemagick \
-          fastfetch \
-          ffmpeg
+          ffmpeg \
+          fcitx5 \
+          fcitx5-mozc \
+          fcitx5-config-qt
     else
         log_info "[DRY RUN] Would install Debian/Ubuntu packages"
     fi
@@ -275,6 +348,9 @@ install_common_packages_debian() {
 
     # Install yazi (via binary installation)
     install_yazi_debian "$@"
+
+    # Install fastfetch (via GitHub releases, not in Ubuntu repos)
+    install_fastfetch_debian "$@"
 
     # Note: uv is now installed via bin/apps/languages/python.sh
 }
