@@ -21,19 +21,11 @@ if [[ -z "${USER_NAME:-}" ]] || [[ -z "${USER_EMAIL:-}" ]]; then
     exit 1
 fi
 
-# git config
-log_info "Setting up Git configuration for: $USER_NAME <$USER_EMAIL>"
-git config --global user.name "$USER_NAME"
-git config --global user.email "$USER_EMAIL"
-git config --global core.editor 'nvim'
+# ~/.gitconfig.local に個人情報を書き込む（~/.gitconfig は dotfiles で管理）
+LOCAL_GITCONFIG="${HOME}/.gitconfig.local"
+log_info "Setting up Git local configuration for: $USER_NAME <$USER_EMAIL>"
 
-log_info "Setting up Git delta configuration"
-git config --global core.pager 'delta'
-git config --global interactive.diffFilter 'delta --color-only'
-git config --global delta.navigate 'true'
-git config --global delta.light 'false'
+git config --file "$LOCAL_GITCONFIG" user.name "$USER_NAME"
+git config --file "$LOCAL_GITCONFIG" user.email "$USER_EMAIL"
 
-log_info "Setting up Git aliases"
-git config --global alias.tree "log --graph --pretty=format:'%x09%C(auto) %h %Cgreen %ar %Creset%x09by\"%C(cyan ul)%an%Creset\" %x09%C(auto)%s %d'"
-
-log_success "Git configuration completed"
+log_success "Git configuration completed (local: $LOCAL_GITCONFIG)"

@@ -22,6 +22,7 @@ load_config
 
 # 基本設定ファイルの一覧
 BASIC_CONFIGS=(
+    ".gitconfig"
     ".config/nvim"
     ".vimrc"
     ".gvimrc"
