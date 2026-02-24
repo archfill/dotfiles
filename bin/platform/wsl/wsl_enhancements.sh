@@ -5,7 +5,7 @@
 
 # 共通ライブラリをインポート
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../lib/common.sh"
+source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # エラーハンドリングを設定
 setup_error_handling
@@ -82,14 +82,66 @@ EOF
     log_success "WSL performance optimization completed"
 }
 
+# 日本語入力設定（fcitx5-mozc - WSLg対応）
+setup_japanese_input() {
+    log_info "Setting up Japanese input (fcitx5-mozc for WSLg)..."
+
+    # fcitx5がインストール済みかチェック
+    if command -v fcitx5 >/dev/null 2>&1; then
+        log_info "fcitx5 is already installed, checking for updates..."
+        if command -v pacman >/dev/null 2>&1; then
+            sudo pacman -S --needed --noconfirm fcitx5 fcitx5-mozc fcitx5-gtk fcitx5-qt fcitx5-configtool
+        fi
+        log_success "Japanese input setup completed (already installed)"
+        return 0
+    fi
+
+    # パッケージマネージャーを検出
+    if command -v pacman >/dev/null 2>&1; then
+        # Arch Linux
+        log_info "Installing fcitx5 and fcitx5-mozc for Arch Linux..."
+        sudo pacman -S --needed --noconfirm \
+            fcitx5 \
+            fcitx5-mozc \
+            fcitx5-gtk \
+            fcitx5-qt \
+            fcitx5-configtool
+    elif command -v apt >/dev/null 2>&1; then
+        # Ubuntu/Debian
+        log_info "Installing fcitx5 and mozc for Ubuntu/Debian..."
+        sudo apt update
+        sudo apt install -y \
+            fcitx5 \
+            fcitx5-mozc \
+            fcitx5-frontend-gtk3 \
+            fcitx5-frontend-gtk4 \
+            fcitx5-frontend-qt5 \
+            fcitx5-config-qt
+    else
+        log_warning "Unsupported package manager. Please install fcitx5 manually."
+        return 1
+    fi
+
+    # 日本語フォントインストール
+    log_info "Installing Japanese fonts..."
+    if command -v pacman >/dev/null 2>&1; then
+        sudo pacman -S --needed --noconfirm noto-fonts-cjk adobe-source-han-sans-jp-fonts
+    elif command -v apt >/dev/null 2>&1; then
+        sudo apt install -y fonts-noto-cjk fonts-noto-cjk-extra
+    fi
+
+    log_success "Japanese input setup completed"
+    log_info "Please restart your WSL session to use Japanese input"
+}
+
 # WSL固有環境変数の設定
 setup_wsl_environment() {
     log_info "Setting up WSL environment variables..."
-    
+
     # WSL固有の環境変数設定ファイル
     local wsl_env_file="${HOME}/.config/wsl/environment"
     mkdir -p "$(dirname "$wsl_env_file")"
-    
+
     cat > "$wsl_env_file" << 'EOF'
 # WSL固有環境変数
 export WSL_ENV=1
@@ -108,17 +160,34 @@ if command -v win32yank >/dev/null 2>&1; then
 elif command -v clip.exe >/dev/null 2>&1; then
     export CLIPBOARD_COPY="clip.exe"
 fi
+
+# 日本語入力設定（fcitx5 for WSLg）
+if command -v fcitx5 >/dev/null 2>&1; then
+    export GTK_IM_MODULE=fcitx
+    export QT_IM_MODULE=fcitx
+    export XMODIFIERS=@im=fcitx
+
+    # fcitx5 自動起動（WSLg対応）
+    # デーモンが既に動いている場合は再起動しない
+    if ! pgrep -x fcitx5 >/dev/null; then
+        fcitx5 -d --replace &>/dev/null &
+    fi
+fi
 EOF
-    
+
     log_success "WSL environment setup completed"
+    log_info "Environment file created at: $wsl_env_file"
+    log_info "Add this to your ~/.zshrc or ~/.bashrc:"
+    log_info "  source \"~/.config/wsl/environment\""
 }
 
 # メイン実行
 main() {
     setup_windows_integration
     setup_wsl_optimization
+    setup_japanese_input
     setup_wsl_environment
-    
+
     log_success "WSL enhancements setup completed successfully"
     log_info "Please restart your WSL session to apply all changes"
 }
