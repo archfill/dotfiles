@@ -84,15 +84,15 @@ setup_android_sdk() {
   local android_home="$1"
   if [ -d "$android_home" ]; then
     export ANDROID_HOME="$android_home"
-    export ANDROID_SDK_ROOT="$ANDROID_HOME/sdk"
+    export ANDROID_SDK_ROOT="$android_home"
     return 0
   fi
   return 1
 }
 
 # Try different Android SDK locations
+setup_android_sdk "$HOME/Library/Android/sdk" || \
 setup_android_sdk "$HOME/AndroidTools" || \
-setup_android_sdk "$HOME/Library/Android" || \
 setup_android_sdk "$HOME/Android/Sdk"  # Common Linux location
 
 # ===== Local Overrides =====
