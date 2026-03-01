@@ -47,4 +47,4 @@ source-safe "$HOME/zshrc_local.zsh"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-. "/home/archfill/.deno/env"
+[ -s "$HOME/.deno/env" ] && . "$HOME/.deno/env"
