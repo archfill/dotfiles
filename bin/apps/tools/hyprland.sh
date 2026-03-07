@@ -353,7 +353,6 @@ install_hyprland() {
 env = LIBVA_DRIVER_NAME,nvidia
 env = GBM_BACKEND,nvidia-drm
 env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = WLR_NO_HARDWARE_CURSORS,1
 
 # Hardware video acceleration (VA-API)
 env = NVD_BACKEND,direct
