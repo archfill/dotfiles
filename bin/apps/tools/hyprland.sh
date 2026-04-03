@@ -193,12 +193,11 @@ install_hyprland() {
         networkmanager  # Network management daemon (provides nmtui)
         network-manager-applet  # Network management GUI (provides nm-connection-editor)
         btop            # Modern system monitor (for Waybar CPU/Memory modules)
-        gnome-calendar  # Calendar application (for Waybar clock module)
         papirus-icon-theme  # Icon theme (for Waybar taskbar module)
         pacman-contrib  # Pacman tools (provides checkupdates for Waybar updates module)
         wireplumber     # PipeWire session manager (provides wpctl for audio control)
         gnome-keyring   # Secrets management (for credential storage)
-        nautilus        # File manager (GNOME Files)
+        dolphin         # File manager (KDE)
         cliphist        # Clipboard history manager (rofi integration)
     )
 
@@ -353,7 +352,6 @@ install_hyprland() {
 env = LIBVA_DRIVER_NAME,nvidia
 env = GBM_BACKEND,nvidia-drm
 env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = WLR_NO_HARDWARE_CURSORS,1
 
 # Hardware video acceleration (VA-API)
 env = NVD_BACKEND,direct

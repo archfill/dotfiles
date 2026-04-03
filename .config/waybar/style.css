@@ -92,6 +92,7 @@ tooltip label {
 #pulseaudio,
 #bluetooth,
 #network,
+#custom-gpu,
 #cpu,
 #memory,
 #custom-disk,
@@ -148,6 +149,10 @@ tooltip label {
 
 #network {
   color: @sapphire;
+}
+
+#custom-gpu {
+  color: @peach;
 }
 
 #cpu {
