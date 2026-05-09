@@ -101,4 +101,3 @@ export CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000
 
 # ===== Local Overrides =====
 if [ -f "$HOME/zshenv_local.zsh" ]; then . "$HOME/zshenv_local.zsh"; fi
-. "$HOME/.cargo/env"

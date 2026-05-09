@@ -688,7 +688,6 @@ log_info "  - $WAYBAR_MONITORS_ENV"
 if [[ -f "${WAYBAR_DIR}/config.jsonc" ]]; then
     log_info "  - ${WAYBAR_DIR}/config.jsonc"
 fi
-log_info "  - $HYPRPAPER_CONF"
 echo ""
 log_info "Next steps:"
 log_info "  1. Reload Hyprland: hyprctl reload"

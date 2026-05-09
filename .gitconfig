@@ -13,7 +13,7 @@
 	light = false
 
 [ghq]
-	root = ~/git
+	root = /home/archfill/git
 	shallow = true
 
 [ghq "look"]

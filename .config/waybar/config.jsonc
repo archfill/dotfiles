@@ -80,15 +80,20 @@
     "ignored-sinks": ["Easy Effects Sink"]
   },
   "network": {
-    "interface": "enp34s0",
     "format": "{ifname}",
-    "format-wifi": "{essid} ({signalStrength}%) ",
+    "format-wifi": "{essid} ({signalStrength}%) 󰤨",
     "format-ethernet": "{ipaddr}/{cidr} 󰊗",
-    "format-disconnected": "", //An empty format will hide the module.
+    "format-disconnected": "",
     "tooltip-format": "{ifname} via {gwaddr} 󰊗",
-    "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
-    "tooltip-format-ethernet": "{ifname} ",
-    "tooltip-format-disconnected": "Disconnected",
+    "tooltip-format-wifi": "{ifname}: {essid}
+IP: {ipaddr}/{cidr}
+信号強度: {signalStrength}%
+周波数: {frequency} MHz",
+    "tooltip-format-ethernet": "{ifname}
+IP: {ipaddr}/{cidr}
+ゲートウェイ: {gwaddr}",
+    "tooltip-format-disconnected": "未接続",
+    "on-click": "nm-connection-editor",
     "max-length": 50
   },
   "battery": {

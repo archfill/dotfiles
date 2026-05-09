@@ -419,6 +419,7 @@ install_common_packages_arch() {
     # Official repository packages (installed via pacman)
     local official_packages=(
         mise
+        rustup
         bun
         ripgrep
         git-delta

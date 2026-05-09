@@ -441,26 +441,32 @@ main() {
   
   # Check if Rust installation should be skipped
   if should_skip_installation_advanced "Rust" "rustc" "$rust_version" "--version"; then
-    # Even if Rust is installed, check and update environment
     log_info "Rust is installed, checking rustup environment and tools..."
-    
+
+    # If Rust was installed via system package manager (no rustup), skip rustup-specific operations
+    if ! command -v rustup >/dev/null 2>&1; then
+      log_info "Rust installed via system package manager (rustup not available) - skipping rustup operations"
+      log_success "Rust is available: $(rustc --version)"
+      return 0
+    fi
+
     # Perform comprehensive environment check
-    check_rustup_comprehensive_environment
-    
+    check_rustup_comprehensive_environment || true
+
     # Setup/verify environment
     setup_rust_environment
-    
+
     # Install/update components
     install_rust_components "$@"
-    
+
     # Install useful tools
     install_rust_tools "$@"
-    
+
     # Install additional targets (skip in quick mode)
     if [[ "$QUICK_CHECK" != "true" && "$DRY_RUN" != "true" ]]; then
       install_additional_targets
     fi
-    
+
     # Verify installation
     if [[ "$DRY_RUN" != "true" ]]; then
       if ! verify_rust_installation; then
@@ -468,7 +474,7 @@ main() {
         log_info "Rust tools were installed successfully, continuing..."
       fi
     fi
-    
+
     return 0
   fi
   
