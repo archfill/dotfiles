@@ -75,56 +75,14 @@ return {
 
 	-- LSP Configuration (pluginconfigから401行の詳細設定を完全移行)
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		priority = 500,
-		keys = {
-			{ "gd", vim.lsp.buf.definition, desc = "Go to Definition" },
-			{ "gr", vim.lsp.buf.references, desc = "Go to References" },
-			{ "gi", vim.lsp.buf.implementation, desc = "Go to Implementation" },
-			{ "gt", vim.lsp.buf.type_definition, desc = "Go to Type Definition" },
-			{
-				"K",
-				function()
-					vim.lsp.buf.hover({
-						border = "rounded",
-						focusable = false,
-						source = "always",
-					})
-				end,
-				desc = "Hover Documentation",
-			},
-			{ "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" },
-			{
-				"<leader>ca",
-				function()
-					vim.lsp.buf.code_action({
-						float = {
-							border = "rounded",
-							focusable = false,
-							title = "Code Actions",
-						},
-					})
-				end,
-				desc = "Code Action",
-			},
-			{ "<leader>dl", "<cmd>lua vim.diagnostic.setloclist()<cr>", desc = "Diagnostics to Location List" },
-			{
-				"<leader>df",
-				function()
-					vim.diagnostic.open_float()
-				end,
-				desc = "Show Diagnostic in Float",
-			},
-			{ "[d", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
-			{ "]d", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
-		},
 		event = { "BufReadPost", "BufNewFile" },
 		dependencies = {
 			"williamboman/mason.nvim",
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
-
 			-- ===== FLOATING WINDOW CONFIGURATION =====
 			-- Diagnostics floating window設定
 			vim.diagnostic.config({
@@ -143,6 +101,85 @@ return {
 				underline = true,
 				update_in_insert = false,
 				severity_sort = true,
+			})
+
+			-- LSPアタッチ時のみ有効なキーマップ（バッファローカル）
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("ModernLspKeymaps", { clear = true }),
+				callback = function(args)
+					local opts = { buffer = args.buf, silent = true }
+
+					vim.keymap.set(
+						"n",
+						"gd",
+						vim.lsp.buf.definition,
+						vim.tbl_extend("force", opts, { desc = "Go to Definition" })
+					)
+					vim.keymap.set(
+						"n",
+						"gr",
+						vim.lsp.buf.references,
+						vim.tbl_extend("force", opts, { desc = "Go to References" })
+					)
+					vim.keymap.set(
+						"n",
+						"gi",
+						vim.lsp.buf.implementation,
+						vim.tbl_extend("force", opts, { desc = "Go to Implementation" })
+					)
+					vim.keymap.set(
+						"n",
+						"gt",
+						vim.lsp.buf.type_definition,
+						vim.tbl_extend("force", opts, { desc = "Go to Type Definition" })
+					)
+					vim.keymap.set("n", "K", function()
+						vim.lsp.buf.hover({
+							border = "rounded",
+							focusable = false,
+							source = "always",
+						})
+					end, vim.tbl_extend("force", opts, { desc = "Hover Documentation" }))
+					vim.keymap.set(
+						"n",
+						"<leader>rn",
+						vim.lsp.buf.rename,
+						vim.tbl_extend("force", opts, { desc = "Rename Symbol" })
+					)
+					vim.keymap.set("n", "<leader>ca", function()
+						vim.lsp.buf.code_action({
+							float = {
+								border = "rounded",
+								focusable = false,
+								title = "Code Actions",
+							},
+						})
+					end, vim.tbl_extend("force", opts, { desc = "Code Action" }))
+					vim.keymap.set(
+						"n",
+						"<leader>dl",
+						vim.diagnostic.setloclist,
+						vim.tbl_extend("force", opts, { desc = "Diagnostics to Location List" })
+					)
+					vim.keymap.set(
+						"n",
+						"<leader>df",
+						vim.diagnostic.open_float,
+						vim.tbl_extend("force", opts, { desc = "Show Diagnostic in Float" })
+					)
+					vim.keymap.set(
+						"n",
+						"[d",
+						vim.diagnostic.goto_prev,
+						vim.tbl_extend("force", opts, { desc = "Previous Diagnostic" })
+					)
+					vim.keymap.set(
+						"n",
+						"]d",
+						vim.diagnostic.goto_next,
+						vim.tbl_extend("force", opts, { desc = "Next Diagnostic" })
+					)
+				end,
 			})
 
 			-- Signature help floating window設定
@@ -203,9 +240,9 @@ return {
 						"dockerls", -- Docker
 
 						-- 外部依存言語（条件付き対応）
-						-- Note: jdtls と dartls は ensure_installed から除外（条件付きセットアップのため）
+						-- Note: jdtls は条件付きセットアップ、dartls は flutter-tools.nvim 側で管理
 					},
-					automatic_enable = true, -- New API in mason-lspconfig 2.0
+					automatic_enable = false, -- vim.lsp.enable() で明示的に有効化
 				})
 			end)
 
@@ -237,10 +274,45 @@ return {
 				end
 			end
 
+			-- サーバー有効化関数（vim.lsp.enable使用）
+			local function enable_server_safe(server_name)
+				local ok, err = pcall(function()
+					vim.lsp.enable(server_name)
+				end)
+
+				if not ok then
+					vim.notify(
+						string.format(
+							"LSP サーバー '%s' の有効化に失敗しました: %s",
+							server_name,
+							tostring(err)
+						),
+						vim.log.levels.WARN
+					)
+				end
+			end
+
+			-- モダンAPI: 設定と有効化を明示的に行う
+			local function with_completion_capabilities(config)
+				local merged = vim.deepcopy(config or {})
+				local blink_ok, blink = pcall(require, "blink.cmp")
+
+				if blink_ok and type(blink.get_lsp_capabilities) == "function" then
+					merged.capabilities = blink.get_lsp_capabilities(merged.capabilities)
+				end
+
+				return merged
+			end
+
+			local function setup_and_enable_server(server_name, config)
+				setup_server_safe(server_name, with_completion_capabilities(config))
+				enable_server_safe(server_name)
+			end
+
 			-- ===== 基本言語サーバー設定 =====
 
 			-- Lua Language Server
-			setup_server_safe("lua_ls", {
+			setup_and_enable_server("lua_ls", {
 				settings = {
 					Lua = {
 						runtime = { version = "LuaJIT" },
@@ -255,7 +327,7 @@ return {
 			})
 
 			-- Python Language Server
-			setup_server_safe("pyright", {
+			setup_and_enable_server("pyright", {
 				settings = {
 					python = {
 						analysis = {
@@ -268,7 +340,7 @@ return {
 			})
 
 			-- JSON Language Server
-			setup_server_safe("jsonls", {
+			setup_and_enable_server("jsonls", {
 				settings = {
 					json = {
 						validate = { enable = true },
@@ -279,7 +351,7 @@ return {
 			-- ===== 開発スタックサーバー =====
 
 			-- TypeScript/JavaScript（ESLint統合）
-			setup_server_safe("ts_ls", {
+			setup_and_enable_server("ts_ls", {
 				settings = {
 					typescript = {
 						inlayHints = {
@@ -307,7 +379,7 @@ return {
 			})
 
 			-- Rust（最適化設定）
-			setup_server_safe("rust_analyzer", {
+			setup_and_enable_server("rust_analyzer", {
 				settings = {
 					["rust-analyzer"] = {
 						cargo = { allFeatures = true },
@@ -318,7 +390,7 @@ return {
 			})
 
 			-- Go（最適化設定）
-			setup_server_safe("gopls", {
+			setup_and_enable_server("gopls", {
 				settings = {
 					gopls = {
 						analyses = { unusedparams = true },
@@ -329,7 +401,7 @@ return {
 			})
 
 			-- C/C++（クロスプラットフォーム設定）
-			setup_server_safe("clangd", {
+			setup_and_enable_server("clangd", {
 				cmd = {
 					"clangd",
 					"--background-index",
@@ -343,7 +415,7 @@ return {
 			-- ===== ウェブ技術サーバー =====
 
 			-- YAML（Kubernetes/Docker対応）
-			setup_server_safe("yamlls", {
+			setup_and_enable_server("yamlls", {
 				settings = {
 					yaml = {
 						schemas = {
@@ -356,15 +428,15 @@ return {
 			})
 
 			-- Bash/Shell
-			setup_server_safe("bashls", {})
+			setup_and_enable_server("bashls", {})
 
 			-- HTML（Emmet統合）
-			setup_server_safe("html", {
+			setup_and_enable_server("html", {
 				filetypes = { "html", "htmldjango" },
 			})
 
 			-- CSS（Tailwind対応）
-			setup_server_safe("cssls", {
+			setup_and_enable_server("cssls", {
 				settings = {
 					css = {
 						validate = true,
@@ -376,7 +448,7 @@ return {
 			-- ===== Tier1言語サーバー =====
 
 			-- PHP（WordPress/Laravel対応）
-			setup_server_safe("intelephense", {
+			setup_and_enable_server("intelephense", {
 				settings = {
 					intelephense = {
 						files = { maxSize = 1000000 },
@@ -387,7 +459,7 @@ return {
 			})
 
 			-- Ruby（Rails対応）
-			setup_server_safe("solargraph", {
+			setup_and_enable_server("solargraph", {
 				settings = {
 					solargraph = {
 						diagnostics = true,
@@ -402,11 +474,11 @@ return {
 			local function setup_sqls()
 				local local_config_ok, local_config = pcall(require, "config.local")
 				if local_config_ok and local_config.sqls then
-					setup_server_safe("sqls", {
+					setup_and_enable_server("sqls", {
 						settings = { sqls = local_config.sqls },
 					})
 				else
-					setup_server_safe("sqls", {
+					setup_and_enable_server("sqls", {
 						settings = { sqls = { connections = {} } },
 					})
 					if not local_config_ok then
@@ -421,7 +493,7 @@ return {
 			setup_sqls()
 
 			-- Terraform（AWS/Azure/GCP対応）
-			setup_server_safe("terraformls", {
+			setup_and_enable_server("terraformls", {
 				filetypes = { "terraform", "hcl" },
 				settings = {
 					terraform = {
@@ -431,7 +503,7 @@ return {
 			})
 
 			-- Kotlin（Android/サーバーサイド対応）
-			setup_server_safe("kotlin_language_server", {
+			setup_and_enable_server("kotlin_language_server", {
 				settings = {
 					kotlin = {
 						compiler = {
@@ -442,7 +514,7 @@ return {
 			})
 
 			-- Markdown（ドキュメント作成支援）
-			setup_server_safe("marksman", {
+			setup_and_enable_server("marksman", {
 				filetypes = { "markdown" },
 				settings = {
 					marksman = {
@@ -454,7 +526,7 @@ return {
 			})
 
 			-- Docker（コンテナ開発支援）
-			setup_server_safe("dockerls", {
+			setup_and_enable_server("dockerls", {
 				filetypes = { "dockerfile" },
 				settings = {
 					docker = {
@@ -487,7 +559,7 @@ return {
 				local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace"
 				vim.fn.mkdir(workspace_dir, "p")
 
-				setup_server_safe("jdtls", {
+				setup_and_enable_server("jdtls", {
 					cmd = { "jdtls", "-data", workspace_dir },
 					filetypes = { "java" },
 					root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" },
@@ -509,48 +581,7 @@ return {
 			end
 			setup_java_lsp()
 
-			-- Dart/Flutter（条件付き対応）
-			local function setup_dart_lsp()
-				local flutter_root = os.getenv("FLUTTER_ROOT")
-				local flutter_cmd = vim.fn.exepath("flutter")
-				local dart_cmd = vim.fn.exepath("dart")
-
-				if not flutter_root and not flutter_cmd and not dart_cmd then
-					vim.notify(
-						"Dart/Flutter環境が見つかりません。\n"
-							.. "Flutter開発を行う場合は以下を設定してください:\n"
-							.. "• Flutter SDKのインストール\n"
-							.. "• FLUTTER_ROOT環境変数またはPATH設定",
-						vim.log.levels.INFO,
-						{ title = "Dart LSP Setup" }
-					)
-					return
-				end
-
-				setup_server_safe("dartls", {
-					cmd = { "dart", "language-server", "--protocol=lsp" },
-					filetypes = { "dart" },
-					root_markers = { "pubspec.yaml" },
-					init_options = {
-						onlyAnalyzeProjectsWithOpenFiles = true,
-						suggestFromUnimportedLibraries = true,
-						closingLabels = true,
-						outline = true,
-						flutterOutline = true,
-					},
-					settings = {
-						dart = {
-							completeFunctionCalls = true,
-							showTodos = true,
-							enableSnippets = true,
-						},
-					},
-				})
-
-				vim.notify("Dart LSP (dartls) が有効化されました", vim.log.levels.INFO, { title = "Dart LSP" })
-			end
-			setup_dart_lsp()
+			-- Dart/Flutter は flutter-tools.nvim 側で dartls を管理する
 		end,
 	},
 }
-
