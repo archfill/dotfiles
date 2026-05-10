@@ -72,7 +72,13 @@ return {
 					virtual_text_str = "■",
 				},
 				on_attach = nil,
-				capabilities = nil,
+				capabilities = (function()
+					local ok, blink = pcall(require, "blink.cmp")
+					if ok and type(blink.get_lsp_capabilities) == "function" then
+						return blink.get_lsp_capabilities()
+					end
+					return nil
+				end)(),
 				settings = {
 					showTodos = true,
 					completeFunctionCalls = true,
@@ -113,4 +119,3 @@ return {
 		},
 	},
 }
-

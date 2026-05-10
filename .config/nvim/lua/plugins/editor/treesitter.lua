@@ -15,6 +15,7 @@ return {
 				vim.notify("Tree-sitter: プラグインがロードされていません。", vim.log.levels.WARN)
 				return
 			end
+			local uv = vim.uv or vim.loop
 
 			local function ts_disable(_, bufnr)
 				-- nvim-treesitterのバグ対策: bufnrがnilの場合がある
@@ -25,7 +26,7 @@ return {
 				-- ファイルサイズベースの早期チェック（500KB以上で無効化）
 				local filename = vim.api.nvim_buf_get_name(bufnr)
 				if filename ~= "" then
-					local ok, stats = pcall(vim.loop.fs_stat, filename)
+					local ok, stats = pcall(uv.fs_stat, filename)
 					if ok and stats and stats.size > 500000 then
 						return true
 					end
@@ -125,13 +126,17 @@ return {
 				if not vim.api.nvim_buf_is_valid(bufnr) then
 					return
 				end
+				if vim.b[bufnr].treesitter_auto_disabled then
+					return
+				end
 
 				-- ファイルサイズチェック
 				local filename = vim.api.nvim_buf_get_name(bufnr)
 				if filename ~= "" then
-					local ok, stats = pcall(vim.loop.fs_stat, filename)
+					local ok, stats = pcall(uv.fs_stat, filename)
 					if ok and stats and stats.size > 500000 then
 						vim.treesitter.stop(bufnr)
+						vim.b[bufnr].treesitter_auto_disabled = true
 						vim.notify(
 							string.format(
 								"TreeSitter: Disabled for large file (%s, %.1fMB)",
@@ -148,6 +153,7 @@ return {
 				local lines = vim.api.nvim_buf_line_count(bufnr)
 				if lines > 5000 then
 					vim.treesitter.stop(bufnr)
+					vim.b[bufnr].treesitter_auto_disabled = true
 					vim.notify(
 						string.format("TreeSitter: Disabled for large file (%d lines)", lines),
 						vim.log.levels.INFO

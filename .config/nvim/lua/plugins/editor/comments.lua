@@ -33,8 +33,11 @@ return {
 			},
 		},
 		config = function(_, opts)
+			local pre_hook_ok, ts_pre_comment = pcall(require, "ts_context_commentstring.integrations.comment_nvim")
+			if pre_hook_ok and ts_pre_comment then
+				opts.pre_hook = ts_pre_comment.create_pre_hook()
+			end
 			require("Comment").setup(opts)
 		end,
 	},
 }
-
