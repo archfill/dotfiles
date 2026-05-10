@@ -8,18 +8,23 @@ return {
 		"folke/trouble.nvim",
 		keys = {
 			-- ===== CORE TROUBLE OPERATIONS =====
-			{ "<leader>xx", "<cmd>Trouble<cr>", desc = "Trouble" },
-			{ "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>", desc = "Workspace Diagnostics" },
-			{ "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", desc = "Document Diagnostics" },
-			{ "<leader>xl", "<cmd>Trouble loclist<cr>", desc = "Location List" },
-			{ "<leader>xq", "<cmd>Trouble quickfix<cr>", desc = "Quickfix" },
+			{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+			{ "<leader>xw", "<cmd>Trouble diagnostics toggle<cr>", desc = "Workspace Diagnostics (Trouble)" },
+			{
+				"<leader>xd",
+				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+				desc = "Document Diagnostics (Trouble)",
+			},
+			{ "<leader>xl", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
+			{ "<leader>xq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
+			{ "<leader>o", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols Outline (Trouble)" },
 
 			-- ===== LSP INTEGRATION =====
-			{ "gR", "<cmd>Trouble lsp_references<cr>", desc = "LSP References" },
+			{ "gR", "<cmd>Trouble lsp_references toggle<cr>", desc = "LSP References (Trouble)" },
 		},
 		cmd = { "Trouble" },
 		opts = {
-			mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+			mode = "diagnostics", -- modern default mode
 			win = {
 				type = "float",
 				relative = "editor",
@@ -77,4 +82,3 @@ return {
 		},
 	},
 }
-

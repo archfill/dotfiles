@@ -6,6 +6,7 @@ return {
 	-- lspsaga: 美しいLSP UI拡張
 	{
 		"nvimdev/lspsaga.nvim",
+		enabled = false, -- Trouble.nvim + 標準LSP UIに統一するため一旦無効化
 		keys = {
 			{ "gh", "<cmd>Lspsaga finder<cr>", desc = "LSP Finder (Saga)" },
 			{ "gp", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek Definition (Saga)" },
@@ -94,4 +95,3 @@ return {
 		},
 	},
 }
-
