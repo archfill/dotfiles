@@ -51,6 +51,7 @@ BASIC_CONFIGS=(
     ".config/matugen"
     ".config/rofi"
     ".config/ags"
+    ".config/lazygit"
 )
 
 # 基本設定ファイルのシンボリックリンク作成
