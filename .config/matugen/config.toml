@@ -27,6 +27,11 @@ output_path = "~/.config/rofi/colors.rasi"
 input_path = "~/.config/matugen/templates/waybar-colors.css"
 output_path = "~/.config/waybar/colors/matugen.css"
 
+# AGS colors template
+[templates.ags]
+input_path = "~/.config/matugen/templates/ags-colors.scss"
+output_path = "~/.config/ags/colors/matugen.scss"
+
 # SwayNC colors template
 [templates.swaync]
 input_path = "~/.config/matugen/templates/swaync-colors.css"

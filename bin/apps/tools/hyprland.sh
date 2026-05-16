@@ -170,14 +170,15 @@ install_hyprland() {
         xdg-desktop-portal-hyprland     # Desktop portal integration
     )
 
-    # Essential Wayland tools (6 packages)
+    # Essential Wayland tools
     local wayland_tools=(
-        waybar          # Status bar
+        waybar          # Status bar (kept for fallback)
         rofi            # Application launcher (customizable)
         rofi-calc       # Calculator plugin for rofi
         rofi-emoji      # Emoji picker plugin for rofi
         swaync          # Notification daemon with notification center
         wl-clipboard    # Clipboard utilities
+        dart-sass       # Sass compiler (required by AGS)
     )
 
     # Screenshot tools (1 package)
@@ -219,13 +220,18 @@ install_hyprland() {
         )
     fi
 
-    # AUR packages (5 packages - conditional on yay availability)
+    # AUR packages (conditional on yay availability)
     local aur_packages=(
-        wlogout         # Wayland logout menu
-        overskride      # Bluetooth manager (GTK4, Hyprland-recommended)
-        awww-git        # Animated wallpaper daemon for Wayland
-        eww             # Standalone widget system (for submap overlay)
-        hyprswitch      # Alt+Tab style window switcher
+        wlogout                     # Wayland logout menu
+        overskride                  # Bluetooth manager (GTK4, Hyprland-recommended)
+        awww-git                    # Animated wallpaper daemon for Wayland
+        eww                         # Standalone widget system (for submap overlay)
+        hyprswitch                  # Alt+Tab style window switcher
+        aylurs-gtk-shell            # AGS - GTK widget system (TypeScript)
+        libastal-hyprland-git       # AGS: Hyprland integration
+        libastal-network-git        # AGS: Network status
+        libastal-battery-git        # AGS: Battery status
+        libastal-wireplumber-git    # AGS: Audio/volume control
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
@@ -292,6 +298,7 @@ install_hyprland() {
             local hyprland_configs=(
                 ".config/hypr"
                 ".config/waybar"
+                ".config/ags"
                 ".config/rofi"
                 ".config/swaync"
                 ".config/wlogout"

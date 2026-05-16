@@ -99,6 +99,9 @@ venv.bak/
 
 ### Node.js ###
 node_modules/
+
+### AGS ###
+.config/ags/@girs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

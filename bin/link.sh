@@ -50,6 +50,7 @@ BASIC_CONFIGS=(
     ".config/eww"
     ".config/matugen"
     ".config/rofi"
+    ".config/ags"
 )
 
 # 基本設定ファイルのシンボリックリンク作成
