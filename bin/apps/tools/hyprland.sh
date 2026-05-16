@@ -427,7 +427,7 @@ EOF
             fi
             if [[ -n "$wallpaper_path" && -f "$wallpaper_path" ]]; then
                 if command -v matugen >/dev/null 2>&1; then
-                    matugen image "$wallpaper_path" && log_success "matugen: color scheme generated from $wallpaper_path" \
+                    matugen image --prefer=lightness "$wallpaper_path" && log_success "matugen: color scheme generated from $wallpaper_path" \
                         || log_warning "matugen failed - run manually: matugen image <wallpaper>"
                 else
                     log_warning "matugen not found - install it and run: matugen image <wallpaper>"
