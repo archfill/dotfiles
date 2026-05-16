@@ -158,12 +158,13 @@ install_hyprland() {
         log_info "NVIDIA GPU detected - Will install additional packages"
     fi
 
-    # Hyprland core packages (8 packages - all from official repos)
+    # Hyprland core packages (9 packages - all from official repos)
     local hypr_packages=(
         hyprland                        # Main compositor
         hyprcursor                      # Cursor management
         hypridle                        # Idle daemon
         hyprlock                        # Screen locker
+        hyprpaper                       # Wallpaper daemon
         hyprpicker                      # Color picker
         hyprshot                        # Screenshot utility
         hyprpolkitagent                 # Polkit authentication agent
@@ -224,7 +225,6 @@ install_hyprland() {
     local aur_packages=(
         wlogout                     # Wayland logout menu
         overskride                  # Bluetooth manager (GTK4, Hyprland-recommended)
-        awww-git                    # Animated wallpaper daemon for Wayland
         eww                         # Standalone widget system (for submap overlay)
         hyprswitch                  # Alt+Tab style window switcher
         aylurs-gtk-shell            # AGS - GTK widget system (TypeScript)
@@ -275,7 +275,7 @@ install_hyprland() {
             log_success "Hyprland installed successfully: $(Hyprland --version | head -1)"
             log_info ""
             log_info "Installed packages:"
-            log_info "  - Hyprland core: ${#hypr_packages[@]} packages"
+            log_info "  - Hyprland core (incl. hyprpaper): ${#hypr_packages[@]} packages"
             log_info "  - Wayland tools: ${#wayland_tools[@]} packages"
             log_info "  - Screenshot: ${#screenshot_tools[@]} packages"
             log_info "  - Optional: ${#optional_packages[@]} packages"
@@ -427,7 +427,7 @@ EOF
         fi
     else
         log_info "[DRY RUN] Would install:"
-        log_info "  - ${#hypr_packages[@]} Hyprland core packages"
+        log_info "  - ${#hypr_packages[@]} Hyprland core packages (incl. hyprpaper)"
         log_info "  - ${#wayland_tools[@]} Wayland tools"
         log_info "  - ${#screenshot_tools[@]} screenshot tools"
         log_info "  - ${#optional_packages[@]} optional packages"
