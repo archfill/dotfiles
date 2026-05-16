@@ -418,6 +418,25 @@ EOF
                 log_info "monitors.conf already exists, skipping creation"
             fi
 
+            # Run matugen to generate AGS color scheme from wallpaper
+            log_info "Generating AGS color scheme with matugen..."
+            local hyprpaper_conf="${HOME}/.config/hypr/hyprpaper.conf"
+            local wallpaper_path=""
+            if [[ -f "$hyprpaper_conf" ]]; then
+                wallpaper_path=$(grep -m1 "^preload\s*=" "$hyprpaper_conf" | sed 's/.*=\s*//' | tr -d ' ')
+            fi
+            if [[ -n "$wallpaper_path" && -f "$wallpaper_path" ]]; then
+                if command -v matugen >/dev/null 2>&1; then
+                    matugen image "$wallpaper_path" && log_success "matugen: color scheme generated from $wallpaper_path" \
+                        || log_warning "matugen failed - run manually: matugen image <wallpaper>"
+                else
+                    log_warning "matugen not found - install it and run: matugen image <wallpaper>"
+                fi
+            else
+                log_warning "Wallpaper not found in hyprpaper.conf - run matugen manually after setting a wallpaper"
+                log_info "  matugen image /path/to/wallpaper.png"
+            fi
+
             log_info "Next steps:"
             log_info "  1. Configure monitors: ~/.config/hypr/monitors.conf"
             log_info "     Check current monitors: hyprctl monitors"
