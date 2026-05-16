@@ -49,4 +49,4 @@ source-safe "$HOME/zshrc_local.zsh"
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 [ -s "$HOME/.deno/env" ] && . "$HOME/.deno/env"
 
-. "$HOME/.moon/bin/env"
+[ -s "$HOME/.moon/bin/env" ] && . "$HOME/.moon/bin/env"
