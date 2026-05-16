@@ -7,13 +7,11 @@ CACHE_DIR="$HOME/.cache/wallpaper-thumbnails"
 CURRENT_WALLPAPER="$HOME/.config/hypr/current-wallpaper"
 THUMB_SIZE=200
 
-# Create cache directory
 mkdir -p "$CACHE_DIR"
 
-# Check dependencies
 check_deps() {
     local missing=()
-    command -v awww >/dev/null || missing+=("awww")
+    command -v hyprctl >/dev/null || missing+=("hyprctl")
     command -v rofi >/dev/null || missing+=("rofi")
     command -v magick >/dev/null || missing+=("imagemagick")
 
@@ -23,15 +21,6 @@ check_deps() {
     fi
 }
 
-# Initialize awww if not running
-init_awww() {
-    if ! pgrep -x awww-daemon >/dev/null; then
-        awww-daemon &
-        sleep 0.5
-    fi
-}
-
-# Generate thumbnail for a single image
 generate_thumbnail() {
     local img="$1"
     local name=$(basename "$img")
@@ -45,13 +34,11 @@ generate_thumbnail() {
     echo "$thumb"
 }
 
-# Generate all thumbnails (parallel)
 generate_all_thumbnails() {
     local count=0
     find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | while read -r img; do
         generate_thumbnail "$img" &
         ((count++))
-        # Limit parallel jobs
         if ((count % 10 == 0)); then
             wait
         fi
@@ -59,23 +46,19 @@ generate_all_thumbnails() {
     wait
 }
 
-# List wallpapers with icons for rofi
 list_wallpapers_with_icons() {
     find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | sort | while read -r img; do
         local name=$(basename "$img")
         local thumb="$CACHE_DIR/${name%.*}.png"
 
-        # Generate thumbnail if needed
         if [[ ! -f "$thumb" ]]; then
             generate_thumbnail "$img" >/dev/null
         fi
 
-        # Output: filename\0icon\x1fthumbnail_path
         printf '%s\0icon\x1f%s\n' "$name" "$thumb"
     done
 }
 
-# Apply wallpaper and regenerate theme
 apply_wallpaper() {
     local wallpaper="$1"
     local full_path="$WALLPAPER_DIR/$wallpaper"
@@ -85,30 +68,30 @@ apply_wallpaper() {
         exit 1
     fi
 
-    # Save current wallpaper path
     echo "$full_path" > "$CURRENT_WALLPAPER"
 
-    # Apply wallpaper with awww
-    awww img "$full_path"
+    # hyprpaperで壁紙を設定
+    hyprctl hyprpaper unload all 2>/dev/null
+    hyprctl hyprpaper preload "$full_path"
+    # 全モニターに適用
+    hyprctl monitors -j | jq -r '.[].name' | while read -r monitor; do
+        hyprctl hyprpaper wallpaper "$monitor,$full_path"
+    done
 
     notify-send "Wallpaper" "Applied: $wallpaper" -t 2000
 
-    # Regenerate colors with matugen
+    # matugenでカラー再生成
     if command -v matugen >/dev/null; then
         matugen image "$full_path" 2>/dev/null
-
-        # Reload applications
-        pkill waybar
-        ~/.config/hypr/scripts/waybar-launch.sh &
+        pkill -f "gjs -m" 2>/dev/null
+        sleep 0.5
+        ags run ~/.config/ags &
         swaync-client -rs &
-
         notify-send "Theme Updated" "Colors regenerated" -t 2000
     fi
 }
 
-# Select wallpaper with rofi grid view
 select_wallpaper() {
-    # Get monitor info for sizing
     local monitor_width=$(hyprctl monitors -j | jq -r '.[0].width')
     local columns=5
     local icon_size=150
@@ -150,7 +133,6 @@ select_wallpaper() {
     fi
 }
 
-# Random wallpaper
 random_wallpaper() {
     local random_file
     random_file=$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | shuf -n 1)
@@ -159,7 +141,6 @@ random_wallpaper() {
     fi
 }
 
-# Regenerate all thumbnails
 regen_thumbnails() {
     rm -rf "$CACHE_DIR"
     mkdir -p "$CACHE_DIR"
@@ -168,9 +149,7 @@ regen_thumbnails() {
     echo "Done! Generated thumbnails for $(ls "$CACHE_DIR" | wc -l) images"
 }
 
-# Main
 check_deps
-init_awww
 
 case "${1:-}" in
     --random|-r)
