@@ -47,9 +47,9 @@ show_nvidia_setup() {
     log_info "═══════════════════════════════════════════════════════════"
     log_info ""
 
-    # Check kernel parameter
-    check_nvidia_kernel_param
-    local kernel_status=$?
+    # Check kernel parameter (|| true prevents set -e from exiting on non-zero return)
+    local kernel_status=0
+    check_nvidia_kernel_param || kernel_status=$?
 
     log_info "1. Kernel Parameters (REQUIRED)"
     log_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -139,10 +139,10 @@ install_hyprland() {
         return 0
     fi
 
-    # Check if Hyprland is already installed
-    if [[ "$FORCE_INSTALL" != "true" ]] && command -v Hyprland >/dev/null 2>&1; then
-        log_skip_reason "hyprland" "Already installed: $(Hyprland --version 2>/dev/null | head -1 || echo 'version unknown')"
-        return 0
+    # Log if Hyprland is already installed (but continue to check ecosystem packages)
+    if command -v Hyprland >/dev/null 2>&1; then
+        log_info "Hyprland already installed: $(Hyprland --version 2>/dev/null | head -1 || echo 'version unknown')"
+        log_info "Checking ecosystem packages..."
     fi
 
     # Quick check mode
@@ -232,10 +232,15 @@ install_hyprland() {
         libastal-network-git        # AGS: Network status
         libastal-battery-git        # AGS: Battery status
         libastal-wireplumber-git    # AGS: Audio/volume control
+        quarrel-git                 # AGS: CLI arg parser (libastal-notifd-git dependency)
+        libastal-notifd-git         # AGS: Notification daemon (AstalNotifd)
+        libastal-bluetooth-git      # AGS: Bluetooth control
+        libastal-mpris-git          # AGS: Media player (MPRIS)
+        libastal-tray-git           # AGS: System tray
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
-        # Install core Hyprland packages
+        # Install core Hyprland packages (--needed skips already-installed packages)
         log_info "Installing ${#hypr_packages[@]} Hyprland core packages..."
         sudo pacman -S --needed --noconfirm "${hypr_packages[@]}"
 
@@ -261,9 +266,9 @@ install_hyprland() {
             sudo pacman -S --needed --noconfirm "${nvidia_packages[@]}"
         fi
 
-        # Install AUR packages if yay is available
+        # Install/check AUR packages (ecosystem may be updated independently)
         if command -v yay >/dev/null 2>&1; then
-            log_info "Installing ${#aur_packages[@]} AUR packages..."
+            log_info "Installing/checking ${#aur_packages[@]} AUR packages..."
             yay -S --needed --noconfirm "${aur_packages[@]}"
         else
             log_warning "yay not found. Skipping AUR packages: ${aur_packages[*]}"
