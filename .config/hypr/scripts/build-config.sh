@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =====================================================
-# Waybar Configuration Builder
+# Hyprland Configuration Builder
 # =====================================================
-# Generates config.jsonc from template using monitor settings
+# Generates monitor config from template using monitor settings
 # =====================================================
 
 set -euo pipefail
@@ -61,12 +61,12 @@ fi
 
 if [[ -z "${MONITOR_SUB:-}" ]]; then
     DISPLAY_MODE="single"
-    echo "🔧 Building waybar configuration..."
+    echo "🔧 Building monitor configuration..."
     echo "   Display Mode: Single"
     echo "   Monitor: $MONITOR_MAIN (Workspaces 1-10)"
 else
     DISPLAY_MODE="dual"
-    echo "🔧 Building waybar configuration..."
+    echo "🔧 Building monitor configuration..."
     echo "   Display Mode: Dual"
     echo "   Main Monitor: $MONITOR_MAIN (Workspaces 1-5)"
     echo "   Sub Monitor:  $MONITOR_SUB (Workspaces 6-10)"
@@ -101,17 +101,18 @@ fi
 echo "✅ Configuration generated: config.jsonc"
 
 # =====================================================
-# Restart Waybar
+# Restart AGS
 # =====================================================
 
-if pgrep -x waybar >/dev/null; then
-    echo "🔄 Restarting waybar..."
-    killall waybar
-    waybar &
+if pgrep -f "ags run" >/dev/null; then
+    echo "🔄 Restarting AGS..."
+    pkill -f "ags run"
+    sleep 0.3
+    ags run ~/.config/ags &
     disown
-    echo "✅ Waybar restarted"
+    echo "✅ AGS restarted"
 else
-    echo "ℹ️  Waybar is not running. Start it with: waybar &"
+    echo "ℹ️  AGS is not running. Start it with: ags run ~/.config/ags &"
 fi
 
 echo ""

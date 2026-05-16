@@ -22,7 +22,7 @@
 
 ### オプション A: 自動検出（推奨）⭐
 
-接続されているモニターを自動検出して、Hyprland と Waybar の設定を自動生成します。
+接続されているモニターを自動検出して、Hyprland の設定を自動生成します。
 
 #### 基本的な使い方
 
@@ -149,8 +149,6 @@ Enter your choice [1-4] (default: 1):
 - **各モニターの向き（landscape/portrait）を個別に選択可能**
 - **サブディスプレイの配置（上下左右）を選択可能**
 - Hyprland `monitors.conf` を自動生成
-- Waybar `monitors.env` を自動生成 + ビルド
-- Waybar を自動再起動
 
 **出力例:**
 
@@ -251,7 +249,7 @@ make monitors-auto
 このコマンドで以下が自動的に更新されます：
 
 - ✅ `monitors.conf` - モニター設定
-- ✅ `waybar/config.jsonc` - Waybar設定
+- ✅ AGS設定 (`~/.config/ags`)
 
 **方法2: スクリプト直接実行**
 
@@ -451,7 +449,7 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 
 ## 🔗 関連設定
 
-- **Waybar**: モニター設定は [`~/.config/waybar/monitors.env`](../waybar/README.md) で管理
+- **AGS**: ステータスバーは AGS (`~/.config/ags`) で管理
 - **Hyprland公式ドキュメント**: https://wiki.hyprland.org
 
 ## 🚨 NVIDIA GPU使用時の注意
