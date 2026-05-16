@@ -158,6 +158,7 @@ go.work
 .config/hypr/local.conf
 .config/hypr/monitors.conf
 .config/hypr/current-wallpaper
+.config/hypr/hypridle.local.conf
 # colors.conf は matugen で上書きされるが、デフォルトとして git 追跡する
 
 ### Matugen (auto-generated color schemes) ###
