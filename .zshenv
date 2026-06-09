@@ -95,9 +95,5 @@ setup_android_sdk "$HOME/Library/Android/sdk" || \
 setup_android_sdk "$HOME/AndroidTools" || \
 setup_android_sdk "$HOME/Android/Sdk"  # Common Linux location
 
-# ===== Claude Code =====
-# Auto-compact context to reduce token consumption at peak hours
-export CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000
-
 # ===== Local Overrides =====
 if [ -f "$HOME/zshenv_local.zsh" ]; then . "$HOME/zshenv_local.zsh"; fi
