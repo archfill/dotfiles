@@ -59,15 +59,12 @@ if ! check_homebrew_environment; then
 fi
 
 # Essential development tools
-# 注記: ripgrep は Nix (home-manager) で管理
+# 注記: ripgrep / jq / yq / bat は Nix (home-manager) で管理
 essential_apps=(
   'git'
   'curl'
   'wget'
-  'jq'
-  'yq'
   'fzf'
-  'bat'
   'tmux'
   'make'
   'coreutils'
@@ -90,20 +87,15 @@ dev_apps=(
 )
 
 # Development utilities
-# 注記: fd は Nix (home-manager) で管理
+# 注記: fd / ghq / lazygit / git-delta / yazi / fastfetch は Nix (home-manager) で管理
 utils_apps=(
-  'ghq'
-  'lazygit'
-  'git-delta'
   'the_silver_searcher'
   'awscli'
   'stripe'
-  'yazi'
   'ffmpegthumbnailer'
   'sevenzip'
   'poppler'
   'imagemagick'
-  'fastfetch'
 )
 
 # macOS specific tools

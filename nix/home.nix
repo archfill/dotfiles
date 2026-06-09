@@ -23,14 +23,31 @@ in
 
   programs.home-manager.enable = true;
 
-  # ── Neovim 本体のみ提供 ───────────────────────────────────────
-  # programs.neovim モジュールは init.lua 等を生成して既存 dotfiles と
-  # 競合するため使わず、wrapped neovim パッケージを直接 home.packages
-  # に入れることで .config/nvim/ を完全に既存のまま保つ。
-  # Lua プラグイン (Telescope / Treesitter 等) から呼ぶ周辺ツールも併せる。
+  # ── home-manager 管理パッケージ ───────────────────────────────
+  # 既存 dotfiles の設定ファイルとは独立してバイナリのみを Nix で提供する
+  # ツール群。programs.<name> モジュールを使うと init.* が自動生成されて
+  # 既存 .config/ と競合する場合があるため、当面は home.packages 直入れに
+  # 寄せて運用する。
   home.packages = with pkgs; [
-    neovimPackage
+    # Editor
+    neovimPackage    # programs.neovim を使わず wrapped neovim を直接提供
+
+    # Search / files
     ripgrep
     fd
+    bat
+
+    # Data
+    jq
+    yq-go            # Go 版 yq (brew 'yq' と挙動互換)
+
+    # Git
+    lazygit
+    delta            # git-delta
+
+    # Repo / misc
+    ghq
+    fastfetch
+    yazi
   ];
 }
