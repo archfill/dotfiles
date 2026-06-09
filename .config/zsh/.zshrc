@@ -37,7 +37,11 @@ source-safe "$ZRCDIR/$CURRENT_PLATFORM/alias.zsh"
 source "$ZRCDIR/bindkey.zsh"
 source-safe "$ZRCDIR/$CURRENT_PLATFORM/bindkey.zsh"
 
-# 11. Load user-specific overrides (highest priority)
+# 11. Ensure Nix profile takes precedence on PATH (must run after all
+#     other PATH-modifying scripts in zshrc/zshenv)
+source "$ZRCDIR/nix.zsh"
+
+# 12. Load user-specific overrides (highest priority)
 source-safe "$HOME/zshrc_local.zsh"
 
 # ===== Java/Maven (mise) =====
