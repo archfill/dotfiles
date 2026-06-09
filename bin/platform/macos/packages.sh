@@ -89,7 +89,6 @@ dev_apps=(
 # Development utilities
 # 注記: fd / ghq / lazygit / git-delta / yazi / fastfetch は Nix (home-manager) で管理
 utils_apps=(
-  'the_silver_searcher'
   'awscli'
   'stripe'
   'ffmpegthumbnailer'
