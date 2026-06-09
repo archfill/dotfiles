@@ -59,6 +59,7 @@ if ! check_homebrew_environment; then
 fi
 
 # Essential development tools
+# 注記: ripgrep は Nix (home-manager) で管理
 essential_apps=(
   'git'
   'curl'
@@ -66,7 +67,6 @@ essential_apps=(
   'jq'
   'yq'
   'fzf'
-  'ripgrep'
   'bat'
   'tmux'
   'make'
@@ -90,6 +90,7 @@ dev_apps=(
 )
 
 # Development utilities
+# 注記: fd は Nix (home-manager) で管理
 utils_apps=(
   'ghq'
   'lazygit'
@@ -101,7 +102,6 @@ utils_apps=(
   'ffmpegthumbnailer'
   'sevenzip'
   'poppler'
-  'fd'
   'imagemagick'
   'fastfetch'
 )
@@ -130,6 +130,8 @@ optional_apps=(
   'sqlite3'
   'tcl-tk'
   'w3m'
+  'grishka/grishka/neardrop'
+  'leoafarias/fvm/fvm'
 )
 
 # GUI applications (casks)
@@ -165,7 +167,6 @@ optional_casks=(
   '--cask blackhole-16ch'
   '--cask blackhole-2ch'
   '--cask blackhole-64ch'
-  '--cask --no-quarantine gcenx/wine/unofficial-wineskin'
 )
 
 # Main installation function
@@ -232,14 +233,15 @@ add_homebrew_taps() {
     fi
     
     local taps=(
-        "FelixKratz/formulae"
-        "gcenx/wine"
+        "felixkratz/formulae"
+        "grishka/grishka"
         "homebrew/cask"
         "homebrew/core"
         "homebrew/services"
         "jakehilborn/jakehilborn"
-        "koekeishiya/formulae"
+        "leoafarias/fvm"
         "nikitabobko/tap"
+        "olets/tap"
         "oven-sh/bun"
         "osx-cross/arm"
         "osx-cross/avr"

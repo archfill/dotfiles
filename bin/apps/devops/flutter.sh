@@ -438,20 +438,18 @@ install_fvm_first() {
     return 0
   fi
   
-  # Try to install Dart first if not available
-  if ! command -v dart >/dev/null 2>&1; then
-    log_info "Installing Dart SDK for FVM..."
-    install_dart_sdk "$@"
-  fi
-  
   if [[ "$DRY_RUN" != "true" ]]; then
-    # Install FVM via pub global
-    if command -v dart >/dev/null 2>&1; then
-      dart pub global activate fvm
-      
-      # Add pub cache to PATH for current session
-      export PATH="$HOME/.pub-cache/bin:$PATH"
-      
+    # Install FVM via Homebrew tap (leoafarias/fvm)
+    if ! command -v brew >/dev/null 2>&1; then
+      log_warning "Homebrew not available, cannot install FVM"
+      return 1
+    fi
+
+    if ! brew tap | grep -q '^leoafarias/fvm$'; then
+      brew tap leoafarias/fvm
+    fi
+
+    if brew install leoafarias/fvm/fvm; then
       if command -v fvm >/dev/null 2>&1; then
         log_success "FVM installed successfully: $(fvm --version)"
         return 0
@@ -460,11 +458,11 @@ install_fvm_first() {
         return 1
       fi
     else
-      log_warning "Dart not available, cannot install FVM"
+      log_warning "FVM installation failed via Homebrew"
       return 1
     fi
   else
-    log_info "[DRY RUN] Would install FVM (Flutter Version Management)"
+    log_info "[DRY RUN] Would install FVM via Homebrew (leoafarias/fvm/fvm)"
     return 0
   fi
 }
