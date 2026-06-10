@@ -73,13 +73,12 @@ essential_apps=(
 
 # Programming languages and tools
 # 注記:
-#   - java は mise で 17 を管理 (Flutter Android ビルド用)
+#   - java / go / bun / node / python / uv / pnpm / rust / just は mise で
+#     管理 (~/.config/mise/config.toml で global バージョン宣言)
 #   - deno は Nix (home-manager) で管理 (nvim denops.vim / skkeleton で必須)
+#   - mise / tenv 自体は brew でブートストラップ
 dev_apps=(
   'mise'
-  'uv'
-  'bun'
-  'go'
   'tenv'
 )
 
