@@ -49,5 +49,8 @@ in
     ghq
     fastfetch
     yazi
+
+    # Network
+    wget
   ];
 }
