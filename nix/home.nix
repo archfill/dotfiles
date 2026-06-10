@@ -74,5 +74,8 @@ in
 
     # Terminal multiplexer
     tmux             # 設定は ~/.config/tmux/ (tpm + conf 分割) をそのまま使用
+
+    # zsh plugin manager
+    sheldon          # plugins.toml は ~/.config/sheldon/ をそのまま使用
   ];
 }

@@ -2,10 +2,11 @@
 # Dynamic path detection for sheldon
 setup_sheldon() {
   local sheldon_paths=(
-    "$HOME/.local/bin/sheldon"    # Local installation
-    "/opt/homebrew/bin/sheldon"   # Homebrew (Apple Silicon)
-    "/usr/local/bin/sheldon"      # Homebrew (Intel) / System installation
-    "/usr/bin/sheldon"            # Package manager installation
+    "$HOME/.nix-profile/bin/sheldon"  # Nix (home-manager)
+    "$HOME/.local/bin/sheldon"        # Local installation
+    "/opt/homebrew/bin/sheldon"       # Homebrew (Apple Silicon)
+    "/usr/local/bin/sheldon"          # Homebrew (Intel) / System installation
+    "/usr/bin/sheldon"                # Package manager installation
   )
   
   for sheldon_path in "${sheldon_paths[@]}"; do
