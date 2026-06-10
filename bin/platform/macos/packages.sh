@@ -130,7 +130,6 @@ optional_casks=(
   '--cask appflowy'
   '--cask biscuit'
   '--cask utm'
-  '--cask warp'
   '--cask xcodes'
   '--cask nextcloud'
   '--cask cscreen'
