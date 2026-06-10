@@ -43,6 +43,9 @@ in
     yq-go            # Go 版 yq (brew 'yq' と挙動互換)
 
     # Git
+    git              # Apple Git (Xcode CLT) は十分新しいが、Nix で
+                     # クロスプラットフォーム統一管理。git-lfs / git-credential
+                     # も同梱
     lazygit
     delta            # git-delta
 
@@ -122,6 +125,9 @@ in
     clippy       # 同上
 
     # ─── Build / task runners ────────────────────────────────────────
+    gnumake      # GNU Make 4.x (macOS /usr/bin/make は GPL ライセンス
+                 # 問題で 3.81 から更新されない。.RECIPEPREFIX / $(file) 等
+                 # 4.x 機能を使う Makefile のため必須)
     just         # Makefile より読みやすいコマンドランナー (Rust 製)
 
     # ─── Package managers (language-specific) ────────────────────────
