@@ -102,4 +102,27 @@ source_if_exists "$ZDOTDIR/zprofile/$(uname)/init.zsh"
 
 # Flutter configuration moved to sdk.zsh to avoid duplication
 
+# ===== Nix home-manager session variables =====
+# JAVA_HOME 等 Nix の home.sessionVariables で宣言した変数を全 shell で
+# 利用可能にする。.zshenv では setopt no_global_rcs が効かず
+# /etc/zprofile の path_helper が PATH を書き換えてしまうため、本ファイル
+# (path_helper の後で読まれる .zprofile) で対処する。
+source_if_exists "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+
+# ===== Nix path precedence (login shell / non-interactive 用) =====
+# /etc/zprofile の path_helper が PATH 先頭を /etc/paths で上書きするため、
+# その直後である本ファイルで Nix path を強制的に先頭へ再配置する。
+# interactive shell では .zshrc 経由で nix.zsh が同じ処理を再実行する
+# (二重実行は idempotent なので問題なし)。これにより claude-mem の
+# Stop hook のような login かつ non-interactive な文脈でも、Nix 経由の
+# 言語ランタイム (java / node / python / go / bun / deno 等) が確実に
+# 解決される。
+if [[ -d "$HOME/.nix-profile/bin" ]]; then
+  path=("$HOME/.nix-profile/bin" "${(@)path:#$HOME/.nix-profile/bin}")
+fi
+if [[ -d "/nix/var/nix/profiles/default/bin" ]]; then
+  path=("/nix/var/nix/profiles/default/bin" "${(@)path:#/nix/var/nix/profiles/default/bin}")
+fi
+export PATH
+
 

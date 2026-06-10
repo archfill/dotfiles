@@ -96,5 +96,24 @@ in
     # グローバル提供する。プロジェクト固有のバージョン (例: yui の
     # mise.toml の bun = "1.3.x") は mise が override する設計。
     bun
+
+    # ─── Language runtimes (グローバル固定、Nix で管理) ─────────────
+    # 方針:
+    #   - グローバルバージョンは Nix で再現性最強の固定
+    #   - プロジェクト毎の override は各リポジトリの mise.toml で
+    #     (yui は java 17 / node 22 / python 3.13 等を local 固定)
+    #   - mise はバージョンマネージャとして「プロジェクト override」
+    #     用途に特化、グローバル管理から退場
+    openjdk17    # Java 17 LTS (Flutter Android ビルド、yui バックエンド等)
+    nodejs_22    # Node.js 22 LTS
+    python313    # Python 3.13
+    go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)
   ];
+
+  # JAVA_HOME を Nix の openjdk17 に向ける。
+  # dotfiles の sdk.zsh は mise where java から JAVA_HOME を取る実装
+  # だが、本セッション変数が先に設定されるため Nix 経由で常に解決される。
+  home.sessionVariables = {
+    JAVA_HOME = "${pkgs.openjdk17}";
+  };
 }
