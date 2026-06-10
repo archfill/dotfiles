@@ -57,6 +57,9 @@ in
     fastfetch
     yazi
 
+    # System monitor
+    bottom           # top/htop モダン版 (Rust)。コマンド名は btm
+
     # Network
     wget
   ];
