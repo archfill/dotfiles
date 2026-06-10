@@ -107,7 +107,6 @@ macos_apps=(
 
 # Optional/specialized tools
 optional_apps=(
-  'bazelisk'
   'neomutt'
   'aerc'
   'urlscan'
