@@ -22,15 +22,6 @@
   # 変更時はマニュアルを必ず確認すること。気軽に上げない。
   system.stateVersion = 6;
 
-  # ─── Homebrew 環境変数 ────────────────────────────────────────────
-  # 近年の Homebrew は `brew bundle install --cleanup` 実行に安全装置を
-  # 強化しており、--force / --force-cleanup / $HOMEBREW_BUNDLE_FORCE_CLEANUP=1
-  # のいずれかが必須。nix-darwin の cleanup = "uninstall" は内部で
-  # --cleanup を渡すだけなので、ここで環境変数で同意を与える。
-  environment.variables = {
-    HOMEBREW_BUNDLE_FORCE_CLEANUP = "1";
-  };
-
   # ─── Homebrew (nix-darwin 経由で宣言的に管理) ────────────────────
   # 役割分担: 実体管理は brew、宣言は Nix。
   # - CLI ツール / 言語ランタイムは Nix (home.nix) 側で管理
@@ -46,6 +37,14 @@
       upgrade = true;           # 既存 brew/cask の自動 upgrade は実行
       cleanup = "uninstall";    # 宣言外の brew/cask を自動 uninstall
                                 # (config は残す。"zap" にすれば config も削除)
+      extraEnv = {
+        # 近年の Homebrew は brew bundle install --cleanup 実行に
+        # --force / --force-cleanup / $HOMEBREW_BUNDLE_FORCE_CLEANUP=1
+        # のいずれかを要求する。activation script 内 (sudo) で読まれる
+        # 環境変数は onActivation.extraEnv で渡す必要がある
+        # (environment.variables は user shell 専用で activation には届かない)。
+        HOMEBREW_BUNDLE_FORCE_CLEANUP = "1";
+      };
     };
 
     # ⚠️ Mac App Store アプリの宣言は絶対に追加しないこと:
