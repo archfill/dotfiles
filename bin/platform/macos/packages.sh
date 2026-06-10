@@ -95,11 +95,12 @@ dev_apps=()
 utils_apps=()
 
 # macOS specific tools
-# 注記: borders / sketchybar は aerospace / yabai 利用時の依存だったため削除
+# 注記:
+#   - borders / sketchybar は aerospace / yabai 利用時の依存だったため削除
+#   - wakeonlan は使用形跡なし、必要なら nmap や Python スクリプトで代替
+#   - dmg2img は macOS では hdiutil で代替可能なため削除
 macos_apps=(
   'jakehilborn/jakehilborn/displayplacer'
-  'dmg2img'
-  'wakeonlan'
 )
 
 # Optional/specialized tools
