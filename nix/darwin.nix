@@ -48,6 +48,13 @@
                                 # (config は残す。"zap" にすれば config も削除)
     };
 
+    # ⚠️ Mac App Store アプリの宣言は絶対に追加しないこと:
+    # Homebrew PR #22395 (2026-05) で brew bundle cleanup が破壊的に変わり、
+    # Brewfile に mas 行が 1 つでもあると Brewfile に載っていない MAS アプリ
+    # (App Store で手動 install 済み、MDM 配布、Apple Configurator 経由
+    # 含む) を全て削除する。具体的には homebrew.masApps を絶対に設定しないこと。
+    # 参考: https://github.com/Homebrew/brew/issues/22450
+
     taps = [
       "grishka/grishka"
       "jakehilborn/jakehilborn"
