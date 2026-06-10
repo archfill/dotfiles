@@ -73,15 +73,15 @@ essential_apps=(
 
 # Programming languages and tools
 # 注記:
-#   - 言語ランタイムは原則 Nix (home-manager) で管理する設計に移行中
-#     (claude-mem の Stop hook など non-interactive shell でも PATH 解決を
-#     確実にするため、shim 依存の mise ではなく Nix 直配置に寄せる)
-#   - Nix 管理: deno / bun (nvim denops や claude-mem 等の hook 要件)
-#   - mise 管理 (~/.config/mise/config.toml で global 宣言、移行中):
-#     java / go / node / python / uv / pnpm / rust / just
-#   - mise / tenv 自体は brew でブートストラップ
+#   - 言語ランタイム / 主要パッケージマネージャは全て Nix (home-manager)
+#     で管理する設計に移行完了
+#     (java 17 / nodejs_22 / python313 / go / bun / deno /
+#      cargo / rustc / rustfmt / clippy / just / uv / pnpm / mise)
+#   - mise はグローバル管理から退場し、各プロジェクト固有の override
+#     (yui の mise.toml 等) 専用ツールとして利用
+#   - tenv のみ brew で維持 (Terraform バージョン管理として実利用中、
+#     Nix へ寄せるかは別途検討)
 dev_apps=(
-  'mise'
   'tenv'
 )
 
