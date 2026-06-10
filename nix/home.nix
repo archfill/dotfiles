@@ -83,5 +83,11 @@ in
     # グローバル設定は ~/.config/mise/config.toml をそのまま使用、
     # 各プロジェクトの mise.toml と組み合わせて運用する。
     mise
+
+    # Deno runtime
+    # nvim の denops.vim + vim-skk/skkeleton (SKK 日本語入力) で必須。
+    # `deno` バイナリが PATH にあれば denops が動く。
+    # ~/.deno/ の DENO_INSTALL 等は使わないので dotfiles 側にも設定なし。
+    deno
   ];
 }

@@ -72,7 +72,9 @@ essential_apps=(
 )
 
 # Programming languages and tools
-# 注記: java は mise で 17 を管理、deno は実利用なしのため削除済み
+# 注記:
+#   - java は mise で 17 を管理 (Flutter Android ビルド用)
+#   - deno は Nix (home-manager) で管理 (nvim denops.vim / skkeleton で必須)
 dev_apps=(
   'mise'
   'uv'
