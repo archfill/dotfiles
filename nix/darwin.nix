@@ -37,14 +37,12 @@
       upgrade = true;           # 既存 brew/cask の自動 upgrade は実行
       cleanup = "uninstall";    # 宣言外の brew/cask を自動 uninstall
                                 # (config は残す。"zap" にすれば config も削除)
-      extraEnv = {
+      extraFlags = [
         # 近年の Homebrew は brew bundle install --cleanup 実行に
-        # --force / --force-cleanup / $HOMEBREW_BUNDLE_FORCE_CLEANUP=1
-        # のいずれかを要求する。activation script 内 (sudo) で読まれる
-        # 環境変数は onActivation.extraEnv で渡す必要がある
-        # (environment.variables は user shell 専用で activation には届かない)。
-        HOMEBREW_BUNDLE_FORCE_CLEANUP = "1";
-      };
+        # --force / --force-cleanup / $HOMEBREW_ASK のいずれかを要求する。
+        # 非対話の activation script では --force-cleanup を渡して同意する。
+        "--force-cleanup"
+      ];
     };
 
     # ⚠️ Mac App Store アプリの宣言は絶対に追加しないこと:
