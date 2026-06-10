@@ -131,7 +131,6 @@ optional_casks=(
   '--cask biscuit'
   '--cask yt-music'
   '--cask utm'
-  '--cask via'
   '--cask warp'
   '--cask xcodes'
   '--cask nextcloud'
