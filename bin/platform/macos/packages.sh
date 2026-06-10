@@ -119,14 +119,22 @@ cask_apps=(
   '--cask aquaskk'
   '--cask android-platform-tools'
   '--cask nikitabobko/tap/aerospace'
+  '--cask 1password-cli'
+  '--cask jordanbaird-ice'
+  '--cask rectangle'
+  '--cask orbstack'
 )
 
 # Optional casks (can be skipped)
 optional_casks=(
   '--cask altserver'
-  '--cask xcodes'
+  '--cask xcodes-app'
   '--cask nextcloud'
   '--cask cscreen'
+  '--cask alacritty'
+  '--cask amical'
+  '--cask sf-symbols'
+  '--cask zed'
 )
 
 # Main installation function
