@@ -140,6 +140,11 @@ in
     postgresql_18   # psql / pg_dump / pg_restore / pg_basebackup 等
     mysql84         # mysql / mysqldump / mysqladmin / mysqlbinlog 等
                     # (mysql80 は 2026-04-30 で EOL、8.4 LTS に統一)
+
+    # ─── Infra / configuration management ───────────────────────────
+    ansible         # ~/git/infra-configs/proxmox/ansible で Proxmox
+                    # 周辺ホスト (pve / pve-docker / pve-forgejo /
+                    # pve-traefik) を管理。brew 版 (~517MB) から Nix へ。
   ];
 
   # JAVA_HOME を Nix の openjdk17 に向ける。
