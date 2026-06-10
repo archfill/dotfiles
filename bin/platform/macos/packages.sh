@@ -73,9 +73,12 @@ essential_apps=(
 
 # Programming languages and tools
 # 注記:
-#   - java / go / bun / node / python / uv / pnpm / rust / just は mise で
-#     管理 (~/.config/mise/config.toml で global バージョン宣言)
-#   - deno は Nix (home-manager) で管理 (nvim denops.vim / skkeleton で必須)
+#   - 言語ランタイムは原則 Nix (home-manager) で管理する設計に移行中
+#     (claude-mem の Stop hook など non-interactive shell でも PATH 解決を
+#     確実にするため、shim 依存の mise ではなく Nix 直配置に寄せる)
+#   - Nix 管理: deno / bun (nvim denops や claude-mem 等の hook 要件)
+#   - mise 管理 (~/.config/mise/config.toml で global 宣言、移行中):
+#     java / go / node / python / uv / pnpm / rust / just
 #   - mise / tenv 自体は brew でブートストラップ
 dev_apps=(
   'mise'

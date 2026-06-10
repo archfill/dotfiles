@@ -89,5 +89,12 @@ in
     # `deno` バイナリが PATH にあれば denops が動く。
     # ~/.deno/ の DENO_INSTALL 等は使わないので dotfiles 側にも設定なし。
     deno
+
+    # Bun runtime
+    # claude-mem の Stop hook (`$SHELL -lc`) など non-interactive な
+    # login shell で bun を解決する必要があるため、mise ではなく Nix で
+    # グローバル提供する。プロジェクト固有のバージョン (例: yui の
+    # mise.toml の bun = "1.3.x") は mise が override する設計。
+    bun
   ];
 }
