@@ -78,10 +78,15 @@ setup_google_cloud_sdk "/snap/google-cloud-sdk/current" || true
 
 # fzf integration - Nix (home-manager) provided shell scripts.
 # Brew 時代は ~/.fzf.zsh を生成して source していたが、Nix 移管に伴い
-# ~/.nix-profile/share/fzf/ から直接 source する形に変更した。
-# Nix 未インストール環境では何も起きない (source_if_exists が no-op)。
-source_if_exists "$HOME/.nix-profile/share/fzf/completion.zsh"
-source_if_exists "$HOME/.nix-profile/share/fzf/key-bindings.zsh"
+# home-manager の share/fzf/ から直接 source する形に変更した。
+# nix-darwin 経由では /etc/profiles/per-user/<user>/、home-manager 単体は
+# ~/.nix-profile/ に配置される。両対応のため両方試行する (source_if_exists
+# が no-op で安全)。
+for _hm_dir in "/etc/profiles/per-user/$USER" "$HOME/.nix-profile"; do
+  source_if_exists "$_hm_dir/share/fzf/completion.zsh"
+  source_if_exists "$_hm_dir/share/fzf/key-bindings.zsh"
+done
+unset _hm_dir
 
 # uv - unified Python package manager completion
 if command_exists uv; then
@@ -107,6 +112,8 @@ source_if_exists "$ZDOTDIR/zprofile/$(uname)/init.zsh"
 # 利用可能にする。.zshenv では setopt no_global_rcs が効かず
 # /etc/zprofile の path_helper が PATH を書き換えてしまうため、本ファイル
 # (path_helper の後で読まれる .zprofile) で対処する。
+# nix-darwin 経由と home-manager 単体で配置先が異なるため両対応。
+source_if_exists "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
 source_if_exists "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 
 # ===== Nix path precedence (login shell / non-interactive 用) =====
@@ -117,12 +124,18 @@ source_if_exists "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 # Stop hook のような login かつ non-interactive な文脈でも、Nix 経由の
 # 言語ランタイム (java / node / python / go / bun / deno 等) が確実に
 # 解決される。
-if [[ -d "$HOME/.nix-profile/bin" ]]; then
-  path=("$HOME/.nix-profile/bin" "${(@)path:#$HOME/.nix-profile/bin}")
-fi
-if [[ -d "/nix/var/nix/profiles/default/bin" ]]; then
-  path=("/nix/var/nix/profiles/default/bin" "${(@)path:#/nix/var/nix/profiles/default/bin}")
-fi
+# 配列の後ろから前へ順に挿入することで、最終的な優先順位は
+# nix-darwin per-user > home-manager .nix-profile > Determinate global
+# の並びになる。
+for _nix_bin in \
+  "/nix/var/nix/profiles/default/bin" \
+  "$HOME/.nix-profile/bin" \
+  "/etc/profiles/per-user/$USER/bin"; do
+  if [[ -d "$_nix_bin" ]]; then
+    path=("$_nix_bin" "${(@)path:#$_nix_bin}")
+  fi
+done
+unset _nix_bin
 export PATH
 
 

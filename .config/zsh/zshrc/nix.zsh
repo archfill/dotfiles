@@ -8,12 +8,17 @@
 #
 # Nix 未インストール環境では何もしない。
 
-if [[ -d "$HOME/.nix-profile/bin" ]]; then
-  path=("$HOME/.nix-profile/bin" "${(@)path:#$HOME/.nix-profile/bin}")
-fi
-
-if [[ -d "/nix/var/nix/profiles/default/bin" ]]; then
-  path=("/nix/var/nix/profiles/default/bin" "${(@)path:#/nix/var/nix/profiles/default/bin}")
-fi
+# nix-darwin per-user > home-manager .nix-profile > Determinate global の順で
+# 先頭に再配置する。配列の後ろから前へ順に挿入することで、最終的な優先順位は
+# nix-darwin per-user が最優先になる。
+for _nix_bin in \
+  "/nix/var/nix/profiles/default/bin" \
+  "$HOME/.nix-profile/bin" \
+  "/etc/profiles/per-user/$USER/bin"; do
+  if [[ -d "$_nix_bin" ]]; then
+    path=("$_nix_bin" "${(@)path:#$_nix_bin}")
+  fi
+done
+unset _nix_bin
 
 export PATH
