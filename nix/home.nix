@@ -128,6 +128,18 @@ in
     uv           # Python 高速パッケージマネージャ (mise.toml の uv 指定は
                  # プロジェクト毎の固定として引き続き機能する)
     pnpm         # Node.js パッケージマネージャ (nodejs_22 と組合せて運用)
+
+    # ─── Database clients ────────────────────────────────────────────
+    # AI agent (Claude Code / Codex) からのワンライナー DB 操作で
+    # 使うため。サーバ機能は使わずクライアントツール一式
+    # (psql / pg_dump / pg_restore / mysql / mysqldump 等) のみ活用。
+    # 実プロジェクトの DB は yui / claude-mem 等すべて docker compose
+    # で起動するため、ホスト側にサーバ本体は不要。
+    # brew の postgresql@18 と libpq、mysql-client を全て退場させ、
+    # Nix で統一する設計。
+    postgresql_18   # psql / pg_dump / pg_restore / pg_basebackup 等
+    mysql84         # mysql / mysqldump / mysqladmin / mysqlbinlog 等
+                    # (mysql80 は 2026-04-30 で EOL、8.4 LTS に統一)
   ];
 
   # JAVA_HOME を Nix の openjdk17 に向ける。
