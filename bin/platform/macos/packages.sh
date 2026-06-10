@@ -129,7 +129,6 @@ optional_casks=(
   '--cask altserver'
   '--cask appflowy'
   '--cask biscuit'
-  '--cask yt-music'
   '--cask utm'
   '--cask warp'
   '--cask xcodes'
