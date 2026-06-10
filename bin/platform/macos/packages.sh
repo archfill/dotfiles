@@ -104,10 +104,10 @@ macos_apps=(
 )
 
 # Optional/specialized tools
-# 注記: fvm は Nix (home-manager) で管理 (pkgs.fvm)
-optional_apps=(
-  'grishka/grishka/neardrop'
-)
+# 注記:
+#   - fvm は Nix (home-manager) で管理 (pkgs.fvm)
+#   - neardrop は cask のため optional_casks へ移動
+optional_apps=()
 
 # GUI applications (casks)
 cask_apps=(
@@ -132,6 +132,7 @@ optional_casks=(
   '--cask amical'
   '--cask sf-symbols'
   '--cask zed'
+  '--cask grishka/grishka/neardrop'
 )
 
 # Main installation function
