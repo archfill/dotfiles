@@ -94,7 +94,6 @@ dev_apps=()
 #     (依存元 brew formula なし、シェル履歴・dotfiles 参照ゼロ) のため
 #     削除。動画プレビュー必要時は Nix pkgs.ffmpeg で復活
 utils_apps=(
-  'awscli'
   'stripe'
   'poppler'
 )

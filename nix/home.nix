@@ -150,6 +150,10 @@ in
                     # 個別固定して運用。dotfiles の .config/zsh/zshrc/
                     # tools.zsh で TENV_AUTO_INSTALL=true / TENV_VALIDATION
                     # =signature を設定済み。
+
+    # ─── Cloud SDK / CLI ─────────────────────────────────────────────
+    awscli2         # AWS CLI v2。業務インフラ (v2g-poc-infra 等) で
+                    # 利用。SSO / SSO+role / 通常 access key 全て対応。
   ];
 
   # JAVA_HOME を Nix の openjdk17 に向ける。
