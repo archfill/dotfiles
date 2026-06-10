@@ -77,5 +77,11 @@ in
 
     # zsh plugin manager
     sheldon          # plugins.toml は ~/.config/sheldon/ をそのまま使用
+
+    # Polyglot version manager / task runner
+    # proto + moon を捨てて mise に統合。
+    # グローバル設定は ~/.config/mise/config.toml をそのまま使用、
+    # 各プロジェクトの mise.toml と組み合わせて運用する。
+    mise
   ];
 }

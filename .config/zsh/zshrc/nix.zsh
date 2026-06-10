@@ -1,8 +1,8 @@
 # Nix package manager — force PATH precedence
 #
-# nix-daemon.sh は /etc/zshrc から source されるが、その後 tools.zsh 等で
-# proto / opencode / mise などが PATH 先頭に prepend されるため、
-# Nix profile が中盤〜末尾に押し下げられる。
+# nix-daemon.sh は /etc/zshrc から source されるが、その後 tools.zsh や
+# sdk.zsh (mise activate) などで opencode / mise などが PATH 先頭に
+# prepend されるため、Nix profile が中盤〜末尾に押し下げられる。
 # ここで明示的に Nix path を **先頭に再配置** することで、Nix で管理する
 # binary が Homebrew より優先されるようにする。
 #

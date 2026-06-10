@@ -74,13 +74,6 @@ if [[ -d "$HOME/.opencode/bin" ]]; then
   export PATH="$HOME/.opencode/bin:$PATH"
 fi
 
-# proto (moonrepo toolchain manager) + moon
-if [[ -x "$HOME/.proto/bin/proto" ]]; then
-  export PROTO_HOME="$HOME/.proto"
-  export PATH="$PROTO_HOME/bin:$PATH"
-  eval "$(proto activate zsh)"
-fi
-
 # claude-switch env (API backend credentials)
 [[ -f ~/.claude/env.sh ]] && source ~/.claude/env.sh
 claude-switch() {
