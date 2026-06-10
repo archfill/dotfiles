@@ -123,7 +123,6 @@ cask_apps=(
 
 # Optional casks (can be skipped)
 optional_casks=(
-  '--cask altserver'
   '--cask xcodes-app'
   '--cask nextcloud'
   '--cask alacritty'
