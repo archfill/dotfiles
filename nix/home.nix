@@ -154,6 +154,8 @@ in
     # ─── Cloud SDK / CLI ─────────────────────────────────────────────
     awscli2         # AWS CLI v2。業務インフラ (v2g-poc-infra 等) で
                     # 利用。SSO / SSO+role / 通常 access key 全て対応。
+    stripe-cli      # Stripe CLI (~/.config/stripe/config.toml で設定
+                    # 済み、業務で利用)
   ];
 
   # JAVA_HOME を Nix の openjdk17 に向ける。

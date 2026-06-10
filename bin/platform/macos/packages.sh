@@ -93,10 +93,7 @@ dev_apps=()
 #   - ffmpeg / ffmpegthumbnailer は macOS で実利用形跡なし
 #     (依存元 brew formula なし、シェル履歴・dotfiles 参照ゼロ) のため
 #     削除。動画プレビュー必要時は Nix pkgs.ffmpeg で復活
-utils_apps=(
-  'stripe'
-  'poppler'
-)
+utils_apps=()
 
 # macOS specific tools
 macos_apps=(
@@ -222,7 +219,6 @@ add_homebrew_taps() {
         "jakehilborn/jakehilborn"
         "leoafarias/fvm"
         "nikitabobko/tap"
-        "stripe/stripe-cli"
     )
     
     local added_count=0
