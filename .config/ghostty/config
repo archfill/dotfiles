@@ -7,8 +7,11 @@
 # ==========================================
 # Font Configuration
 # ==========================================
-# HackGen35 Console NF（3:5比率版、英数字大きめ）+ フォールバック
-font-family = "HackGen35 Console NF"
+# Moralerspace Argon (GitHub Monaspace Argon + IBM Plex Sans JP) を
+# メインに、Nerd Font アイコンと CJK 拡張を fallback で補う構成。
+# Nerd Font は v1.1.0 から Moralerspace に標準同梱されたため、
+# JetBrainsMono Nerd Font の fallback は予備として残してある。
+font-family = "Moralerspace Argon"
 font-family = "JetBrainsMono Nerd Font"
 font-family = "Noto Sans CJK JP"
 # Console版は十分太いのでthickenは無効化

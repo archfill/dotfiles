@@ -158,9 +158,9 @@ end
 ---------------------------------------------------------------
 local config = {
 	font = wezterm.font_with_fallback({
-		{ family = "HackGen Console NF", weight = "Regular" },
+		{ family = "Moralerspace Argon", weight = "Regular" },
 		{ family = "JetBrainsMono Nerd Font", weight = "Regular", harfbuzz_features = { "calt=1", "clig=1", "liga=1" } },
-		{ family = "UDEV Gothic 35NFLG" },
+		{ family = "HackGen Console NF" }, -- 旧資産との互換用 fallback
 		"Noto Color Emoji",  -- 絵文字用
 		"Segoe UI Emoji",    -- Windows標準フォールバック
 	}),

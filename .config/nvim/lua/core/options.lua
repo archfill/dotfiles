@@ -10,7 +10,7 @@ vim.g.vscode_mode = vim.g.vscode or false
 vim.o.sh = "zsh"
 
 -- フォント設定
-vim.o.guifont = "HackGen Console NF:h14"
+vim.o.guifont = "Moralerspace Argon:h14"
 
 -- ================================================================
 -- 基本設定

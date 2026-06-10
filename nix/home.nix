@@ -156,7 +156,23 @@ in
                     # 利用。SSO / SSO+role / 通常 access key 全て対応。
     stripe-cli      # Stripe CLI (~/.config/stripe/config.toml で設定
                     # 済み、業務で利用)
+
+    # ─── Fonts ───────────────────────────────────────────────────────
+    # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
+    # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable
+    # Font を持ち込む構成。yuru7 ファミリーフォントは全部 nixpkgs 提供
+    # 済みなので brew cask の font-* は完全に退場できる。
+    moralerspace              # メイン (Ghostty / WezTerm / Neovim)
+    hackgen-font              # 移行期 fallback / 旧資産との互換
+    nerd-fonts.jetbrains-mono # ASCII fallback / 他エディタ
+    nerd-fonts.symbols-only   # Powerline / Nerd Font アイコン専用
   ];
+
+  # Nix で配置するフォントを ~/Library/Fonts にも認識させる
+  # (macOS の場合、~/.nix-profile/share/fonts を `fc-cache` できれば
+  # 不要だが、Ghostty 等は OS フォント登録経由で読むため、home-manager
+  # の fonts.fontconfig を有効化する)
+  fonts.fontconfig.enable = true;
 
   # JAVA_HOME を Nix の openjdk17 に向ける。
   # dotfiles の sdk.zsh は mise where java から JAVA_HOME を取る実装

@@ -52,13 +52,13 @@ multiplier = 3
 # (linux.toml, macos.toml, windows.toml)
 
 [font.normal]
-family = "HackGen Console NF"
+family = "Moralerspace Argon"
 
 [font.bold]
-family = "HackGen Console NF"
+family = "Moralerspace Argon"
 
 [font.italic]
-family = "HackGen Console NF"
+family = "Moralerspace Argon"
 
 [font.offset]
 x = 0
