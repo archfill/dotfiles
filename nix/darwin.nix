@@ -22,6 +22,15 @@
   # 変更時はマニュアルを必ず確認すること。気軽に上げない。
   system.stateVersion = 6;
 
+  # ─── Homebrew 環境変数 ────────────────────────────────────────────
+  # 近年の Homebrew は `brew bundle install --cleanup` 実行に安全装置を
+  # 強化しており、--force / --force-cleanup / $HOMEBREW_BUNDLE_FORCE_CLEANUP=1
+  # のいずれかが必須。nix-darwin の cleanup = "uninstall" は内部で
+  # --cleanup を渡すだけなので、ここで環境変数で同意を与える。
+  environment.variables = {
+    HOMEBREW_BUNDLE_FORCE_CLEANUP = "1";
+  };
+
   # ─── Homebrew (nix-darwin 経由で宣言的に管理) ────────────────────
   # 役割分担: 実体管理は brew、宣言は Nix。
   # - CLI ツール / 言語ランタイムは Nix (home.nix) 側で管理
