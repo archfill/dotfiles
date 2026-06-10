@@ -119,24 +119,6 @@ setup_php_composer_path() {
 # Setup Composer paths if PHP is available
 command_exists php && setup_php_composer_path
 
-# ===== Ruby (rbenv) - Optimized =====
-init_env_var "RBENV_ROOT" "$HOME/.rbenv"
-
-# Initialize rbenv if available (optimized)
-if dir_exists "$RBENV_ROOT"; then
-  add_to_path "$RBENV_ROOT/bin"
-  add_to_path "$RBENV_ROOT/shims"
-  
-  # Initialize rbenv (with error handling)
-  exec_if_command rbenv eval "$(rbenv init -)" 2>/dev/null || true
-  
-  # Ensure gems are in PATH
-  if command_exists rbenv && command_exists ruby; then
-    local gem_bin_path="$(ruby -e 'puts Gem.user_dir' 2>/dev/null)/bin"
-    [[ -d "$gem_bin_path" ]] && add_to_path "$gem_bin_path"
-  fi
-fi
-
 # ===== mise (Polyglot Tool Version Manager) =====
 # mise manages multiple language versions and environment variables per project
 # Replaces: asdf, pyenv, rbenv, nvm, direnv, and more
@@ -321,10 +303,9 @@ function sdk_status() {
     echo "❌ PHP: Not installed"
   fi
   
-  # Ruby (optimized)
+  # Ruby (macOS 標準のみ。rbenv は 2026-06-10 に廃止)
   if command_exists ruby; then
     echo "✅ Ruby: $(ruby --version)"
-    command_exists rbenv && echo "   Manager: rbenv $(rbenv --version)"
     command_exists gem && echo "   Gem: $(gem --version)"
     command_exists bundler && echo "   Bundler: $(bundler --version)"
   else

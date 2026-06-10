@@ -109,7 +109,6 @@ macos_apps=(
 
 # Optional/specialized tools
 optional_apps=(
-  'qmk'
   'sqlite3'
   'tcl-tk'
   'grishka/grishka/neardrop'
@@ -226,7 +225,6 @@ add_homebrew_taps() {
         "oven-sh/bun"
         "osx-cross/arm"
         "osx-cross/avr"
-        "qmk/qmk"
         "stripe/stripe-cli"
     )
     
