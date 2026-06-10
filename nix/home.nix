@@ -36,6 +36,7 @@ in
     ripgrep
     fd
     bat
+    eza              # ls 代替 (Rust)
 
     # Data
     jq
@@ -44,6 +45,12 @@ in
     # Git
     lazygit
     delta            # git-delta
+
+    # GitHub
+    gh               # GitHub CLI
+
+    # Formatter / Linter (system 配置で nvim Mason と分離)
+    stylua           # Lua formatter
 
     # Repo / misc
     ghq
