@@ -68,5 +68,8 @@ in
 
     # Prompt
     starship         # 設定は ~/.config/starship.toml をそのまま使用
+
+    # Fuzzy finder
+    fzf              # ~/.fzf.zsh から share/fzf/ の completion/key-bindings を source
   ];
 }

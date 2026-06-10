@@ -76,8 +76,12 @@ setup_google_cloud_sdk "/snap/google-cloud-sdk/current" || true
 # These should ideally be in .zshrc (for interactive shells only)
 # but are kept here for backwards compatibility
 
-# fzf integration - conditional loading
-source_if_exists ~/.fzf.zsh
+# fzf integration - Nix (home-manager) provided shell scripts.
+# Brew 時代は ~/.fzf.zsh を生成して source していたが、Nix 移管に伴い
+# ~/.nix-profile/share/fzf/ から直接 source する形に変更した。
+# Nix 未インストール環境では何も起きない (source_if_exists が no-op)。
+source_if_exists "$HOME/.nix-profile/share/fzf/completion.zsh"
+source_if_exists "$HOME/.nix-profile/share/fzf/key-bindings.zsh"
 
 # uv - unified Python package manager completion
 if command_exists uv; then
