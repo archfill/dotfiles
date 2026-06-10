@@ -117,27 +117,16 @@ cask_apps=(
   '--cask wezterm'
   '--cask ghostty'
   '--cask aquaskk'
-  '--cask hammerspoon'
   '--cask android-platform-tools'
-  '--cask brewlet'
-  '--cask cheatsheet'
   '--cask nikitabobko/tap/aerospace'
 )
 
 # Optional casks (can be skipped)
 optional_casks=(
   '--cask altserver'
-  '--cask appflowy'
-  '--cask biscuit'
-  '--cask utm'
   '--cask xcodes'
   '--cask nextcloud'
   '--cask cscreen'
-  '--cask devtoys'
-  '--cask finch'
-  '--cask blackhole-16ch'
-  '--cask blackhole-2ch'
-  '--cask blackhole-64ch'
 )
 
 # Main installation function
