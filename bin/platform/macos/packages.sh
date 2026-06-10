@@ -104,9 +104,9 @@ macos_apps=(
 )
 
 # Optional/specialized tools
+# 注記: fvm は Nix (home-manager) で管理 (pkgs.fvm)
 optional_apps=(
   'grishka/grishka/neardrop'
-  'leoafarias/fvm/fvm'
 )
 
 # GUI applications (casks)
@@ -198,13 +198,11 @@ add_homebrew_taps() {
     fi
     
     local taps=(
-        "felixkratz/formulae"
         "grishka/grishka"
         "homebrew/cask"
         "homebrew/core"
         "homebrew/services"
         "jakehilborn/jakehilborn"
-        "leoafarias/fvm"
         "nikitabobko/tap"
     )
     

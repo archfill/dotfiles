@@ -157,6 +157,11 @@ in
     stripe-cli      # Stripe CLI (~/.config/stripe/config.toml で設定
                     # 済み、業務で利用)
 
+    # ─── Mobile / Flutter ────────────────────────────────────────────
+    fvm             # Flutter Version Management (Dart 製)。プロジェクト
+                    # ごとの Flutter SDK バージョン固定に利用。brew tap
+                    # (leoafarias/fvm) から Nix へ移管。
+
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable
