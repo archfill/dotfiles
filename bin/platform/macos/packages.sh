@@ -92,7 +92,6 @@ utils_apps=(
   'awscli'
   'stripe'
   'ffmpegthumbnailer'
-  'sevenzip'
   'poppler'
   'imagemagick'
 )
@@ -117,7 +116,6 @@ optional_apps=(
   'isync'
   'msmtp'
   'qmk'
-  'ranger'
   'sqlite3'
   'tcl-tk'
   'w3m'
