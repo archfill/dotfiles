@@ -86,13 +86,16 @@ dev_apps=(
 )
 
 # Development utilities
-# 注記: fd / ghq / lazygit / git-delta / yazi / fastfetch は Nix (home-manager) で管理
+# 注記:
+#   - fd / ghq / lazygit / git-delta / yazi / fastfetch は
+#     Nix (home-manager) で管理
+#   - imagemagick は macOS 環境で実利用形跡なし (Linux Hyprland 用
+#     wallpaper-picker.sh のみ) のため削除。必要になれば再導入
 utils_apps=(
   'awscli'
   'stripe'
   'ffmpegthumbnailer'
   'poppler'
-  'imagemagick'
 )
 
 # macOS specific tools
