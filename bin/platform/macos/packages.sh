@@ -73,17 +73,16 @@ essential_apps=(
 
 # Programming languages and tools
 # 注記:
-#   - 言語ランタイム / 主要パッケージマネージャは全て Nix (home-manager)
-#     で管理する設計に移行完了
-#     (java 17 / nodejs_22 / python313 / go / bun / deno /
-#      cargo / rustc / rustfmt / clippy / just / uv / pnpm / mise)
+#   - 言語ランタイム / 主要パッケージマネージャ / インフラツールは
+#     全て Nix (home-manager) で管理する設計に移行完了
+#     - 言語: java 17 / nodejs_22 / python313 / go / bun / deno /
+#             cargo / rustc / rustfmt / clippy
+#     - パッケージ管理: just / uv / pnpm / mise
+#     - インフラ: ansible / tenv (Terraform / OpenTofu / Terragrunt 管理)
 #   - mise はグローバル管理から退場し、各プロジェクト固有の override
 #     (yui の mise.toml 等) 専用ツールとして利用
-#   - tenv のみ brew で維持 (Terraform バージョン管理として実利用中、
-#     Nix へ寄せるかは別途検討)
-dev_apps=(
-  'tenv'
-)
+#   - 本配列は将来 brew 固有の dev ツールが必要になった時の追加用
+dev_apps=()
 
 # Development utilities
 # 注記:

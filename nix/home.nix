@@ -145,6 +145,11 @@ in
     ansible         # ~/git/infra-configs/proxmox/ansible で Proxmox
                     # 周辺ホスト (pve / pve-docker / pve-forgejo /
                     # pve-traefik) を管理。brew 版 (~517MB) から Nix へ。
+    tenv            # Terraform / OpenTofu / Terragrunt のバージョン
+                    # マネージャ。各プロジェクトの .terraform-version で
+                    # 個別固定して運用。dotfiles の .config/zsh/zshrc/
+                    # tools.zsh で TENV_AUTO_INSTALL=true / TENV_VALIDATION
+                    # =signature を設定済み。
   ];
 
   # JAVA_HOME を Nix の openjdk17 に向ける。
