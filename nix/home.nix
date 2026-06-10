@@ -108,6 +108,26 @@ in
     nodejs_22    # Node.js 22 LTS
     python313    # Python 3.13
     go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)
+
+    # ─── Rust toolchain ──────────────────────────────────────────────
+    # 案 A (pkgs.cargo + pkgs.rustc) を採用。rustup を捨てて Nix で
+    # stable を 1 本提供する。rustup の ~/.rustup (1.2GB) を解放し、
+    # ~/.cargo/bin の rustup-managed バイナリも削除する。
+    # 注意: rustup target add / component add は使えなくなる。aarch64-
+    # darwin だけで運用しているため影響なし。複数 toolchain や別 target
+    # が必要になった場合は rust-overlay / fenix を後日検討する。
+    cargo
+    rustc
+    rustfmt      # nixpkgs では rustc に同梱されないため別途追加
+    clippy       # 同上
+
+    # ─── Build / task runners ────────────────────────────────────────
+    just         # Makefile より読みやすいコマンドランナー (Rust 製)
+
+    # ─── Package managers (language-specific) ────────────────────────
+    uv           # Python 高速パッケージマネージャ (mise.toml の uv 指定は
+                 # プロジェクト毎の固定として引き続き機能する)
+    pnpm         # Node.js パッケージマネージャ (nodejs_22 と組合せて運用)
   ];
 
   # JAVA_HOME を Nix の openjdk17 に向ける。
