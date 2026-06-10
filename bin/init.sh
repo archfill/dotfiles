@@ -31,21 +31,21 @@ case "$OS_NAME" in
     log_info "macOS setup starting (mode: $install_mode)"
     run "bin/platform/macos/link.sh"
 
-    # Skip package installation in CI environment
+    # macOS では nix-darwin + home-manager + homebrew モジュールで全管理。
+    # Brew の taps / brews / casks は nix/darwin.nix の宣言で同期される。
+    # フォントも home.nix の pkgs.moralerspace 等で配置される。
     if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" ]]; then
-      log_info "Installing packages with mode: $install_mode"
-      DOTFILES_INSTALL_MODE="$install_mode" run "bin/platform/macos/packages.sh"
-
-      # Install fonts for essential and full modes
-      if [[ "$install_mode" != "minimal" ]] && [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-        log_info "Starting font installation..."
-        if bash bin/apps/tools/fonts.sh; then
-          log_success "Font installation completed successfully"
+      if command -v darwin-rebuild >/dev/null 2>&1; then
+        log_info "Applying nix-darwin configuration..."
+        if sudo darwin-rebuild switch --flake "${DOTFILES_DIR}/nix#archfill-to-Mac-mini"; then
+          log_success "nix-darwin switch completed"
         else
-          log_warning "Font installation failed (continuing with setup)"
+          log_error "nix-darwin switch failed"
         fi
-      elif [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then
-        log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
+      else
+        log_warning "darwin-rebuild not found"
+        log_info "初回セットアップは以下を実行してください:"
+        log_info "  sudo nix run nix-darwin -- switch --flake ${DOTFILES_DIR}/nix#archfill-to-Mac-mini"
       fi
     else
       log_info "Skipping package installation (CI environment)"

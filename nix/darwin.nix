@@ -33,9 +33,10 @@
     enable = true;
 
     onActivation = {
-      autoUpdate = false;  # brew update を毎回叩かない (重いため)
-      upgrade = true;      # 既存 brew/cask の自動 upgrade は実行
-      # cleanup = "uninstall";  # P3 で有効化予定
+      autoUpdate = false;       # brew update を毎回叩かない (重いため)
+      upgrade = true;           # 既存 brew/cask の自動 upgrade は実行
+      cleanup = "uninstall";    # 宣言外の brew/cask を自動 uninstall
+                                # (config は残す。"zap" にすれば config も削除)
     };
 
     taps = [
