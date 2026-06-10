@@ -115,7 +115,6 @@ cask_apps=(
   '--cask ghostty'
   '--cask aquaskk'
   '--cask android-platform-tools'
-  '--cask nikitabobko/tap/aerospace'
   '--cask 1password-cli'
   '--cask jordanbaird-ice'
   '--cask rectangle'
@@ -127,7 +126,6 @@ optional_casks=(
   '--cask altserver'
   '--cask xcodes-app'
   '--cask nextcloud'
-  '--cask cscreen'
   '--cask alacritty'
   '--cask amical'
   '--cask sf-symbols'
@@ -204,7 +202,6 @@ add_homebrew_taps() {
         "homebrew/core"
         "homebrew/services"
         "jakehilborn/jakehilborn"
-        "nikitabobko/tap"
     )
     
     local added_count=0
