@@ -222,9 +222,6 @@ add_homebrew_taps() {
         "jakehilborn/jakehilborn"
         "leoafarias/fvm"
         "nikitabobko/tap"
-        "oven-sh/bun"
-        "osx-cross/arm"
-        "osx-cross/avr"
         "stripe/stripe-cli"
     )
     
