@@ -91,10 +91,12 @@ dev_apps=(
 #     Nix (home-manager) で管理
 #   - imagemagick は macOS 環境で実利用形跡なし (Linux Hyprland 用
 #     wallpaper-picker.sh のみ) のため削除。必要になれば再導入
+#   - ffmpeg / ffmpegthumbnailer は macOS で実利用形跡なし
+#     (依存元 brew formula なし、シェル履歴・dotfiles 参照ゼロ) のため
+#     削除。動画プレビュー必要時は Nix pkgs.ffmpeg で復活
 utils_apps=(
   'awscli'
   'stripe'
-  'ffmpegthumbnailer'
   'poppler'
 )
 
