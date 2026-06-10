@@ -168,6 +168,12 @@ in
                     # ごとの Flutter SDK バージョン固定に利用。brew tap
                     # (leoafarias/fvm) から Nix へ移管。
 
+    # ─── AI coding agents ────────────────────────────────────────────
+    codex           # OpenAI 公式 Codex CLI (Lightweight coding agent)。
+                    # npm install -g は /nix/store の immutable と衝突
+                    # する (EACCES on /nix/store/...-nodejs/lib) ため、
+                    # Nix 経由で導入することで宣言的かつ衝突なく管理する。
+
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable
