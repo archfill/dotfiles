@@ -32,10 +32,11 @@ fi
 # Dynamic path detection for starship
 setup_starship() {
   local starship_paths=(
-    "$HOME/.local/bin/starship"   # Local installation
-    "/opt/homebrew/bin/starship"  # Homebrew (Apple Silicon)
-    "/usr/local/bin/starship"     # Homebrew (Intel) / System installation
-    "/usr/bin/starship"           # Package manager installation
+    "$HOME/.nix-profile/bin/starship" # Nix (home-manager)
+    "$HOME/.local/bin/starship"       # Local installation
+    "/opt/homebrew/bin/starship"      # Homebrew (Apple Silicon)
+    "/usr/local/bin/starship"         # Homebrew (Intel) / System installation
+    "/usr/bin/starship"               # Package manager installation
   )
   
   for starship_path in "${starship_paths[@]}"; do
