@@ -28,7 +28,6 @@ BASIC_CONFIGS=(
     ".gvimrc"
     ".ideavimrc"
     ".config/alacritty"
-    ".config/kitty"
     ".config/wezterm"
     ".config/ghostty"
     ".muttrc"

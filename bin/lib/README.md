@@ -95,7 +95,7 @@ source "${SCRIPT_DIR}/lib/symlink_manager.sh"
 create_symlink_from_dotfiles ".config/nvim"
 
 # バッチリンク作成
-CONFIGS=(".vimrc" ".config/alacritty" ".config/kitty")
+CONFIGS=(".vimrc" ".config/alacritty" ".config/wezterm")
 create_symlinks_batch "${CONFIGS[@]}"
 ```
 

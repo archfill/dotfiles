@@ -229,54 +229,6 @@ create_alacritty_os_specific_link() {
     log_success "Created Alacritty os-specific link: os-specific.toml -> ${target_file}"
 }
 
-# Kittyのcolors-platform.confシンボリックリンク作成
-create_kitty_colors_platform_link() {
-    local platform="$1"
-    local kitty_dir="${DOTFILES_DIR}/.config/kitty"
-    local platform_link="${kitty_dir}/colors-platform.conf"
-    local target_file=""
-
-    case "$platform" in
-        "macos")
-            target_file="colors-macos.conf"
-            ;;
-        "linux")
-            target_file="colors-linux.conf"
-            ;;
-        *)
-            log_warning "Unknown platform for Kitty colors: $platform"
-            return 1
-            ;;
-    esac
-
-    # Kittyディレクトリの存在確認
-    if [[ ! -d "$kitty_dir" ]]; then
-        log_warning "Kitty config directory not found: $kitty_dir"
-        return 1
-    fi
-
-    # ターゲットファイルの存在確認
-    if [[ ! -f "${kitty_dir}/${target_file}" ]]; then
-        log_error "Kitty platform colors not found: ${target_file}"
-        return 1
-    fi
-
-    # 既存のシンボリックリンクまたはファイルを削除
-    if [[ -L "$platform_link" ]]; then
-        rm "$platform_link"
-    elif [[ -e "$platform_link" ]]; then
-        log_warning "colors-platform.conf exists but is not a symlink, removing"
-        rm "$platform_link"
-    fi
-
-    # 相対パスでシンボリックリンクを作成
-    cd "$kitty_dir" || return 1
-    ln -s "$target_file" "colors-platform.conf"
-    cd - > /dev/null || return 1
-
-    log_success "Created Kitty colors-platform link: colors-platform.conf -> ${target_file}"
-}
-
 # Ghosttyのplatformシンボリックリンク作成
 create_ghostty_platform_link() {
     local platform="$1"
@@ -334,9 +286,6 @@ create_platform_specific_symlinks() {
 
     # Alacrittyのos-specific.tomlリンク作成（全プラットフォーム共通）
     create_alacritty_os_specific_link "$platform"
-
-    # Kittyのcolors-platform.confリンク作成（Linux/macOS）
-    create_kitty_colors_platform_link "$platform"
 
     # Ghosttyのplatformリンク作成（全プラットフォーム共通）
     create_ghostty_platform_link "$platform"

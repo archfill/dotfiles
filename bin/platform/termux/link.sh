@@ -20,8 +20,6 @@ link ".vimrc"
 # link ".ideavimrc"
 # # alacritty
 # link ".config/alacritty"
-# # kitty
-# link ".config/kitty"
 # # wezterm
 # link ".config/wezterm"
 # # neomutt
