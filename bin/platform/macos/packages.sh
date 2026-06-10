@@ -59,15 +59,14 @@ if ! check_homebrew_environment; then
 fi
 
 # Essential development tools
-# 注記: ripgrep / jq / yq / bat / wget / fzf / tmux は Nix (home-manager) で管理
+# 注記:
+#   - ripgrep / jq / yq / bat / wget / fzf / tmux は Nix (home-manager) で管理
+#   - git / make / sqlite3 / tcl-tk は Xcode Command Line Tools に同梱のため削除
+#   - openssl / xz は brew の他 formula 依存で自動インストールされるため明示宣言不要
 essential_apps=(
-  'git'
   'curl'
-  'make'
   'coreutils'
-  'openssl'
   'readline'
-  'xz'
   'zlib'
 )
 
@@ -96,18 +95,15 @@ dev_apps=()
 utils_apps=()
 
 # macOS specific tools
+# 注記: borders / sketchybar は aerospace / yabai 利用時の依存だったため削除
 macos_apps=(
-  'borders'
-  'sketchybar'
-  'displayplacer'
+  'jakehilborn/jakehilborn/displayplacer'
   'dmg2img'
   'wakeonlan'
 )
 
 # Optional/specialized tools
 optional_apps=(
-  'sqlite3'
-  'tcl-tk'
   'grishka/grishka/neardrop'
   'leoafarias/fvm/fvm'
 )
