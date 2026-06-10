@@ -62,5 +62,8 @@ in
 
     # Network
     wget
+
+    # Shells / runtime
+    bash             # dotfiles スクリプトが bash 4+ (mapfile / declare -g) を要求
   ];
 }
