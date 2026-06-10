@@ -71,5 +71,8 @@ in
 
     # Fuzzy finder
     fzf              # ~/.fzf.zsh から share/fzf/ の completion/key-bindings を source
+
+    # Terminal multiplexer
+    tmux             # 設定は ~/.config/tmux/ (tpm + conf 分割) をそのまま使用
   ];
 }

@@ -59,12 +59,10 @@ if ! check_homebrew_environment; then
 fi
 
 # Essential development tools
-# 注記: ripgrep / jq / yq / bat / wget は Nix (home-manager) で管理
+# 注記: ripgrep / jq / yq / bat / wget / fzf / tmux は Nix (home-manager) で管理
 essential_apps=(
   'git'
   'curl'
-  'fzf'
-  'tmux'
   'make'
   'coreutils'
   'openssl'
