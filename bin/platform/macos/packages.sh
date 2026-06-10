@@ -107,17 +107,9 @@ macos_apps=(
 
 # Optional/specialized tools
 optional_apps=(
-  'neomutt'
-  'aerc'
-  'urlscan'
-  'khard'
-  'notmuch'
-  'isync'
-  'msmtp'
   'qmk'
   'sqlite3'
   'tcl-tk'
-  'w3m'
   'grishka/grishka/neardrop'
   'leoafarias/fvm/fvm'
 )
