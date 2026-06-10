@@ -85,6 +85,106 @@ export PATH="$HOME/.composer/vendor/bin:$PATH" # Composer global tools
 
 ---
 
+## 🌐 Nix 採用と OSS 配布の方針 (2026 年 6 月 10 日制定)
+
+### 基本原則
+
+> **個人環境では Nix を全開で使う。OSS / 配布対象のリポジトリには Nix を必須化しない。**
+
+dotfiles に Nix (home-manager) を導入した結果、強力な再現性とツール一元管理が手に入った。一方で、リポジトリ単位で Nix 必須にすると、コントリビュータが Nix インストールから始めねばならず、参加障壁が著しく上がる。両者を両立させる運用を本ドキュメントで明文化する。
+
+### 関連用語
+
+- **Nix / home-manager / flakes**: 宣言的パッケージ・環境管理。本 dotfiles で採用済み（`~/dotfiles/nix/`）。
+- **mise**: Polyglot version manager + task runner。proto / asdf 系の後継的存在で、軽量・OSS 配布で広く許容される。
+- **flake.nix + devShell + direnv**: Nix 派 OSS 開発者の標準的なローカル開発体験。プロジェクトに入ると `nix develop` で隔離された環境が起動する。
+
+### プロジェクト分類とツール選定
+
+| プロジェクト類型                       | 推奨ツール構成                                                                | flake.nix の扱い                                                                  |
+| -------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| OSS / 配布想定                         | **mise.toml** + **husky / lefthook** + **npm/pnpm scripts** or **mise tasks** | リポジトリには **commit しない**（ローカル限定でなら使える、後述パターン C 参照） |
+| private / 個人専用（小規模）           | mise.toml ベースが無難。flake.nix を併設してもよい                            | 任意                                                                              |
+| Nix ネイティブ OSS (NixOS, Nixpkgs 等) | flake.nix を主軸                                                              | **commit してよい**                                                               |
+| 純粋な個人実験リポジトリ               | flake.nix + devShell + direnv で Nix 全開                                     | commit してよい                                                                   |
+
+### Nix 派 OSS 開発者の主流: パターン C（ローカル限定 flake.nix）
+
+NixOS Discourse / Reddit r/NixOS でのコンセンサス: **「flake.nix は個人 gitignore、OSS リポジトリのコントリビュータには mise を案内する」** が最多。実装は以下:
+
+#### 設定手順
+
+1. **`~/.gitignore_global` に Nix ローカル設定を追加**
+
+   ```
+   flake.nix
+   flake.lock
+   .envrc
+   .direnv/
+   ```
+
+   有効化:
+
+   ```bash
+   git config --global core.excludesfile ~/.gitignore_global
+   ```
+
+   これで、どのリポジトリに `flake.nix` を置いても自動的に commit 対象外になる。
+
+2. **リポジトリ別ローカル除外（gitignore_global を使わない場合）**
+
+   ```bash
+   cd ~/git/<repo>
+   printf '%s\n' 'flake.nix' 'flake.lock' '.envrc' >> .git/info/exclude
+   ```
+
+3. **ローカル flake.nix のテンプレート**
+
+   ```nix
+   {
+     description = "Local dev shell (個人ローカル用、gitignore 対象)";
+     inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+     outputs = { self, nixpkgs }:
+       let
+         system = "aarch64-darwin";
+         pkgs = nixpkgs.legacyPackages.${system};
+       in {
+         devShells.${system}.default = pkgs.mkShell {
+           buildInputs = [ pkgs.mise pkgs.direnv ];
+           shellHook = ''eval "$(mise activate bash)"'';
+         };
+       };
+   }
+   ```
+
+4. **direnv で自動切替**
+
+   ```bash
+   # .envrc (gitignore 対象)
+   use flake
+   ```
+
+   `cd <repo>/` で Nix devShell + mise activate が自動起動する。
+
+### 例外と判断軸
+
+- **「リポジトリに flake.nix を入れたい」と感じたとき** → 「このプロジェクトのコントリビュータに Nix を要求して問題ないか」を自問する。public OSS / 第三者貢献を期待する場合は NO。
+- **「ハイブリッドで両方提供したい」** → mise.toml と flake.nix を両方 commit する選択肢もあるが、バージョン宣言が二重化するため DRY 違反になりやすい。よほどメリットがない限り避ける。
+- **「全コントリビュータが Nix を入れる前提」が成立する小チーム** → flake.nix を commit してよい。事前合意必須。
+
+### この方針の根拠
+
+- 個人 dotfiles が Nix 全開でも、リポジトリ単位の選択は独立して決められる。
+- Nix エコシステム公式 (Determinate Systems) も「グローバル最小限 + プロジェクト単位 devShell」を推奨しており、本方針はそれと整合する。
+- yui (Python + TypeScript monorepo) を moon + proto から mise + husky に移行したのもこの方針に基づく決定（2026 年 6 月 10 日）。
+
+### 参照
+
+- グローバル CLAUDE.md (`~/.claude/CLAUDE.md`) の「プロジェクト環境構築の方針」セクションが本ドキュメントの要約。
+- 詳細実装手順は本ファイル（このセクション）を参照する。
+
+---
+
 ## Documentation Requirements
 
 **CRITICAL**: Any modifications MUST include corresponding updates to README files.
