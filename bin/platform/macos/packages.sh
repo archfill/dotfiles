@@ -127,7 +127,6 @@ optional_casks=(
   '--cask nextcloud'
   '--cask alacritty'
   '--cask amical'
-  '--cask sf-symbols'
   '--cask zed'
   '--cask grishka/grishka/neardrop'
 )
