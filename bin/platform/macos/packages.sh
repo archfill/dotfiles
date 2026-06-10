@@ -72,14 +72,12 @@ essential_apps=(
 )
 
 # Programming languages and tools
+# 注記: java は mise で 17 を管理、deno は実利用なしのため削除済み
 dev_apps=(
   'mise'
   'uv'
-  'deno'
   'bun'
   'go'
-  'openjdk'
-  'openjdk@11'
   'tenv'
 )
 

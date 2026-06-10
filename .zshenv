@@ -67,12 +67,6 @@ source_if_exists "$CARGO_HOME/env"
 # Add Cargo bin to PATH
 add_to_path "$CARGO_HOME/bin"
 
-# ===== Deno Runtime =====
-if dir_exists "$HOME/.deno"; then
-  init_env_var "DENO_INSTALL" "$HOME/.deno"
-  add_to_path "$DENO_INSTALL/bin"
-fi
-
 # ===== Bun Runtime =====
 if dir_exists "$HOME/.bun"; then
   init_env_var "BUN_INSTALL" "$HOME/.bun"
