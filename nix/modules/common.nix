@@ -303,6 +303,12 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/git/config";
 
+  # aicommit2 (AI コミットメッセージ生成 CLI) は ~/.aicommit2 を読みに行く。
+  # XDG 標準パスをサポートしないため、ホーム直下に symlink を置く。
+  home.file.".aicommit2".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/aicommit2/config";
+
   # vim / gvim / IntelliJ IDEA vim plugin の設定をホーム直下に配置。
   # 設定は dotfiles 側で編集、Nix は symlink のみ宣言。
   home.file.".vimrc".source =

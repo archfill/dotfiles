@@ -57,24 +57,10 @@ log_info "Creating basic configuration symlinks"
 create_symlinks_batch "${BASIC_CONFIGS[@]}"
 
 # 特別なパスマッピングが必要な設定ファイル
-log_info "Creating special path mapping symlinks"
-# tmux設定: .config/tmux/tmux.conf → ~/.tmux.conf
-# (.config/tmuxディレクトリ全体がシンボリックリンクされるため、個別の処理は不要)
-if [[ -f "${DOTFILES_DIR}/.config/tmux/tmux.conf" ]] && [[ ! -L "${HOME}/.config/tmux" ]]; then
-    create_symlink "${DOTFILES_DIR}/.config/tmux/tmux.conf" "${HOME}/.tmux.conf"
-fi
-
-# aicommit2設定: .config/aicommit2/config → ~/.aicommit2
-if [[ -f "${DOTFILES_DIR}/.config/aicommit2/config" ]]; then
-    create_symlink "${DOTFILES_DIR}/.config/aicommit2/config" "${HOME}/.aicommit2"
-fi
-
-# tmuxディレクトリの作成（必要な場合）
-TMUX_DIR="${HOME}/.tmux"
-if [[ ! -d "$TMUX_DIR" ]]; then
-    log_info "Creating tmux directory: $TMUX_DIR"
-    mkdir -p "$TMUX_DIR"
-fi
+# - ~/.tmux.conf: tmux 1.6+ が ~/.config/tmux/tmux.conf を自動参照するため不要
+# - ~/.aicommit2: home-manager (nix/modules/common.nix) で管理
+# - ~/.tmux ディレクトリ: home-manager (nix/modules/common.nix) が
+#   ~/.tmux/bin を symlink する際に自動作成するため明示作成不要
 
 # zshの既存ファイル削除（バックアップしない）
 log_info "Cleaning up existing zsh files"
