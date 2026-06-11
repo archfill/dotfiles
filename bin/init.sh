@@ -53,7 +53,7 @@ case "$OS_NAME" in
       log_info "Skipping package installation (CI environment)"
     fi
 
-    run "bin/platform/macos/config.sh"
+    # ghq.root を含む git config は bin/config.sh (全プラットフォーム共通) に統合済み
     ;;
 
   Linux)

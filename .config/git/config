@@ -13,7 +13,7 @@
 	light = false
 
 [ghq]
-	root = /home/archfill/git
+	# root は環境固有のため ~/.config/git/config.local に bin/config.sh が書き込む
 	shallow = true
 
 [ghq "look"]

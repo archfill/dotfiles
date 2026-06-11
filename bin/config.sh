@@ -28,4 +28,11 @@ log_info "Setting up Git local configuration for: $USER_NAME <$USER_EMAIL>"
 git config --file "$LOCAL_GITCONFIG" user.name "$USER_NAME"
 git config --file "$LOCAL_GITCONFIG" user.email "$USER_EMAIL"
 
+# ghq.root も同じ config.local に書き込む（環境ごとにパスが異なるため共有 dotfiles
+# に置けない）。GHQ_ROOT は config/versions.conf で定義 (~/git デフォルト)。
+if [[ -n "${GHQ_ROOT:-}" ]]; then
+    log_info "Setting ghq.root to ${GHQ_ROOT}"
+    git config --file "$LOCAL_GITCONFIG" ghq.root "${GHQ_ROOT}"
+fi
+
 log_success "Git configuration completed (local: $LOCAL_GITCONFIG)"
