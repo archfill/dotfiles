@@ -36,8 +36,8 @@ BASIC_CONFIGS=(
     ".textlintrc"
     # ".tmux/bin"    は home-manager (nix/modules/common.nix) で管理
     # ".config/tmux" は home-manager (programs.tmux + mkOutOfStoreSymlink) で管理
-    ".config/zsh"
-    ".zshenv"
+    # ".config/zsh" は home-manager (nix/modules/common.nix) で管理
+    # ".zshenv"     は home-manager (nix/modules/common.nix) で管理
     # ".config/sheldon" は home-manager (nix/modules/common.nix) で管理
     ".mmcp.json"
     ".config/hypr"

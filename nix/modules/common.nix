@@ -302,4 +302,15 @@ in
   xdg.configFile."git/config".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/git/config";
+
+  # zsh: ZDOTDIR=$HOME/.config/zsh 構成のまま dotfiles 管理を維持。
+  # programs.zsh は ~/.zshrc を生成するため ZDOTDIR と競合する。
+  # mkOutOfStoreSymlink で symlink のみ Nix 宣言、設定内容は dotfiles 側で編集。
+  home.file.".zshenv".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.zshenv";
+
+  xdg.configFile."zsh".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/zsh";
 }
