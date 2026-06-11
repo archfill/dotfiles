@@ -81,7 +81,6 @@ dotfiles/
 │   ├── ghostty/       # Ghostty設定
 │   ├── alacritty/     # Alacritty設定
 │   ├── starship.toml  # Starshipプロンプト
-│   ├── sheldon/       # Sheldon (zshプラグイン管理)
 │   ├── aerc/          # Aerc (メールクライアント)
 │   ├── lazygit/       # Lazygit
 │   └── ...            # その他20+の設定
@@ -141,10 +140,9 @@ bin/
 │   │   ├── terraform.sh            # Terraform CLI
 │   │   └── flutter.sh              # Flutter SDK
 │   │
-│   └── tools/                      # CLI開発ツール (8スクリプト)
+│   └── tools/                      # CLI開発ツール (7スクリプト)
 │       ├── eza.sh                  # モダンls代替
 │       ├── starship.sh             # プロンプト
-│       ├── sheldon.sh              # zshプラグイン管理
 │       ├── tmux.sh                 # tmuxプラグイン管理
 │       ├── ghq.sh                  # リポジトリ管理
 │       ├── abbr.sh                 # zsh略語展開
