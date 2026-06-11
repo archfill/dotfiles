@@ -49,7 +49,7 @@ BASIC_CONFIGS=(
     ".config/matugen"
     ".config/rofi"
     ".config/ags"
-    ".config/lazygit"
+    # ".config/lazygit" は home-manager (nix/modules/common.nix) で管理
 )
 
 # 基本設定ファイルのシンボリックリンク作成
