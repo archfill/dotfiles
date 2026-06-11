@@ -44,7 +44,8 @@ BASIC_CONFIGS=(
     ".config/waybar"
     ".config/swaync"
     ".config/wlogout"
-    ".config/scripts"
+    # ".config/scripts" は dotfiles 内に shell 拡張用の置き場として残すが
+    # ホームへの symlink は作らない (呼び出し時はフルパスで参照する方針)
     ".config/eww"
     ".config/matugen"
     ".config/rofi"
