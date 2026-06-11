@@ -161,8 +161,8 @@ main() {
 
     # Check if Deno should be managed by platform package manager
     if [[ "$os_type" == "macos" ]]; then
-        log_info "macOS detected - Deno is managed by Homebrew (bin/platform/macos/packages.sh)"
-        log_skip_reason "Deno" "Managed by Homebrew package manager"
+        log_info "macOS detected - Deno is managed by Nix (nix/modules/common.nix home.packages)"
+        log_skip_reason "Deno" "Managed by Nix home-manager"
         return 0
     elif [[ "$distro" == "arch" ]]; then
         log_info "Arch Linux detected - Deno is managed by pacman (bin/platform/linux/packages.sh)"

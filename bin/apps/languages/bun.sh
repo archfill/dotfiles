@@ -172,8 +172,8 @@ main() {
 
     # Check if Bun should be managed by platform package manager
     if [[ "$os_type" == "macos" ]]; then
-        log_info "macOS detected - Bun is managed by Homebrew (bin/platform/macos/packages.sh)"
-        log_skip_reason "Bun" "Managed by Homebrew package manager"
+        log_info "macOS detected - Bun is managed by Nix (nix/modules/common.nix home.packages)"
+        log_skip_reason "Bun" "Managed by Nix home-manager"
         return 0
     elif [[ "$distro" == "arch" ]]; then
         log_info "Arch Linux detected - Bun is managed by pacman (bin/platform/linux/packages.sh)"

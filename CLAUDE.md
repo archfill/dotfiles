@@ -212,7 +212,8 @@ bin/init.sh
   ├─ bin/link.sh (シンボリックリンク)
   │
   ├─ プラットフォーム別セットアップ
-  │   ├─ [macOS]   bin/platform/macos/packages.sh
+  │   ├─ [macOS]   darwin-rebuild switch --flake nix#archfill-to-Mac-mini
+  │   │             (nix-darwin + home-manager + homebrew モジュールで宣言管理)
   │   ├─ [Linux]   bin/platform/linux/packages.sh
   │   └─ [Cygwin]  bin/platform/cygwin/install_cygwin.sh
   │
