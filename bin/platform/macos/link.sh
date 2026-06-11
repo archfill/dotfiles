@@ -27,8 +27,8 @@ function link() {
   ln -snf "$DOT_PATH" "$TARGET_PATH"
 }
 
-# lazygit
-link "dotfiles/.config/lazygit/config.yml" "Library/Application Support/lazygit/config.yml"
+# lazygit は home-manager (nix/modules/darwin.nix) で
+# ~/Library/Application Support/lazygit/config.yml を管理
 
 # karabiner
 link ".config/karabiner/assets/complex_modifications/aquaskk_iterm2.json"
@@ -39,8 +39,5 @@ link ".config/karabiner/assets/complex_modifications/aquaskk_iterm2.json"
 # skhd
 # link ".config/skhd"
 
-# hammerspoon (link entire directory)
-if [[ -e "${HOME}/.hammerspoon" && ! -L "${HOME}/.hammerspoon" ]]; then
-  rm -rf "${HOME}/.hammerspoon"
-fi
-link ".hammerspoon"
+# hammerspoon は home-manager (nix/modules/darwin.nix) で
+# ~/.hammerspoon ディレクトリ全体を管理
