@@ -307,19 +307,11 @@ create_platform_specific_symlinks() {
 }
 
 # macOS固有のシンボリックリンク
+# 旧 symlink ターゲット (.config/karabiner / .config/borders /
+# .config/sketchybar / .aerospace.toml) はすべて home-manager
+# (nix/modules/darwin.nix) で管理しているため、ここでは何もしない。
 create_macos_symlinks() {
-    local macos_configs=(
-        ".config/karabiner"
-        ".config/borders"
-        ".config/sketchybar"
-        ".aerospace.toml"
-    )
-
-    for config in "${macos_configs[@]}"; do
-        if [[ -e "${DOTFILES_DIR}/${config}" ]]; then
-            create_symlink_from_dotfiles "$config"
-        fi
-    done
+    :  # no-op
 }
 
 # Linux固有のシンボリックリンク

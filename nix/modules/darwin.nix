@@ -21,4 +21,29 @@
   home.file."Library/Application Support/lazygit/config.yml".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/lazygit/config.yml";
+
+  # Karabiner-Elements の complex modifications (AquaSKK + iTerm2 連携)。
+  # ~/.config/karabiner/karabiner.json (profile 本体) は Karabiner-Elements
+  # GUI が自動生成・編集するため Nix 管理しない。
+  # 個別の complex modification ルールだけを dotfiles で保持する。
+  xdg.configFile."karabiner/assets/complex_modifications/aquaskk_iterm2.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/karabiner/assets/complex_modifications/aquaskk_iterm2.json";
+
+  # JankyBorders (アクティブウィンドウに枠線を描画する macOS ツール)。
+  xdg.configFile."borders".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/borders";
+
+  # SketchyBar (macOS のカスタムステータスバー)。
+  # lua/ plugins/ sketchybarrc を含む。
+  xdg.configFile."sketchybar".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/sketchybar";
+
+  # AeroSpace (タイル型ウィンドウマネージャ)。
+  # 設定は ~/.aerospace.toml をホーム直下に置く規約。
+  home.file.".aerospace.toml".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.aerospace.toml";
 }

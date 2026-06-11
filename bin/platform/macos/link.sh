@@ -30,8 +30,7 @@ function link() {
 # lazygit は home-manager (nix/modules/darwin.nix) で
 # ~/Library/Application Support/lazygit/config.yml を管理
 
-# karabiner
-link ".config/karabiner/assets/complex_modifications/aquaskk_iterm2.json"
+# karabiner complex modifications は home-manager (nix/modules/darwin.nix) で管理
 
 # yabai
 # link ".config/yabai"
