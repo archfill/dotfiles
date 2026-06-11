@@ -206,4 +206,12 @@ in
   xdg.configFile."starship.toml".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/starship.toml";
+
+  # .gitconfig は XDG (~/.config/git/config) より root 配置が一般的なため
+  # home.file で ~/.gitconfig に配置する。
+  # 移管前に既存 ~/.gitconfig (regular file) を削除すること:
+  #   rm ~/.gitconfig && darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
+  home.file.".gitconfig".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.gitconfig";
 }
