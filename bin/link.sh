@@ -39,7 +39,6 @@ BASIC_CONFIGS=(
     ".config/zsh"
     ".zshenv"
     ".config/sheldon"
-    ".config/starship.toml"
     ".mmcp.json"
     ".config/hypr"
     ".config/waybar"

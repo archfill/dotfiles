@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, config, ... }:
 
 let
   # ─── Neovim バージョン切替フラグ ────────────────────────────────
@@ -197,4 +197,16 @@ in
   home.sessionVariables = {
     JAVA_HOME = "${pkgs.openjdk17}";
   };
+
+  # ─── 設定ファイルの配置 (Impure / out-of-store symlink) ───────────
+  # 大きな宣言的設定 (starship の 318 行 Catppuccin Powerline 等) は
+  # programs.<name>.settings で Nix attrset に変換せず、元の TOML を維持
+  # したまま mkOutOfStoreSymlink で配置だけ home-manager 管理に寄せる。
+  # 利点: 公式 docs からのコピペが効く / 編集が即反映 (rebuild 不要) /
+  #       Linux など home-manager 非使用環境とも同じファイルを共有できる。
+  # NixOS コミュニティでも大設定 (starship.toml / neovim lua) は
+  # この Impure 方式が多数派。bin/link.sh の symlink から本宣言へ移管。
+  xdg.configFile."starship.toml".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/starship.toml";
 }
