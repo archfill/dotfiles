@@ -292,7 +292,8 @@ create_platform_specific_symlinks() {
 
     case "$platform" in
         "macos")
-            create_macos_symlinks
+            # macOS 固有 symlink は home-manager (nix/modules/darwin.nix) で管理
+            :
             ;;
         "linux")
             create_linux_symlinks
@@ -304,14 +305,6 @@ create_platform_specific_symlinks() {
             log_warning "Unknown platform: $platform"
             ;;
     esac
-}
-
-# macOS固有のシンボリックリンク
-# 旧 symlink ターゲット (.config/karabiner / .config/borders /
-# .config/sketchybar / .aerospace.toml) はすべて home-manager
-# (nix/modules/darwin.nix) で管理しているため、ここでは何もしない。
-create_macos_symlinks() {
-    :  # no-op
 }
 
 # Linux固有のシンボリックリンク

@@ -29,7 +29,9 @@ case "$OS_NAME" in
   Darwin)
     install_mode="${DOTFILES_INSTALL_MODE:-full}"
     log_info "macOS setup starting (mode: $install_mode)"
-    run "bin/platform/macos/link.sh"
+
+    # macOS 固有 symlink は home-manager (nix/modules/darwin.nix) で完全に管理。
+    # 旧 bin/platform/macos/link.sh は不要になったため削除済み。
 
     # macOS では nix-darwin + home-manager + homebrew モジュールで全管理。
     # Brew の taps / brews / casks は nix/darwin.nix の宣言で同期される。

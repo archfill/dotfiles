@@ -150,10 +150,10 @@ bin/
 │
 ├── platform/                       # プラットフォーム固有処理 (13スクリプト)
 │   │
-│   ├── macos/                      # macOS (3スクリプト)
+│   ├── macos/                      # macOS (2スクリプト)
 │   │   ├── packages.sh             # Homebrewパッケージ (78個 + 25 casks)
-│   │   ├── link.sh                 # macOS専用シンボリックリンク
 │   │   └── config.sh               # macOS設定 (ghq等)
+│   │                                 # link.sh は home-manager 完全移行に伴い削除済み
 │   │
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ
