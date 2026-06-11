@@ -21,8 +21,8 @@ if [[ -z "${USER_NAME:-}" ]] || [[ -z "${USER_EMAIL:-}" ]]; then
     exit 1
 fi
 
-# ~/.gitconfig.local に個人情報を書き込む（~/.gitconfig は dotfiles で管理）
-LOCAL_GITCONFIG="${HOME}/.gitconfig.local"
+# ~/.config/git/config.local に個人情報を書き込む（XDG 配置、dotfiles 非管理）
+LOCAL_GITCONFIG="${HOME}/.config/git/config.local"
 log_info "Setting up Git local configuration for: $USER_NAME <$USER_EMAIL>"
 
 git config --file "$LOCAL_GITCONFIG" user.name "$USER_NAME"
