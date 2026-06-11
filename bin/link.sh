@@ -22,7 +22,7 @@ load_config
 
 # 基本設定ファイルの一覧
 BASIC_CONFIGS=(
-    # ".gitconfig" は home-manager (nix/modules/common.nix) で管理
+    # ".config/git/config" は home-manager (nix/modules/common.nix) で XDG 管理
     ".config/nvim"
     ".vimrc"
     ".gvimrc"

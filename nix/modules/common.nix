@@ -207,11 +207,12 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/starship.toml";
 
-  # .gitconfig は XDG (~/.config/git/config) より root 配置が一般的なため
-  # home.file で ~/.gitconfig に配置する。
+  # git config を XDG 配置 (~/.config/git/config) で管理。
+  # Git 1.7.12+ / libgit2 ともに対応済み。include.path の
+  # ~/.gitconfig.local はそのまま維持 (bin/config.sh が書き込む)。
   # 移管前に既存 ~/.gitconfig (regular file) を削除すること:
   #   rm ~/.gitconfig && darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
-  home.file.".gitconfig".source =
+  xdg.configFile."git/config".source =
     config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.gitconfig";
+      "${config.home.homeDirectory}/dotfiles/.config/git/config";
 }
