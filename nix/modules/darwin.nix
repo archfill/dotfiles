@@ -22,10 +22,13 @@
   # そちらを優先するため、移行時に当該ディレクトリを手動削除すること:
   #   rm -rf ~/Library/Application\ Support/lazygit
 
-  # Karabiner-Elements の complex modifications (AquaSKK + iTerm2 連携)。
-  # ~/.config/karabiner/karabiner.json (profile 本体) は Karabiner-Elements
-  # GUI が自動生成・編集するため Nix 管理しない。
-  # 個別の complex modification ルールだけを dotfiles で保持する。
+  # Karabiner-Elements の profile 本体と complex modifications (AquaSKK + iTerm2 連携)。
+  # mkOutOfStoreSymlink で dotfiles のファイルを参照させるため、Karabiner-Elements
+  # GUI からの編集はそのまま dotfiles 側に書き込まれる (git diff で履歴管理可能)。
+  xdg.configFile."karabiner/karabiner.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/karabiner/karabiner.json";
+
   xdg.configFile."karabiner/assets/complex_modifications/aquaskk_iterm2.json".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/karabiner/assets/complex_modifications/aquaskk_iterm2.json";
