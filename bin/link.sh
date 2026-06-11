@@ -30,10 +30,10 @@ BASIC_CONFIGS=(
     # ".config/alacritty" は home-manager (nix/modules/common.nix) で管理
     # ".config/wezterm"   は home-manager (nix/modules/common.nix) で管理
     # ".config/ghostty"   は home-manager (nix/modules/common.nix) で管理
-    ".muttrc"
-    ".mutt"
-    ".config/aerc"
-    ".textlintrc"
+    # ".muttrc"      は home-manager (nix/modules/common.nix) で管理
+    # ".mutt"        は home-manager (nix/modules/common.nix) で管理
+    # ".config/aerc" は home-manager (nix/modules/common.nix) で管理
+    # ".textlintrc"  は不要のため削除済み
     # ".tmux/bin"    は home-manager (nix/modules/common.nix) で管理
     # ".config/tmux" は home-manager (programs.tmux + mkOutOfStoreSymlink) で管理
     # ".config/zsh" は home-manager (nix/modules/common.nix) で管理
