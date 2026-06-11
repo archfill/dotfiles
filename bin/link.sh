@@ -24,9 +24,9 @@ load_config
 BASIC_CONFIGS=(
     # ".config/git/config" は home-manager (nix/modules/common.nix) で XDG 管理
     # ".config/nvim" は home-manager (nix/modules/common.nix) で管理
-    ".vimrc"
-    ".gvimrc"
-    ".ideavimrc"
+    # ".vimrc"     は home-manager (nix/modules/common.nix) で管理
+    # ".gvimrc"    は home-manager (nix/modules/common.nix) で管理
+    # ".ideavimrc" は home-manager (nix/modules/common.nix) で管理
     # ".config/alacritty" は home-manager (nix/modules/common.nix) で管理
     # ".config/wezterm"   は home-manager (nix/modules/common.nix) で管理
     # ".config/ghostty"   は home-manager (nix/modules/common.nix) で管理
