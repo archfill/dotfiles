@@ -75,8 +75,7 @@ in
     # Terminal multiplexer
     tmux             # 設定は ~/.config/tmux/ (tpm + conf 分割) をそのまま使用
 
-    # zsh plugin manager
-    sheldon          # plugins.toml は ~/.config/sheldon/ をそのまま使用
+    # zsh plugin manager: sheldon は programs.sheldon モジュールで管理
 
     # Polyglot version manager / task runner
     # proto + moon を捨てて mise に統合。
@@ -203,9 +202,29 @@ in
   #       Linux など home-manager 非使用環境とも同じファイルを共有できる。
   # NixOS コミュニティでも大設定 (starship.toml / neovim lua) は
   # この Impure 方式が多数派。bin/link.sh の symlink から本宣言へ移管。
-  xdg.configFile."sheldon".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/sheldon";
+  # ─── sheldon (programs.sheldon でプラグイン Nix 宣言管理) ────────────
+  # plugins.toml は programs.sheldon.settings から生成される。
+  # sheldon lock によるプラグインダウンロードは引き続き必要。
+  # xdg.configFile."sheldon" と home.packages の sheldon は本モジュールが代替。
+  programs.sheldon = {
+    enable = true;
+    settings = {
+      shell = "zsh";
+      plugins = {
+        zsh-fast-syntax-highlighting   = { github = "zdharma-continuum/fast-syntax-highlighting"; };
+        zsh-autosuggestions            = { github = "zsh-users/zsh-autosuggestions"; };
+        zsh-completions                = { github = "zsh-users/zsh-completions"; };
+        zsh-history-substring-search   = { github = "zsh-users/zsh-history-substring-search"; };
+        zsh-256color                   = { github = "chrissicool/zsh-256color"; };
+        fzf-tab                        = { github = "Aloxaf/fzf-tab"; };
+        zsh-you-should-use             = { github = "MichaelAquilina/zsh-you-should-use"; };
+        zsh-abbr                       = { github = "olets/zsh-abbr"; };
+      };
+      templates = {
+        defer = "{{ hooks?.pre | nl }}{% for plugin in plugins %}{{ plugin.raw }}{% endfor %}{{ hooks?.post | nl }}";
+      };
+    };
+  };
 
   xdg.configFile."starship.toml".source =
     config.lib.file.mkOutOfStoreSymlink
