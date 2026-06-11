@@ -38,7 +38,7 @@ BASIC_CONFIGS=(
     # ".config/tmux" は home-manager (programs.tmux + mkOutOfStoreSymlink) で管理
     ".config/zsh"
     ".zshenv"
-    ".config/sheldon"
+    # ".config/sheldon" は home-manager (nix/modules/common.nix) で管理
     ".mmcp.json"
     ".config/hypr"
     ".config/waybar"

@@ -203,6 +203,10 @@ in
   #       Linux など home-manager 非使用環境とも同じファイルを共有できる。
   # NixOS コミュニティでも大設定 (starship.toml / neovim lua) は
   # この Impure 方式が多数派。bin/link.sh の symlink から本宣言へ移管。
+  xdg.configFile."sheldon".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/sheldon";
+
   xdg.configFile."starship.toml".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/starship.toml";
