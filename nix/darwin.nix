@@ -84,4 +84,50 @@
       "grishka/grishka/neardrop"
     ];
   };
+
+  # ─── macOS システム設定 (nix-darwin system.defaults) ─────────────────
+  # 宣言した設定は darwin-rebuild switch のたびに強制上書きされる。
+  # 基準: 新マシンで毎回手動設定するのが面倒 / 常に固定したい値のみ入れる。
+  # 「気分で変えたい」ものは入れない。
+  system.defaults = {
+
+    # ─── グローバルドメイン ──────────────────────────────────────────
+    NSGlobalDomain = {
+      # キーリピート高速化 (現状値をそのまま固定)
+      # 値が小さいほど速い。macOS デフォルト: KeyRepeat=6, InitialKeyRepeat=68
+      KeyRepeat = 2;
+      InitialKeyRepeat = 25;
+
+      # 長押しアクセント候補ポップアップを無効化 → キーリピート有効 (vim 必須)
+      ApplePressAndHoldEnabled = false;
+
+      # ─── 開発者向け: テキスト自動変換を全オフ ──────────────────
+      # ON のままだとコードや CLI コマンドを貼り付けた際に
+      # " → " (スマートクォート) や -- → — (スマートダッシュ) に化けてバグの元になる。
+      NSAutomaticQuoteSubstitutionEnabled = false;
+      NSAutomaticDashSubstitutionEnabled  = false;
+      NSAutomaticCapitalizationEnabled    = false;
+      NSAutomaticPeriodSubstitutionEnabled = false;
+    };
+
+    # ─── Finder ───────────────────────────────────────────────────────
+    finder = {
+      AppleShowAllExtensions = true;      # 拡張子を常に表示
+      ShowPathbar            = true;      # ウィンドウ下部にパスバー
+      ShowStatusBar          = true;      # ウィンドウ下部にステータスバー
+      FXPreferredViewStyle   = "clmv";    # カラム表示 (clmv/icnv/Nlsv/glyv)
+    };
+
+    # ─── トラックパッド ────────────────────────────────────────────────
+    trackpad = {
+      Clicking = true;  # タップでクリック
+    };
+
+    # ─── Dock ─────────────────────────────────────────────────────────
+    # 頻繁に変えたい場合はこのブロックごと削除して GUI 設定に戻してよい
+    dock = {
+      autohide = true;
+      tilesize  = 64;
+    };
+  };
 }
