@@ -140,9 +140,8 @@ bin/
 │   │   ├── terraform.sh            # Terraform CLI
 │   │   └── flutter.sh              # Flutter SDK
 │   │
-│   └── tools/                      # CLI開発ツール (7スクリプト)
+│   └── tools/                      # CLI開発ツール (6スクリプト)
 │       ├── eza.sh                  # モダンls代替
-│       ├── starship.sh             # プロンプト
 │       ├── tmux.sh                 # tmuxプラグイン管理
 │       ├── ghq.sh                  # リポジトリ管理
 │       ├── abbr.sh                 # zsh略語展開
