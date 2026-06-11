@@ -75,6 +75,7 @@
       "jordanbaird-ice"
       "rectangle"
       "orbstack"
+      "hammerspoon"        # macOS 自動化 (~/.hammerspoon は home-manager 管理)
       # オプション GUI (optional_casks 相当)
       "xcodes-app"
       "nextcloud"

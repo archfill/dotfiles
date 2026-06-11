@@ -14,13 +14,13 @@
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.hammerspoon";
 
-  # lazygit は macOS では XDG_CONFIG_HOME を尊重せず、
-  # ~/Library/Application Support/lazygit/config.yml を読みに行く。
-  # ~/.config/lazygit は home-manager (common.nix) で管理済みなので、
-  # 同じ dotfiles 実体を Library 側からも symlink で参照させる。
-  home.file."Library/Application Support/lazygit/config.yml".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/lazygit/config.yml";
+  # lazygit は最新バージョン (PR #3989, 2025) で
+  # ~/.config/lazygit/config.yml をデフォルトで読むようになったため、
+  # common.nix の xdg.configFile."lazygit" のみで完結する。
+  # ~/Library/Application Support/lazygit/ は古い既存ファイル
+  # (state.yml 等) が残っている場合に lazygit が後方互換で
+  # そちらを優先するため、移行時に当該ディレクトリを手動削除すること:
+  #   rm -rf ~/Library/Application\ Support/lazygit
 
   # Karabiner-Elements の complex modifications (AquaSKK + iTerm2 連携)。
   # ~/.config/karabiner/karabiner.json (profile 本体) は Karabiner-Elements
