@@ -34,8 +34,8 @@ BASIC_CONFIGS=(
     ".mutt"
     ".config/aerc"
     ".textlintrc"
-    ".tmux/bin"
-    ".config/tmux"
+    # ".tmux/bin"    は home-manager (nix/modules/common.nix) で管理
+    # ".config/tmux" は home-manager (programs.tmux + mkOutOfStoreSymlink) で管理
     ".config/zsh"
     ".zshenv"
     ".config/sheldon"

@@ -223,6 +223,75 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/ghostty";
 
+  # ─── tmux (programs.tmux でプラグイン Nix 管理、TPM 廃止) ────────────
+  # tmux.conf は programs.tmux が ~/.config/tmux/tmux.conf に生成する。
+  # 既存の conf/* / scripts/ は source-file 経由でそのまま使用。
+  programs.tmux = {
+    enable        = true;
+    sensibleOnTop = true;   # tmux-sensible 相当の設定を自動付与
+
+    plugins = with pkgs.tmuxPlugins; [
+      {
+        plugin      = resurrect;
+        extraConfig = ''
+          set -g @resurrect-processes 'false'
+          set -g @resurrect-capture-pane-contents 'off'
+        '';
+      }
+      continuum
+      {
+        plugin      = yank;
+        extraConfig = ''
+          set -g @yank_selection 'primary'
+          set -g @yank_selection_mouse 'clipboard'
+          set -g @yank_action 'copy-pipe-no-clear'
+        '';
+      }
+      {
+        plugin      = tmux-fzf;
+        extraConfig = ''
+          set -g @fzf-url-fzf-options '-p 60%,30% --prompt="   " --border-label=" Open URL "'
+          set -g @fzf-url-history-limit '2000'
+        '';
+      }
+      {
+        plugin      = tmux-thumbs;
+        extraConfig = ''
+          set -g @thumbs-key F
+          set -g @thumbs-alphabet dvorak-homerow
+          set -g @thumbs-reverse enabled
+          set -g @thumbs-unique enabled
+        '';
+      }
+    ];
+
+    # 既存の conf/* をそのまま source。plugins.conf は Nix に吸収済みのため除外。
+    extraConfig = ''
+      source-file ~/.config/tmux/conf/optimization.conf
+      source-file ~/.config/tmux/conf/appearance.conf
+      source-file ~/.config/tmux/conf/base.conf
+      source-file ~/.config/tmux/conf/keybinds.conf
+      source-file ~/.config/tmux/conf/smart-splits.conf
+      source-file ~/.config/tmux/conf/automation.conf
+      if-shell "uname | grep -q Darwin" "source-file ~/.config/tmux/conf/macos.conf"
+      if-shell "uname | grep -q Linux"  "source-file ~/.config/tmux/conf/linux.conf"
+    '';
+  };
+
+  # conf/ と scripts/ は dotfiles から直接参照
+  xdg.configFile."tmux/conf".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/tmux/conf";
+
+  xdg.configFile."tmux/scripts".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/tmux/scripts";
+
+  # ~/.tmux/bin/ (battery, tmux-pane-border スクリプト)
+  home.file.".tmux/bin".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.tmux/bin";
+
   xdg.configFile."nvim".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/nvim";
