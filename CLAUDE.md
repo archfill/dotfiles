@@ -98,6 +98,15 @@ dotfiles/
 ├── docs/              # ドキュメント
 │   └── claude/        # Claude Code向けドキュメント
 │
+├── nix/               # Nix flake (nix-darwin / NixOS / home-manager)
+│   ├── flake.nix      # マルチホスト出力 (mkDarwinHost / mkHomeConfig)
+│   ├── darwin.nix     # macOS システム設定 (nix-darwin module)
+│   ├── home.nix       # macOS 用 home-manager エントリ
+│   └── modules/
+│       ├── common.nix # 全 OS 共通の home-manager 設定
+│       ├── darwin.nix # macOS 専用 user 設定
+│       └── linux.nix  # Linux 専用 user 設定 (placeholder)
+│
 ├── macos/             # macOS固有ファイル
 ├── windows/           # Windows固有ファイル
 ├── archive/           # アーカイブ済み設定
@@ -106,6 +115,96 @@ dotfiles/
 ├── CLAUDE.md          # このファイル
 └── README.md          # プロジェクト説明
 ```
+
+---
+
+## ❄️ Nix Configuration Architecture
+
+### 採用方針
+
+**`hosts/` 型 + plain flake.nix** を採用する（2025-2026 時点で最も主流のパターン）。
+
+- ホスト 1 単位 = 1 ディレクトリ（`hosts/<host>/`）が直感的でスケールする
+- Misterio77 / Mic92 / hlissner / dustinlyons など著名 Nix dotfiles の多くがこの形
+- ホスト数 1 でも 10+ でも同じ構造のまま運用できる（再構成の必要なし）
+
+### 採用しないもの
+
+- **Framework (Blueprint / Snowfall Lib / flake-parts)** は使わない
+  - 個人 dotfiles 規模では恩恵より複雑性が勝つ
+  - plain flake.nix のままで「魔法のない透明な構成」を維持する
+- **OS 別トップディレクトリ型 (`nixos/` / `nix-darwin/` / `home-manager/`)** は採用しない
+  - yutkat/dotfiles など一部の流派だが少数派
+  - 共有モジュールの参照が複雑化しがち
+
+### 現状（移行段階）
+
+macOS 1 ホストのみのためフラット配置を維持：
+
+```
+nix/
+├── flake.nix
+├── darwin.nix      # 旧 nix-darwin system module (将来 hosts/<host>/ に移管)
+├── home.nix        # 旧 home-manager エントリ (将来 hosts/<host>/ に移管)
+└── modules/
+    ├── common.nix
+    ├── darwin.nix
+    └── linux.nix
+```
+
+### 目標構成（Linux ホスト追加時に移行）
+
+```
+nix/
+├── flake.nix
+├── modules/
+│   ├── common.nix              # 全 OS 共通の user 環境
+│   ├── home-darwin.nix         # macOS 専用 user 設定
+│   ├── home-linux.nix          # Linux 専用 user 設定
+│   └── desktop/
+│       ├── hyprland.nix        # 将来 Hyprland 用
+│       └── wayland.nix
+└── hosts/
+    ├── archfill-to-Mac-mini/
+    │   ├── darwin.nix          # nix-darwin system 設定
+    │   └── home.nix            # home-manager (imports common + home-darwin)
+    ├── arch-desktop/
+    │   └── home.nix            # standalone home-manager (Arch のため system は pacman)
+    ├── wsl-ubuntu/
+    │   └── home.nix            # WSL 用 (standalone home-manager)
+    └── nixos-server/
+        ├── configuration.nix   # NixOS system
+        ├── hardware.nix
+        └── home.nix
+```
+
+**移行ルール:** Linux ホスト 1 台でも追加する際に、既存 macOS も `hosts/archfill-to-Mac-mini/` 配下に統合する（git mv で履歴保持）。途中半端な状態は避ける。
+
+### ホスト追加手順
+
+1. `nix/hosts/<host>/` ディレクトリを作成
+2. 構成タイプ別の最小ファイル:
+   - **NixOS**: `configuration.nix` + `hardware.nix` + `home.nix`
+   - **standalone home-manager** (Arch / Ubuntu / WSL): `home.nix` のみ
+   - **nix-darwin** (macOS): `darwin.nix` + `home.nix`
+3. `nix/flake.nix` の対応する出力 (`nixosConfigurations` / `homeConfigurations` / `darwinConfigurations`) にホストを追加（雛形コメントを解除）
+4. 切替コマンド:
+   - macOS: `sudo darwin-rebuild switch --flake ./nix#<host>`
+   - NixOS: `sudo nixos-rebuild switch --flake ./nix#<host>`
+   - その他 Linux: `home-manager switch --flake ./nix#<user>@<host>`
+
+### 設定ファイルの管理方針
+
+- **設定の中身** は dotfiles 側に置き、`mkOutOfStoreSymlink` で symlink する（rebuild 不要、即反映、impure だが実用的）
+- **Nix attrset で設定生成** (`programs.<name>.settings`) は使わない方針
+  - 例外: `programs.sheldon`（短い設定リスト）など宣言が自然なものは採用
+- **理由:** 公式 docs のコピペが効く / Linux など home-manager 非使用環境とも同じファイルを共有できる / NixOS コミュニティでも大設定 (starship.toml / nvim lua) はこの impure 方式が多数派
+
+### 参考リンク
+
+- [Misterio77/nix-config](https://github.com/Misterio77/nix-config) — お手本
+- [Misterio77/nix-starter-configs](https://github.com/Misterio77/nix-starter-configs) — 公式テンプレ
+- [bullo.sk - One Nix Flake for Three Machines](https://bullo.sk/blog/nix-darwin-multi-host-setup/) — nix-darwin + multi-host 実装
 
 ---
 
