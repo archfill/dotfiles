@@ -211,6 +211,18 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/lazygit";
 
+  xdg.configFile."alacritty".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/alacritty";
+
+  xdg.configFile."wezterm".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/wezterm";
+
+  xdg.configFile."ghostty".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/ghostty";
+
   # git config を XDG 配置 (~/.config/git/config) で管理。
   # Git 1.7.12+ / libgit2 ともに対応済み。include.path の
   # ~/.gitconfig.local はそのまま維持 (bin/config.sh が書き込む)。

@@ -27,9 +27,9 @@ BASIC_CONFIGS=(
     ".vimrc"
     ".gvimrc"
     ".ideavimrc"
-    ".config/alacritty"
-    ".config/wezterm"
-    ".config/ghostty"
+    # ".config/alacritty" は home-manager (nix/modules/common.nix) で管理
+    # ".config/wezterm"   は home-manager (nix/modules/common.nix) で管理
+    # ".config/ghostty"   は home-manager (nix/modules/common.nix) で管理
     ".muttrc"
     ".mutt"
     ".config/aerc"
