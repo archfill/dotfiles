@@ -76,6 +76,8 @@
       "rectangle"
       "orbstack"
       "hammerspoon"        # macOS 自動化 (~/.hammerspoon は home-manager 管理)
+      "karabiner-elements" # キーリマップ (Karabiner-EventViewer 同梱、
+                           # complex_modifications は home-manager 管理)
       # オプション GUI (optional_casks 相当)
       "xcodes-app"
       "nextcloud"
