@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild diff nix-clean nix-update
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -35,6 +35,25 @@ config: ## Setup Git configuration with personal settings
 links: ## Create symbolic links for dotfiles
 	@echo "Creating symbolic links..."
 	bash ./bin/link.sh
+
+# ─── Nix 運用 (nh 経由) ─────────────────────────────────────────────
+# nh が PATH に入っている前提 (home.packages.nh で配布)。
+# 切替対象は OS / Linux ディストロで自動分岐。NixOS なら nh os、
+# macOS なら nh darwin、それ以外 (Arch / Ubuntu / WSL) は nh home。
+NIX_FLAKE := $(CURDIR)/nix
+NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
+
+rebuild: ## Nix flake を反映 (nh で OS 自動判定)
+	nh $(NH_TARGET) switch $(NIX_FLAKE)
+
+diff: ## 次の switch で何が変わるかを表示 (適用しない)
+	nh $(NH_TARGET) switch $(NIX_FLAKE) --dry
+
+nix-clean: ## 古い generation を 5 世代残して掃除
+	nh clean all --keep 5
+
+nix-update: ## flake.lock を更新してから switch
+	nh $(NH_TARGET) switch $(NIX_FLAKE) -u
 
 # プラットフォーム固有のセットアップ
 termux-setup: ## Setup for Android Termux environment

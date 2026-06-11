@@ -49,6 +49,13 @@ in
     # GitHub
     gh               # GitHub CLI
 
+    # ─── Nix 運用補助 ────────────────────────────────────────────────
+    # nh (nix-helper): macOS / NixOS / standalone home-manager を統一 CLI 化。
+    # `nh darwin switch` / `nh os switch` / `nh home switch` で全 OS 共通の
+    # rebuild インタフェース、`nh clean all` で古い generation を整理、
+    # `nh ... -u` で flake update + switch を 1 コマンド実行できる。
+    nh
+
     # Formatter / Linter (system 配置で nvim Mason と分離)
     stylua           # Lua formatter
 
