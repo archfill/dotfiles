@@ -1,6 +1,14 @@
 setopt combiningchars
 setopt no_global_rcs
 
+# XDG Base Directory Specification
+# 未 export だと lazygit など XDG 準拠ツールが ~/Library/Application Support
+# を読みにいくため、~/.config/ 配下の設定が反映されない。
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+
 export ZDOTDIR=$HOME/.config/zsh
 export ZRCDIR=$ZDOTDIR/zshrc
 
