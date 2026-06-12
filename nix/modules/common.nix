@@ -345,6 +345,16 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.ideavimrc";
 
+  # Codex environment helper. Secret values are not stored in Nix. codex-env
+  # prefers the mounted 1Password Environment and falls back to env.refs.
+  xdg.configFile."codex/env.refs".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/codex/env.refs";
+
+  home.file.".local/bin/codex-env".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.local/bin/codex-env";
+
   # zsh: ZDOTDIR=$HOME/.config/zsh 構成のまま dotfiles 管理を維持。
   # programs.zsh は ~/.zshrc を生成するため ZDOTDIR と競合する。
   # mkOutOfStoreSymlink で symlink のみ Nix 宣言、設定内容は dotfiles 側で編集。

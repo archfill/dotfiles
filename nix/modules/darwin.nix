@@ -49,4 +49,11 @@
   home.file.".aerospace.toml".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.aerospace.toml";
+
+  # Codex Desktop を Dock / Finder から起動しても MCP token が見えるよう、
+  # 1Password Environment の mounted .env を login session の launchctl
+  # environment へ定期投入する。
+  home.file."Library/LaunchAgents/com.archfill.codex-env.plist".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/codex/com.archfill.codex-env.plist";
 }

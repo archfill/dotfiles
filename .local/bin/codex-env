@@ -1,0 +1,345 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENV_FILE="${CODEX_ENV_FILE:-${HOME}/.config/codex/env}"
+REFS_FILE="${CODEX_ENV_REFS:-${HOME}/.config/codex/env.refs}"
+APP_NAME="${CODEX_APP_NAME:-Codex}"
+CODEX_CONFIG="${CODEX_CONFIG:-${CODEX_HOME:-${HOME}/.codex}/config.toml}"
+ONEPASSWORD_MCP="${ONEPASSWORD_MCP:-/Applications/1Password.app/Contents/MacOS/onepassword-mcp}"
+
+usage() {
+  cat <<'EOF'
+Usage: codex-env <command>
+
+Commands:
+  doctor   Check Codex secret injection and MCP config health
+  status   Show whether required variables are visible to launchctl/shell
+  set      Read mounted .env or 1Password references and set launchctl variables
+  refresh  Set launchctl variables, then show status
+  unset    Remove variables from the launchctl environment
+  run      Run Codex CLI with secrets injected
+  open     Set launchctl variables, then open Codex Desktop
+
+If ~/.config/codex/env exists, it is preferred as a 1Password Environment
+local .env mount. Otherwise ~/.config/codex/env.refs is used with lines like:
+  GITHUB_PAT=op://Personal/GitHub Codex MCP/token
+  YUI_MCP_TOKEN=op://Personal/YUI MCP/token
+EOF
+}
+
+require_command() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "codex-env: missing required command: $1" >&2
+    exit 1
+  fi
+}
+
+info() {
+  printf 'INFO %s\n' "$*"
+}
+
+ok() {
+  printf 'OK   %s\n' "$*"
+}
+
+warn() {
+  printf 'WARN %s\n' "$*"
+}
+
+error() {
+  printf 'ERROR %s\n' "$*" >&2
+  doctor_errors=$((doctor_errors + 1))
+}
+
+trim() {
+  local value="$1"
+  value="${value#${value%%[![:space:]]*}}"
+  value="${value%${value##*[![:space:]]}}"
+  printf '%s' "$value"
+}
+
+parse_assignment_line() {
+  local source="$1"
+  local line="$2"
+
+  [[ -z "${line//[[:space:]]/}" ]] && return 1
+  [[ "$line" =~ ^[[:space:]]*# ]] && return 1
+  line="${line#export }"
+  if [[ "$line" != *=* ]]; then
+    echo "codex-env: invalid line in $source: $line" >&2
+    exit 1
+  fi
+
+  name="${line%%=*}"
+  value="${line#*=}"
+  name="$(trim "$name")"
+  value="$(trim "$value")"
+  if [[ ! "$name" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+    echo "codex-env: invalid env var name: $name" >&2
+    exit 1
+  fi
+  printf '%s=%s\n' "$name" "$value"
+}
+
+load_env_file() {
+  env_entries=()
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if parsed="$(parse_assignment_line "$ENV_FILE" "$line")"; then
+      env_entries+=("$parsed")
+    fi
+  done < "$ENV_FILE"
+}
+
+load_refs_file() {
+  refs=()
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if parsed="$(parse_assignment_line "$REFS_FILE" "$line")"; then
+      refs+=("$parsed")
+    fi
+  done < "$REFS_FILE"
+}
+
+load_config() {
+  config_mode=""
+  if [[ -p "$ENV_FILE" || -f "$ENV_FILE" ]]; then
+    config_mode="env"
+    load_env_file
+    return
+  fi
+
+  if [[ -f "$REFS_FILE" ]]; then
+    config_mode="refs"
+    load_refs_file
+    return
+  fi
+
+  echo "codex-env: config file not found: $ENV_FILE or $REFS_FILE" >&2
+  exit 1
+}
+
+launchctl_available() {
+  [[ "$(uname -s)" == "Darwin" ]] && command -v launchctl >/dev/null 2>&1
+}
+
+status_var() {
+  local name="$1"
+  local shell_state="unset"
+  local launch_state="n/a"
+
+  if [[ -n "${!name-}" ]]; then
+    shell_state="set"
+  fi
+
+  if launchctl_available; then
+    if launchctl getenv "$name" >/dev/null 2>&1 && [[ -n "$(launchctl getenv "$name" 2>/dev/null || true)" ]]; then
+      launch_state="set"
+    else
+      launch_state="unset"
+    fi
+  fi
+
+  printf '%-20s shell=%s launchctl=%s\n' "$name" "$shell_state" "$launch_state"
+}
+
+cmd_status() {
+  load_config
+  if [[ "$config_mode" == "env" ]]; then
+    for entry in "${env_entries[@]}"; do
+      status_var "${entry%%=*}"
+    done
+  else
+    for entry in "${refs[@]}"; do
+      status_var "${entry%%=*}"
+    done
+  fi
+}
+
+cmd_set() {
+  if ! launchctl_available; then
+    echo "codex-env: launchctl environment is only available on macOS" >&2
+    exit 1
+  fi
+  load_config
+  if [[ "$config_mode" == "env" ]]; then
+    for entry in "${env_entries[@]}"; do
+      name="${entry%%=*}"
+      value="${entry#*=}"
+      launchctl setenv "$name" "$value"
+      echo "set $name for launchctl"
+    done
+    return
+  fi
+
+  require_command op
+  for entry in "${refs[@]}"; do
+    name="${entry%%=*}"
+    ref="${entry#*=}"
+    value="$(op read "$ref")"
+    launchctl setenv "$name" "$value"
+    echo "set $name for launchctl"
+  done
+}
+
+cmd_refresh() {
+  cmd_set
+  cmd_status
+}
+
+cmd_unset() {
+  if ! launchctl_available; then
+    echo "codex-env: launchctl environment is only available on macOS" >&2
+    exit 1
+  fi
+  load_config
+  if [[ "$config_mode" == "env" ]]; then
+    for entry in "${env_entries[@]}"; do
+      name="${entry%%=*}"
+      launchctl unsetenv "$name" || true
+      echo "unset $name from launchctl"
+    done
+  else
+    for entry in "${refs[@]}"; do
+      name="${entry%%=*}"
+      launchctl unsetenv "$name" || true
+      echo "unset $name from launchctl"
+    done
+  fi
+}
+
+cmd_run() {
+  if [[ "$#" -eq 0 ]]; then
+    set -- codex
+  fi
+  load_config
+  if [[ "$config_mode" == "env" ]]; then
+    for entry in "${env_entries[@]}"; do
+      export "$entry"
+    done
+    exec "$@"
+  fi
+
+  require_command op
+  exec op run --env-file="$REFS_FILE" -- "$@"
+}
+
+cmd_open() {
+  cmd_set
+  open -a "$APP_NAME"
+}
+
+config_has_bearer_env_var() {
+  local name="$1"
+  [[ -f "$CODEX_CONFIG" ]] && grep -Eq "bearer_token_env_var[[:space:]]*=[[:space:]]*\"${name}\"" "$CODEX_CONFIG"
+}
+
+config_has_static_authorization() {
+  [[ -f "$CODEX_CONFIG" ]] && grep -Eq '^[[:space:]]*Authorization[[:space:]]*=' "$CODEX_CONFIG"
+}
+
+config_has_onepassword_mcp_enabled() {
+  [[ -f "$CODEX_CONFIG" ]] && awk '
+    /^\[mcp_servers\.onepassword\]$/ { in_section = 1; next }
+    /^\[/ { in_section = 0 }
+    in_section && $0 ~ /^[[:space:]]*enabled[[:space:]]*=[[:space:]]*true[[:space:]]*$/ { found = 1 }
+    END { exit found ? 0 : 1 }
+  ' "$CODEX_CONFIG"
+}
+
+cmd_doctor() {
+  doctor_errors=0
+
+  if [[ -p "$ENV_FILE" ]]; then
+    ok "mounted env file exists: $ENV_FILE"
+  elif [[ -f "$ENV_FILE" ]]; then
+    warn "plain env file exists: $ENV_FILE"
+  elif [[ -f "$REFS_FILE" ]]; then
+    warn "mounted env file is missing; falling back to refs file: $REFS_FILE"
+  else
+    error "missing env source: $ENV_FILE or $REFS_FILE"
+  fi
+
+  if load_config; then
+    info "env source mode: $config_mode"
+    entry_count=0
+    if [[ "$config_mode" == "env" ]]; then
+      entry_count="${#env_entries[@]}"
+    else
+      entry_count="${#refs[@]}"
+    fi
+    if [[ "$entry_count" -eq 0 ]]; then
+      error "no environment variables found in selected env source"
+    fi
+
+    entries=()
+    if [[ "$config_mode" == "env" ]]; then
+      entries=("${env_entries[@]}")
+    else
+      entries=("${refs[@]}")
+    fi
+
+    for entry in "${entries[@]}"; do
+      [[ -z "$entry" ]] && continue
+      name="${entry%%=*}"
+      if [[ -n "${!name-}" ]]; then
+        ok "$name is set in current shell"
+      else
+        warn "$name is not set in current shell"
+      fi
+
+      if launchctl_available; then
+        if launchctl getenv "$name" >/dev/null 2>&1 && [[ -n "$(launchctl getenv "$name" 2>/dev/null || true)" ]]; then
+          ok "$name is set in launchctl"
+        else
+          error "$name is not set in launchctl"
+        fi
+      fi
+
+      if config_has_bearer_env_var "$name"; then
+        ok "$CODEX_CONFIG uses bearer_token_env_var for $name"
+      else
+        warn "$CODEX_CONFIG does not reference $name via bearer_token_env_var"
+      fi
+    done
+  fi
+
+  if [[ -f "$CODEX_CONFIG" ]]; then
+    ok "Codex config exists: $CODEX_CONFIG"
+    if config_has_static_authorization; then
+      error "$CODEX_CONFIG still contains static Authorization headers"
+    else
+      ok "$CODEX_CONFIG has no static Authorization headers"
+    fi
+
+    if config_has_onepassword_mcp_enabled; then
+      ok "1Password MCP is enabled in $CODEX_CONFIG"
+    else
+      warn "1Password MCP is not enabled in $CODEX_CONFIG"
+    fi
+  else
+    error "Codex config not found: $CODEX_CONFIG"
+  fi
+
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    if [[ -x "$ONEPASSWORD_MCP" ]]; then
+      ok "1Password MCP binary exists: $ONEPASSWORD_MCP"
+    else
+      warn "1Password MCP binary not found: $ONEPASSWORD_MCP"
+    fi
+  fi
+
+  if [[ "$doctor_errors" -gt 0 ]]; then
+    return 1
+  fi
+}
+
+case "${1:-}" in
+  doctor) shift; cmd_doctor "$@" ;;
+  status) shift; cmd_status "$@" ;;
+  set) shift; cmd_set "$@" ;;
+  refresh) shift; cmd_refresh "$@" ;;
+  unset) shift; cmd_unset "$@" ;;
+  run) shift; cmd_run "$@" ;;
+  open) shift; cmd_open "$@" ;;
+  -h|--help|help|"") usage ;;
+  *) echo "codex-env: unknown command: $1" >&2; usage >&2; exit 1 ;;
+esac
