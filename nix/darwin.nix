@@ -84,6 +84,7 @@
       "alacritty"
       "amical"
       "zed"
+      "beekeeper-studio"
       "grishka/grishka/neardrop"
     ];
   };
