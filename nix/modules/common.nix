@@ -13,6 +13,10 @@ let
     if useNeovimNightly
     then neovimNightly
     else pkgs.neovim;
+
+  pipxPackage = pkgs.pipx.overridePythonAttrs (_: {
+    doCheck = false;
+  });
 in
 {
   # 初回 install 時点の home-manager リリース版。以降は変更しない。
@@ -136,6 +140,7 @@ in
     # ─── Package managers (language-specific) ────────────────────────
     uv           # Python 高速パッケージマネージャ (mise.toml の uv 指定は
                  # プロジェクト毎の固定として引き続き機能する)
+    pipxPackage  # Python CLI apps を分離 venv で導入する補助ツール
     pnpm         # Node.js パッケージマネージャ (nodejs_22 と組合せて運用)
 
     # ─── Database clients ────────────────────────────────────────────
