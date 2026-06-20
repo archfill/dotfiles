@@ -49,21 +49,21 @@
         };
 
       # NixOS ホスト (システム + home-manager モジュール)
-      # mkNixosHost = { system, hostModule, homeModule, username }:
-      #   nixpkgs.lib.nixosSystem {
-      #     inherit system;
-      #     specialArgs = { inherit inputs; };
-      #     modules = [
-      #       hostModule
-      #       home-manager.nixosModules.home-manager
-      #       {
-      #         home-manager.useGlobalPkgs = true;
-      #         home-manager.useUserPackages = true;
-      #         home-manager.extraSpecialArgs = { inherit inputs; };
-      #         home-manager.users.${username} = homeModule;
-      #       }
-      #     ];
-      #   };
+      mkNixosHost = { system, hostModule, homeModule, username }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            hostModule
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.users.${username} = homeModule;
+            }
+          ];
+        };
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
       # codex は nixpkgs で Rust ソースビルド (依存重) されるため更新が遅れ
@@ -116,13 +116,26 @@
       };
 
       # ─── NixOS (システム + home-manager) ──────────────────────────
-      # nixosConfigurations = {
-      #   "nixos-desktop" = mkNixosHost {
-      #     system = "x86_64-linux";
-      #     hostModule = ./hosts/nixos-desktop/configuration.nix;
-      #     homeModule = ./hosts/nixos-desktop/home.nix;
-      #     username = "archfill";
-      #   };
-      # };
+      nixosConfigurations = {
+        "nixos-vm" = mkNixosHost {
+          system = "x86_64-linux";
+          hostModule = ./hosts/nixos-vm/configuration.nix;
+          homeModule = ./hosts/nixos-vm/home.nix;
+          username = "archfill";
+        };
+
+        # 実機追加時:
+        # 1. cp -r ./hosts/_template/nixos ./hosts/<host>
+        # 2. 実機で生成した hardware.nix を ./hosts/<host>/hardware.nix に配置
+        # 3. configuration.nix の networking.hostName を <host> に変更
+        # 4. 下の例を有効化
+        #
+        # "<host>" = mkNixosHost {
+        #   system = "x86_64-linux";
+        #   hostModule = ./hosts/<host>/configuration.nix;
+        #   homeModule = ./hosts/<host>/home.nix;
+        #   username = "archfill";
+        # };
+      };
     };
 }

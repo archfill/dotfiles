@@ -7,7 +7,7 @@ let
   useNeovimNightly = false;
 
   neovimNightly =
-    inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+    inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   neovimPackage =
     if useNeovimNightly
@@ -182,7 +182,7 @@ in
     # 自前 packages.codex (GitHub release の prebuilt native binary) で最新を
     # 追従。バージョン更新は `make codex-bump VERSION=x.y.z` → diff 確認 → rebuild。
     # npm install -g は /nix/store の immutable と衝突するため不採用。
-    inputs.self.packages.${pkgs.system}.codex
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.codex
 
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
