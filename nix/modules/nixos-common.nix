@@ -42,6 +42,7 @@
   services.pulseaudio.enable = false;
 
   services.openssh.enable = true;
+  services.tailscale.enable = true;
 
   users.users.archfill = {
     isNormalUser = true;
@@ -63,6 +64,7 @@
 
   environment.systemPackages = with pkgs; [
     git
+    tailscale
     vim
     wget
     curl
