@@ -177,10 +177,12 @@ in
                     # (leoafarias/fvm) から Nix へ移管。
 
     # ─── AI coding agents ────────────────────────────────────────────
-    codex           # OpenAI 公式 Codex CLI (Lightweight coding agent)。
-                    # npm install -g は /nix/store の immutable と衝突
-                    # する (EACCES on /nix/store/...-nodejs/lib) ため、
-                    # Nix 経由で導入することで宣言的かつ衝突なく管理する。
+    # OpenAI 公式 Codex CLI。nixpkgs の codex は Rust ソースビルド (依存が
+    # 重く libwebrtc/librusty_v8 を抱える) で更新 PR のラグが常態化するため、
+    # 自前 packages.codex (GitHub release の prebuilt native binary) で最新を
+    # 追従。バージョン更新は `make codex-bump VERSION=x.y.z` → diff 確認 → rebuild。
+    # npm install -g は /nix/store の immutable と衝突するため不採用。
+    inputs.self.packages.${pkgs.system}.codex
 
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)

@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild diff nix-clean nix-update
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -54,6 +54,18 @@ nix-clean: ## 古い generation を 5 世代残して掃除
 
 nix-update: ## flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_FLAKE) -u
+
+codex-bump: ## codex の SRI hash を再取得 (usage: make codex-bump VERSION=0.142.0)
+	@test -n "$(VERSION)" || { echo "Usage: make codex-bump VERSION=<version>  (e.g. 0.142.0)"; exit 1; }
+	@echo "==> codex v$(VERSION) — SRI hashes for nix/pkgs/codex/default.nix"
+	@for plat in aarch64-apple-darwin x86_64-apple-darwin x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do \
+		hash=$$(nix store prefetch-file --hash-type sha256 --json \
+			"https://github.com/openai/codex/releases/download/rust-v$(VERSION)/codex-$$plat.tar.gz" \
+			2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin)['hash'])"); \
+		printf '    "%-31s = "%s";\n' "$$plat" "$$hash"; \
+	done
+	@echo ""
+	@echo "==> nix/pkgs/codex/default.nix の version + hashes を差し替えて 'make diff' → 'make rebuild'"
 
 # プラットフォーム固有のセットアップ
 termux-setup: ## Setup for Android Termux environment

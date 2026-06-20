@@ -65,6 +65,16 @@
       #     ];
       #   };
     in {
+      # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
+      # codex は nixpkgs で Rust ソースビルド (依存重) されるため更新が遅れ
+      # やすい。GitHub release の prebuilt native binary を取って最新を追従。
+      packages = nixpkgs.lib.genAttrs
+        [ "aarch64-darwin" "x86_64-darwin" "x86_64-linux" "aarch64-linux" ]
+        (system:
+          let pkgs = nixpkgs.legacyPackages.${system}; in {
+            codex = pkgs.callPackage ./pkgs/codex { };
+          });
+
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
       # 切替: sudo darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
       darwinConfigurations."archfill-to-Mac-mini" = mkDarwinHost {
