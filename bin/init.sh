@@ -11,12 +11,18 @@ source "$DOTFILES_DIR/bin/lib/common.sh"
 # Setup standardized error handling
 setup_error_handling
 
-mkdir -p "$HOME/.config"
-
-log_info "Dotfiles setup starting at $(date)"
-
 run() {
   bash "$DOTFILES_DIR/$1"
+}
+
+prepare_common_environment() {
+  mkdir -p "$HOME/.config"
+  log_info "Dotfiles setup starting at $(date)"
+}
+
+apply_common_configuration() {
+  log_info "Starting config setup"
+  run "bin/config.sh"
 }
 
 resolve_linux_home_attr() {
@@ -86,6 +92,8 @@ apply_nix_linux_configuration() {
   fi
 }
 
+prepare_common_environment
+
 OS_NAME="$(uname)"
 log_info "Detected OS: $OS_NAME"
 
@@ -139,8 +147,7 @@ case "$OS_NAME" in
     ;;
 esac
 
-log_info "Starting config setup"
-run "bin/config.sh"
+apply_common_configuration
 
 log_success "Dotfiles setup completed at $(date)"
 
