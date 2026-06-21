@@ -73,6 +73,7 @@
     efibootmgr
     ghostty
     google-chrome
+    vscode
     pciutils
     usbutils
   ];
