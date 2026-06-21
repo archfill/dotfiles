@@ -13,16 +13,21 @@
 # (例: Wayland / X11 連携、Linux 固有の env var) ここに集約する。
 {
   home.packages = with pkgs; [
+    cliphist
     curl
     ffmpeg
     ffmpegthumbnailer
+    gettext
     imagemagick
     less
+    matugen
     mpv
     p7zip
     poppler-utils
+    rofi
     sqlite
     unzip
+    wl-clipboard
     zoxide
   ];
 
