@@ -90,34 +90,31 @@
       };
 
       # ─── Linux: standalone home-manager (Arch / Ubuntu / WSL) ─────
-      # ホスト追加方法 (例):
-      #   1. nix/hosts/<host>.nix を作成
-      #      { config, pkgs, ... }: {
-      #        home.username = "archfill";
-      #        home.homeDirectory = "/home/archfill";
-      #        home.stateVersion = "25.05";
-      #        # ホスト固有設定 (Hyprland / WSL 連携 / etc.)
-      #      }
-      #   2. 下の attrset に modules を追加してコメント解除
-      #   3. home-manager switch --flake ./nix#archfill@<host>
+      # 非 NixOS Linux では system 領域 (kernel / GPU driver / display
+      # manager / daemon 類) は各ディストロで管理し、開発ツール・dotfiles
+      # symlink・shell/editor 環境を Nix home-manager へ寄せる。
+      # 切替: home-manager switch --flake ./nix#archfill@<host>
       homeConfigurations = {
-        # "archfill@arch-desktop" = mkHomeConfig {
-        #   system = "x86_64-linux";
-        #   modules = [
-        #     ./modules/common.nix
-        #     ./modules/linux.nix
-        #     ./hosts/arch-desktop.nix
-        #   ];
-        # };
-        #
-        # "archfill@wsl-ubuntu" = mkHomeConfig {
-        #   system = "x86_64-linux";
-        #   modules = [
-        #     ./modules/common.nix
-        #     ./modules/linux.nix
-        #     ./hosts/wsl-ubuntu.nix
-        #   ];
-        # };
+        "archfill@arch-desktop" = mkHomeConfig {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/arch-desktop/home.nix
+          ];
+        };
+
+        "archfill@ubuntu-desktop" = mkHomeConfig {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/ubuntu-desktop/home.nix
+          ];
+        };
+
+        "archfill@wsl-ubuntu" = mkHomeConfig {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/wsl-ubuntu/home.nix
+          ];
+        };
       };
 
       # ─── NixOS (システム + home-manager) ──────────────────────────

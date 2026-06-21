@@ -2,6 +2,41 @@
 
 このディレクトリは NixOS / standalone home-manager のホスト単位設定を置く。
 
+## Arch / Ubuntu / WSL を Nix で補う方針
+
+非 NixOS Linux では、OS installer / pacman / apt が担う範囲を最小限にし、日常的に使う user 環境は standalone home-manager に寄せる。
+
+OS 側に残すもの:
+
+- Nix 本体
+- `git` / `curl` など dotfiles を取得して Nix を起動するための最小ツール
+- kernel / GPU driver / display manager / Docker daemon / systemd service など system 領域
+
+Nix home-manager で管理するもの:
+
+- shell / editor / tmux / git / lazygit / gh / ghq など CLI ツール
+- Node.js / Python / Go / Rust / Java など開発ランタイム
+- dotfiles の symlink
+- Linux 共通の Hyprland 関連 user config
+
+用意済み standalone home-manager 出力:
+
+```bash
+home-manager switch --flake ~/dotfiles/nix#archfill@arch-desktop
+home-manager switch --flake ~/dotfiles/nix#archfill@ubuntu-desktop
+home-manager switch --flake ~/dotfiles/nix#archfill@wsl-ubuntu
+```
+
+`make rebuild` から明示する場合:
+
+```bash
+make rebuild NIX_ATTR='archfill@arch-desktop'
+make rebuild NIX_ATTR='archfill@ubuntu-desktop'
+make rebuild NIX_ATTR='archfill@wsl-ubuntu'
+```
+
+ホスト名と flake attr が一致している環境では `make rebuild` だけでもよい。
+
 ## 実機 NixOS 追加手順
 
 1. NixOS installer で実機へインストールする。

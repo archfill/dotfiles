@@ -41,26 +41,27 @@ links: ## Create symbolic links for dotfiles
 # 切替対象は OS / Linux ディストロで自動分岐。NixOS なら nh os、
 # macOS なら nh darwin、それ以外 (Arch / Ubuntu / WSL) は nh home。
 NIX_FLAKE := $(CURDIR)/nix
+NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 
 rebuild: ## Nix flake を反映 (nh で OS 自動判定)
-	nh $(NH_TARGET) switch $(NIX_FLAKE)
+	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
 
 rebuild-bootloader: ## NixOS の bootloader も再インストールして反映
 	@if [ "$(NH_TARGET)" != "os" ]; then \
 		echo "rebuild-bootloader is only for NixOS"; \
 		exit 1; \
 	fi
-	nh os switch $(NIX_FLAKE) --install-bootloader
+	nh os switch $(NIX_FLAKE_REF) --install-bootloader
 
 diff: ## 次の switch で何が変わるかを表示 (適用しない)
-	nh $(NH_TARGET) switch $(NIX_FLAKE) --dry
+	nh $(NH_TARGET) switch $(NIX_FLAKE_REF) --dry
 
 nix-clean: ## 古い generation を 5 世代残して掃除
 	nh clean all --keep 5
 
 nix-update: ## flake.lock を更新してから switch
-	nh $(NH_TARGET) switch $(NIX_FLAKE) -u
+	nh $(NH_TARGET) switch $(NIX_FLAKE_REF) -u
 
 codex-bump: ## codex の SRI hash を再取得 (usage: make codex-bump VERSION=0.142.0)
 	@test -n "$(VERSION)" || { echo "Usage: make codex-bump VERSION=<version>  (e.g. 0.142.0)"; exit 1; }
