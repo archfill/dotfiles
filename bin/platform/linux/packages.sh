@@ -298,7 +298,6 @@ install_common_packages_debian() {
         sudo apt update
         sudo apt install -y \
           python3 \
-          python3-pip \
           wget \
           less \
           zsh \
@@ -408,7 +407,6 @@ install_common_packages_arch() {
     # Official repository packages (installed via pacman)
     local official_packages=(
         mise
-        rustup
         bun
         ripgrep
         git-delta
@@ -448,12 +446,6 @@ install_common_packages_arch() {
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
-        # rustup と rust(スタンドアロン) は競合するため、rustup インストール前に rust を削除する
-        if pacman -Qq rust 2>/dev/null | grep -qx "rust"; then
-            log_info "Removing standalone 'rust' package (conflicts with rustup)..."
-            sudo pacman -R --noconfirm rust
-        fi
-
         # Install official repository packages via pacman
         log_info "Installing ${#official_packages[@]} packages from official repositories..."
         sudo pacman -S --needed --noconfirm "${official_packages[@]}"

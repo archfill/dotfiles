@@ -309,11 +309,11 @@ For more help:
 
 ### Programming Languages
 
-- **Python**: uv package manager (modern pyenv replacement)
-- **Node.js**: mise version manager (replaces nvm/volta)
-- **Rust**: rustup with essential tools (clippy, rustfmt)
-- **Go**: mise version manager with development tools
-- **Java**: mise version manager (Temurin JDK)
+- **Python**: Nix-provided Python with uv / pipx for package workflows
+- **Node.js**: Nix-provided Node.js with mise for project overrides
+- **Rust**: Nix-provided cargo / rustc / clippy / rustfmt
+- **Go**: Nix-provided Go with project-level overrides when needed
+- **Java**: Nix-provided OpenJDK with project-level overrides when needed
 
 ### Development Environment
 
