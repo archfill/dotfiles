@@ -171,11 +171,9 @@ install_hyprland() {
         xdg-desktop-portal-hyprland     # Desktop portal integration
     )
 
-    # Essential Wayland tools
+        # Essential Wayland tools
     local wayland_tools=(
-        rofi            # Application launcher (customizable)
-        rofi-calc       # Calculator plugin for rofi
-        rofi-emoji      # Emoji picker plugin for rofi
+        rofi            # dmenu UI for clipboard, wallpaper picker, and cheatsheet
         wl-clipboard    # Clipboard utilities
     )
 

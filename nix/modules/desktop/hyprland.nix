@@ -26,12 +26,7 @@
     hyprpolkitagent
 
     # Wayland desktop tools
-    (rofi.override {
-      plugins = [
-        rofi-calc
-        rofi-emoji
-      ];
-    })
+    rofi
     wl-clipboard
     cliphist
     satty
