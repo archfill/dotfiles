@@ -43,6 +43,9 @@
     playerctl
     networkmanagerapplet
     nwg-look
+    adwaita-icon-theme
+    papirus-icon-theme
+    hicolor-icon-theme
 
     # NVIDIA Wayland / VA-API support
     egl-wayland

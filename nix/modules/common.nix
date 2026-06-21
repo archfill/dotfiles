@@ -196,6 +196,8 @@ in
     hackgen-font              # 移行期 fallback / 旧資産との互換
     nerd-fonts.jetbrains-mono # ASCII fallback / 他エディタ
     nerd-fonts.symbols-only   # Powerline / Nerd Font アイコン専用
+    material-symbols          # Caelestia Shell の MaterialIcon 用
+    nerd-fonts.caskaydia-cove # Caelestia Shell 既定 mono font
   ];
 
   # Nix で配置するフォントを ~/Library/Fonts にも認識させる
