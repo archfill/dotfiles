@@ -106,7 +106,7 @@ echo "✅ Configuration generated: config.jsonc"
 
 if systemctl --user is-active --quiet caelestia.service; then
     echo "🔄 Restarting Caelestia Shell..."
-    /home/archfill/.config/hypr/scripts/restart-shell.sh &
+    "$HOME/.config/hypr/scripts/restart-shell.sh" &
     disown
     echo "✅ Caelestia Shell restarted"
 else
