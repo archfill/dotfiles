@@ -133,7 +133,7 @@ case "$OS_NAME" in
 
     if [[ "${DOTFILES_LEGACY_INSTALL:-0}" == "1" || "$install_mode" == "legacy" ]]; then
       log_warning "Running legacy Linux base OS package installer"
-      run "bin/platform/linux/packages.sh"
+      run "bin/linux-bootstrap.sh"
     else
       log_info "Using Nix/Home Manager for Linux user environment"
       apply_nix_linux_configuration

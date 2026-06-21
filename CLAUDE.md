@@ -86,8 +86,6 @@ dotfiles/
 │   └── ...            # その他20+の設定
 │
 ├── bin/               # インストール・セットアップスクリプト (詳細は次セクション)
-│   ├── apps/          # クロスプラットフォーム開発ツール
-│   ├── platform/      # プラットフォーム固有処理
 │   └── lib/           # 共通ライブラリ
 │
 ├── config/            # dotfiles設定
@@ -217,32 +215,16 @@ nix/
 
 ### 📊 概要
 
-インストールスクリプトを**2つの軸**で整理:
+Nix に寄せた結果、残っているセットアップスクリプトは `bin/` 直下に集約:
 
-1. **apps/** - クロスプラットフォーム開発ツール（何をインストールするか）
-2. **platform/** - プラットフォーム固有処理（どこで動かすか）
+1. **linux-bootstrap.sh** - 非 NixOS Linux の最小 OS bootstrap
+2. **docker-setup.sh** - 非 NixOS Linux の Docker daemon setup
+3. **sbarlua.sh** - macOS SketchyBar 用 SbarLua setup
 
 ### 📂 詳細構造
 
 ```
 bin/
-├── apps/                           # クロスプラットフォーム開発ツール (19スクリプト)
-│   │
-│   ├── languages/                  # Nix移行済み（スクリプトなし）
-│   │
-│   ├── devops/                     # OS/daemon 管理が必要なもの
-│   │   └── docker.sh               # Docker Engine
-│   │
-│   └── tools/                      # Nix移行済み（スクリプトなし）
-│
-├── platform/                       # プラットフォーム固有処理
-│   │
-│   ├── macos/                      # macOS (1スクリプト)
-│   │   └── sbarlua.sh              # SketchyBar Lua module setup
-│   │
-│   ├── linux/                      # Linux (1スクリプト)
-│   │   └── packages.sh             # apt/pacman/yayパッケージ
-│   │
 ├── lib/                            # 共通ライブラリ
 │   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
@@ -251,6 +233,9 @@ bin/
 │
 ├── init.sh                         # メインエントリーポイント (make init)
 ├── config.sh                       # Git設定
+├── linux-bootstrap.sh              # 非 NixOS Linux の最小 bootstrap
+├── docker-setup.sh                 # 非 NixOS Linux の Docker daemon setup
+├── sbarlua.sh                      # macOS SketchyBar Lua module setup
 └── test.sh                         # テストスクリプト
 ```
 
@@ -263,18 +248,17 @@ bin/init.sh
   ├─ プラットフォーム別セットアップ
   │   ├─ [macOS]   darwin-rebuild switch --flake nix#archfill-to-Mac-mini
   │   │             (nix-darwin + home-manager + homebrew モジュールで宣言管理)
-  │   └─ [Linux]   bin/platform/linux/packages.sh
+  │   └─ [Linux legacy] bin/linux-bootstrap.sh
   │
   └─ bin/config.sh (Git設定)
 ```
 
 ### 💡 設計原則
 
-1. **責務の分離**: apps/platform で明確に分類
-2. **依存関係管理**: languages → devops → tools の順で実行
-3. **クロスプラットフォーム**: apps/は全環境で動作
-4. **Git履歴保持**: git mv使用でファイル履歴を完全保持
-5. **スキップロジック**: 既存インストールを自動検出・スキップ
+1. **責務の分離**: Nix 管理外として残す必要がある処理だけを `bin/` 直下に配置
+2. **Nix 優先**: user-space CLI / runtimes / editor / fonts は Nix で管理
+3. **OS 管理の分離**: daemon や初回 bootstrap など OS 依存のものだけ shell に残す
+4. **スキップロジック**: 既存インストールを自動検出・スキップ
 
 ### 📦 アプリインストールポリシー
 
@@ -475,8 +459,7 @@ cd $env:USERPROFILE\dotfiles\windows
 
 ```
 dotfiles/                               # 親リポジトリ
-├── bin/apps/tools/
-│   └── npm-essentials.sh               # 必須npmパッケージ（typescript, eslint）
+├── nix/modules/common.nix              # 必須 CLI / runtime は Nix 管理
 ├── .gitmodules                         # サブモジュール設定
 └── toolbox/                            # サブモジュール（オプショナルツール）
     ├── bin/
@@ -539,9 +522,8 @@ make toolbox-ai      # AIツールのみインストール
 **実装:**
 
 ```bash
-# bin/platform/linux/packages.sh
-official_packages=(...)  # pacmanでインストール
-aur_packages=(...)       # yayでインストール
+# bin/linux-bootstrap.sh
+# 初回 bootstrap に必要な OS パッケージのみ pacman / apt でインストール
 ```
 
 **影響:**

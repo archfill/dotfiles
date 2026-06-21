@@ -317,7 +317,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 			echo "Installing SketchyBar via Homebrew..."; \
 			brew tap FelixKratz/formulae && brew install sketchybar; \
 		fi; \
-		bash bin/platform/macos/sbarlua.sh; \
+		bash bin/sbarlua.sh; \
 		echo "✅ SketchyBar setup completed!"; \
 		echo ""; \
 		echo "💡 Next steps:"; \
@@ -331,7 +331,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 sketchybar-uninstall: ## Uninstall SbarLua
 	@echo "Uninstalling SbarLua..."
 	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		bash bin/platform/macos/sbarlua.sh uninstall; \
+		bash bin/sbarlua.sh uninstall; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \
@@ -369,7 +369,7 @@ aerospace-install: ## Install AeroSpace window manager with borders and sketchyb
 		if ! command -v sketchybar >/dev/null 2>&1; then \
 			brew tap FelixKratz/formulae && brew install sketchybar; \
 		fi; \
-		bash bin/platform/macos/sbarlua.sh; \
+		bash bin/sbarlua.sh; \
 		echo ""; \
 		echo "✅ AeroSpace ecosystem installed successfully!"; \
 		echo ""; \
@@ -412,7 +412,7 @@ aerospace-uninstall: ## Uninstall AeroSpace, borders, and optionally sketchybar
 		if [[ "$$uninstall_sketchybar" == "y" || "$$uninstall_sketchybar" == "Y" ]]; then \
 			echo "Uninstalling SketchyBar..."; \
 			brew services stop sketchybar 2>/dev/null || true; \
-			bash bin/platform/macos/sbarlua.sh uninstall 2>/dev/null || true; \
+			bash bin/sbarlua.sh uninstall 2>/dev/null || true; \
 			brew uninstall sketchybar 2>/dev/null || true; \
 			echo "✅ SketchyBar uninstalled"; \
 		fi; \
@@ -666,7 +666,7 @@ macos-test: ## Run macOS-specific environment tests
 
 docker-setup: ## Setup Docker Engine
 	@echo "Setting up Docker Engine..."
-	@bash ./bin/apps/devops/docker.sh
+	@bash ./bin/docker-setup.sh
 
 # SDK status and management
 sdk-status: ## Check all SDK installation status
