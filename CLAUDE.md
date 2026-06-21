@@ -237,28 +237,13 @@ nix/
 bin/
 ├── apps/                           # クロスプラットフォーム開発ツール (19スクリプト)
 │   │
-│   ├── languages/                  # プログラミング言語 (8スクリプト)
-│   │   ├── go.sh                   # Go (mise)
-│   │   ├── rust.sh                 # Rust (rustup)
-│   │   ├── java.sh                 # Java 21 LTS (mise)
-│   │   ├── python.sh               # Python (uv)
-│   │   ├── nodejs.sh               # Node.js (mise)
-│   │   ├── php.sh                  # PHP 8.3
-│   │   ├── ruby.sh                 # Ruby 3.2 (rbenv)
-│   │   └── deno.sh                 # Deno runtime
+│   ├── languages/                  # Nix移行済み（スクリプトなし）
 │   │
-│   ├── devops/                     # DevOpsツール (3スクリプト)
-│   │   ├── docker.sh               # Docker Engine
-│   │   ├── terraform.sh            # Terraform CLI
-│   │   └── flutter.sh              # Flutter SDK
+│   ├── devops/                     # OS/daemon 管理が必要なもの
+│   │   └── docker.sh               # Docker Engine
 │   │
-│   └── tools/                      # CLI開発ツール (6スクリプト)
-│       ├── eza.sh                  # モダンls代替
-│       ├── tmux.sh                 # tmuxプラグイン管理
-│       ├── ghq.sh                  # リポジトリ管理
-│       ├── abbr.sh                 # zsh略語展開
-│       ├── lazydocker.sh           # Docker管理TUI
-│       └── fonts.sh                # フォント管理
+│   └── tools/                      # desktop legacy helper
+│       └── hyprland.sh             # Arch Linux 用 Hyprland legacy installer
 │
 ├── platform/                       # プラットフォーム固有処理 (13スクリプト)
 │   │
@@ -297,12 +282,11 @@ bin/
 │       ├── neovim-macos.sh         # Neovim macOS tar.gz版
 │       └── sketchybar.sh           # SketchyBar (SbarLua)
 │
-├── lib/                            # 共通ライブラリ (9モジュール)
+├── lib/                            # 共通ライブラリ
 │   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
 │   ├── install_checker.sh          # インストール状態管理・スキップ判定
 │   ├── symlink_manager.sh          # シンボリックリンク管理
-│   ├── font_manager.sh             # フォント管理 (Nerd Fonts等)
 │   ├── appimage_manager.sh         # AppImage管理
 │   └── uv_installer.sh             # uv専用インストーラー
 │
@@ -634,7 +618,7 @@ aur_packages=(...)       # yayでインストール
 1. **カテゴリ別整理** - `bin/apps/` を `languages/`, `devops/`, `tools/` に分類
 2. **プラットフォーム統一** - `bin/platform/` 配下に全プラットフォーム集約
 3. **インストール方法分離** - `bin/install-methods/` でAppImageとバイナリ配布を分離
-4. **重複解消** - uv/miseの重複インストールを削除、fonts.shを統合
+4. **重複解消** - uv/miseの重複インストールを削除、フォント管理を統合
 5. **命名統一** - `brew.sh` → `packages.sh`, `install_linux.sh` → `packages.sh`
 
 **変更統計:**

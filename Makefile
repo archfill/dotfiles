@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config links test clean status info hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -397,47 +397,6 @@ backup: ## Create backup of current configuration
 	mkdir -p "$$BACKUP_DIR"; \
 	cp -r . "$$BACKUP_DIR/" 2>/dev/null || true; \
 	echo "Backup created at: $$BACKUP_DIR"
-
-# フォント管理コマンド
-fonts: ## Install recommended fonts for current platform
-	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
-		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
-	else \
-		echo "Installing recommended fonts..."; \
-		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts developer'; \
-	fi
-
-fonts-list: ## List available and installed fonts
-	@echo "Font installation status:"
-	@bash -c 'source ./bin/lib/font_manager.sh && list_installed_fonts'
-
-fonts-install: ## Install specific font (usage: make fonts-install FONT=font-name)
-	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
-		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
-	elif [ -z "$(FONT)" ]; then \
-		echo "Usage: make fonts-install FONT=<font-name>"; \
-		echo "Available fonts:"; \
-		bash -c 'source ./bin/lib/font_manager.sh && init_font_configs && for key in $${!FONT_CONFIGS[@]}; do echo "  $$key"; done | sort'; \
-	else \
-		echo "Installing font: $(FONT)"; \
-		bash -c 'source ./bin/lib/font_manager.sh && install_font "$(FONT)"'; \
-	fi
-
-fonts-japanese: ## Install Japanese-focused font set
-	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
-		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
-	else \
-		echo "Installing Japanese font set..."; \
-		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts japanese'; \
-	fi
-
-fonts-all: ## Install all available fonts
-	@if [[ "${SKIP_FONT_INSTALL:-0}" == "1" ]]; then \
-		echo "Font installation skipped (SKIP_FONT_INSTALL=1)"; \
-	else \
-		echo "Installing all available fonts..."; \
-		bash -c 'source ./bin/lib/font_manager.sh && install_recommended_fonts all'; \
-	fi
 
 # SketchyBar関連コマンド
 sketchybar-install: ## Install SketchyBar with SbarLua support

@@ -88,8 +88,6 @@ validate_config() {
     # バージョン設定のチェック
     local required_versions=(
         "NVM_VERSION"
-        "FONT_CICA_VERSION"
-        "FONT_HACKGEN_VERSION"
         "LAZYGIT_VERSION"
     )
     
@@ -114,8 +112,6 @@ show_config() {
     echo "  USER_NAME: ${USER_NAME:-'(not set)'}"
     echo "  USER_EMAIL: ${USER_EMAIL:-'(not set)'}"
     echo "  NVM_VERSION: ${NVM_VERSION:-'(not set)'}"
-    echo "  FONT_CICA_VERSION: ${FONT_CICA_VERSION:-'(not set)'}"
-    echo "  FONT_HACKGEN_VERSION: ${FONT_HACKGEN_VERSION:-'(not set)'}"
     echo "  LAZYGIT_VERSION: ${LAZYGIT_VERSION:-'(not set)'}"
     echo "  DOTFILES_DIR: ${DOTFILES_DIR:-'(not set)'}"
 }
