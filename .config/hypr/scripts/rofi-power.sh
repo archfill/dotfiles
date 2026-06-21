@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Rofi power modi script
 
 if [ -z "$1" ]; then

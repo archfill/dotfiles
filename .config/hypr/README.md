@@ -249,7 +249,7 @@ make monitors-auto
 このコマンドで以下が自動的に更新されます：
 
 - ✅ `monitors.conf` - モニター設定
-- ✅ AGS設定 (`~/.config/ags`)
+- ✅ Caelestia Shell 設定
 
 **方法2: スクリプト直接実行**
 
@@ -449,7 +449,7 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 
 ## 🔗 関連設定
 
-- **AGS**: ステータスバーは AGS (`~/.config/ags`) で管理
+- **Caelestia Shell**: ステータスバーと通知は Caelestia Shell で管理
 - **Hyprland公式ドキュメント**: https://wiki.hyprland.org
 
 ## 🚨 NVIDIA GPU使用時の注意

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Submap overlay control script
 # Opens EWW overlay on the active monitor
 
