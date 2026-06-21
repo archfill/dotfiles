@@ -16,6 +16,7 @@
     ffmpeg
     ffmpegthumbnailer
     imagemagick
+    mpv
     poppler-utils
     sqlite
     zoxide
