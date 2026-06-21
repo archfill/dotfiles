@@ -247,10 +247,6 @@ bin/
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ
 │   │
-│   ├── wsl/                        # Windows WSL (2スクリプト)
-│   │   ├── wsl_enhancements.sh
-│   │   └── windows_integration.sh
-│
 ├── install-methods/                # 特殊インストール方法 (4スクリプト)
 │   │
 │   ├── appimage/                   # Linux AppImage (2スクリプト)
