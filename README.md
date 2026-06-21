@@ -59,8 +59,8 @@ make init DOTFILES_INSTALL_MODE=legacy
 
 | Platform | Package Manager | Window Manager      | Special Features          |
 | -------- | --------------- | ------------------- | ------------------------- |
-| macOS    | Homebrew        | yabai/skhd          | Unified setup             |
-| Linux    | apt/pacman/dnf  | Hyprland | Systemd services, Wayland |
+| macOS    | Homebrew        | AeroSpace/SketchyBar | Unified setup             |
+| Linux    | apt/pacman/dnf  | Hyprland            | Systemd services, Wayland |
 | Windows  | Scoop/WSL       | Native              | WSL2 config management    |
 
 ### Windows WSL Configuration

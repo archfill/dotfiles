@@ -101,7 +101,7 @@ wezterm aquaskk hammerspoon kitty android-platform-tools google-cloud-sdk brewle
 
 ```bash
 # macOS専用ツール
-yabai skhd displayplacer dmg2img wakeonlan
+displayplacer dmg2img wakeonlan
 
 # 専門ツール
 bazelisk qmk ranger sqlite3 tcl-tk
