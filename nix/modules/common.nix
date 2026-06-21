@@ -66,6 +66,7 @@ in
     # Repo / misc
     ghq
     fastfetch
+    lazydocker
     yazi
 
     # System monitor
