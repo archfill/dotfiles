@@ -452,6 +452,12 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 - **matugen**: Caelestia の配色を Hyprland/rofi/terminal に同期
 - **Hyprland公式ドキュメント**: https://wiki.hyprland.org
 
+## ❄️ NixOS でのパッケージ管理
+
+`bin/apps/tools/hyprland.sh` は Arch Linux 用のインストーラです。NixOS 実機では Hyprland 周辺ツールを `nix/modules/desktop/hyprland.nix`、NetworkManager/PipeWire/fcitx5/GNOME 系の共通サービスを `nix/modules/nixos-common.nix` で宣言管理します。
+
+NixOS では `hyprland.sh` を再実行してパッケージを追加するのではなく、足りないものがあれば Nix module に追加して `make rebuild` で反映します。
+
 ## 🚨 NVIDIA GPU使用時の注意
 
 NVIDIA/VA-API など共有できる環境変数は `hyprland.conf` と NixOS module 側で管理します。ホスト固有の差分は `nix/hosts/<host>/` 配下で管理します。

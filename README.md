@@ -222,6 +222,23 @@ All configuration files are symlinked via `make links`:
 - `rofi` remains the picker UI for clipboard history and the keybind cheatsheet.
 - `matugen` syncs the current Caelestia scheme into Hyprland, rofi, and terminal color files.
 
+#### NixOS Hyprland Coverage
+
+`bin/apps/tools/hyprland.sh` remains the Arch Linux installer. On NixOS, the same desktop stack is declared through Nix modules:
+
+| Purpose | NixOS declaration |
+| ------- | ----------------- |
+| Hyprland, XWayland, portal | `programs.hyprland` and `xdg.portal` in `nix/modules/desktop/hyprland.nix` |
+| Hyprland tools | `hyprcursor`, `hypridle`, `hyprpicker`, `hyprshot`, `hyprpolkitagent` in `nix/modules/desktop/hyprland.nix` |
+| Clipboard and picker UI | `rofi`, `wl-clipboard`, `cliphist` in `nix/modules/desktop/hyprland.nix` |
+| Screenshots and colors | `satty`, `matugen`, `gettext` in `nix/modules/desktop/hyprland.nix` |
+| Desktop utilities | `pavucontrol`, `brightnessctl`, `playerctl`, `networkmanagerapplet`, `nwg-look`, `overskride` in `nix/modules/desktop/hyprland.nix` |
+| NVIDIA Wayland support | `egl-wayland`, `nvidia-vaapi-driver` in `nix/modules/desktop/hyprland.nix`; driver/kernel details in `nix/hosts/<host>/configuration.nix` |
+| Network and audio services | `networking.networkmanager` and `services.pipewire` in `nix/modules/nixos-common.nix` |
+| Japanese input method | `i18n.inputMethod.fcitx5` in `nix/modules/nixos-common.nix` |
+| GNOME integration | `services.desktopManager.gnome`, GDM, Nautilus, and GNOME keyring from `nix/modules/nixos-common.nix` |
+| Caelestia Shell | Home Manager module in `nix/hosts/archfill-nixos/home.nix` |
+
 #### Default Keybindings
 
 | Key                       | Action                                  |
