@@ -139,6 +139,7 @@ go.work
 ### Tmux ###
 .tmux/resurrect/*
 .tmux/plugins/tmux-*
+.config/tmux/nix-plugins.conf
 
 ### Mutt ###
 .mutt/account/*
@@ -159,7 +160,11 @@ go.work
 .config/hypr/monitors.conf
 .config/hypr/current-wallpaper
 .config/hypr/hypridle.local.conf
+.config/hypr/scheme/
 # colors.conf は matugen で上書きされるが、デフォルトとして git 追跡する
+
+### Sheldon ###
+.config/sheldon/
 
 ### Matugen (auto-generated color schemes) ###
 **/colors-matugen.*
