@@ -124,6 +124,13 @@
           username = "archfill";
         };
 
+        "archfill-nixos" = mkNixosHost {
+          system = "x86_64-linux";
+          hostModule = ./hosts/archfill-nixos/configuration.nix;
+          homeModule = ./hosts/archfill-nixos/home.nix;
+          username = "archfill";
+        };
+
         # 実機追加時:
         # 1. cp -r ./hosts/_template/nixos ./hosts/<host>
         # 2. 実機で生成した hardware.nix を ./hosts/<host>/hardware.nix に配置
