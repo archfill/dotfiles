@@ -49,6 +49,8 @@ in
                      # も同梱
     lazygit
     delta            # git-delta
+    git-filter-repo  # public repo 化前の履歴クリーニング用
+    gitleaks         # secret scan
 
     # GitHub
     gh               # GitHub CLI
