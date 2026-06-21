@@ -81,7 +81,6 @@ alias mrun='mise run'                # Run task from config
 
 ## npm aliases
 alias gemini-install='npm install -g @google/gemini-cli'
-alias codex-install='npm install -g @openai/codex'
 
 ## Claude Code utilities
 alias cpclaudemd='cp -i ~/git/claude-configs/templates/CLAUDE-workflow.md ./CLAUDE.md'
