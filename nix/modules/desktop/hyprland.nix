@@ -38,7 +38,6 @@
     matugen
     imagemagick
     gettext
-    eww
     overskride
 
     # Desktop utilities used by the existing Hyprland config/scripts

@@ -468,7 +468,6 @@ install_common_packages_arch() {
         urlscan
         khard
         ghostty
-        eww
         tenv-bin
     )
 
