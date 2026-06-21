@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status php-setup ruby-setup terraform-setup docker-setup web-sdks devops-sdks sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -817,26 +817,14 @@ macos-test: ## Run macOS-specific environment tests
 	fi
 
 # ===== Development SDKs Management =====
-# Individual SDK setup commands
-java-setup: ## Install Java 21 LTS via mise
-	@echo "Installing Java 21 LTS via mise..."
-	@bash ./bin/apps/languages/java.sh
-
-rust-setup: ## Install Rust stable toolchain via rustup
-	@echo "Installing Rust stable toolchain via rustup..."
-	@bash ./bin/apps/02-rust-rustup.sh
-
-go-setup: ## Install Go latest via mise
-	@echo "Installing Go latest via mise..."
-	@bash ./bin/apps/languages/go.sh
-
+# Legacy SDK setup commands for runtimes not yet covered by Nix.
 php-setup: ## Install PHP 8.3 via APT package manager
 	@echo "Installing PHP 8.3 via APT package manager..."
-	@bash ./bin/apps/php-apt.sh
+	@bash ./bin/apps/languages/php.sh
 
 ruby-setup: ## Install Ruby 3.2 via rbenv
 	@echo "Installing Ruby 3.2 via rbenv..."
-	@bash ./bin/apps/ruby-rbenv.sh
+	@bash ./bin/apps/languages/ruby.sh
 
 terraform-setup: ## Install Terraform CLI
 	@echo "Installing Terraform CLI..."
@@ -846,20 +834,11 @@ docker-setup: ## Setup Docker Engine
 	@echo "Setting up Docker Engine..."
 	@bash ./bin/apps/50-docker.sh
 
-# Grouped SDK setup commands
-core-sdks: java-setup rust-setup go-setup ## Install core development SDKs (Java, Rust, Go)
-	@echo "✅ Core SDKs installation completed!"
-
 web-sdks: php-setup ruby-setup ## Install web development SDKs (PHP, Ruby)
 	@echo "✅ Web development SDKs installation completed!"
 
 devops-sdks: terraform-setup docker-setup ## Install DevOps tools (Terraform, Docker)
 	@echo "✅ DevOps tools installation completed!"
-
-all-sdks: core-sdks web-sdks devops-sdks ## Install all supported SDKs and tools
-	@echo "🚀 All SDKs and development tools installation completed!"
-	@echo ""
-	@echo "📊 Run 'make sdk-status' to verify installations"
 
 # SDK status and management
 sdk-status: ## Check all SDK installation status
@@ -873,28 +852,6 @@ sdk-versions: ## Show installed SDK versions in compact format
 sdk-paths: ## Show SDK environment variables and paths
 	@echo "SDK environment variables:"
 	@zsh -c 'source ~/.config/zsh/zshrc/sdk.zsh && sdk_paths'
-
-# Quick environment setup
-dev-environment: init all-sdks ## Complete development environment setup (dotfiles + all SDKs)
-	@echo "🎉 Complete development environment setup finished!"
-	@echo ""
-	@echo "📋 What was installed:"
-	@echo "  • Dotfiles configuration"
-	@echo "  • Java 21 LTS (mise)"
-	@echo "  • Rust stable (rustup)"
-	@echo "  • Go latest (mise)"
-	@echo "  • PHP 8.3 (phpenv)"
-	@echo "  • Ruby 3.2 (rbenv)"
-	@echo "  • Terraform CLI"
-	@echo "  • Docker Engine setup"
-	@echo "  • Node.js (mise - existing)"
-	@echo "  • Python (uv - existing)"
-	@echo "  • Flutter SDK (existing)"
-	@echo ""
-	@echo "🔧 Next steps:"
-	@echo "  • Restart your shell: exec $$SHELL"
-	@echo "  • Check status: make sdk-status"
-	@echo "  • Install Neovim LSP tools: nvim and run :MasonInstallEssentials"
 
 # ===== Neovim管理システム完了 =====
 
