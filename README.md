@@ -89,9 +89,6 @@ Hyprland is a modern Wayland compositor with GPU-accelerated animations and exte
 # NixOS: apply the declared Hyprland desktop
 make rebuild
 
-# Arch Linux: install Hyprland and ecosystem packages
-make hyprland-install
-
 # Check installation status
 make hyprland-status
 ```
@@ -235,7 +232,7 @@ All configuration files are symlinked via `make links`:
 
 #### NixOS Hyprland Coverage
 
-`bin/apps/tools/hyprland.sh` remains the Arch Linux installer. On NixOS, the same desktop stack is declared through Nix modules:
+Hyprland and the desktop stack are declared through Nix modules:
 
 | Purpose | NixOS declaration |
 | ------- | ----------------- |

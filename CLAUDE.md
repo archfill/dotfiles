@@ -242,8 +242,7 @@ bin/
 │   ├── devops/                     # OS/daemon 管理が必要なもの
 │   │   └── docker.sh               # Docker Engine
 │   │
-│   └── tools/                      # desktop legacy helper
-│       └── hyprland.sh             # Arch Linux 用 Hyprland legacy installer
+│   └── tools/                      # Nix移行済み（スクリプトなし）
 │
 ├── platform/                       # プラットフォーム固有処理 (13スクリプト)
 │   │

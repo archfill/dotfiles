@@ -52,7 +52,7 @@ Nix/Home Manager で管理しない OS 基盤パッケージだけを入れる�
 make init DOTFILES_INSTALL_MODE=legacy
 ```
 
-`bin/apps/tools/hyprland.sh` は Arch Linux 用 legacy installer として残す。NixOS / Ubuntu / WSL では実行せず、必要な user 環境は上記 home-manager 出力で反映する。Arch でも Nix で管理できる範囲を優先し、OS 側に残す system package が不要になった時点で script ごと削除する。
+Hyprland 周辺の user 環境は Nix / Home Manager で管理する。Arch / Ubuntu / WSL でも OS 基盤パッケージ以外は standalone home-manager 出力で反映する。
 
 ## 実機 NixOS 追加手順
 
