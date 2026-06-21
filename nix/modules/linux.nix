@@ -47,6 +47,15 @@
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/caelestia/shell.json";
 
+  xdg.dataFile."icons/hicolor/scalable/apps/input-keyboard.svg".source =
+    "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-keyboard-symbolic.svg";
+
+  xdg.dataFile."icons/hicolor/scalable/apps/applications-system.svg".source =
+    "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-applications-symbolic.svg";
+
+  xdg.dataFile."icons/hicolor/scalable/apps/preferences-system-network.svg".source =
+    "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-network-symbolic.svg";
+
   # Linux でもフォント認識を有効化 (macOS 側と同じく fonts.fontconfig は
   # nix/modules/common.nix で enable 済みなので追記不要)。
 }
