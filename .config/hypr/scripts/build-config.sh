@@ -101,18 +101,16 @@ fi
 echo "✅ Configuration generated: config.jsonc"
 
 # =====================================================
-# Restart AGS
+# Restart Caelestia Shell
 # =====================================================
 
-if pgrep -f "ags run" >/dev/null; then
-    echo "🔄 Restarting AGS..."
-    pkill -f "ags run"
-    sleep 0.3
-    ags run ~/.config/ags &
+if systemctl --user is-active --quiet caelestia.service; then
+    echo "🔄 Restarting Caelestia Shell..."
+    /home/archfill/.config/hypr/scripts/restart-shell.sh &
     disown
-    echo "✅ AGS restarted"
+    echo "✅ Caelestia Shell restarted"
 else
-    echo "ℹ️  AGS is not running. Start it with: ags run ~/.config/ags &"
+    echo "ℹ️  Caelestia Shell is not running. Start it with: systemctl --user start caelestia.service"
 fi
 
 echo ""

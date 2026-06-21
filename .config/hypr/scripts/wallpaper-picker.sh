@@ -83,10 +83,8 @@ apply_wallpaper() {
     # matugenでカラー再生成
     if command -v matugen >/dev/null; then
         matugen image "$full_path" 2>/dev/null
-        pkill -f "gjs -m" 2>/dev/null
         sleep 0.5
-        ags run ~/.config/ags &
-        swaync-client -rs &
+        /home/archfill/.config/hypr/scripts/restart-shell.sh &
         notify-send "Theme Updated" "Colors regenerated" -t 2000
     fi
 }
