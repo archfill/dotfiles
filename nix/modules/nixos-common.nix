@@ -30,7 +30,8 @@
       addons = with pkgs; [
         fcitx5-mozc
         fcitx5-gtk
-        kdePackages.fcitx5-configtool
+        qt6Packages.fcitx5-qt
+        qt6Packages.fcitx5-configtool
       ];
     };
   };
