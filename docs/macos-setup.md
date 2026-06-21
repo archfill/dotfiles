@@ -35,13 +35,6 @@ make macos-setup-minimal
 make rebuild
 ```
 
-### 3. 環境テスト
-
-```bash
-# macOS固有のテスト実行
-make macos-test
-```
-
 ## 詳細手順
 
 ### Xcode Command Line Tools
@@ -127,8 +120,8 @@ make macos-setup           # 完全な開発環境セットアップ（全パッ
 make macos-setup-essential # 必要最小限の開発環境セットアップ
 make macos-setup-minimal   # Neovimビルド依存関係のみ
 
-# テスト・診断
-make macos-test            # macOS環境テスト
+# Nix 設定確認
+make diff                  # 反映前の差分確認
 ```
 
 ### Neovim
@@ -181,9 +174,6 @@ ln -sf "$brew_prefix/bin/ninja-build" "$brew_prefix/bin/ninja"
 ### 環境診断
 
 ```bash
-# 総合環境チェック
-make macos-test
-
 # システム情報表示
 make info
 

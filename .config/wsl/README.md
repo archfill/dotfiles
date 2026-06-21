@@ -44,9 +44,6 @@
 WSL環境が正しく設定されているかを確認:
 
 ```bash
-# WSL検出
-make test
-
 # WSL固有機能テスト
 echo $WSL_ENV
 win32yank --version

@@ -18,7 +18,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "Examples:"
 	@echo "  make init          # Complete dotfiles setup"
-	@echo "  make test          # Run all tests"
+	@echo "  make diff          # Preview Nix changes"
 	@echo "  make config        # Setup Git configuration"
 	@echo "  make monitors      # Configure monitors (interactive)"
 
@@ -165,11 +165,6 @@ monitors-single: ## Force single display mode
 monitors-dual: ## Force dual display mode
 	@echo "Configuring for dual display mode..."
 	@bash ~/.config/hypr/auto-detect-monitors.sh --mode dual
-
-# テスト
-test: ## Run dotfiles functionality tests
-	@echo "Running dotfiles tests..."
-	bash ./bin/test.sh
 
 status: ## Show current dotfiles status and configuration
 	@echo "Dotfiles Status:"
@@ -567,7 +562,7 @@ macos-setup: ## Complete macOS development environment setup (dotfiles + apps)
 		echo "✅ macOS setup completed!"; \
 		echo ""; \
 		echo "💡 Next steps:"; \
-		echo "  • Run tests: make macos-test"; \
+		echo "  • Preview Nix changes: make diff"; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \
@@ -586,15 +581,6 @@ macos-setup-essential: ## Setup essential macOS development environment
 		DOTFILES_INSTALL_MODE=essential bash ./bin/init.sh; \
 		echo ""; \
 		echo "✅ Essential macOS setup completed!"; \
-	else \
-		echo "❌ This command is only for macOS"; \
-		exit 1; \
-	fi
-
-macos-test: ## Run macOS-specific environment tests
-	@echo "Running macOS tests..."
-	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		bash ./bin/test-macos.sh; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \

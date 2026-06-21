@@ -129,9 +129,9 @@ load_config_file "$CONFIG_DIR/versions.conf"
 
 ### Testing
 
-- Run `make test` before committing changes
+- Run focused checks before committing changes
+- Use `make diff` when Nix files are touched
 - Test on target platforms when possible
-- Verify symbolic links are created correctly
 
 ### Script Template
 

@@ -46,7 +46,6 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 ### Core Setup
 
 - `make init` - Complete dotfiles initialization and setup
-- `make test` - Run comprehensive functionality tests
 - `make config` - Setup Git configuration with personal settings
 - `make help` - Show all available commands
 

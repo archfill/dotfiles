@@ -32,7 +32,7 @@ make init
 
 ```bash
 make init     # Complete installation
-make test     # Verify setup
+make diff     # Preview Nix changes
 make status   # Check status
 make help     # Show all commands
 ```
