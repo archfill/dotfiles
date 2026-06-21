@@ -37,14 +37,14 @@ make status   # Check status
 make help     # Show all commands
 ```
 
-On Linux, `make init` now prefers Nix/Home Manager for the user environment. Legacy apt/pacman app installers are opt-in:
+On Linux, `make init` now prefers Nix/Home Manager for the user environment. Minimal OS bootstrap packages are opt-in:
 
 ```bash
 make init NIX_ATTR='archfill@arch-desktop'
 make init NIX_ATTR='archfill@ubuntu-desktop'
 make init NIX_ATTR='archfill@wsl-ubuntu'
 
-# Legacy Linux installers, only when explicitly needed
+# Bootstrap curl/git/zsh before installing Nix, only when explicitly needed
 make init DOTFILES_INSTALL_MODE=legacy
 ```
 

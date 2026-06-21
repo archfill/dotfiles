@@ -1,120 +1,107 @@
 #!/usr/bin/env bash
 
-# 共通ライブラリをインポート
+# Minimal Linux bootstrap for non-NixOS hosts.
+#
+# This script intentionally installs only the OS-level tools needed before Nix /
+# Home Manager can take over. User-space CLI tools, language runtimes, editors,
+# fonts, and desktop packages are managed by nix/modules/*.nix.
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
-source "$DOTFILES_DIR/bin/lib/config_loader.sh"
 source "$DOTFILES_DIR/bin/lib/install_checker.sh"
-source "$DOTFILES_DIR/bin/lib/uv_installer.sh"
 
-# エラーハンドリングを設定
 setup_error_handling
 
-# 設定ファイルを読み込み
-load_config
-
-log_info "Starting Linux configuration"
-
-# Get OS info using shared library functions
 distro="$(get_os_distribution)"
-arch="$(detect_architecture)"
 
-install_common_packages_debian() {
-    log_info "Installing base OS packages for Debian/Ubuntu..."
+install_debian_bootstrap_packages() {
+  local packages=(
+    ca-certificates
+    curl
+    git
+    xz-utils
+    zsh
+  )
 
-    # Parse command line options
-    parse_install_options "$@"
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Debian/Ubuntu bootstrap packages: ${packages[*]}"
+    return 0
+  fi
 
-    # Quick check mode
-    if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install Debian/Ubuntu base OS packages"
-        return 0
-    fi
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_info "[DRY RUN] Would run: sudo apt update"
+    log_info "[DRY RUN] Would install Debian/Ubuntu bootstrap packages: ${packages[*]}"
+    return 0
+  fi
 
-    if [[ "$DRY_RUN" != "true" ]]; then
-        sudo apt update
-        sudo apt install -y \
-          python3 \
-          wget \
-          zsh \
-          vim \
-          fontconfig \
-          curl \
-          unzip \
-          fcitx5 \
-          fcitx5-mozc \
-          fcitx5-config-qt
-    else
-        log_info "[DRY RUN] Would install Debian/Ubuntu base OS packages"
-    fi
-
-    # User-space tools and language runtimes are managed by Nix.
+  sudo apt update
+  sudo apt install -y "${packages[@]}"
 }
 
-install_common_packages_arch() {
-    log_info "Installing base OS packages for Arch Linux..."
+install_arch_bootstrap_packages() {
+  local packages=(
+    ca-certificates
+    curl
+    git
+    xz
+    zsh
+  )
 
-    # Parse command line options
-    parse_install_options "$@"
+  if [[ "$QUICK_CHECK" == "true" ]]; then
+    log_info "QUICK: Would install Arch bootstrap packages: ${packages[*]}"
+    return 0
+  fi
 
-    # Quick check mode
-    if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install Arch Linux base OS packages"
-        return 0
-    fi
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_info "[DRY RUN] Would install Arch bootstrap packages: ${packages[*]}"
+    return 0
+  fi
 
-    # Official repository packages (installed via pacman)
-    local official_packages=(
-        wget
-        unzip
-        curl
-        fontconfig
-        vim
-        zsh
-    )
-
-    if [[ "$DRY_RUN" != "true" ]]; then
-        # Install official repository packages via pacman
-        log_info "Installing ${#official_packages[@]} packages from official repositories..."
-        sudo pacman -S --needed --noconfirm "${official_packages[@]}"
-    else
-        log_info "[DRY RUN] Would install ${#official_packages[@]} Arch Linux base OS packages"
-    fi
-
-    # User-space tools and language runtimes are managed by Nix.
+  sudo pacman -S --needed --noconfirm "${packages[@]}"
 }
 
-# Main installation function
+show_nix_next_steps() {
+  if command -v nix >/dev/null 2>&1; then
+    log_success "Nix is already available"
+    log_info "Next step:"
+    log_info "  make init"
+    return 0
+  fi
+
+  log_warning "Nix is not installed yet"
+  log_info "Install Nix, then rerun make init so Home Manager can take over."
+  log_info "Recommended installer:"
+  log_info "  sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon"
+  log_info ""
+  log_info "After opening a new shell:"
+  log_info "  make init"
+}
+
 main() {
-    log_info "Linux Package Installation"
-    log_info "=========================="
-    
-    # Parse command line options
-    parse_install_options "$@"
-    
-    case "${distro}" in
-      debian | ubuntu)
-        log_info "Detected Debian/Ubuntu"
-        install_common_packages_debian "$@"
-        if [[ "${arch}" == "x86_64" ]]; then
-          log_info "Architecture: x86_64"
-        fi
-        ;;
-      arch)
-        log_info "Detected Arch Linux"
-        install_common_packages_arch "$@"
-        ;;
-      *)
-        log_warning "Unsupported distribution: ${distro}"
-        ;;
-    esac
-    
-    log_success "Linux configuration completed!"
+  parse_install_options "$@"
+
+  log_info "Linux bootstrap package installation"
+  log_info "===================================="
+
+  case "$distro" in
+    debian | ubuntu)
+      log_info "Detected Debian/Ubuntu"
+      install_debian_bootstrap_packages
+      ;;
+    arch)
+      log_info "Detected Arch Linux"
+      install_arch_bootstrap_packages
+      ;;
+    *)
+      log_warning "Unsupported distribution: $distro"
+      log_info "Install curl, git, ca-certificates, xz, and zsh with your OS package manager."
+      ;;
+  esac
+
+  show_nix_next_steps
+  log_success "Linux bootstrap completed"
 }
 
-# Run main function
 main "$@"
-
-log_success "Linux configuration completed."

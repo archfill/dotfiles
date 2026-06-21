@@ -45,8 +45,8 @@ make init NIX_ATTR='archfill@ubuntu-desktop'
 make init NIX_ATTR='archfill@wsl-ubuntu'
 ```
 
-旧 installer が必要な場合だけ明示する。Linux の legacy installer は
-Nix/Home Manager で管理しない OS 基盤パッケージだけを入れる。
+Nix 未導入の Linux で最低限の OS bootstrap が必要な場合だけ明示する。
+この導線は curl / git / zsh などを入れ、Nix 導入手順を表示する。
 
 ```bash
 make init DOTFILES_INSTALL_MODE=legacy
