@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 # home-manager の Linux 共通設定。
 # ホスト固有 (home.username / homeDirectory / GUI 環境) は
@@ -12,6 +12,10 @@
 # 本ファイルは現状 placeholder。Linux でだけ必要な設定が出てきたら
 # (例: Wayland / X11 連携、Linux 固有の env var) ここに集約する。
 {
+  home.packages = with pkgs; [
+    zoxide
+  ];
+
   xdg.configFile."hypr".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/hypr";
