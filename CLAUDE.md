@@ -39,7 +39,7 @@ Please conduct all interactions in **Japanese (日本語)** when working with th
 
 ## 📋 Repository Overview
 
-This is a comprehensive **cross-platform dotfiles repository** that automates development environment setup across macOS, Linux, Windows, and Termux (Android). It includes configurations for modern terminal-based development workflows with Japanese language support.
+This is a comprehensive **cross-platform dotfiles repository** that automates development environment setup across macOS, Linux, and Windows. It includes configurations for modern terminal-based development workflows with Japanese language support.
 
 ## ⚡ Essential Commands
 
@@ -56,12 +56,6 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 - `make diff` - 次の switch で何が変わるかを表示 (適用しない、`--dry`)
 - `make nix-update` - flake.lock を更新してから switch (`-u`)
 - `make nix-clean` - 古い generation を 5 世代残して掃除 (`nh clean all --keep 5`)
-
-### Platform-Specific
-
-- `make termux-setup` - Android Termux environment
-- `make neovim-install` - Install Neovim on Linux
-- `make flutter-setup` - Setup Flutter development
 
 ### Maintenance
 
@@ -252,11 +246,6 @@ bin/
 │   │
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ
-│   │
-│   ├── termux/                     # Android Termux (3スクリプト)
-│   │   ├── init.sh
-│   │   ├── install.sh
-│   │   └── link.sh
 │   │
 │   ├── wsl/                        # Windows WSL (2スクリプト)
 │   │   ├── wsl_enhancements.sh

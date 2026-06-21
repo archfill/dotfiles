@@ -70,11 +70,6 @@ codex-bump: ## codex の SRI hash を再取得 (usage: make codex-bump VERSION=0
 	@echo ""
 	@echo "==> nix/pkgs/codex/default.nix の version + hashes を差し替えて 'make diff' → 'make rebuild'"
 
-# プラットフォーム固有のセットアップ
-termux-setup: ## Setup for Android Termux environment
-	@echo "Setting up Termux environment..."
-	bash ./bin/termux/init.sh
-
 # 専用設定スクリプト
 memolist-config: ## Configure note-taking system with optional Nextcloud sync
 	@echo "Configuring memolist..."

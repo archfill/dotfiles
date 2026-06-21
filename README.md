@@ -1,14 +1,14 @@
 # 🏠 Dotfiles Repository
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Android-blue)](https://github.com)
+[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](https://github.com)
 [![日本語](https://img.shields.io/badge/lang-ja-blue)](README.ja.md)
 
 Cross-platform dotfiles for modern development environments with Japanese language support.
 
 ## ✨ Features
 
-- **Multi-Platform**: macOS, Linux, Windows, Android (Termux)
+- **Multi-Platform**: macOS, Linux, Windows
 - **Modern Tools**: Neovim, WezTerm, Zsh with optimized configurations
 - **Japanese Support**: SKK input method, textlint for technical writing
 - **Development Ready**: Python (uv), Node.js (mise), Flutter, Docker support
@@ -63,7 +63,6 @@ make init DOTFILES_INSTALL_MODE=legacy
 | macOS    | Homebrew        | yabai/skhd          | Unified setup             |
 | Linux    | apt/pacman/dnf  | i3/polybar/Hyprland | Systemd services, Wayland |
 | Windows  | Scoop/WSL       | Native              | WSL2 config management    |
-| Android  | Termux          | Native              | Mobile optimization       |
 
 ### Windows WSL Configuration
 
