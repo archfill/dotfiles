@@ -158,13 +158,12 @@ install_hyprland() {
         log_info "NVIDIA GPU detected - Will install additional packages"
     fi
 
-    # Hyprland core packages (9 packages - all from official repos)
+    # Hyprland core packages (8 packages - all from official repos)
     local hypr_packages=(
         hyprland                        # Main compositor
         hyprcursor                      # Cursor management
         hypridle                        # Idle daemon
         hyprlock                        # Screen locker
-        hyprpaper                       # Wallpaper daemon
         hyprpicker                      # Color picker
         hyprshot                        # Screenshot utility
         hyprpolkitagent                 # Polkit authentication agent
@@ -260,7 +259,7 @@ install_hyprland() {
             log_success "Hyprland installed successfully: $(Hyprland --version | head -1)"
             log_info ""
             log_info "Installed packages:"
-            log_info "  - Hyprland core (incl. hyprpaper): ${#hypr_packages[@]} packages"
+            log_info "  - Hyprland core: ${#hypr_packages[@]} packages"
             log_info "  - Wayland tools: ${#wayland_tools[@]} packages"
             log_info "  - Screenshot: ${#screenshot_tools[@]} packages"
             log_info "  - Optional: ${#optional_packages[@]} packages"
@@ -282,6 +281,7 @@ install_hyprland() {
             log_info "Ensuring Hyprland configuration symlinks..."
             local hyprland_configs=(
                 ".config/hypr"
+                ".config/caelestia"
                 ".config/rofi"
                 ".config/matugen"
             )
@@ -337,17 +337,10 @@ install_hyprland() {
 
 # Basic NVIDIA environment
 env = LIBVA_DRIVER_NAME,nvidia
-env = GBM_BACKEND,nvidia-drm
 env = __GLX_VENDOR_LIBRARY_NAME,nvidia
 
 # Hardware video acceleration (VA-API)
 env = NVD_BACKEND,direct
-
-# Native Wayland support for Electron/Chromium apps (VSCode, Discord, etc)
-env = ELECTRON_OZONE_PLATFORM_HINT,auto
-
-# VRR/G-Sync control (set to 0 to avoid problems in some games)
-env = __GL_VRR_ALLOWED,0
 EOF
                 log_success "Created local.conf with NVIDIA environment variables"
                 show_nvidia_setup
@@ -393,31 +386,23 @@ EOF
                 log_info "monitors.conf already exists, skipping creation"
             fi
 
-            # Run matugen to generate color schemes from wallpaper
-            log_info "Generating color schemes with matugen..."
-            local hyprpaper_conf="${HOME}/.config/hypr/hyprpaper.conf"
-            local wallpaper_path=""
-            if [[ -f "$hyprpaper_conf" ]]; then
-                wallpaper_path=$(grep -m1 "^preload\s*=" "$hyprpaper_conf" | sed 's/.*=\s*//' | tr -d ' ')
-            fi
-            if [[ -n "$wallpaper_path" && -f "$wallpaper_path" ]]; then
-                if command -v matugen >/dev/null 2>&1; then
-                    matugen image --prefer=lightness "$wallpaper_path" && log_success "matugen: color scheme generated from $wallpaper_path" \
-                        || log_warning "matugen failed - run manually: matugen image <wallpaper>"
-                else
-                    log_warning "matugen not found - install it and run: matugen image <wallpaper>"
-                fi
+            if command -v caelestia >/dev/null 2>&1 && command -v caelestia-shell >/dev/null 2>&1; then
+                log_success "Caelestia Shell is available"
+                log_info "Wallpaper, notifications, launcher, sidebar, and session UI are handled by Caelestia"
+                log_info "matugen colors are synced from Caelestia's current scheme"
             else
-                log_warning "Wallpaper not found in hyprpaper.conf - run matugen manually after setting a wallpaper"
-                log_info "  matugen image /path/to/wallpaper.png"
+                log_warning "Caelestia Shell is not installed"
+                log_info "This Hyprland config expects Caelestia for wallpaper, notifications, launcher, sidebar, and session UI"
+                log_info "Install Caelestia Shell before using the configured keybindings"
             fi
 
             log_info "Next steps:"
             log_info "  1. Configure monitors: ~/.config/hypr/monitors.conf"
             log_info "     Check current monitors: hyprctl monitors"
-            log_info "  2. Configure keybindings: ~/.config/hypr/hyprland.conf"
-            log_info "  3. Start Hyprland: 'Hyprland' (from TTY)"
-            log_info "  4. Or use a display manager (GDM, SDDM, etc.)"
+            log_info "  2. Install/start Caelestia Shell if it is not available"
+            log_info "  3. Configure keybindings: ~/.config/hypr/hyprland.conf"
+            log_info "  4. Start Hyprland: 'Hyprland' (from TTY)"
+            log_info "  5. Or use a display manager (GDM, SDDM, etc.)"
             log_info ""
             log_info "Documentation: https://wiki.hyprland.org"
         else
@@ -426,7 +411,7 @@ EOF
         fi
     else
         log_info "[DRY RUN] Would install:"
-        log_info "  - ${#hypr_packages[@]} Hyprland core packages (incl. hyprpaper)"
+        log_info "  - ${#hypr_packages[@]} Hyprland core packages"
         log_info "  - ${#wayland_tools[@]} Wayland tools"
         log_info "  - ${#screenshot_tools[@]} screenshot tools"
         log_info "  - ${#optional_packages[@]} optional packages"
