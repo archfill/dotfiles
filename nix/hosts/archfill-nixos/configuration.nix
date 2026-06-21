@@ -20,6 +20,9 @@
     };
   };
   boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelModules = [
+    "iptable_nat"
+  ];
   boot.kernelParams = [
     "nvidia-drm.modeset=1"
     "nvidia-drm.fbdev=1"
@@ -74,6 +77,7 @@
     ghostty
     google-chrome
     vscode
+    winboat
     pciutils
     usbutils
   ];
