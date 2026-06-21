@@ -107,8 +107,7 @@
             },
             {
                 "command": [
-                    "systemctl",
-                    "suspend"
+                    "/home/archfill/.config/hypr/scripts/lock-and-suspend.sh"
                 ],
                 "description": "Suspend the system",
                 "icon": "bedtime",
@@ -133,8 +132,7 @@
     "session": {
         "commands": {
             "hibernate": [
-                "systemctl",
-                "suspend"
+                "/home/archfill/.config/hypr/scripts/lock-and-suspend.sh"
             ]
         },
         "icons": {
