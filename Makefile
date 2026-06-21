@@ -152,9 +152,13 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	@if lspci | grep -i nvidia >/dev/null 2>&1; then \
 		echo "🎮 NVIDIA GPU detected"; \
 		if [ -f /sys/module/nvidia_drm/parameters/modeset ]; then \
-			MODESET=$$(cat /sys/module/nvidia_drm/parameters/modeset 2>/dev/null); \
+			MODESET=$$(cat /sys/module/nvidia_drm/parameters/modeset 2>/dev/null || sudo -n cat /sys/module/nvidia_drm/parameters/modeset 2>/dev/null || true); \
 			if [ "$$MODESET" = "Y" ]; then \
 				echo "✅ nvidia-drm.modeset=1: configured"; \
+			elif grep -q 'nvidia-drm.modeset=1' /proc/cmdline 2>/dev/null; then \
+				echo "✅ nvidia-drm.modeset=1: configured"; \
+			elif [ -z "$$MODESET" ]; then \
+				echo "⚠️  nvidia-drm.modeset=1: unable to verify"; \
 			else \
 				echo "⚠️  nvidia-drm.modeset=1: NOT configured"; \
 			fi; \
