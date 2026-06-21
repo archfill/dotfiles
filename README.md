@@ -68,14 +68,17 @@ make windows-status
 
 The `windows/.wslconfig` file is automatically symlinked to manage WSL2 performance settings.
 
-### Hyprland Setup (Arch Linux)
+### Hyprland Setup (NixOS / Arch Linux)
 
 Hyprland is a modern Wayland compositor with GPU-accelerated animations and extensive customization.
 
 #### Installation
 
 ```bash
-# Install Hyprland and ecosystem
+# NixOS: apply the declared Hyprland desktop
+make rebuild
+
+# Arch Linux: install Hyprland and ecosystem packages
 make hyprland-install
 
 # Check installation status
@@ -84,7 +87,7 @@ make hyprland-status
 
 #### What Gets Installed
 
-**Core Hyprland Packages (7):**
+**Core Hyprland Packages:**
 
 - `hyprland` - Main compositor
 - `hyprcursor` - Cursor management
@@ -92,27 +95,28 @@ make hyprland-status
 - `hyprlock` - Screen locker
 - `hyprpicker` - Color picker
 - `hyprshot` - Screenshot utility
+- `hyprpolkitagent` - Polkit authentication agent
 - `xdg-desktop-portal-hyprland` - Desktop portal integration
 
-**Essential Wayland Tools (6):**
+**Shell and Wayland Tools:**
 
-- `waybar` - Status bar with customizable modules
-- `rofi` - Customizable application launcher
-- `rofi-calc` - Calculator plugin for rofi
-- `rofi-emoji` - Emoji picker plugin for rofi
-- `swaync` - Notification daemon with notification center
+- `caelestia-shell` - Bar, launcher, sidebar, session menu, wallpaper selector, notifications
+- `rofi` - Fallback menus for clipboard history and keybind cheatsheet
 - `wl-clipboard` - Clipboard utilities
+- `cliphist` - Clipboard history
+- `matugen` - Color generation synced from the current Caelestia scheme
 
 **Screenshot Tools (1):**
 
 - `satty` - Screenshot editor/annotation
 
-**Optional Packages (4):**
+**Optional Packages:**
 
 - `pavucontrol` - Audio control GUI
 - `brightnessctl` - Brightness control
 - `playerctl` - Media player control (MPRIS)
 - `network-manager-applet` - Network management GUI
+- `overskride` - Bluetooth manager
 
 **NVIDIA-Specific Packages (2, if NVIDIA GPU detected):**
 
@@ -121,14 +125,13 @@ make hyprland-status
 
 #### GPU-Specific Configuration
 
-The installation script automatically detects your GPU and creates `~/.config/hypr/local.conf`:
+NixOS declares shared GPU settings in the Nix modules. Environment-specific overrides can still live in `~/.config/hypr/local.conf`; the Arch installer creates that file automatically.
 
 **NVIDIA GPU (RTX 4070, etc.):**
 
-- Automatically configures 7 environment variables for optimal performance
+- Configures NVIDIA/VA-API environment variables for Hyprland
 - Includes VA-API hardware acceleration support
-- Enables Electron/Chromium Wayland support (VSCode, Discord, etc.)
-- Configures VRR/G-Sync control
+- Enables Wayland support for Electron/Chromium apps on NixOS via `NIXOS_OZONE_WL=1`
 
 **Intel/AMD GPU:**
 
@@ -151,7 +154,7 @@ The installation script automatically detects your GPU and creates `~/.config/hy
 
 **For NVIDIA Users (REQUIRED):**
 
-After installation, the script displays a comprehensive setup guide. Key steps:
+On NixOS, NVIDIA DRM modeset, fbdev, early modules, and Hyprland environment variables are declared in the Nix configuration. On Arch Linux, after installation, the script displays a setup guide. Key steps:
 
 1. **Kernel Parameters** (REQUIRED):
 
@@ -211,28 +214,32 @@ All configuration files are symlinked via `make links`:
 - `~/.config/hypr/hyprland.conf` - Main configuration
 - `~/.config/hypr/hypridle.conf` - Idle management (screen dim, lock, suspend)
 - `~/.config/hypr/hyprlock.conf` - Lock screen appearance
-- `~/.config/waybar/` - Status bar configuration
-- `~/.config/rofi/` - Application launcher
-- `~/.config/swaync/` - Notification center
+- `~/.config/caelestia/shell.json` - Caelestia Shell settings
+- `~/.config/rofi/` - Fallback clipboard/keybind menus
+- `~/.config/matugen/` - Color generation templates
 - `~/.config/hypr/local.conf` - Auto-generated, GPU-specific (git-ignored)
 
 #### Default Keybindings
 
-| Key                   | Action                      |
-| --------------------- | --------------------------- |
-| `Super + Return`      | Open terminal (ghostty)     |
-| `Super + D`           | Application launcher (rofi) |
-| `Super + Q`           | Kill active window          |
-| `Super + M`           | Exit Hyprland               |
-| `Super + F`           | Fullscreen                  |
-| `Super + V`           | Toggle floating             |
-| `Super + 1-9`         | Switch workspace            |
-| `Super + Shift + 1-9` | Move window to workspace    |
-| `Super + h/j/k/l`     | Move focus (vim-like)       |
-| `Super + N`           | Toggle notification center  |
-| `Print`               | Screenshot region           |
-| `Shift + Print`       | Screenshot window           |
-| `Ctrl + Print`        | Screenshot with annotation  |
+| Key                       | Action                                  |
+| ------------------------- | --------------------------------------- |
+| `Super + Return`          | Open terminal (ghostty)                 |
+| `Super + D`               | Toggle Caelestia launcher               |
+| `Super + W`               | Toggle Caelestia launcher               |
+| `Super + Shift + W`       | Open Caelestia wallpaper selector       |
+| `Super + N`               | Toggle Caelestia sidebar                |
+| `Super + M`               | Toggle Caelestia session menu           |
+| `Super + V`               | Clipboard history via rofi/cliphist     |
+| `Super + /`               | Keybind cheatsheet via rofi             |
+| `Super + Q`               | Kill active window                      |
+| `Super + Space`           | Toggle floating                         |
+| `Super + F`               | Fullscreen                              |
+| `Super + S`               | Enter workspace submap                  |
+| `Super + h/j/k/l`         | Move focus (vim-like)                   |
+| `Super + Shift + h/j/k/l` | Move active window                      |
+| `Print`                   | Screenshot region                       |
+| `Shift + Print`           | Screenshot window                       |
+| `Ctrl + Print`            | Screenshot with annotation              |
 
 #### Troubleshooting
 
@@ -241,18 +248,13 @@ All configuration files are symlinked via `make links`:
 - Check journal: `journalctl -b | grep hyprland`
 - Verify NVIDIA kernel parameter: `cat /sys/module/nvidia_drm/parameters/modeset` (should show `Y`)
 
-**Cursor invisible (NVIDIA):**
-
-- Already configured via `WLR_NO_HARDWARE_CURSORS=1` in `local.conf`
-
 **Electron apps not using Wayland:**
 
-- Already configured via `ELECTRON_OZONE_PLATFORM_HINT=auto` in `local.conf`
+- On NixOS, `NIXOS_OZONE_WL=1` is configured in the Hyprland Nix module
 
 **Screen tearing:**
 
-- Check VRR setting in `local.conf`: `__GL_VRR_ALLOWED=0`
-- Try `__GL_VRR_ALLOWED=1` if you have G-Sync/FreeSync monitor
+- Check the NVIDIA driver and Hyprland logs first: `journalctl -b -k | grep -i nvidia`
 
 **Monitor not detected:**
 
