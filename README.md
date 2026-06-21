@@ -1,7 +1,7 @@
 # 🏠 Dotfiles Repository
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](https://github.com)
+[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](#platform-support)
 [![日本語](https://img.shields.io/badge/lang-ja-blue)](README.ja.md)
 
 Cross-platform dotfiles for modern development environments with Japanese language support.
@@ -18,7 +18,7 @@ Cross-platform dotfiles for modern development environments with Japanese langua
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/your-username/dotfiles.git ~/dotfiles
+git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # Configure personal settings interactively

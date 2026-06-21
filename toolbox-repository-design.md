@@ -154,7 +154,7 @@ dotfiles (親)
 ### セットアップフロー
 ```
 1. dotfiles クローン（サブモジュール含む）
-   git clone --recurse-submodules https://github.com/you/dotfiles
+   git clone --recurse-submodules ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git
 
 2. 基本環境構築（必須ツール）
    cd dotfiles
@@ -173,7 +173,7 @@ dotfiles (親)
 ```ini
 [submodule "toolbox"]
     path = toolbox
-    url = https://github.com/yourusername/toolbox.git
+    url = ssh://git@forgejo.archfill.com:2222/archfill/toolbox.git
     branch = main
 ```
 
@@ -513,7 +513,7 @@ Optional tools for dotfiles environment.
 
 ## Setup
 
-This repository is designed to be used as a submodule of [dotfiles](https://github.com/yourusername/dotfiles).
+This repository is designed to be used as a submodule of dotfiles.
 
 ```bash
 cd dotfiles
@@ -543,8 +543,8 @@ EOF
 # 5. コミット & プッシュ
 git add .
 git commit -m "feat: initial toolbox setup"
-# GitHubでリポジトリ作成後
-git remote add origin https://github.com/yourusername/toolbox.git
+# Forgejoでリポジトリ作成後
+git remote add origin ssh://git@forgejo.archfill.com:2222/archfill/toolbox.git
 git push -u origin main
 ```
 
@@ -554,7 +554,7 @@ git push -u origin main
 cd ~/repos/dotfiles
 
 # 1. サブモジュール追加
-git submodule add https://github.com/yourusername/toolbox.git toolbox
+git submodule add ssh://git@forgejo.archfill.com:2222/archfill/toolbox.git toolbox
 
 # 2. 確認
 git submodule status
@@ -571,7 +571,7 @@ git push
 
 ```bash
 # 新規クローン（サブモジュール含む）
-git clone --recurse-submodules https://github.com/yourusername/dotfiles.git test-dotfiles
+git clone --recurse-submodules ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git test-dotfiles
 cd test-dotfiles
 
 # 基本セットアップ
@@ -621,7 +621,7 @@ toolboxで失敗しても、dotfilesに影響なし
 ### クローン時
 ```bash
 # サブモジュール含む
-git clone --recurse-submodules https://github.com/you/dotfiles
+git clone --recurse-submodules ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git
 
 # 既存リポジトリでサブモジュール初期化
 git submodule update --init --recursive

@@ -560,4 +560,4 @@ make toolbox-ai      # AIツールのみインストール
 - ✅ 全スクリプトの構文チェック済み
 - ✅ 既存機能は完全互換
 
-**詳細**: Commit [e58e913](https://github.com/yourusername/dotfiles/commit/e58e913)
+**詳細**: 旧構成の整理記録として保持

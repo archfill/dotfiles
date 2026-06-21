@@ -1,7 +1,7 @@
 # 🏠 Dotfiles リポジトリ
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Android-blue)](https://github.com)
+[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Android-blue)](#プラットフォーム対応)
 [![English](https://img.shields.io/badge/lang-en-red)](README.md)
 
 日本語環境対応のクロスプラットフォーム dotfiles です。モダンな開発環境を自動構築します。
@@ -18,7 +18,7 @@
 ### 1. クローンとセットアップ
 
 ```bash
-git clone https://github.com/your-username/dotfiles.git ~/dotfiles
+git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # 個人設定の構成

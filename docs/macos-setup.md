@@ -15,7 +15,7 @@
 
 ```bash
 # dotfilesリポジトリをクローン
-git clone https://github.com/your-username/dotfiles.git ~/.dotfiles
+git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 # 【推奨】完全な開発環境セットアップ（全アプリ + 設定）
