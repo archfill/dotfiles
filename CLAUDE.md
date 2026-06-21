@@ -253,11 +253,6 @@ bin/
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ
 │   │
-│   ├── chromebook/                 # Chromebook (3スクリプト)
-│   │   ├── chromebook_install.sh
-│   │   ├── alacritty_install.sh
-│   │   └── lazygit_install.sh
-│   │
 │   ├── termux/                     # Android Termux (3スクリプト)
 │   │   ├── init.sh
 │   │   ├── install.sh
