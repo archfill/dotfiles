@@ -56,6 +56,12 @@
   xdg.dataFile."icons/hicolor/scalable/apps/preferences-system-network.svg".source =
     "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-network-symbolic.svg";
 
+  xdg.dataFile."icons/hicolor/scalable/actions/application-exit.svg".source =
+    "${pkgs.adwaita-icon-theme}/share/icons/Adwaita/symbolic/actions/application-exit-symbolic.svg";
+
+  xdg.dataFile."icons/hicolor/scalable/actions/view-refresh.svg".source =
+    "${pkgs.adwaita-icon-theme}/share/icons/Adwaita/symbolic/actions/view-refresh-symbolic.svg";
+
   # Linux でもフォント認識を有効化 (macOS 側と同じく fonts.fontconfig は
   # nix/modules/common.nix で enable 済みなので追記不要)。
 }
