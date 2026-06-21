@@ -7,11 +7,33 @@
     ./hardware.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    efi.canTouchEfiVariables = false;
+    systemd-boot.enable = false;
+    grub = {
+      enable = true;
+      device = "nodev";
+      efiSupport = true;
+      efiInstallAsRemovable = true;
+      gfxmodeEfi = "1024x768";
+      useOSProber = true;
+    };
+  };
   boot.kernelPackages = pkgs.linuxPackages_zen;
 
   networking.hostName = "archfill-nixos";
+
+  security.sudo.extraRules = [
+    {
+      users = [ "archfill" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -36,62 +58,10 @@
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
-  systemd.services.nvidia-device-files = {
-    description = "Create NVIDIA device files";
-    wantedBy = [ "multi-user.target" ];
-    before = [ "display-manager.service" ];
-    after = [
-      "systemd-modules-load.service"
-      "systemd-udev-settle.service"
-    ];
-    path = with pkgs; [
-      coreutils
-      gawk
-      gnugrep
-    ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      shopt -s nullglob
-
-      nvidia_major="$(grep -m1 ' nvidia$' /proc/devices | awk '{ print $1 }')"
-      uvm_major="$(grep -m1 ' nvidia-uvm$' /proc/devices | awk '{ print $1 }')"
-
-      if [ -z "$nvidia_major" ]; then
-        exit 0
-      fi
-
-      mknod -m 666 /dev/nvidiactl c "$nvidia_major" 255 || true
-      mknod -m 666 /dev/nvidia-modeset c "$nvidia_major" 254 || true
-
-      if [ -n "$uvm_major" ]; then
-        mknod -m 666 /dev/nvidia-uvm c "$uvm_major" 0 || true
-        mknod -m 666 /dev/nvidia-uvm-tools c "$uvm_major" 1 || true
-      fi
-
-      minors=()
-      for info in /proc/driver/nvidia/gpus/*/information; do
-        minor="$(grep -m1 '^Device Minor:' "$info" | cut -d: -f2 | tr -d '[:space:]')"
-        if [ -n "$minor" ]; then
-          minors+=("$minor")
-        fi
-      done
-
-      if [ "''${#minors[@]}" -eq 0 ]; then
-        exit 0
-      fi
-
-      for minor in "''${minors[@]}"; do
-        mknod -m 666 "/dev/nvidia$minor" c "$nvidia_major" "$minor" || true
-      done
-    '';
-  };
-
   environment.systemPackages = with pkgs; [
+    efibootmgr
     ghostty
-    nvidia-modprobe
+    google-chrome
     pciutils
     usbutils
   ];
