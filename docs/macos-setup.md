@@ -99,7 +99,7 @@ uv mise deno go openjdk openjdk@11
 
 ```bash
 # 開発ユーティリティ
-ghq lazygit the_silver_searcher awscli stripe
+ghq lazygit awscli stripe
 
 # GUI アプリケーション（Cask）
 wezterm aquaskk hammerspoon kitty android-platform-tools google-cloud-sdk brewlet cheatsheet

@@ -305,7 +305,6 @@ install_common_packages_debian() {
           tmux \
           vim \
           fzf \
-          silversearcher-ag \
           ripgrep \
           git-delta \
           fontconfig \
@@ -426,7 +425,6 @@ install_common_packages_arch() {
         fzf
         lazygit
         bottom
-        the_silver_searcher
         zoxide
         bat
         jq
