@@ -8,7 +8,7 @@ Cross-platform dotfiles for modern development environments with Japanese langua
 
 ## ✨ Features
 
-- **Multi-Platform**: macOS, Linux, Windows (Cygwin), Android (Termux)
+- **Multi-Platform**: macOS, Linux, Windows, Android (Termux)
 - **Modern Tools**: Neovim, WezTerm, Zsh with optimized configurations
 - **Japanese Support**: SKK input method, textlint for technical writing
 - **Development Ready**: Python (uv), Node.js (mise), Flutter, Docker support

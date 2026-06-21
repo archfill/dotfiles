@@ -136,11 +136,6 @@ case "$OS_NAME" in
     fi
     ;;
 
-  MINGW32_NT*|MINGW64_NT*)
-    log_info "Windows (Cygwin) setup starting"
-    run "bin/platform/cygwin/install_cygwin.sh"
-    ;;
-
   *)
     log_error "Unsupported OS: $OS_NAME"
     exit 1

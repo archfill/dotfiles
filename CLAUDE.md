@@ -39,7 +39,7 @@ Please conduct all interactions in **Japanese (日本語)** when working with th
 
 ## 📋 Repository Overview
 
-This is a comprehensive **cross-platform dotfiles repository** that automates development environment setup across macOS, Linux, Windows (Cygwin), and Termux (Android). It includes configurations for modern terminal-based development workflows with Japanese language support.
+This is a comprehensive **cross-platform dotfiles repository** that automates development environment setup across macOS, Linux, Windows, and Termux (Android). It includes configurations for modern terminal-based development workflows with Japanese language support.
 
 ## ⚡ Essential Commands
 
@@ -267,9 +267,6 @@ bin/
 │   ├── wsl/                        # Windows WSL (2スクリプト)
 │   │   ├── wsl_enhancements.sh
 │   │   └── windows_integration.sh
-│   │
-│   └── cygwin/                     # Windows Cygwin (1スクリプト)
-│       └── install_cygwin.sh
 │
 ├── install-methods/                # 特殊インストール方法 (4スクリプト)
 │   │
@@ -308,8 +305,7 @@ bin/init.sh
   ├─ プラットフォーム別セットアップ
   │   ├─ [macOS]   darwin-rebuild switch --flake nix#archfill-to-Mac-mini
   │   │             (nix-darwin + home-manager + homebrew モジュールで宣言管理)
-  │   ├─ [Linux]   bin/platform/linux/packages.sh
-  │   └─ [Cygwin]  bin/platform/cygwin/install_cygwin.sh
+  │   └─ [Linux]   bin/platform/linux/packages.sh
   │
   └─ bin/config.sh (Git設定)
 ```
