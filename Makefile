@@ -715,17 +715,12 @@ aerospace-status: ## Show status of AeroSpace ecosystem
 		exit 1; \
 	fi
 
-# ghq関連コマンド
-ghq-setup: ## Setup ghq for repository management
-	@echo "Setting up ghq..."
-	@bash ./bin/apps/ghq.sh
-
 ghq-list: ## List all repositories managed by ghq
 	@echo "Repositories managed by ghq:"
 	@if command -v ghq >/dev/null 2>&1; then \
 		ghq list; \
 	else \
-		echo "ghq is not installed. Run 'make ghq-setup' first."; \
+		echo "ghq is not installed. It is managed by Nix/Home Manager; run 'make rebuild'."; \
 	fi
 
 ghq-get: ## Clone a repository with ghq (usage: make ghq-get REPO=github.com/user/repo)

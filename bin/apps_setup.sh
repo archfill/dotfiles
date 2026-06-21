@@ -31,12 +31,6 @@ for category in "${categories[@]}"; do
     if [[ -f "$filepath" ]]; then
       script_name="$(basename "$filepath")"
 
-      # Skip certain scripts in CI environment
-      if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]] && [[ "$script_name" == "ghq.sh" ]]; then
-        log_info "Skipping $category/$script_name in CI environment"
-        continue
-      fi
-
       log_info "Running app setup: $category/$script_name"
 
       if ! bash "${filepath}"; then
