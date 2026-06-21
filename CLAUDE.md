@@ -105,7 +105,6 @@ dotfiles/
 │
 ├── macos/             # macOS固有ファイル
 ├── windows/           # Windows固有ファイル
-├── archive/           # アーカイブ済み設定
 │
 ├── Makefile           # メインコマンドインターフェース
 ├── CLAUDE.md          # このファイル
