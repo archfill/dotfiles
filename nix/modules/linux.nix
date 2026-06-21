@@ -13,6 +13,7 @@
 # (例: Wayland / X11 連携、Linux 固有の env var) ここに集約する。
 {
   home.packages = with pkgs; [
+    poppler-utils
     sqlite
     zoxide
   ];
