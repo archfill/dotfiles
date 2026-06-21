@@ -43,7 +43,6 @@
     playerctl
     networkmanagerapplet
     nwg-look
-    kdePackages.dolphin
 
     # NVIDIA Wayland / VA-API support
     egl-wayland

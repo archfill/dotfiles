@@ -189,7 +189,6 @@ install_hyprland() {
         network-manager-applet  # Network management GUI (provides nm-connection-editor)
         wireplumber     # PipeWire session manager (provides wpctl for audio control)
         gnome-keyring   # Secrets management (for credential storage)
-        dolphin         # File manager (KDE)
         cliphist        # Clipboard history manager (rofi integration)
     )
 
