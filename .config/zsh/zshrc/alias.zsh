@@ -57,8 +57,6 @@ alias grev='git remote -v'
 
 # Combined operations
 alias gacp='(){git add . && git commit -m "$1" && git push origin $(git_current_branch)}'
-## mutt
-alias mutt="neomutt"
 ## tmux
 alias tmux-start='tmux -u attach -t main'
 

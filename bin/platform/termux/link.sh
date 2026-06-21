@@ -22,9 +22,6 @@ link ".vimrc"
 # link ".config/alacritty"
 # # wezterm
 # link ".config/wezterm"
-# # neomutt
-# link ".muttrc"
-# link ".mutt"
 # link ".textlintrc"
 
 #tmux
@@ -48,4 +45,3 @@ link ".zshenv"
 # sheldon & starship (modern zsh setup)
 link ".config/sheldon"
 link ".config/starship.toml"
-

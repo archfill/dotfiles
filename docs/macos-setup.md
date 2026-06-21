@@ -114,7 +114,7 @@ wezterm aquaskk hammerspoon kitty android-platform-tools google-cloud-sdk brewle
 yabai skhd displayplacer dmg2img wakeonlan
 
 # 専門ツール
-bazelisk neomutt qmk ranger sqlite3 tcl-tk w3m
+bazelisk qmk ranger sqlite3 tcl-tk
 
 # オプションGUIアプリ
 altserver appflowy biscuit yt-music utm via warp xcodes lapce nextcloud gitup など

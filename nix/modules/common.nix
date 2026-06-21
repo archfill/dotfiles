@@ -323,21 +323,6 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/aicommit2/config";
 
-  # mutt (CLI メールクライアント) 関連設定。XDG をサポートしないため
-  # ホーム直下に配置。
-  home.file.".muttrc".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.muttrc";
-
-  home.file.".mutt".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.mutt";
-
-  # aerc (TUI メールクライアント、Gmail OAuth 経由) 関連設定。
-  xdg.configFile."aerc".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/aerc";
-
   # vim / gvim / IntelliJ IDEA vim plugin の設定をホーム直下に配置。
   # 設定は dotfiles 側で編集、Nix は symlink のみ宣言。
   home.file.".vimrc".source =

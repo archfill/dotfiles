@@ -300,14 +300,6 @@ install_common_packages_debian() {
           python3 \
           python3-pip \
           wget \
-          w3m \
-          neomutt \
-          aerc \
-          urlscan \
-          khard \
-          notmuch \
-          isync \
-          msmtp \
           less \
           zsh \
           tmux \
@@ -428,12 +420,6 @@ install_common_packages_arch() {
         p7zip
         curl
         fontconfig
-        neomutt
-        aerc
-        w3m
-        notmuch
-        isync
-        msmtp
         less
         mpv
         vim
@@ -465,8 +451,6 @@ install_common_packages_arch() {
 
     # AUR-only packages (installed via yay)
     local aur_packages=(
-        urlscan
-        khard
         ghostty
         tenv-bin
     )
