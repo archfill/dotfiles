@@ -19,11 +19,79 @@ run() {
   bash "$DOTFILES_DIR/$1"
 }
 
+resolve_linux_home_attr() {
+  local distro
+  distro="$(get_os_distribution)"
+
+  if is_wsl; then
+    echo "archfill@wsl-ubuntu"
+    return 0
+  fi
+
+  case "$distro" in
+    arch) echo "archfill@arch-desktop" ;;
+    ubuntu | debian) echo "archfill@ubuntu-desktop" ;;
+    *) echo "" ;;
+  esac
+}
+
+apply_nix_linux_configuration() {
+  if [[ "${SKIP_PACKAGE_INSTALL:-}" == "1" ]]; then
+    log_info "Skipping Nix switch (SKIP_PACKAGE_INSTALL=1)"
+    return 0
+  fi
+
+  if ! command -v nix >/dev/null 2>&1; then
+    log_warning "nix command not found"
+    log_info "Install Nix first, then run make init again:"
+    log_info "  https://nixos.org/download/"
+    return 0
+  fi
+
+  if [[ -e /etc/NIXOS ]]; then
+    log_info "Applying NixOS configuration..."
+    if command -v nh >/dev/null 2>&1; then
+      nh os switch "${DOTFILES_DIR}/nix"
+    elif command -v nixos-rebuild >/dev/null 2>&1; then
+      sudo nixos-rebuild switch --flake "${DOTFILES_DIR}/nix"
+    else
+      log_warning "Neither nh nor nixos-rebuild was found"
+      log_info "Run manually after installing nh:"
+      log_info "  make rebuild"
+    fi
+    return 0
+  fi
+
+  local attr
+  attr="${NIX_ATTR:-$(resolve_linux_home_attr)}"
+
+  if [[ -z "$attr" ]]; then
+    log_warning "No standalone home-manager attr is defined for this Linux distribution"
+    log_info "Set NIX_ATTR explicitly, for example:"
+    log_info "  make init NIX_ATTR='archfill@ubuntu-desktop'"
+    return 0
+  fi
+
+  local flake_ref
+  flake_ref="${DOTFILES_DIR}/nix#${attr}"
+
+  log_info "Applying standalone home-manager configuration: ${attr}"
+  if command -v nh >/dev/null 2>&1; then
+    nh home switch "$flake_ref"
+  elif command -v home-manager >/dev/null 2>&1; then
+    home-manager switch --flake "$flake_ref"
+  else
+    log_info "home-manager command not found; using nix run fallback"
+    nix run github:nix-community/home-manager -- switch --flake "$flake_ref"
+  fi
+}
+
 log_info "Starting to create symbolic links"
 run "bin/link.sh"
 
 OS_NAME="$(uname)"
 log_info "Detected OS: $OS_NAME"
+RUN_LEGACY_APP_SETUP=0
 
 case "$OS_NAME" in
   Darwin)
@@ -57,23 +125,33 @@ case "$OS_NAME" in
     ;;
 
   Linux)
-    log_info "Linux setup starting"
-    run "bin/platform/linux/packages.sh"
-    if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-      log_info "Starting font installation..."
-      if bash bin/apps/tools/fonts.sh; then
-        log_success "Font installation completed successfully"
+    install_mode="${DOTFILES_INSTALL_MODE:-nix}"
+    log_info "Linux setup starting (mode: $install_mode)"
+
+    if [[ "${DOTFILES_LEGACY_INSTALL:-0}" == "1" || "$install_mode" == "legacy" ]]; then
+      log_warning "Running legacy Linux package/app installers"
+      run "bin/platform/linux/packages.sh"
+      if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
+        log_info "Starting font installation..."
+        if bash bin/apps/tools/fonts.sh; then
+          log_success "Font installation completed successfully"
+        else
+          log_warning "Font installation failed (continuing with setup)"
+        fi
       else
-        log_warning "Font installation failed (continuing with setup)"
+        log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
       fi
+      RUN_LEGACY_APP_SETUP=1
     else
-      log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
+      log_info "Using Nix/Home Manager for Linux user environment"
+      apply_nix_linux_configuration
     fi
     ;;
 
   MINGW32_NT*|MINGW64_NT*)
     log_info "Windows (Cygwin) setup starting"
     run "bin/platform/cygwin/install_cygwin.sh"
+    RUN_LEGACY_APP_SETUP=1
     ;;
 
   *)
@@ -82,12 +160,12 @@ case "$OS_NAME" in
     ;;
 esac
 
-# Skip app setup in CI environment
-if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" ]]; then
-  log_info "Starting app setup"
+# Skip app setup in CI environment and Nix-managed environments
+if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" && "$RUN_LEGACY_APP_SETUP" == "1" ]]; then
+  log_info "Starting legacy app setup"
   run "bin/apps_setup.sh"
 else
-  log_info "Skipping app setup (CI environment)"
+  log_info "Skipping legacy app setup"
 fi
 
 log_info "Starting config setup"

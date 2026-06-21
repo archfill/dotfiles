@@ -37,6 +37,20 @@ make rebuild NIX_ATTR='archfill@wsl-ubuntu'
 
 ホスト名と flake attr が一致している環境では `make rebuild` だけでもよい。
 
+`make init` も同じ attr を受け取る。Linux ではデフォルトで Nix/Home Manager を適用し、旧 `apt` / `pacman` / 個別 app installer は実行しない。
+
+```bash
+make init NIX_ATTR='archfill@arch-desktop'
+make init NIX_ATTR='archfill@ubuntu-desktop'
+make init NIX_ATTR='archfill@wsl-ubuntu'
+```
+
+旧 installer が必要な場合だけ明示する。
+
+```bash
+make init DOTFILES_INSTALL_MODE=legacy
+```
+
 `bin/apps/tools/hyprland.sh` は Arch Linux 用 legacy installer として残す。NixOS / Ubuntu / WSL では実行せず、必要な user 環境は上記 home-manager 出力で反映する。Arch でも Nix で管理できる範囲を優先し、OS 側に残す system package が不要になった時点で script ごと削除する。
 
 ## 実機 NixOS 追加手順

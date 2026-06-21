@@ -26,7 +26,7 @@ help: ## Show this help message
 # 基本セットアップ
 init: ## Complete dotfiles initialization and setup
 	@echo "Starting complete dotfiles initialization..."
-	bash ./bin/init.sh
+	NIX_ATTR="$(NIX_ATTR)" DOTFILES_INSTALL_MODE="$(DOTFILES_INSTALL_MODE)" DOTFILES_LEGACY_INSTALL="$(DOTFILES_LEGACY_INSTALL)" bash ./bin/init.sh
 
 config: ## Setup Git configuration with personal settings
 	@echo "Setting up Git configuration..."
