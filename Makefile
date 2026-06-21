@@ -822,7 +822,7 @@ terraform-setup: ## Install Terraform CLI
 
 docker-setup: ## Setup Docker Engine
 	@echo "Setting up Docker Engine..."
-	@bash ./bin/apps/50-docker.sh
+	@bash ./bin/apps/devops/docker.sh
 
 devops-sdks: terraform-setup docker-setup ## Install DevOps tools (Terraform, Docker)
 	@echo "✅ DevOps tools installation completed!"

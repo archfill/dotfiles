@@ -62,10 +62,12 @@
   services.openssh.enable = true;
   services.tailscale.enable = true;
 
+  virtualisation.docker.enable = true;
+
   users.users.archfill = {
     isNormalUser = true;
     description = "archfill";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "docker" "networkmanager" "wheel" ];
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOaWmcBbwpGLXnlJdKS+YvFUloC96coOgDJGQBmF/lob main@chill-rf.com"
