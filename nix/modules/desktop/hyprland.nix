@@ -31,7 +31,6 @@
     cliphist
     satty
     matugen
-    imagemagick
     gettext
     overskride
 

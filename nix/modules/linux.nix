@@ -24,6 +24,10 @@
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/matugen";
 
+  xdg.configFile."caelestia/shell.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/caelestia/shell.json";
+
   # Linux でもフォント認識を有効化 (macOS 側と同じく fonts.fontconfig は
   # nix/modules/common.nix で enable 済みなので追記不要)。
 }

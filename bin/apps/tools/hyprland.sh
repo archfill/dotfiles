@@ -173,7 +173,7 @@ install_hyprland() {
 
         # Essential Wayland tools
     local wayland_tools=(
-        rofi            # dmenu UI for clipboard, wallpaper picker, and cheatsheet
+        rofi            # dmenu UI for clipboard history and cheatsheet
         wl-clipboard    # Clipboard utilities
     )
 
