@@ -93,7 +93,6 @@ The repository includes a comprehensive shared library system in `bin/lib/`:
 - **`common.sh`** - Platform detection, logging, error handling, utility functions
 - **`config_loader.sh`** - Configuration management, version control, personal settings
 - **`uv_installer.sh`** - Unified Python environment management with uv
-- **`symlink_manager.sh`** - Advanced symlink creation with backup and validation
 
 ### Configuration Management
 

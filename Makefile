@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config test clean status info hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -19,7 +19,6 @@ help: ## Show this help message
 	@echo "Examples:"
 	@echo "  make init          # Complete dotfiles setup"
 	@echo "  make test          # Run all tests"
-	@echo "  make links         # Create symlinks only"
 	@echo "  make config        # Setup Git configuration"
 	@echo "  make monitors      # Configure monitors (interactive)"
 
@@ -31,10 +30,6 @@ init: ## Complete dotfiles initialization and setup
 config: ## Setup Git configuration with personal settings
 	@echo "Setting up Git configuration..."
 	bash ./bin/config.sh
-
-links: ## Create symbolic links for dotfiles
-	@echo "Creating symbolic links..."
-	bash ./bin/link.sh
 
 # ─── Nix 運用 (nh 経由) ─────────────────────────────────────────────
 # nh が PATH に入っている前提 (home.packages.nh で配布)。

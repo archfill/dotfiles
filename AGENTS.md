@@ -48,7 +48,6 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 - `make init` - Complete dotfiles initialization and setup
 - `make test` - Run comprehensive functionality tests
 - `make config` - Setup Git configuration with personal settings
-- `make links` - Create symbolic links for dotfiles
 - `make help` - Show all available commands
 
 ### Nix 運用 (nh 経由、OS 自動判定)
@@ -282,12 +281,10 @@ bin/
 │   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
 │   ├── install_checker.sh          # インストール状態管理・スキップ判定
-│   ├── symlink_manager.sh          # シンボリックリンク管理
 │   ├── appimage_manager.sh         # AppImage管理
 │   └── uv_installer.sh             # uv専用インストーラー
 │
 ├── init.sh                         # メインエントリーポイント (make init)
-├── link.sh                         # シンボリックリンク作成
 ├── config.sh                       # Git設定
 ├── appimage-manager.sh             # AppImage一括管理
 ├── neovim-unified-manager.sh       # Neovim統合管理
@@ -300,8 +297,6 @@ bin/
 make init
   ↓
 bin/init.sh
-  ├─ bin/link.sh (シンボリックリンク)
-  │
   ├─ プラットフォーム別セットアップ
   │   ├─ [macOS]   darwin-rebuild switch --flake nix#archfill-to-Mac-mini
   │   │             (nix-darwin + home-manager + homebrew モジュールで宣言管理)

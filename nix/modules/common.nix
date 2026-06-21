@@ -348,6 +348,10 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.local/bin/codex-env";
 
+  home.file.".mmcp.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.mmcp.json";
+
   # zsh: ZDOTDIR=$HOME/.config/zsh 構成のまま dotfiles 管理を維持。
   # programs.zsh は ~/.zshrc を生成するため ZDOTDIR と競合する。
   # mkOutOfStoreSymlink で symlink のみ Nix 宣言、設定内容は dotfiles 側で編集。

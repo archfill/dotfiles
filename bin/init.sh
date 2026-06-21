@@ -86,9 +86,6 @@ apply_nix_linux_configuration() {
   fi
 }
 
-log_info "Starting to create symbolic links"
-run "bin/link.sh"
-
 OS_NAME="$(uname)"
 log_info "Detected OS: $OS_NAME"
 

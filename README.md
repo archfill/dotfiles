@@ -215,7 +215,7 @@ Hyprland
 
 #### Configuration Files
 
-All configuration files are symlinked via `make links`:
+Configuration files are symlinked by Nix/Home Manager:
 
 - `~/.config/hypr/hyprland.conf` - Main configuration
 - `~/.config/hypr/hypridle.conf` - Idle management (screen dim, DPMS, suspend; lock UI is Caelestia)
