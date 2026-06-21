@@ -24,7 +24,6 @@
     hyprcursor
     hypridle
     hyprlock
-    hyprpaper
     hyprpicker
     hyprshot
     hyprpolkitagent
