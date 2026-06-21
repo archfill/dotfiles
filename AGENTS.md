@@ -235,12 +235,10 @@ bin/
 │   │
 │   └── tools/                      # Nix移行済み（スクリプトなし）
 │
-├── platform/                       # プラットフォーム固有処理 (13スクリプト)
+├── platform/                       # プラットフォーム固有処理
 │   │
 │   ├── macos/                      # macOS (1スクリプト)
-│   │   └── packages.sh             # Homebrewパッケージ (78個 + 25 casks)
-│   │                                 # link.sh は home-manager 完全移行に伴い削除済み
-│   │                                 # config.sh は bin/config.sh に統合済み
+│   │   └── sbarlua.sh              # SketchyBar Lua module setup
 │   │
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ

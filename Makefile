@@ -655,15 +655,6 @@ macos-setup-essential: ## Setup essential macOS development environment
 		exit 1; \
 	fi
 
-macos-packages-minimal: ## Install minimal Homebrew packages only
-	@echo "Installing minimal Homebrew packages..."
-	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		DOTFILES_INSTALL_MODE=minimal bash ./bin/mac/brew.sh; \
-	else \
-		echo "❌ This command is only for macOS"; \
-		exit 1; \
-	fi
-
 macos-test: ## Run macOS-specific environment tests
 	@echo "Running macOS tests..."
 	@if [[ "$$(uname -s)" == "Darwin" ]]; then \

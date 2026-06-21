@@ -127,9 +127,6 @@ make macos-setup           # 完全な開発環境セットアップ（全パッ
 make macos-setup-essential # 必要最小限の開発環境セットアップ
 make macos-setup-minimal   # Neovimビルド依存関係のみ
 
-# パッケージ管理
-make macos-packages-minimal # 最小限のHomebrewパッケージのみインストール
-
 # テスト・診断
 make macos-test            # macOS環境テスト
 ```
