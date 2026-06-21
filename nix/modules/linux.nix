@@ -15,6 +15,7 @@
   home.packages = with pkgs; [
     ffmpeg
     ffmpegthumbnailer
+    imagemagick
     poppler-utils
     sqlite
     zoxide
