@@ -21,9 +21,8 @@ Cross-platform dotfiles for modern development environments with Japanese langua
 git clone https://github.com/your-username/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
-# Configure personal settings
-cp config/personal.conf.template config/personal.conf
-$EDITOR config/personal.conf  # Set USER_NAME and USER_EMAIL
+# Configure personal settings interactively
+make config
 
 # Complete setup
 make init
