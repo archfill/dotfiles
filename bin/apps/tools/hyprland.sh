@@ -214,7 +214,6 @@ install_hyprland() {
     # AUR packages (conditional on yay availability)
     local aur_packages=(
         overskride                  # Bluetooth manager (GTK4, Hyprland-recommended)
-        hyprshell                   # Alt+Tab style window switcher / launcher
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
