@@ -37,12 +37,6 @@ for category in "${categories[@]}"; do
         continue
       fi
 
-      # Skip PHP installation (not needed in current environment)
-      if [[ "$script_name" == "php.sh" ]]; then
-        log_info "Skipping $category/$script_name (PHP installation disabled)"
-        continue
-      fi
-
       log_info "Running app setup: $category/$script_name"
 
       if ! bash "${filepath}"; then

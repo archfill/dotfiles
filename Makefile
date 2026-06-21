@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status php-setup ruby-setup terraform-setup docker-setup web-sdks devops-sdks sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status terraform-setup docker-setup devops-sdks sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -816,16 +816,6 @@ macos-test: ## Run macOS-specific environment tests
 		exit 1; \
 	fi
 
-# ===== Development SDKs Management =====
-# Legacy SDK setup commands for runtimes not yet covered by Nix.
-php-setup: ## Install PHP 8.3 via APT package manager
-	@echo "Installing PHP 8.3 via APT package manager..."
-	@bash ./bin/apps/languages/php.sh
-
-ruby-setup: ## Install Ruby 3.2 via rbenv
-	@echo "Installing Ruby 3.2 via rbenv..."
-	@bash ./bin/apps/languages/ruby.sh
-
 terraform-setup: ## Install Terraform CLI
 	@echo "Installing Terraform CLI..."
 	@bash ./bin/apps/51-terraform.sh
@@ -833,9 +823,6 @@ terraform-setup: ## Install Terraform CLI
 docker-setup: ## Setup Docker Engine
 	@echo "Setting up Docker Engine..."
 	@bash ./bin/apps/50-docker.sh
-
-web-sdks: php-setup ruby-setup ## Install web development SDKs (PHP, Ruby)
-	@echo "✅ Web development SDKs installation completed!"
 
 devops-sdks: terraform-setup docker-setup ## Install DevOps tools (Terraform, Docker)
 	@echo "✅ DevOps tools installation completed!"
