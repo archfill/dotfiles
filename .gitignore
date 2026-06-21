@@ -156,7 +156,6 @@ go.work
 .config/ghostty/platform
 
 ### Hyprland ###
-.config/hypr/local.conf
 .config/hypr/monitors.conf
 .config/hypr/current-wallpaper
 .config/hypr/hypridle.local.conf

@@ -9,7 +9,6 @@
 ├── hyprland.conf           # メイン設定（Git管理）
 ├── monitors.conf.example   # シングルディスプレイのデフォルト（Git管理）
 ├── monitors.conf           # 環境固有設定（.gitignore）
-├── local.conf              # 環境固有の上書き設定（.gitignore）
 ├── hypridle.conf           # アイドル管理設定
 ├── hyprlock.conf           # スクリーンロック設定
 ├── examples/               # 設定例集
@@ -445,7 +444,6 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 ### 追跡されないファイル（.gitignore）
 
 - `monitors.conf` - 環境固有のモニター設定
-- `local.conf` - 環境固有の上書き設定
 
 ## 🔗 関連設定
 
@@ -454,6 +452,6 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 
 ## 🚨 NVIDIA GPU使用時の注意
 
-NVIDIA/VA-API など共有できる環境変数は `hyprland.conf` と NixOS module 側で管理します。`local.conf` は端末ごとの一時的な上書きだけに使います。
+NVIDIA/VA-API など共有できる環境変数は `hyprland.conf` と NixOS module 側で管理します。ホスト固有の差分は `nix/hosts/<host>/` 配下で管理します。
 
 詳細は `bin/apps/tools/hyprland.sh` のインストールログを参照してください。

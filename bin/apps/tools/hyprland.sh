@@ -319,44 +319,9 @@ install_hyprland() {
             done
             log_success "Hyprland configuration symlinks ready"
 
-            # Create local.conf for machine-specific environment overrides
-            local local_conf="${HOME}/.config/hypr/local.conf"
-            log_info "Creating local configuration file..."
-
             if [[ "$has_nvidia" == "true" ]]; then
-                # NVIDIA GPU detected - create local.conf with minimal NVIDIA environment overrides
-                cat > "$local_conf" << 'EOF'
-# =====================================================
-# Local Environment Overrides (Auto-generated)
-# =====================================================
-# This file is created automatically during installation
-# and is not tracked by git (.gitignore)
-#
-# NVIDIA GPU detected - NVIDIA-specific environment variables enabled
-# =====================================================
-
-# Basic NVIDIA environment
-env = LIBVA_DRIVER_NAME,nvidia
-env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-
-# Hardware video acceleration (VA-API)
-env = NVD_BACKEND,direct
-EOF
-                log_success "Created local.conf with NVIDIA environment variables"
+                log_success "NVIDIA/Wayland environment variables are managed in hyprland.conf"
                 show_nvidia_setup
-            else
-                # Intel/AMD GPU - create empty local.conf
-                cat > "$local_conf" << 'EOF'
-# =====================================================
-# Local Environment Variables (Auto-generated)
-# =====================================================
-# This file is created automatically during installation
-# and is not tracked by git (.gitignore)
-#
-# No NVIDIA GPU detected - using default settings
-# =====================================================
-EOF
-                log_success "Created local.conf (empty - using default settings)"
             fi
 
             # Create monitors.conf for monitor-specific configuration

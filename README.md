@@ -125,7 +125,7 @@ make hyprland-status
 
 #### GPU-Specific Configuration
 
-NixOS declares shared GPU settings in the Nix modules. Environment-specific overrides can still live in `~/.config/hypr/local.conf`; the Arch installer creates that file automatically.
+NixOS declares shared GPU settings in the Nix modules. Host-specific differences should live in `nix/hosts/<host>/`; monitor layout is still kept in `~/.config/hypr/monitors.conf`.
 
 **NVIDIA GPU (RTX 4070, etc.):**
 
@@ -135,12 +135,11 @@ NixOS declares shared GPU settings in the Nix modules. Environment-specific over
 
 **Intel/AMD GPU:**
 
-- Creates empty `local.conf` using default Wayland settings
 - No additional configuration needed
 
 **Multi-PC Setup:**
 
-- `local.conf` is git-ignored (environment-specific)
+- Host-specific Nix settings live under `nix/hosts/<host>/`
 - Same dotfiles work across different GPU configurations
 - No git diff conflicts when using different hardware
 
@@ -217,7 +216,6 @@ All configuration files are symlinked via `make links`:
 - `~/.config/caelestia/shell.json` - Caelestia Shell settings
 - `~/.config/rofi/` - Fallback clipboard/keybind menus
 - `~/.config/matugen/` - Color generation templates
-- `~/.config/hypr/local.conf` - Auto-generated, GPU-specific (git-ignored)
 
 #### Default Keybindings
 
