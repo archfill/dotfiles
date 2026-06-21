@@ -316,8 +316,6 @@ install_common_packages_debian() {
           bat \
           jq \
           wl-clipboard \
-          xsel \
-          xclip \
           sqlite3 \
           libsqlite3-dev \
           ffmpegthumbnailer \
@@ -427,8 +425,6 @@ install_common_packages_arch() {
         tmux
         fzf
         lazygit
-        luarocks
-        lua51
         bottom
         the_silver_searcher
         zoxide
@@ -436,8 +432,6 @@ install_common_packages_arch() {
         jq
         wl-clipboard
         cliphist
-        xsel
-        xclip
         sqlite
         yazi
         ffmpegthumbnailer
