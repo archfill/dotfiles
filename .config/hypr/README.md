@@ -10,7 +10,6 @@
 ├── monitors.conf.example   # シングルディスプレイのデフォルト（Git管理）
 ├── monitors.conf           # 環境固有設定（.gitignore）
 ├── hypridle.conf           # アイドル管理設定
-├── hyprlock.conf           # スクリーンロック設定
 ├── examples/               # 設定例集
 │   ├── monitors.conf.dual  # デュアルディスプレイの例
 │   └── monitors.conf.all-examples  # 全例文集（シングル/デュアル/トリプル等）
@@ -438,7 +437,7 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 
 - `hyprland.conf` - メイン設定
 - `monitors.conf.example` - シングルディスプレイのデフォルト
-- `hypridle.conf`, `hyprlock.conf` - その他設定
+- `hypridle.conf` - アイドル管理設定（ロックは Caelestia Shell）
 - `examples/` - 設定例集
 
 ### 追跡されないファイル（.gitignore）

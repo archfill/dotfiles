@@ -163,7 +163,6 @@ install_hyprland() {
         hyprland                        # Main compositor
         hyprcursor                      # Cursor management
         hypridle                        # Idle daemon
-        hyprlock                        # Screen locker
         hyprpicker                      # Color picker
         hyprshot                        # Screenshot utility
         hyprpolkitagent                 # Polkit authentication agent

@@ -23,7 +23,6 @@
     # Hyprland core
     hyprcursor
     hypridle
-    hyprlock
     hyprpicker
     hyprshot
     hyprpolkitagent

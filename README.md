@@ -92,7 +92,6 @@ make hyprland-status
 - `hyprland` - Main compositor
 - `hyprcursor` - Cursor management
 - `hypridle` - Idle daemon
-- `hyprlock` - Screen locker
 - `hyprpicker` - Color picker
 - `hyprshot` - Screenshot utility
 - `hyprpolkitagent` - Polkit authentication agent
@@ -212,7 +211,6 @@ All configuration files are symlinked via `make links`:
 
 - `~/.config/hypr/hyprland.conf` - Main configuration
 - `~/.config/hypr/hypridle.conf` - Idle management (screen dim, lock, suspend)
-- `~/.config/hypr/hyprlock.conf` - Lock screen appearance
 - `~/.config/caelestia/shell.json` - Caelestia Shell settings
 - `~/.config/rofi/` - Fallback clipboard/keybind menus
 - `~/.config/matugen/` - Color generation templates
