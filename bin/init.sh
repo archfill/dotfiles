@@ -129,19 +129,8 @@ case "$OS_NAME" in
     log_info "Linux setup starting (mode: $install_mode)"
 
     if [[ "${DOTFILES_LEGACY_INSTALL:-0}" == "1" || "$install_mode" == "legacy" ]]; then
-      log_warning "Running legacy Linux package/app installers"
+      log_warning "Running legacy Linux base OS package installer"
       run "bin/platform/linux/packages.sh"
-      if [[ "${SKIP_FONT_INSTALL:-0}" != "1" ]]; then
-        log_info "Starting font installation..."
-        if bash bin/apps/tools/fonts.sh; then
-          log_success "Font installation completed successfully"
-        else
-          log_warning "Font installation failed (continuing with setup)"
-        fi
-      else
-        log_info "Skipping font installation (SKIP_FONT_INSTALL=1)"
-      fi
-      RUN_LEGACY_APP_SETUP=1
     else
       log_info "Using Nix/Home Manager for Linux user environment"
       apply_nix_linux_configuration

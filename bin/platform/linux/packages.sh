@@ -22,14 +22,14 @@ distro="$(get_os_distribution)"
 arch="$(detect_architecture)"
 
 install_common_packages_debian() {
-    log_info "Installing packages for Debian/Ubuntu..."
+    log_info "Installing base OS packages for Debian/Ubuntu..."
 
     # Parse command line options
     parse_install_options "$@"
 
     # Quick check mode
     if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install Debian/Ubuntu packages"
+        log_info "QUICK: Would install Debian/Ubuntu base OS packages"
         return 0
     fi
 
@@ -38,153 +38,52 @@ install_common_packages_debian() {
         sudo apt install -y \
           python3 \
           wget \
-          less \
           zsh \
-          tmux \
           vim \
-          fzf \
-          ripgrep \
-          git-delta \
           fontconfig \
           curl \
           unzip \
-          p7zip-full \
-          zoxide \
-          bat \
-          jq \
-          wl-clipboard \
-          sqlite3 \
-          libsqlite3-dev \
-          ffmpegthumbnailer \
-          poppler-utils \
-          fd-find \
-          imagemagick \
-          ffmpeg \
           fcitx5 \
           fcitx5-mozc \
           fcitx5-config-qt
     else
-        log_info "[DRY RUN] Would install Debian/Ubuntu packages"
+        log_info "[DRY RUN] Would install Debian/Ubuntu base OS packages"
     fi
 
-    # Note: uv is now installed via bin/apps/languages/python.sh
-}
-
-# Install yay (AUR helper) with skip logic
-install_yay_arch() {
-    log_info "Installing yay (AUR helper)..."
-    
-    # Parse command line options
-    parse_install_options "$@"
-    
-    # Check if yay should be skipped
-    if [[ "$FORCE_INSTALL" != "true" ]] && command -v yay >/dev/null 2>&1; then
-        log_skip_reason "yay" "Already installed: $(yay --version 2>/dev/null | head -1 || echo 'version unknown')"
-        return 0
-    fi
-    
-    # Quick check mode
-    if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install yay (AUR helper)"
-        return 0
-    fi
-    
-    if [[ "$DRY_RUN" != "true" ]]; then
-        # Install base-devel if needed
-        sudo pacman -Suy --needed git base-devel --noconfirm
-        
-        # Install yay from AUR
-        local tempdir
-        tempdir=$(mktemp -d)
-        git clone https://aur.archlinux.org/yay.git "${tempdir}/yay"
-        pushd "${tempdir}/yay" >/dev/null
-        makepkg -si --noconfirm
-        popd >/dev/null
-        rm -rf "${tempdir}"
-        
-        # Verify yay installation
-        if command -v yay >/dev/null 2>&1; then
-            log_success "yay installed successfully: $(yay --version | head -1)"
-        else
-            log_error "yay installation failed"
-            return 1
-        fi
-    else
-        log_info "[DRY RUN] Would install yay from AUR"
-    fi
-    
-    return 0
+    # User-space tools and language runtimes are managed by Nix.
 }
 
 install_common_packages_arch() {
-    log_info "Installing packages for Arch Linux..."
+    log_info "Installing base OS packages for Arch Linux..."
 
     # Parse command line options
     parse_install_options "$@"
 
-    # Install yay first (with skip logic)
-    install_yay_arch "$@"
-
     # Quick check mode
     if [[ "$QUICK_CHECK" == "true" ]]; then
-        log_info "QUICK: Would install Arch Linux packages"
+        log_info "QUICK: Would install Arch Linux base OS packages"
         return 0
     fi
 
     # Official repository packages (installed via pacman)
     local official_packages=(
-        ripgrep
-        git-delta
         wget
         unzip
-        p7zip
         curl
         fontconfig
-        less
-        mpv
         vim
         zsh
-        tmux
-        fzf
-        lazygit
-        bottom
-        zoxide
-        bat
-        jq
-        wl-clipboard
-        cliphist
-        sqlite
-        ffmpegthumbnailer
-        poppler
-        fd
-        imagemagick
-        matugen
-    )
-
-    # AUR-only packages (installed via yay)
-    local aur_packages=(
-        ghostty
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
         # Install official repository packages via pacman
         log_info "Installing ${#official_packages[@]} packages from official repositories..."
         sudo pacman -S --needed --noconfirm "${official_packages[@]}"
-
-        # Install AUR packages via yay (if available)
-        if command -v yay >/dev/null 2>&1; then
-            log_info "Installing ${#aur_packages[@]} packages from AUR..."
-            yay -S --needed --noconfirm "${aur_packages[@]}"
-        else
-            log_warning "yay not available. AUR packages skipped: ${aur_packages[*]}"
-            log_info "Install yay to enable AUR package installation"
-        fi
     else
-        log_info "[DRY RUN] Would install ${#official_packages[@]} official packages via pacman"
-        log_info "[DRY RUN] Would install ${#aur_packages[@]} AUR packages via yay"
+        log_info "[DRY RUN] Would install ${#official_packages[@]} Arch Linux base OS packages"
     fi
 
-    # Note: uv and language/runtime tools are managed by Nix.
+    # User-space tools and language runtimes are managed by Nix.
 }
 
 # Main installation function
@@ -213,17 +112,6 @@ main() {
     esac
     
     log_success "Linux configuration completed!"
-    
-    if [[ "${distro}" == "arch" ]]; then
-        log_info ""
-        log_info "Available yay commands:"
-        log_info "  yay -S <package>       # Install package from official repos or AUR"
-        log_info "  yay -Syu               # Update all packages"
-        log_info "  yay -Ss <search>       # Search packages"
-        log_info "  yay -Qi <package>      # Show package info"
-        log_info ""
-        log_info "Note: yay provides access to AUR (Arch User Repository) packages"
-    fi
 }
 
 # Run main function
