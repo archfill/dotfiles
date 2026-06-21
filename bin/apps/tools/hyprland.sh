@@ -217,7 +217,6 @@ install_hyprland() {
 
     # AUR packages (conditional on yay availability)
     local aur_packages=(
-        wlogout                     # Wayland logout menu
         overskride                  # Bluetooth manager (GTK4, Hyprland-recommended)
         eww                         # Standalone widget system (for submap overlay)
         hyprshell                   # Alt+Tab style window switcher / launcher
@@ -287,7 +286,6 @@ install_hyprland() {
             local hyprland_configs=(
                 ".config/hypr"
                 ".config/rofi"
-                ".config/wlogout"
                 ".config/eww"
                 ".config/matugen"
             )
