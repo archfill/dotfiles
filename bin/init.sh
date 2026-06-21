@@ -16,7 +16,6 @@ run() {
 }
 
 prepare_common_environment() {
-  mkdir -p "$HOME/.config"
   log_info "Dotfiles setup starting at $(date)"
 }
 
