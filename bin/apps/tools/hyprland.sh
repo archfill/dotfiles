@@ -105,7 +105,7 @@ show_nvidia_setup() {
 
     log_info "5. Environment Variables"
     log_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    log_success "✓ Already configured in ~/.config/hypr/local.conf"
+    log_success "✓ Shared NVIDIA/Wayland variables are configured in hyprland.conf"
     log_info ""
 
     log_info "═══════════════════════════════════════════════════════════"
@@ -319,15 +319,15 @@ install_hyprland() {
             done
             log_success "Hyprland configuration symlinks ready"
 
-            # Create local.conf for GPU-specific environment variables
+            # Create local.conf for machine-specific environment overrides
             local local_conf="${HOME}/.config/hypr/local.conf"
             log_info "Creating local configuration file..."
 
             if [[ "$has_nvidia" == "true" ]]; then
-                # NVIDIA GPU detected - create local.conf with NVIDIA environment variables
+                # NVIDIA GPU detected - create local.conf with minimal NVIDIA environment overrides
                 cat > "$local_conf" << 'EOF'
 # =====================================================
-# Local Environment Variables (Auto-generated)
+# Local Environment Overrides (Auto-generated)
 # =====================================================
 # This file is created automatically during installation
 # and is not tracked by git (.gitignore)
