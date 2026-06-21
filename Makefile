@@ -115,15 +115,15 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ Hyprland: Not installed"; \
 	fi
-	@if command -v rofi >/dev/null 2>&1; then \
-		echo "✅ rofi: $$(rofi -version 2>&1 | head -1)"; \
-	else \
-		echo "❌ rofi: Not installed"; \
-	fi
 	@if command -v caelestia-shell >/dev/null 2>&1; then \
 		echo "✅ caelestia-shell: installed"; \
 	else \
 		echo "❌ caelestia-shell: Not installed"; \
+	fi
+	@if command -v rofi >/dev/null 2>&1; then \
+		echo "✅ rofi: $$(rofi -version 2>&1 | head -1) (clipboard/cheatsheet)"; \
+	else \
+		echo "❌ rofi: Not installed"; \
 	fi
 	@echo ""
 	@echo "=== Configuration Files ==="
@@ -132,8 +132,13 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ hyprland.conf: missing"; \
 	fi
+	@if [ -w ~/.config/caelestia/shell.json ]; then \
+		echo "✅ caelestia config: writable"; \
+	else \
+		echo "❌ caelestia config: missing or read-only"; \
+	fi
 	@if [ -d ~/.config/rofi ]; then \
-		echo "✅ rofi config: exists"; \
+		echo "✅ rofi config: exists (fallback menus)"; \
 	else \
 		echo "❌ rofi config: missing"; \
 	fi
