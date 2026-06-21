@@ -296,7 +296,7 @@ For more help:
 
 ## 🇯🇵 Japanese Features
 
-- **SKK Input**: yaskkserv2 server with comprehensive dictionaries
+- **Japanese Input**: SKK-oriented editor/input configuration
 - **Text Linting**: textlint for technical Japanese writing
 - **Media Styles**: WEB+DB PRESS, TechBooster style guides
 

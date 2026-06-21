@@ -70,14 +70,6 @@ codex-bump: ## codex の SRI hash を再取得 (usage: make codex-bump VERSION=0
 	@echo ""
 	@echo "==> nix/pkgs/codex/default.nix の version + hashes を差し替えて 'make diff' → 'make rebuild'"
 
-wezterm-install: ## Build and install WezTerm terminal from source
-	@echo "Installing WezTerm..."
-	bash ./install_wezterm.sh
-
-yaskkserv2-build: ## Build Japanese SKK input method server
-	@echo "Building yaskkserv2..."
-	bash ./make_yaskkserv2.sh
-
 hyprland-status: ## Check Hyprland installation and configuration status
 	@echo "Checking Hyprland status..."
 	@echo ""
