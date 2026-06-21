@@ -783,9 +783,6 @@ sdk-paths: ## Show SDK environment variables and paths
 init-log: ## Complete dotfiles initialization with logging
 	@bash -c 'source ./bin/lib/logger.sh && run_with_log "init" bash ./bin/init.sh'
 
-apps-setup-log: ## Run apps setup with logging
-	@bash -c 'source ./bin/lib/logger.sh && run_with_log "apps_setup" bash ./bin/apps_setup.sh'
-
 # ===== ログ管理コマンド =====
 logs-list: ## List all log files
 	@echo "Available log files:"

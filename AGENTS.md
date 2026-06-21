@@ -290,7 +290,6 @@ bin/
 │   └── uv_installer.sh             # uv専用インストーラー
 │
 ├── init.sh                         # メインエントリーポイント (make init)
-├── apps_setup.sh                   # apps/配下を順次実行
 ├── link.sh                         # シンボリックリンク作成
 ├── config.sh                       # Git設定
 ├── appimage-manager.sh             # AppImage一括管理
@@ -311,11 +310,6 @@ bin/init.sh
   │   │             (nix-darwin + home-manager + homebrew モジュールで宣言管理)
   │   ├─ [Linux]   bin/platform/linux/packages.sh
   │   └─ [Cygwin]  bin/platform/cygwin/install_cygwin.sh
-  │
-  ├─ bin/apps_setup.sh
-  │   ├─ apps/languages/* (依存順)
-  │   ├─ apps/devops/*
-  │   └─ apps/tools/*
   │
   └─ bin/config.sh (Git設定)
 ```

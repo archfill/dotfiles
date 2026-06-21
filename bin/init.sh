@@ -91,7 +91,6 @@ run "bin/link.sh"
 
 OS_NAME="$(uname)"
 log_info "Detected OS: $OS_NAME"
-RUN_LEGACY_APP_SETUP=0
 
 case "$OS_NAME" in
   Darwin)
@@ -140,7 +139,6 @@ case "$OS_NAME" in
   MINGW32_NT*|MINGW64_NT*)
     log_info "Windows (Cygwin) setup starting"
     run "bin/platform/cygwin/install_cygwin.sh"
-    RUN_LEGACY_APP_SETUP=1
     ;;
 
   *)
@@ -148,14 +146,6 @@ case "$OS_NAME" in
     exit 1
     ;;
 esac
-
-# Skip app setup in CI environment and Nix-managed environments
-if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" && "$RUN_LEGACY_APP_SETUP" == "1" ]]; then
-  log_info "Starting legacy app setup"
-  run "bin/apps_setup.sh"
-else
-  log_info "Skipping legacy app setup"
-fi
 
 log_info "Starting config setup"
 run "bin/config.sh"
