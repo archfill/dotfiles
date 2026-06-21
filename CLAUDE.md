@@ -228,8 +228,7 @@ bin/
 ├── lib/                            # 共通ライブラリ
 │   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
-│   ├── install_checker.sh          # インストール状態管理・スキップ判定
-│   └── uv_installer.sh             # uv専用インストーラー
+│   └── logger.sh                   # init-log 用ログヘルパー
 │
 ├── init.sh                         # メインエントリーポイント (make init)
 ├── config.sh                       # Git設定

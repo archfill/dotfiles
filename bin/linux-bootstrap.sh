@@ -10,7 +10,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 source "$DOTFILES_DIR/bin/lib/common.sh"
-source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 
 setup_error_handling
 

@@ -237,3 +237,44 @@ check_command_exists() {
         return 1
     fi
 }
+
+# 共通オプションの解析
+parse_install_options() {
+    FORCE_INSTALL=false
+    QUICK_CHECK=false
+    SKIP_DEPS=false
+    DRY_RUN=false
+    VERBOSE=false
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --force)
+                FORCE_INSTALL=true
+                shift
+                ;;
+            --quick)
+                QUICK_CHECK=true
+                shift
+                ;;
+            --skip-deps)
+                SKIP_DEPS=true
+                shift
+                ;;
+            --dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            --verbose)
+                VERBOSE=true
+                shift
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+
+    if [[ "$VERBOSE" == "true" ]]; then
+        log_info "Options: FORCE=$FORCE_INSTALL, QUICK=$QUICK_CHECK, SKIP_DEPS=$SKIP_DEPS, DRY_RUN=$DRY_RUN"
+    fi
+}
