@@ -88,7 +88,6 @@ dotfiles/
 ├── bin/               # インストール・セットアップスクリプト (詳細は次セクション)
 │   ├── apps/          # クロスプラットフォーム開発ツール
 │   ├── platform/      # プラットフォーム固有処理
-│   ├── install-methods/ # 特殊インストール方法
 │   └── lib/           # 共通ライブラリ
 │
 ├── config/            # dotfiles設定
@@ -218,11 +217,10 @@ nix/
 
 ### 📊 概要
 
-インストールスクリプトを**3つの軸**で整理:
+インストールスクリプトを**2つの軸**で整理:
 
 1. **apps/** - クロスプラットフォーム開発ツール（何をインストールするか）
 2. **platform/** - プラットフォーム固有処理（どこで動かすか）
-3. **install-methods/** - 特殊インストール方法（どうやってインストールするか）
 
 ### 📂 詳細構造
 
@@ -247,12 +245,6 @@ bin/
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ
 │   │
-├── install-methods/                # 特殊インストール方法
-│   │
-│   └── binary/                     # バイナリ配布版 (2スクリプト)
-│       ├── neovim-macos.sh         # Neovim macOS tar.gz版
-│       └── sketchybar.sh           # SketchyBar (SbarLua)
-│
 ├── lib/                            # 共通ライブラリ
 │   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
@@ -261,7 +253,6 @@ bin/
 │
 ├── init.sh                         # メインエントリーポイント (make init)
 ├── config.sh                       # Git設定
-├── neovim-unified-manager.sh       # Neovim統合管理
 └── test.sh                         # テストスクリプト
 ```
 
@@ -281,7 +272,7 @@ bin/init.sh
 
 ### 💡 設計原則
 
-1. **責務の分離**: 3軸（apps/platform/install-methods）で明確に分類
+1. **責務の分離**: apps/platform で明確に分類
 2. **依存関係管理**: languages → devops → tools の順で実行
 3. **クロスプラットフォーム**: apps/は全環境で動作
 4. **Git履歴保持**: git mv使用でファイル履歴を完全保持
@@ -575,7 +566,7 @@ aur_packages=(...)       # yayでインストール
 
 1. **カテゴリ別整理** - `bin/apps/` を `languages/`, `devops/`, `tools/` に分類
 2. **プラットフォーム統一** - `bin/platform/` 配下に全プラットフォーム集約
-3. **インストール方法分離** - `bin/install-methods/` で特殊なバイナリ配布を分離
+3. **特殊インストールの分離** - 当時は特殊なバイナリ配布を分離（現在は廃止）
 4. **重複解消** - uv/miseの重複インストールを削除、フォント管理を統合
 5. **命名統一** - `brew.sh` → `packages.sh`, `install_linux.sh` → `packages.sh`
 

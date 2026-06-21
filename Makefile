@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config test clean status info hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config test clean status info hyprland-status monitors monitors-auto monitors-single monitors-dual docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -166,23 +166,6 @@ monitors-dual: ## Force dual display mode
 	@echo "Configuring for dual display mode..."
 	@bash ~/.config/hypr/auto-detect-monitors.sh --mode dual
 
-# ===== Neovim管理システム =====
-neovim-install: ## Install Neovim version (fzf selection or VERSION=stable/nightly)
-	@bash ./bin/neovim-unified-manager.sh install "$(VERSION)"
-
-neovim-switch: ## Switch Neovim version (fzf selection or VERSION=stable/nightly)
-	@bash ./bin/neovim-unified-manager.sh switch "$(VERSION)"
-
-neovim-uninstall: ## Uninstall Neovim version (fzf selection or VERSION=stable/nightly/all)
-	@bash ./bin/neovim-unified-manager.sh uninstall "$(VERSION)"
-
-neovim-status: ## Show unified status of all Neovim versions
-	@bash ./bin/neovim-unified-manager.sh status
-
-neovim-update: ## Update current active Neovim version
-	@echo "Updating current Neovim version..."
-	@bash ./bin/neovim-unified-manager.sh update
-
 # テストとメンテナンス
 test: ## Run dotfiles functionality tests
 	@echo "Running dotfiles tests..."
@@ -334,7 +317,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 			echo "Installing SketchyBar via Homebrew..."; \
 			brew tap FelixKratz/formulae && brew install sketchybar; \
 		fi; \
-		bash bin/install-methods/binary/sketchybar.sh; \
+		bash bin/platform/macos/sbarlua.sh; \
 		echo "✅ SketchyBar setup completed!"; \
 		echo ""; \
 		echo "💡 Next steps:"; \
@@ -348,7 +331,7 @@ sketchybar-install: ## Install SketchyBar with SbarLua support
 sketchybar-uninstall: ## Uninstall SbarLua
 	@echo "Uninstalling SbarLua..."
 	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		bash bin/install-methods/binary/sketchybar.sh uninstall; \
+		bash bin/platform/macos/sbarlua.sh uninstall; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \
@@ -386,7 +369,7 @@ aerospace-install: ## Install AeroSpace window manager with borders and sketchyb
 		if ! command -v sketchybar >/dev/null 2>&1; then \
 			brew tap FelixKratz/formulae && brew install sketchybar; \
 		fi; \
-		bash bin/install-methods/binary/sketchybar.sh; \
+		bash bin/platform/macos/sbarlua.sh; \
 		echo ""; \
 		echo "✅ AeroSpace ecosystem installed successfully!"; \
 		echo ""; \
@@ -429,7 +412,7 @@ aerospace-uninstall: ## Uninstall AeroSpace, borders, and optionally sketchybar
 		if [[ "$$uninstall_sketchybar" == "y" || "$$uninstall_sketchybar" == "Y" ]]; then \
 			echo "Uninstalling SketchyBar..."; \
 			brew services stop sketchybar 2>/dev/null || true; \
-			bash bin/install-methods/binary/sketchybar.sh uninstall 2>/dev/null || true; \
+			bash bin/platform/macos/sbarlua.sh uninstall 2>/dev/null || true; \
 			brew uninstall sketchybar 2>/dev/null || true; \
 			echo "✅ SketchyBar uninstalled"; \
 		fi; \
@@ -632,7 +615,7 @@ tmux-reload: ## Reload tmux configuration
 
 
 # ===== macOS特化コマンド =====
-macos-setup: ## Complete macOS development environment setup (dotfiles + apps + neovim)
+macos-setup: ## Complete macOS development environment setup (dotfiles + apps)
 	@echo "Setting up complete macOS development environment..."
 	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
 		echo "🍎 Starting comprehensive macOS setup..."; \
@@ -648,9 +631,7 @@ macos-setup: ## Complete macOS development environment setup (dotfiles + apps + 
 		echo "✅ macOS setup completed!"; \
 		echo ""; \
 		echo "💡 Next steps:"; \
-		echo "  • Install Neovim: make neovim-install VERSION=stable"; \
 		echo "  • Run tests: make macos-test"; \
-		echo "  • Check status: make neovim-status"; \
 	else \
 		echo "❌ This command is only for macOS"; \
 		exit 1; \

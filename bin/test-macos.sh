@@ -96,22 +96,6 @@ if command -v brew &>/dev/null; then
     fi
 fi
 
-# Neovim統合管理システムテスト
-echo ""
-echo "=== Neovim Unified Manager Test ==="
-if [[ -x "$DOTFILES_DIR/bin/neovim-unified-manager.sh" ]]; then
-    echo "✅ Neovim unified manager script found"
-    
-    # プラットフォーム検出テスト
-    if bash "$DOTFILES_DIR/bin/neovim-unified-manager.sh" deps 2>&1 | grep -q "Installing dependencies for macOS"; then
-        echo "✅ macOS platform detection working"
-    else
-        echo "❌ macOS platform detection failed"
-    fi
-else
-    echo "❌ Neovim unified manager script not found"
-fi
-
 echo ""
 echo "🍎 macOS test completed"
 
@@ -120,7 +104,7 @@ echo ""
 echo "=== Recommendations ==="
 if [[ ${#missing_deps[@]} -gt 0 ]]; then
     echo "💡 Install missing dependencies with:"
-    echo "   make neovim-unified-deps"
+    echo "   make rebuild"
 fi
 
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then

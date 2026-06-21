@@ -13,87 +13,13 @@
 
 ## Neovim Version Management
 
-### Neovim HEAD Auto-Tracking System (2025年6月16日実装)
+Neovim は Nix で管理します。`nix/modules/common.nix` の `neovimPackage` が全 OS 共通の配布元です。
 
-#### 概要
-Nix neovim-nightly-overlayの方式を参考に、Neovim HEADの自動追跡・ビルドシステムを構築。yutkatさんのdotfiles環境と同等の最新性を実現。
+- 通常は `pkgs.neovim`
+- nightly を使う場合は `useNeovimNightly = true` に変更し、`neovim-nightly-overlay` を使う
+- 反映は `make rebuild`
 
-#### クロスプラットフォーム対応
-- **Linux**: apt/dnf/yum/pacman による自動依存関係管理
-- **macOS**: Homebrew + Xcode Command Line Tools 自動セットアップ
-- **Apple Silicon対応**: M1/M2 Mac特有のパス(`/opt/homebrew`)に対応
-
-#### システム構成
-- **`bin/neovim-head-tracker.sh`**: メインビルドスクリプト（Nixスタイル）
-- **`bin/neovim-auto-updater.sh`**: 自動更新システム（systemd/cron対応）
-- **`bin/neovim-unified-manager.sh`**: 統合版管理（stable/nightly/HEAD）
-- **Makefile統合**: `make neovim-head-*` + `make neovim-unified-*` コマンド群
-
-#### 主要機能
-
-##### 1. Nixスタイル依存関係管理
-- **deps.txt解析**: `cmake.deps/deps.txt` を自動パース
-- **Bundled Tree-sitter**: Neovim専用のTree-sitterバージョン使用
-- **USE_BUNDLED=1**: Nix overlayと同じbundled依存関係
-- **SHA256検証**: 依存関係の整合性チェック
-
-##### 2. 自動追跡システム
-```bash
-# 基本コマンド
-make neovim-head-build         # フルビルド
-make neovim-head-update        # 更新があるときのみビルド
-make neovim-head-status        # 現在の状態確認
-
-# 自動更新
-make neovim-head-auto-install  # 自動更新システム設置
-make neovim-head-auto-status   # 自動更新状態確認
-```
-
-##### 3. ビルド設定（Nix overlay準拠）
-- **ビルドタイプ**: `RelWithDebInfo` (デバッグ情報付きリリース)
-- **Ninja**: 高速並列ビルド
-- **インストール先**: `$HOME/.local`
-- **ログ管理**: 詳細なビルドログ保存
-
-### Neovim統合管理システム (2025年6月16日実装)
-
-#### 概要
-既存のstable/nightly管理システムとHEAD追跡システムを統合し、完全な互換性と競合回避を実現した統一管理システム。
-
-#### システム構成
-- **`bin/neovim-unified-manager.sh`**: 統合管理スクリプト
-- **既存システム統合**: neovim_installer.sh, neovim_switcher.sh との完全互換
-- **状態管理**: `~/.neovim_unified_state` による一元的な状態追跡
-
-#### 主要機能
-
-##### 1. **競合回避システム**
-```bash
-# HEAD版インストール時
-- stable/nightlyバイナリは保持（nvim-stable, nvim-nightly）
-- nvimシンボリックリンクのみ削除・置換
-
-# stable/nightly版インストール時
-- HEAD版を一時的に無効化
-- HEADバイナリを退避（nvim-head-backup）
-```
-
-##### 2. **システムワイドNeovim検出**
-- パッケージマネージャー経由のNeovim検出
-- 競合警告と削除推奨
-- PATH優先度の確認
-
-##### 3. **統一コマンドインターフェース**
-```bash
-# 基本操作
-make neovim-unified-status                    # 全バージョン状態確認
-make neovim-unified-install VERSION=head      # 競合解決付きインストール
-make neovim-unified-switch VERSION=stable     # バージョン切り替え
-make neovim-unified-uninstall VERSION=all     # 完全削除
-
-# 旧コマンドとの互換性
-make neovim-status                            # → neovim-unified-status
-```
+旧来の Homebrew/AppImage/HEAD ビルド用スクリプトと Makefile ターゲットは削除済みです。
 
 ---
 

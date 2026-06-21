@@ -28,14 +28,11 @@ make macos-setup-essential
 make macos-setup-minimal
 ```
 
-### 2. Neovim HEAD版のインストール
+### 2. Nix 設定の反映
 
 ```bash
-# 依存関係の確認とインストール（既に実行済みの場合はスキップ可能）
-make neovim-deps
-
-# Neovim HEAD版のインストール
-make neovim-install VERSION=head
+# Neovim を含む開発環境を反映
+make rebuild
 ```
 
 ### 3. 環境テスト
@@ -49,13 +46,13 @@ make macos-test
 
 ### Xcode Command Line Tools
 
-Neovim HEAD版のビルドには Xcode Command Line Tools が必要です。
+一部の macOS 向け開発ツールや Homebrew パッケージには Xcode Command Line Tools が必要です。
 
 ```bash
 # 手動インストール
 xcode-select --install
 
-# 自動インストール（make macos-setup実行時）
+# 自動インストール（必要なセットアップ実行時）
 # 対話式でインストール確認が表示されます
 ```
 
@@ -137,32 +134,9 @@ make macos-packages-minimal # 最小限のHomebrewパッケージのみインス
 make macos-test            # macOS環境テスト
 ```
 
-### Neovim統一管理コマンド
+### Neovim
 
-```bash
-# 統合管理システム（推奨）
-make neovim-status                            # 全バージョンのステータス表示
-make neovim-install VERSION=stable           # stable版インストール
-make neovim-install VERSION=nightly          # nightly版インストール
-make neovim-install VERSION=head             # HEAD版インストール
-make neovim-switch VERSION=stable            # stable版に切り替え
-make neovim-switch VERSION=nightly           # nightly版に切り替え
-make neovim-switch VERSION=head              # HEAD版に切り替え
-make neovim-uninstall VERSION=stable         # stable版をアンインストール
-make neovim-uninstall VERSION=all            # 全バージョンを削除
-make neovim-update                            # 現在のバージョンを更新
-make neovim-deps                              # 依存関係チェック・インストール
-```
-
-### HEAD版専用コマンド
-
-```bash
-make neovim-head-build        # HEAD版のビルド
-make neovim-head-update       # HEAD版の更新
-make neovim-head-status       # HEAD版のステータス
-make neovim-head-clean        # ビルドキャッシュのクリア
-make neovim-head-clean-all    # 全データの削除
-```
+Neovim は Nix の `nix/modules/common.nix` で管理します。macOS でも個別の Homebrew/ビルドスクリプトは使わず、`make rebuild` で反映します。
 
 ## トラブルシューティング
 
@@ -206,16 +180,6 @@ ln -sf "$brew_prefix/bin/ninja-build" "$brew_prefix/bin/ninja"
 ```
 
 ## ログとデバッグ
-
-### ビルドログの確認
-
-```bash
-# HEAD版のビルドログ
-tail -f ~/.local/neovim-head/build.log
-
-# 依存関係の確認
-make neovim-deps
-```
 
 ### 環境診断
 

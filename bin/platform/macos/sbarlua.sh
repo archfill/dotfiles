@@ -65,10 +65,10 @@ install_sbarlua() {
     log_info "Installing SbarLua (official method)..."
 
     if (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua && make install && rm -rf /tmp/SbarLua); then
-        log_info "✅ SbarLua installed successfully"
+        log_info "SbarLua installed successfully"
         return 0
     else
-        log_error "❌ SbarLua installation failed"
+        log_error "SbarLua installation failed"
         return 1
     fi
 }
@@ -77,10 +77,10 @@ uninstall_sbarlua() {
     log_info "Uninstalling SbarLua..."
 
     if (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua && make uninstall && rm -rf /tmp/SbarLua); then
-        log_info "✅ SbarLua uninstalled successfully"
+        log_info "SbarLua uninstalled successfully"
         return 0
     else
-        log_error "❌ SbarLua uninstall failed"
+        log_error "SbarLua uninstall failed"
         return 1
     fi
 }
@@ -98,15 +98,14 @@ main() {
 
             if check_installation; then
                 log_info "SbarLua is already installed and functional"
-                log_info "💡 Next step: make sketchybar-convert"
+                log_info "Next step: make sketchybar-test"
             else
                 if install_sbarlua; then
                     log_info ""
-                    log_info "🎉 SbarLua setup completed!"
+                    log_info "SbarLua setup completed."
                     log_info ""
                     log_info "Next steps:"
-                    log_info "  1. Convert to Lua config: make sketchybar-convert"
-                    log_info "  2. Test the setup: make sketchybar-test"
+                    log_info "  1. Test the setup: make sketchybar-test"
                 else
                     exit 1
                 fi
@@ -115,7 +114,7 @@ main() {
         "uninstall")
             if uninstall_sbarlua; then
                 log_info ""
-                log_info "🗑️ SbarLua uninstall completed!"
+                log_info "SbarLua uninstall completed."
             else
                 exit 1
             fi
