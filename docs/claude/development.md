@@ -65,10 +65,9 @@ npm install -g typescript
 
 ### Complete Integration (2025年6月)
 
-- **Complete Integration**: Automatic SDK installation and FVM setup
-- **Platform Support**: macOS (Homebrew + manual), Linux (manual)
+- **SDK Management**: FVM is provided by Nix/Home Manager
+- **Version Management**: Flutter SDK versions are selected per project with FVM
 - **Environment**: Dynamic path detection and Flutter environment setup
-- **Command**: `make flutter-setup` for one-command setup
 
 ### FVM Usage
 

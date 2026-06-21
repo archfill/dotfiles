@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status terraform-setup docker-setup devops-sdks sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status terraform-setup docker-setup devops-sdks sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -96,11 +96,6 @@ wezterm-install: ## Build and install WezTerm terminal from source
 yaskkserv2-build: ## Build Japanese SKK input method server
 	@echo "Building yaskkserv2..."
 	bash ./make_yaskkserv2.sh
-
-# Flutter開発環境
-flutter-setup: ## Install and setup Flutter development environment
-	@echo "Setting up Flutter development environment..."
-	bash ./bin/apps/devops/flutter.sh
 
 # Hyprland環境（legacy Arch Linux installer）
 hyprland-install: ## Legacy Arch-only Hyprland installer; prefer Nix/Home Manager

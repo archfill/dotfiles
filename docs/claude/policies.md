@@ -37,7 +37,7 @@
 **修正対象スクリプト**:
 
 1. **`bin/lib/volta_installer.sh`**: ※2025年12月にmiseへ移行のため削除
-2. **`bin/apps/52-flutter.sh`**: Flutter/Dart PATHの自動追加を削除
+2. **Flutter installer**: FVM を Nix 管理へ移行したため削除済み
 3. **`bin/apps/php-apt.sh`**: Composer PATH追加処理を削除（既に削除済み）
 
 **修正後の動作**:
