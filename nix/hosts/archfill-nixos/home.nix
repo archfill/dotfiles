@@ -10,6 +10,13 @@
   home.username = "archfill";
   home.homeDirectory = "/home/archfill";
 
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+      gtk-theme = "adw-gtk3-dark";
+    };
+  };
+
   programs.caelestia = {
     enable = true;
     package = inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli;
