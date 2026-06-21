@@ -42,7 +42,7 @@ get_nvim_info() {
   local icon="󰅴" # デフォルトアイコン（cog）
 
   # カスタム管理システムのチェック（~/.local/bin/nvim）
-  # Linux/macOS: AppImage/tar.gz方式でstable/nightlyを管理
+  # macOSのstable/nightly切り替えなど、明示的なローカルリンクを判定
   if [[ -L "$HOME/.local/bin/nvim" ]]; then
     local nvim_target
     nvim_target=$(readlink "$HOME/.local/bin/nvim" 2>/dev/null || echo "")
@@ -74,4 +74,3 @@ fi
 # キャッシュが無効な場合、新しい情報を取得してキャッシュに保存
 result=$(get_nvim_info)
 echo "$result" | tee "$CACHE_FILE"
-

@@ -247,11 +247,7 @@ bin/
 │   ├── linux/                      # Linux (1スクリプト)
 │   │   └── packages.sh             # apt/pacman/yayパッケージ
 │   │
-├── install-methods/                # 特殊インストール方法 (4スクリプト)
-│   │
-│   ├── appimage/                   # Linux AppImage (2スクリプト)
-│   │   ├── neovim.sh               # Neovim AppImage管理 (stable/nightly)
-│   │   └── winboat.sh              # Winboat AppImage
+├── install-methods/                # 特殊インストール方法
 │   │
 │   └── binary/                     # バイナリ配布版 (2スクリプト)
 │       ├── neovim-macos.sh         # Neovim macOS tar.gz版
@@ -261,12 +257,10 @@ bin/
 │   ├── common.sh                   # 基本関数・ログ・プラットフォーム検出
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
 │   ├── install_checker.sh          # インストール状態管理・スキップ判定
-│   ├── appimage_manager.sh         # AppImage管理
 │   └── uv_installer.sh             # uv専用インストーラー
 │
 ├── init.sh                         # メインエントリーポイント (make init)
 ├── config.sh                       # Git設定
-├── appimage-manager.sh             # AppImage一括管理
 ├── neovim-unified-manager.sh       # Neovim統合管理
 └── test.sh                         # テストスクリプト
 ```
@@ -574,14 +568,14 @@ aur_packages=(...)       # yayでインストール
 **背景:**
 
 - アプリインストールスクリプトの重複と分散
-- 不明確なディレクトリ構造（apps/, linux/apps/, mac/, appimages/, installers/）
+- 不明確なディレクトリ構造（apps/, linux/apps/, mac/, installers/）
 - uv/miseの二重インストール問題
 
 **変更内容:**
 
 1. **カテゴリ別整理** - `bin/apps/` を `languages/`, `devops/`, `tools/` に分類
 2. **プラットフォーム統一** - `bin/platform/` 配下に全プラットフォーム集約
-3. **インストール方法分離** - `bin/install-methods/` でAppImageとバイナリ配布を分離
+3. **インストール方法分離** - `bin/install-methods/` で特殊なバイナリ配布を分離
 4. **重複解消** - uv/miseの重複インストールを削除、フォント管理を統合
 5. **命名統一** - `brew.sh` → `packages.sh`, `install_linux.sh` → `packages.sh`
 

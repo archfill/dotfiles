@@ -20,7 +20,7 @@ load_config
 check_platform() {
     if [[ "$(uname -s)" != "Darwin" ]]; then
         log_error "This script is for macOS only"
-        log_info "For Linux (AppImage), use: bin/install-methods/appimage/neovim.sh"
+        log_info "For Linux, Neovim is managed by Nix in this repository."
         exit 1
     fi
 }

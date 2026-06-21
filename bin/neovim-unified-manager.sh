@@ -4,8 +4,8 @@
 # Neovim統合管理ラッパースクリプト
 # プラットフォームに応じて適切なNeovimインストーラーを呼び出します
 #
-# Linux: bin/appimages/neovim.sh (AppImage)
-# macOS: bin/installers/neovim.sh (tar.gz)
+# Linux: managed by Nix/home-manager
+# macOS: bin/install-methods/binary/neovim-macos.sh (Homebrew)
 
 # 共有ライブラリの読み込み
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,7 +30,9 @@ get_neovim_script() {
 
     case "$platform" in
         Linux)
-            echo "$DOTFILES_DIR/bin/install-methods/appimage/neovim.sh"
+            log_error "Linux Neovim is managed by Nix in this repository."
+            log_info "Use 'make rebuild' to apply the Nix configuration."
+            return 1
             ;;
         Darwin)
             echo "$DOTFILES_DIR/bin/install-methods/binary/neovim-macos.sh"
@@ -174,8 +176,8 @@ show_usage() {
 Neovim Unified Manager - Platform-aware wrapper
 
 This script automatically selects the appropriate Neovim installer:
-  • Linux:  bin/appimages/neovim.sh (AppImage)
-  • macOS:  bin/installers/neovim.sh (tar.gz)
+  • Linux:  managed by Nix/home-manager
+  • macOS:  bin/install-methods/binary/neovim-macos.sh (Homebrew)
 
 Usage: neovim-unified-manager.sh <command> [version]
 
@@ -202,8 +204,8 @@ Makefile Usage:
   make neovim-uninstall VERSION=all
 
 Platform-specific Scripts:
-  Linux:  $DOTFILES_DIR/bin/appimages/neovim.sh
-  macOS:  $DOTFILES_DIR/bin/installers/neovim.sh
+  Linux:  Nix configuration
+  macOS:  $DOTFILES_DIR/bin/install-methods/binary/neovim-macos.sh
 EOF
 }
 

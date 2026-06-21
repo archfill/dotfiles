@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config test clean status info hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config test clean status info hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -182,64 +182,6 @@ neovim-status: ## Show unified status of all Neovim versions
 neovim-update: ## Update current active Neovim version
 	@echo "Updating current Neovim version..."
 	@bash ./bin/neovim-unified-manager.sh update
-
-# ===== AppImage一括管理システム =====
-# 一括操作
-appimage-list: ## List all available AppImage scripts
-	@bash ./bin/appimage-manager.sh list
-
-appimage-list-installed: ## List installed AppImages with details
-	@bash ./bin/appimage-manager.sh list-installed
-
-appimage-install-all: ## Install all available AppImages
-	@bash ./bin/appimage-manager.sh install-all
-
-appimage-update-all: ## Update all installed AppImages
-	@bash ./bin/appimage-manager.sh update-all
-
-appimage-uninstall-all: ## Uninstall all AppImages
-	@bash ./bin/appimage-manager.sh uninstall-all
-
-# 個別操作（簡潔な形式）
-appimage-install: ## Install specific AppImage (usage: make appimage-install APP=winboat)
-	@if [ -z "$(APP)" ]; then \
-		echo "Usage: make appimage-install APP=<app-name>"; \
-		echo "Example: make appimage-install APP=winboat"; \
-		echo ""; \
-		bash ./bin/appimage-manager.sh list; \
-	else \
-		bash ./bin/appimage-manager.sh install "$(APP)"; \
-	fi
-
-appimage-update: ## Update specific AppImage (usage: make appimage-update APP=winboat)
-	@if [ -z "$(APP)" ]; then \
-		echo "Usage: make appimage-update APP=<app-name>"; \
-		echo "Example: make appimage-update APP=winboat"; \
-		echo ""; \
-		bash ./bin/appimage-manager.sh list; \
-	else \
-		bash ./bin/appimage-manager.sh update "$(APP)"; \
-	fi
-
-appimage-uninstall: ## Uninstall specific AppImage (usage: make appimage-uninstall APP=winboat)
-	@if [ -z "$(APP)" ]; then \
-		echo "Usage: make appimage-uninstall APP=<app-name>"; \
-		echo "Example: make appimage-uninstall APP=winboat"; \
-		echo ""; \
-		bash ./bin/appimage-manager.sh list; \
-	else \
-		bash ./bin/appimage-manager.sh uninstall "$(APP)"; \
-	fi
-
-appimage-status: ## Show status of specific AppImage (usage: make appimage-status APP=winboat)
-	@if [ -z "$(APP)" ]; then \
-		echo "Usage: make appimage-status APP=<app-name>"; \
-		echo "Example: make appimage-status APP=winboat"; \
-		echo ""; \
-		bash ./bin/appimage-manager.sh list; \
-	else \
-		bash ./bin/appimage-manager.sh status "$(APP)"; \
-	fi
 
 # テストとメンテナンス
 test: ## Run dotfiles functionality tests
