@@ -6,58 +6,35 @@
 
 ### wslconfig.template
 - **用途**: WSL2の動作設定テンプレート
-- **配置場所**: Windows側の `C:\Users\username\.wslconfig` にコピー
+- **配置場所**: Home Managerで `~/.config/wsl/wslconfig.template` に配置。Windows側の `C:\Users\username\.wslconfig` は `windows/setup.ps1` で管理
 - **主要設定**:
   - メモリ使用量制限
   - プロセッサ数制限
   - ネットワーク設定
   - パフォーマンス最適化
 
-### windows_terminal.json（移行済み）
-- **用途**: Windows Terminal設定（`windows/windows_terminal.json`に移行済み）
-- **配置場所**: 自動シンボリックリンク（`make windows-setup`で自動作成）
-- **主要設定**:
-  - Arch Linux / Ubuntu プロファイル
-  - フォント設定（HackGen Console NF推奨）
-  - カラースキーム
-  - キーバインド
-
-### environment（自動生成）
-- **用途**: WSL固有の環境変数
-- **生成元**: `bin/wsl/wsl_enhancements.sh`により自動生成
-- **内容**:
-  - Windows統合パス
-  - クリップボード設定
-  - WSL環境識別変数
-
-### windows_aliases（自動生成）
-- **用途**: Windows統合エイリアス
-- **生成元**: `bin/wsl/windows_integration.sh`により自動生成
-- **内容**:
-  - Windowsアプリケーション起動エイリアス
-  - ファイルパス変換関数
-  - クリップボード操作エイリアス
+### WSL shell integration
+- **用途**: WSL固有の環境変数、PATH優先順位、Windows統合エイリアス
+- **管理場所**:
+  - `.config/zsh/zshenv/WSL/init.zsh`
+  - `.config/zsh/zprofile/WSL/alias.zsh`
+- **補足**: `win32yank` は `nix/modules/wsl.nix` で Home Manager 管理
 
 ## セットアップ
 
-1. WSL基本セットアップ:
+1. WSL user環境の反映:
    ```bash
-   make wsl-setup
+   make rebuild NIX_ATTR='archfill@wsl-ubuntu'
    ```
 
-2. Windows統合機能のセットアップ:
-   ```bash
-   make wsl-windows-integration
-   ```
-
-3. Windows設定の自動セットアップ:
+2. Windows設定の自動セットアップ:
    ```bash
    make windows-setup  # 管理者権限が必要
    ```
    - `.wslconfig` のシンボリックリンク作成
-   - Windows Terminal設定のシンボリックリンク作成（動的検出）
+   - Windows Terminal設定はテンプレートのみ提供し、実体は各デバイスで管理
 
-4. 設定状態の確認:
+3. 設定状態の確認:
    ```bash
    make windows-status
    ```
