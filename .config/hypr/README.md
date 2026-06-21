@@ -446,7 +446,10 @@ monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
 
 ## 🔗 関連設定
 
-- **Caelestia Shell**: ステータスバーと通知は Caelestia Shell で管理
+- **Caelestia Shell**: ステータスバー、ランチャー、通知、セッションメニュー、ロック画面を管理
+- **hypridle**: アイドル検知、輝度変更、DPMS、サスペンド、復帰後フックを管理
+- **rofi**: クリップボード履歴とキーバインド一覧の fallback picker として維持
+- **matugen**: Caelestia の配色を Hyprland/rofi/terminal に同期
 - **Hyprland公式ドキュメント**: https://wiki.hyprland.org
 
 ## 🚨 NVIDIA GPU使用時の注意

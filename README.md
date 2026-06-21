@@ -210,10 +210,17 @@ Hyprland
 All configuration files are symlinked via `make links`:
 
 - `~/.config/hypr/hyprland.conf` - Main configuration
-- `~/.config/hypr/hypridle.conf` - Idle management (screen dim, lock, suspend)
+- `~/.config/hypr/hypridle.conf` - Idle management (screen dim, DPMS, suspend; lock UI is Caelestia)
 - `~/.config/caelestia/shell.json` - Caelestia Shell settings
 - `~/.config/rofi/` - Fallback clipboard/keybind menus
 - `~/.config/matugen/` - Color generation templates
+
+#### Desktop Responsibilities
+
+- `caelestia-shell` owns the bar, launcher, sidebar, session menu, wallpaper selector, notifications, and lock UI.
+- `hypridle` owns idle timers, brightness dim/restore, DPMS, suspend, and resume hooks.
+- `rofi` remains the picker UI for clipboard history and the keybind cheatsheet.
+- `matugen` syncs the current Caelestia scheme into Hyprland, rofi, and terminal color files.
 
 #### Default Keybindings
 
@@ -227,6 +234,8 @@ All configuration files are symlinked via `make links`:
 | `Super + M`               | Toggle Caelestia session menu           |
 | `Super + V`               | Clipboard history via rofi/cliphist     |
 | `Super + /`               | Keybind cheatsheet via rofi             |
+| `Alt + Tab`               | Cycle windows via Hyprland              |
+| `Alt + Shift + Tab`       | Cycle windows backward via Hyprland     |
 | `Super + Q`               | Kill active window                      |
 | `Super + Space`           | Toggle floating                         |
 | `Super + F`               | Fullscreen                              |
