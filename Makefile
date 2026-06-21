@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status terraform-setup docker-setup devops-sdks sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status docker-setup sdk-status sdk-versions sdk-paths aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -811,16 +811,9 @@ macos-test: ## Run macOS-specific environment tests
 		exit 1; \
 	fi
 
-terraform-setup: ## Install Terraform CLI
-	@echo "Installing Terraform CLI..."
-	@bash ./bin/apps/51-terraform.sh
-
 docker-setup: ## Setup Docker Engine
 	@echo "Setting up Docker Engine..."
 	@bash ./bin/apps/devops/docker.sh
-
-devops-sdks: terraform-setup docker-setup ## Install DevOps tools (Terraform, Docker)
-	@echo "✅ DevOps tools installation completed!"
 
 # SDK status and management
 sdk-status: ## Check all SDK installation status
