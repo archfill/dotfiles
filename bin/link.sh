@@ -41,15 +41,12 @@ BASIC_CONFIGS=(
     # ".config/sheldon" は home-manager (nix/modules/common.nix) で管理
     ".mmcp.json"
     ".config/hypr"
-    ".config/waybar"
-    ".config/swaync"
     ".config/wlogout"
     # ".config/scripts" は dotfiles 内に shell 拡張用の置き場として残すが
     # ホームへの symlink は作らない (呼び出し時はフルパスで参照する方針)
     ".config/eww"
     ".config/matugen"
     ".config/rofi"
-    ".config/ags"
     # ".config/lazygit" は home-manager (nix/modules/common.nix) で管理
 )
 
@@ -78,4 +75,3 @@ fi
 create_platform_specific_symlinks
 
 log_success "All symlinks created successfully"
-

@@ -173,13 +173,10 @@ install_hyprland() {
 
     # Essential Wayland tools
     local wayland_tools=(
-        waybar          # Status bar (kept for fallback)
         rofi            # Application launcher (customizable)
         rofi-calc       # Calculator plugin for rofi
         rofi-emoji      # Emoji picker plugin for rofi
-        swaync          # Notification daemon with notification center
         wl-clipboard    # Clipboard utilities
-        dart-sass       # Sass compiler (required by AGS)
     )
 
     # Screenshot tools (1 package)
@@ -194,9 +191,6 @@ install_hyprland() {
         playerctl       # Media player control (MPRIS)
         networkmanager  # Network management daemon (provides nmtui)
         network-manager-applet  # Network management GUI (provides nm-connection-editor)
-        btop            # Modern system monitor (for Waybar CPU/Memory modules)
-        papirus-icon-theme  # Icon theme (for Waybar taskbar module)
-        pacman-contrib  # Pacman tools (provides checkupdates for Waybar updates module)
         wireplumber     # PipeWire session manager (provides wpctl for audio control)
         gnome-keyring   # Secrets management (for credential storage)
         dolphin         # File manager (KDE)
@@ -226,17 +220,7 @@ install_hyprland() {
         wlogout                     # Wayland logout menu
         overskride                  # Bluetooth manager (GTK4, Hyprland-recommended)
         eww                         # Standalone widget system (for submap overlay)
-        hyprswitch                  # Alt+Tab style window switcher
-        aylurs-gtk-shell            # AGS - GTK widget system (TypeScript)
-        libastal-hyprland-git       # AGS: Hyprland integration
-        libastal-network-git        # AGS: Network status
-        libastal-battery-git        # AGS: Battery status
-        libastal-wireplumber-git    # AGS: Audio/volume control
-        quarrel-git                 # AGS: CLI arg parser (libastal-notifd-git dependency)
-        libastal-notifd-git         # AGS: Notification daemon (AstalNotifd)
-        libastal-bluetooth-git      # AGS: Bluetooth control
-        libastal-mpris-git          # AGS: Media player (MPRIS)
-        libastal-tray-git           # AGS: System tray
+        hyprshell                   # Alt+Tab style window switcher / launcher
     )
 
     if [[ "$DRY_RUN" != "true" ]]; then
@@ -302,10 +286,7 @@ install_hyprland() {
             log_info "Ensuring Hyprland configuration symlinks..."
             local hyprland_configs=(
                 ".config/hypr"
-                ".config/waybar"
-                ".config/ags"
                 ".config/rofi"
-                ".config/swaync"
                 ".config/wlogout"
                 ".config/eww"
                 ".config/matugen"
@@ -418,8 +399,8 @@ EOF
                 log_info "monitors.conf already exists, skipping creation"
             fi
 
-            # Run matugen to generate AGS color scheme from wallpaper
-            log_info "Generating AGS color scheme with matugen..."
+            # Run matugen to generate color schemes from wallpaper
+            log_info "Generating color schemes with matugen..."
             local hyprpaper_conf="${HOME}/.config/hypr/hyprpaper.conf"
             local wallpaper_path=""
             if [[ -f "$hyprpaper_conf" ]]; then

@@ -22,21 +22,6 @@ post_hook = "hyprctl reload"
 input_path = "~/.config/matugen/templates/rofi-colors.rasi"
 output_path = "~/.config/rofi/colors.rasi"
 
-# Waybar colors template
-[templates.waybar]
-input_path = "~/.config/matugen/templates/waybar-colors.css"
-output_path = "~/.config/waybar/colors/matugen.css"
-
-# AGS colors template
-[templates.ags]
-input_path = "~/.config/matugen/templates/ags-colors.scss"
-output_path = "~/.config/ags/colors/matugen.scss"
-
-# SwayNC colors template
-[templates.swaync]
-input_path = "~/.config/matugen/templates/swaync-colors.css"
-output_path = "~/.config/swaync/colors/matugen.css"
-
 # Kitty colors template
 [templates.kitty]
 input_path = "~/.config/matugen/templates/kitty-colors.conf"

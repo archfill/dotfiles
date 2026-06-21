@@ -16,17 +16,9 @@
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/hypr";
 
-  xdg.configFile."waybar".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/waybar";
-
   xdg.configFile."rofi".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/rofi";
-
-  xdg.configFile."swaync".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/swaync";
 
   xdg.configFile."matugen".source =
     config.lib.file.mkOutOfStoreSymlink

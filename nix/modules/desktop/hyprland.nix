@@ -26,17 +26,18 @@
     hyprpolkitagent
 
     # Wayland desktop tools
-    waybar
-    rofi
-    rofi-calc
-    rofi-emoji
-    swaynotificationcenter
+    (rofi.override {
+      plugins = [
+        rofi-calc
+        rofi-emoji
+      ];
+    })
     wl-clipboard
     cliphist
     satty
     matugen
-    dart-sass
-    ags
+    imagemagick
+    gettext
     eww
     wlogout
     overskride
@@ -44,10 +45,10 @@
     # Desktop utilities used by the existing Hyprland config/scripts
     pavucontrol
     brightnessctl
+    libnotify
     playerctl
     networkmanagerapplet
-    btop
-    papirus-icon-theme
+    nwg-look
     kdePackages.dolphin
 
     # NVIDIA Wayland / VA-API support

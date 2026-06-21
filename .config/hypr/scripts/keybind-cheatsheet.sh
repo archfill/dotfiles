@@ -96,7 +96,6 @@ generate_cheatsheet() {
             gsub(/alacritty --class clipse -e /, "", desc)
             gsub(/ \| rofi -dmenu.*$/, "", desc)
             gsub(/rofi -show /, "", desc)
-            gsub(/swaync-client -t -sw/, "Notifications", desc)
             if (length(desc) > 30) desc = substr(desc, 1, 27) "..."
         } else if (action == "killactive") desc = "Close window"
         else if (action == "exit") desc = "Exit Hyprland"

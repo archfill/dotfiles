@@ -4,7 +4,7 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild diff nix-clean nix-update codex-bump
+.PHONY: all help init config links test clean status info fonts fonts-list fonts-install flutter-setup hyprland-install hyprland-status monitors monitors-auto monitors-single monitors-dual neovim-install neovim-switch neovim-uninstall neovim-status neovim-update appimage-list appimage-list-installed appimage-install-all appimage-update-all appimage-uninstall-all appimage-install appimage-update appimage-uninstall appimage-status java-setup rust-setup go-setup php-setup ruby-setup terraform-setup docker-setup core-sdks web-sdks devops-sdks all-sdks sdk-status sdk-versions sdk-paths dev-environment aerospace-install aerospace-uninstall aerospace-start aerospace-stop aerospace-restart aerospace-status git-health rebuild rebuild-bootloader diff nix-clean nix-update codex-bump
 .DEFAULT_GOAL := help
 
 # デフォルトターゲット
@@ -45,6 +45,13 @@ NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIX
 
 rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE)
+
+rebuild-bootloader: ## NixOS の bootloader も再インストールして反映
+	@if [ "$(NH_TARGET)" != "os" ]; then \
+		echo "rebuild-bootloader is only for NixOS"; \
+		exit 1; \
+	fi
+	nh os switch $(NIX_FLAKE) --install-bootloader
 
 diff: ## 次の switch で何が変わるかを表示 (適用しない)
 	nh $(NH_TARGET) switch $(NIX_FLAKE) --dry
@@ -108,20 +115,15 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ Hyprland: Not installed"; \
 	fi
-	@if command -v waybar >/dev/null 2>&1; then \
-		echo "✅ waybar: $$(waybar --version 2>&1 | head -1)"; \
-	else \
-		echo "❌ waybar: Not installed"; \
-	fi
 	@if command -v rofi >/dev/null 2>&1; then \
 		echo "✅ rofi: $$(rofi -version 2>&1 | head -1)"; \
 	else \
 		echo "❌ rofi: Not installed"; \
 	fi
-	@if command -v swaync >/dev/null 2>&1; then \
-		echo "✅ swaync: installed"; \
+	@if command -v caelestia-shell >/dev/null 2>&1; then \
+		echo "✅ caelestia-shell: installed"; \
 	else \
-		echo "❌ swaync: Not installed"; \
+		echo "❌ caelestia-shell: Not installed"; \
 	fi
 	@echo ""
 	@echo "=== Configuration Files ==="
@@ -130,20 +132,15 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ hyprland.conf: missing"; \
 	fi
-	@if [ -f ~/.config/waybar/config.json ]; then \
-		echo "✅ waybar config: exists"; \
-	else \
-		echo "❌ waybar config: missing"; \
-	fi
 	@if [ -d ~/.config/rofi ]; then \
 		echo "✅ rofi config: exists"; \
 	else \
 		echo "❌ rofi config: missing"; \
 	fi
-	@if [ -f ~/.config/swaync/config.json ]; then \
-		echo "✅ swaync config: exists"; \
+	@if systemctl --user is-active --quiet caelestia.service; then \
+		echo "✅ caelestia.service: active"; \
 	else \
-		echo "❌ swaync config: missing"; \
+		echo "❌ caelestia.service: inactive"; \
 	fi
 	@echo ""
 	@echo "=== NVIDIA Status ==="
@@ -921,4 +918,3 @@ logs-view: ## View specific log file (usage: make logs-view LOG=filename)
 	else \
 		less .logs/$(LOG); \
 	fi
-
