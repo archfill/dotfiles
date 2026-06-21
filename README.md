@@ -1,51 +1,67 @@
 # 🏠 Dotfiles Repository
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](#platform-support)
+[![Platform Support](https://img.shields.io/badge/Platform-NixOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Windows-blue)](#platform-support)
 [![日本語](https://img.shields.io/badge/lang-ja-blue)](README.ja.md)
 
 Cross-platform dotfiles for modern development environments with Japanese language support.
 
 ## ✨ Features
 
-- **Multi-Platform**: macOS, Linux, Windows
+- **Multi-Platform**: NixOS, macOS, Linux, Windows
 - **Modern Tools**: Neovim, WezTerm, Zsh with optimized configurations
 - **Japanese Support**: SKK input method, textlint for technical writing
-- **Development Ready**: Python (uv), Node.js (mise), Flutter, Docker support
+- **Nix Managed**: shared packages and dotfile links through NixOS, nix-darwin, and Home Manager
 
 ## 🚀 Quick Start
 
-### 1. Clone and Setup
+### 1. Clone
 
 ```bash
 git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+```
 
-# Configure personal settings interactively
-make config
+### 2. Apply Nix Configuration
 
-# Complete setup
+Use `make rebuild` when Nix/nh is already available:
+
+```bash
+make rebuild
+```
+
+For first setup, install Nix first, then run `make init`. `make init` applies the right backend for the current OS:
+
+- NixOS: `nh os switch ~/dotfiles/nix`
+- macOS: `nh darwin switch ~/dotfiles/nix`
+- Arch / Ubuntu / WSL: `nh home switch ~/dotfiles/nix#<user>@<host>`
+
+```bash
+# NixOS or macOS host declared in flake outputs
 make init
-```
 
-### 2. Essential Commands
-
-```bash
-make init     # Complete installation
-make diff     # Preview Nix changes
-make status   # Check status
-make help     # Show all commands
-```
-
-On Linux, `make init` now prefers Nix/Home Manager for the user environment. Minimal OS bootstrap packages are opt-in:
-
-```bash
+# Standalone Home Manager hosts
 make init NIX_ATTR='archfill@arch-desktop'
 make init NIX_ATTR='archfill@ubuntu-desktop'
 make init NIX_ATTR='archfill@wsl-ubuntu'
+```
 
-# Bootstrap curl/git/zsh before installing Nix, only when explicitly needed
+Minimal OS bootstrap packages are opt-in and only intended before installing Nix:
+
+```bash
 make init DOTFILES_INSTALL_MODE=legacy
+```
+
+### 3. Essential Commands
+
+```bash
+make rebuild          # Apply the Nix flake through nh
+make diff             # Preview the next Nix switch
+make nix-update       # Update flake.lock and switch
+make nix-clean        # Keep the latest 5 generations
+make config           # Configure Git user settings
+make status           # Check status
+make help             # Show all commands
 ```
 
 ## 📁 Key Configurations
@@ -57,11 +73,12 @@ make init DOTFILES_INSTALL_MODE=legacy
 
 ## 🌍 Platform Support
 
-| Platform | Package Manager | Window Manager      | Special Features          |
-| -------- | --------------- | ------------------- | ------------------------- |
-| macOS    | Homebrew        | AeroSpace/SketchyBar | Unified setup             |
-| Linux    | apt/pacman/dnf  | Hyprland            | Systemd services, Wayland |
-| Windows  | Scoop/WSL       | Native              | WSL2 config management    |
+| Platform | Management layer | Desktop / WM        | Notes                     |
+| -------- | ---------------- | ------------------- | ------------------------- |
+| NixOS    | NixOS + Home Manager | GNOME / Hyprland | Main Linux target         |
+| macOS    | nix-darwin + Home Manager + Homebrew module | AeroSpace/SketchyBar | Declarative package setup |
+| Linux    | Home Manager     | Hyprland-ready user config | Arch / Ubuntu / WSL hosts |
+| Windows  | Manual scripts   | Native              | WSL2 config management    |
 
 ### Windows WSL Configuration
 

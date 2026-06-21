@@ -1,41 +1,67 @@
 # 🏠 Dotfiles リポジトリ
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform Support](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Android-blue)](#プラットフォーム対応)
+[![Platform Support](https://img.shields.io/badge/Platform-NixOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Windows-blue)](#プラットフォーム対応)
 [![English](https://img.shields.io/badge/lang-en-red)](README.md)
 
 日本語環境対応のクロスプラットフォーム dotfiles です。モダンな開発環境を自動構築します。
 
 ## ✨ 特徴
 
-- **マルチプラットフォーム**: macOS、Linux、Windows (Cygwin)、Android (Termux)
+- **マルチプラットフォーム**: NixOS、macOS、Linux、Windows
 - **モダンツール**: Neovim、WezTerm、Zsh の最適化設定
 - **日本語サポート**: SKK 入力方式、技術文書用 textlint
-- **開発対応**: Python (uv)、Node.js (mise)、Flutter、Docker サポート
+- **Nix 管理**: NixOS、nix-darwin、Home Manager でパッケージと dotfiles リンクを管理
 
 ## 🚀 クイックスタート
 
-### 1. クローンとセットアップ
+### 1. クローン
 
 ```bash
 git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-
-# 個人設定の構成
-cp config/personal.conf.template config/personal.conf
-$EDITOR config/personal.conf  # USER_NAME と USER_EMAIL を設定
-
-# 完全セットアップ
-make init
 ```
 
-### 2. 基本コマンド
+### 2. Nix 設定の反映
+
+Nix と `nh` が使える状態なら、通常は `make rebuild` で反映します。
 
 ```bash
-make init     # 完全インストール
-make test     # セットアップ検証
-make status   # 状態確認
-make help     # 全コマンド表示
+make rebuild
+```
+
+初回セットアップでは先に Nix を導入してから `make init` を実行します。`make init` は OS に応じて以下へ分岐します。
+
+- NixOS: `nh os switch ~/dotfiles/nix`
+- macOS: `nh darwin switch ~/dotfiles/nix`
+- Arch / Ubuntu / WSL: `nh home switch ~/dotfiles/nix#<user>@<host>`
+
+```bash
+# NixOS / macOS の flake 定義済みホスト
+make init
+
+# standalone Home Manager ホスト
+make init NIX_ATTR='archfill@arch-desktop'
+make init NIX_ATTR='archfill@ubuntu-desktop'
+make init NIX_ATTR='archfill@wsl-ubuntu'
+```
+
+Nix 導入前に最低限の OS パッケージだけ入れたい場合のみ、legacy モードを使います。
+
+```bash
+make init DOTFILES_INSTALL_MODE=legacy
+```
+
+### 3. 基本コマンド
+
+```bash
+make rebuild          # nh 経由で Nix flake を反映
+make diff             # 次の switch 差分を確認
+make nix-update       # flake.lock を更新して switch
+make nix-clean        # 最新 5 世代を残して掃除
+make config           # Git ユーザー設定
+make status           # 状態確認
+make help             # 全コマンド表示
 ```
 
 ## 📁 主要設定
@@ -47,22 +73,22 @@ make help     # 全コマンド表示
 
 ## 🌍 プラットフォーム対応
 
-| プラットフォーム | パッケージマネージャー | ウィンドウマネージャー |
-| ---------------- | ---------------------- | ---------------------- |
-| macOS            | Homebrew               | yabai/skhd             |
-| Linux            | apt/pacman/dnf         | i3/polybar/Hyprland    |
-| Windows          | Cygwin                 | Native                 |
-| Android          | Termux                 | Native                 |
+| プラットフォーム | 管理レイヤー | デスクトップ / WM | 備考 |
+| ---------------- | ------------ | ----------------- | ---- |
+| NixOS            | NixOS + Home Manager | GNOME / Hyprland | メイン Linux 環境 |
+| macOS            | nix-darwin + Home Manager + Homebrew module | AeroSpace/SketchyBar | 宣言的にパッケージ管理 |
+| Linux            | Home Manager | Hyprland 向けユーザー設定 | Arch / Ubuntu / WSL |
+| Windows          | 手動スクリプト | Native | WSL2 設定管理 |
 
-### Hyprland セットアップ (Arch Linux)
+### Hyprland セットアップ (NixOS / Arch Linux)
 
 Hyprland は GPU アクセラレーションによるアニメーションと豊富なカスタマイズが可能な、モダンな Wayland コンポジタです。
 
 #### インストール
 
 ```bash
-# Hyprland とエコシステムをインストール
-make hyprland-install
+# NixOS: 宣言済みの Hyprland デスクトップを反映
+make rebuild
 
 # インストール状態を確認
 make hyprland-status
@@ -70,62 +96,60 @@ make hyprland-status
 
 #### インストールされるパッケージ
 
-**Hyprland コアパッケージ (7個):**
+**Hyprland コアパッケージ:**
 
 - `hyprland` - メインコンポジタ
 - `hyprcursor` - カーソル管理
 - `hypridle` - アイドルデーモン
-- `hyprlock` - スクリーンロック
 - `hyprpicker` - カラーピッカー
 - `hyprshot` - スクリーンショットユーティリティ
+- `hyprpolkitagent` - Polkit 認証エージェント
 - `xdg-desktop-portal-hyprland` - デスクトップポータル統合
 
-**必須 Wayland ツール (6個):**
+**Shell / Wayland ツール:**
 
-- `waybar` - カスタマイズ可能なステータスバー
-- `rofi` - カスタマイズ可能なアプリケーションランチャー
-- `rofi-calc` - rofi 計算機プラグイン
-- `rofi-emoji` - rofi 絵文字ピッカー
-- `swaync` - 通知センター付き通知デーモン
+- `caelestia-shell` - バー、ランチャー、サイドバー、電源メニュー、壁紙選択、通知、ロック UI
+- `rofi` - クリップボード履歴とキーバインド一覧の fallback UI
 - `wl-clipboard` - クリップボードユーティリティ
+- `cliphist` - クリップボード履歴
+- `matugen` - Caelestia の配色を Hyprland / rofi / terminal に同期
 
-**スクリーンショットツール (1個):**
+**スクリーンショットツール:**
 
 - `satty` - スクリーンショット編集・注釈ツール
 
-**オプションパッケージ (4個):**
+**デスクトップ補助ツール:**
 
 - `pavucontrol` - オーディオコントロール GUI
 - `brightnessctl` - 画面輝度制御
 - `playerctl` - メディアプレーヤー制御 (MPRIS)
 - `network-manager-applet` - ネットワーク管理 GUI
+- `overskride` - Bluetooth 管理
 
-**NVIDIA 専用パッケージ (2個、NVIDIA GPU 検出時):**
+**NVIDIA 専用パッケージ:**
 
 - `egl-wayland` - NVIDIA 向け Wayland EGL サポート
 - `libva-nvidia-driver` - NVIDIA ハードウェアアクセラレーション
 
 #### GPU 別設定
 
-インストールスクリプトが自動的に GPU を検出し、`~/.config/hypr/local.conf` を作成します：
+NixOS の共通設定は Nix module で宣言します。ホスト固有の差分は `nix/hosts/<host>/` に置き、モニター配置は `~/.config/hypr/monitors.conf` に残します。
 
 **NVIDIA GPU (RTX 4070 など):**
 
-- 最適なパフォーマンスのため 7 つの環境変数を自動設定
+- Hyprland 向け NVIDIA / VA-API 環境変数を設定
 - VA-API ハードウェアアクセラレーション対応
-- Electron/Chromium の Wayland サポート有効化（VSCode、Discord など）
-- VRR/G-Sync 制御設定
+- NixOS では `NIXOS_OZONE_WL=1` で Electron / Chromium 系アプリの Wayland 利用を有効化
 
 **Intel/AMD GPU:**
 
-- デフォルト Wayland 設定で空の `local.conf` を作成
 - 追加設定不要
 
 **複数 PC での利用:**
 
-- `local.conf` は git 管理外（環境固有ファイル）
-- 異なる GPU 構成でも同じ dotfiles が動作
-- ハードウェアが異なっても git diff の競合なし
+- ホスト固有の Nix 設定は `nix/hosts/<host>/` に配置
+- GPU 構成が違っても同じ dotfiles を共有
+- ハードウェア差分で不要な git diff を作らない
 
 #### インストール後の手順
 
@@ -135,45 +159,9 @@ make hyprland-status
 2. 必要に応じてキーバインド調整（デフォルト: Super/Windows キー）
 3. 複数ディスプレイ使用時はモニターレイアウトを設定
 
-**NVIDIA ユーザー向け（必須）:**
+**NVIDIA ユーザー向け:**
 
-インストール後、スクリプトが包括的なセットアップガイドを表示します。主な手順：
-
-1. **カーネルパラメータ**（必須）:
-
-   ```bash
-   sudo vim /etc/default/grub
-   # GRUB_CMDLINE_LINUX_DEFAULT に追加:
-   # nvidia-drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1
-
-   sudo grub-mkconfig -o /boot/grub/grub.cfg
-   sudo reboot
-   ```
-
-2. **Modprobe 設定**（推奨）:
-
-   ```bash
-   sudo tee /etc/modprobe.d/nvidia.conf <<EOF
-   options nvidia_drm modeset=1
-   options nvidia NVreg_PreserveVideoMemoryAllocations=1
-   EOF
-   ```
-
-3. **Early KMS**（推奨）:
-
-   ```bash
-   sudo vim /etc/mkinitcpio.conf
-   # 追加: MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
-
-   sudo mkinitcpio -P
-   ```
-
-4. **サスペンド/レジューム対応**（任意）:
-   ```bash
-   sudo systemctl enable nvidia-suspend.service
-   sudo systemctl enable nvidia-hibernate.service
-   sudo systemctl enable nvidia-resume.service
-   ```
+NixOS では NVIDIA DRM modeset、fbdev、early modules、Hyprland 環境変数を Nix 設定で宣言します。Arch Linux など NixOS 以外では、必要に応じて各 OS 側の NVIDIA 設定を別途行います。
 
 詳細な NVIDIA セットアップ手順: https://wiki.hyprland.org/Nvidia/
 
@@ -192,30 +180,56 @@ Hyprland
 
 #### 設定ファイル
 
-すべての設定ファイルは `make links` でシンボリックリンクされます：
+設定ファイルは Nix / Home Manager から symlink されます。
 
 - `~/.config/hypr/hyprland.conf` - メイン設定
-- `~/.config/hypr/hypridle.conf` - アイドル管理（画面減光、ロック、サスペンド）
-- `~/.config/hypr/hyprlock.conf` - ロック画面の外観
-- `~/.config/waybar/` - ステータスバー設定
-- `~/.config/rofi/` - アプリケーションランチャー
-- `~/.config/swaync/` - 通知センター
-- `~/.config/hypr/local.conf` - 自動生成、GPU 固有（git 管理外）
+- `~/.config/hypr/hypridle.conf` - アイドル管理（画面減光、DPMS、サスペンド。ロック UI は Caelestia）
+- `~/.config/caelestia/shell.json` - Caelestia Shell 設定
+- `~/.config/rofi/` - クリップボード / キーバインド一覧の fallback menu
+- `~/.config/matugen/` - 配色生成テンプレート
+
+#### デスクトップ責務
+
+- `caelestia-shell` がバー、ランチャー、サイドバー、電源メニュー、壁紙選択、通知、ロック UI を担当
+- `hypridle` が idle timer、輝度の減光/復元、DPMS、サスペンド、復帰 hook を担当
+- `rofi` はクリップボード履歴とキーバインド一覧の picker UI として残す
+- `matugen` は Caelestia の現在の配色を Hyprland、rofi、terminal の配色ファイルに同期
+
+#### NixOS Hyprland 管理範囲
+
+| 用途 | NixOS 宣言 |
+| ---- | ---------- |
+| Hyprland、XWayland、portal | `nix/modules/desktop/hyprland.nix` の `programs.hyprland` / `xdg.portal` |
+| Hyprland ツール | `hyprcursor`、`hypridle`、`hyprpicker`、`hyprshot`、`hyprpolkitagent` |
+| クリップボード / picker | `rofi`、`wl-clipboard`、`cliphist` |
+| スクリーンショット / 配色 | `satty`、`matugen`、`gettext` |
+| デスクトップ補助 | `pavucontrol`、`brightnessctl`、`playerctl`、`networkmanagerapplet`、`nwg-look`、`overskride` |
+| NVIDIA Wayland 対応 | `egl-wayland`、`nvidia-vaapi-driver`。driver / kernel は `nix/hosts/<host>/configuration.nix` |
+| ネットワーク / 音声 | `nix/modules/nixos-common.nix` の NetworkManager / PipeWire |
+| 日本語入力 | `nix/modules/nixos-common.nix` の `i18n.inputMethod.fcitx5` |
+| GNOME 連携 | GDM、GNOME、Nautilus、GNOME keyring |
+| Caelestia Shell | `nix/hosts/archfill-nixos/home.nix` の Home Manager module |
 
 #### デフォルトキーバインド
 
 | キー                  | 動作                               |
 | --------------------- | ---------------------------------- |
 | `Super + Return`      | ターミナル起動（ghostty）          |
-| `Super + D`           | アプリケーションランチャー（rofi） |
+| `Super + D`           | Caelestia ランチャー切り替え       |
+| `Super + W`           | Caelestia ランチャー切り替え       |
+| `Super + Shift + W`   | Caelestia 壁紙選択                 |
+| `Super + N`           | Caelestia サイドバー切り替え       |
+| `Super + M`           | Caelestia 電源メニュー             |
+| `Super + V`           | rofi/cliphist クリップボード履歴   |
+| `Super + /`           | rofi キーバインド一覧              |
+| `Alt + Tab`           | Hyprland のウィンドウ巡回          |
+| `Alt + Shift + Tab`   | Hyprland の逆順ウィンドウ巡回      |
 | `Super + Q`           | アクティブウィンドウを閉じる       |
-| `Super + M`           | Hyprland 終了                      |
+| `Super + Space`       | フローティング切り替え             |
 | `Super + F`           | フルスクリーン                     |
-| `Super + V`           | フローティング切り替え             |
-| `Super + 1-9`         | ワークスペース切り替え             |
-| `Super + Shift + 1-9` | ウィンドウを別ワークスペースへ移動 |
+| `Super + S`           | workspace submap                   |
 | `Super + h/j/k/l`     | フォーカス移動（vim スタイル）     |
-| `Super + N`           | 通知センター切り替え               |
+| `Super + Shift + h/j/k/l` | アクティブウィンドウ移動       |
 | `Print`               | 領域スクリーンショット             |
 | `Shift + Print`       | ウィンドウスクリーンショット       |
 | `Ctrl + Print`        | 注釈付きスクリーンショット         |
@@ -227,18 +241,13 @@ Hyprland
 - ジャーナルを確認: `journalctl -b | grep hyprland`
 - NVIDIA カーネルパラメータを確認: `cat /sys/module/nvidia_drm/parameters/modeset`（`Y` と表示されるべき）
 
-**カーソルが表示されない（NVIDIA）:**
-
-- `local.conf` で `WLR_NO_HARDWARE_CURSORS=1` により既に設定済み
-
 **Electron アプリが Wayland を使わない:**
 
-- `local.conf` で `ELECTRON_OZONE_PLATFORM_HINT=auto` により既に設定済み
+- NixOS では Hyprland Nix module で `NIXOS_OZONE_WL=1` を設定済み
 
 **画面ティアリング:**
 
-- `local.conf` の VRR 設定を確認: `__GL_VRR_ALLOWED=0`
-- G-Sync/FreeSync モニター使用時は `__GL_VRR_ALLOWED=1` を試す
+- NVIDIA driver と Hyprland log を確認: `journalctl -b -k | grep -i nvidia`
 
 **モニターが検出されない:**
 
@@ -252,7 +261,7 @@ Hyprland
 
 ## 🇯🇵 日本語機能
 
-- **SKK 入力**: yaskkserv2 サーバー、包括的辞書
+- **日本語入力**: エディタとデスクトップの日本語入力設定
 - **文章校正**: 技術文書用 textlint
 - **メディアスタイル**: WEB+DB PRESS、TechBooster スタイルガイド
 
@@ -260,11 +269,11 @@ Hyprland
 
 ### プログラミング言語
 
-- **Python**: uv パッケージマネージャー（pyenv の現代的代替）
-- **Node.js**: mise バージョン管理（nvm/volta 代替）
-- **Rust**: rustup と基本ツール（clippy、rustfmt）
-- **Go**: mise バージョン管理、開発ツール
-- **Java**: mise バージョン管理（Temurin JDK）
+- **Python**: Nix 提供の Python と uv / pipx によるパッケージ運用
+- **Node.js**: Nix 提供の Node.js と mise によるプロジェクト単位の上書き
+- **Rust**: Nix 提供の cargo / rustc / clippy / rustfmt
+- **Go**: Nix 提供の Go と必要に応じたプロジェクト単位の上書き
+- **Java**: Nix 提供の OpenJDK と必要に応じたプロジェクト単位の上書き
 
 ### 開発環境
 
