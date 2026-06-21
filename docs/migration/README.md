@@ -40,19 +40,10 @@ docs/migration/
 
 ## 🔄 移行記録の作成
 
-新しい設定変更を行う際は、以下のツールを使用してください：
-
-```bash
-# 自動的に移行記録を作成
-make archive-config CONFIG=設定名 REASON="移行理由"
-
-# または手動でスクリプト実行
-./bin/archive-config.sh 設定名 "移行理由"
-```
+新しい設定変更を行う際は、このディレクトリに手動で記録を追加します。現在は Nix / home-manager 管理を優先しているため、旧来の自動アーカイブスクリプトは廃止済みです。
 
 ## 📚 関連ドキュメント
 
-- [保守手順書](../maintenance.md) - 詳細なメンテナンス手順
 - [CLAUDE.md](../../CLAUDE.md) - プロジェクト概要
 - [Makefile](../../Makefile) - 利用可能なコマンド
 
@@ -61,8 +52,7 @@ make archive-config CONFIG=設定名 REASON="移行理由"
 移行記録に関する質問や問題：
 
 1. 該当する個別の移行記録を確認
-2. [保守手順書](../maintenance.md)を参照
-3. GitHubのIssueで報告
+2. GitHubのIssueで報告
 
 ---
 

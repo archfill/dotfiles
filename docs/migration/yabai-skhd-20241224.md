@@ -147,15 +147,13 @@ git clone https://github.com/AdamWagner/stackline.git ~/.hammerspoon/stackline
 - [yabai公式ドキュメント](https://github.com/koekeishiya/yabai)
 - [skhd公式ドキュメント](https://github.com/koekeishiya/skhd)
 - [Aerospace公式ドキュメント](https://github.com/nikitabobko/AeroSpace)
-- [保守手順書](../maintenance.md)
 
 ## 質問・サポート
 
 この移行に関する質問がある場合：
 
-1. [保守手順書](../maintenance.md)を確認
-2. 移行記録の実行者に連絡
-3. GitHubのIssueで報告
+1. 移行記録の実行者に連絡
+2. GitHubのIssueで報告
 
 ---
 
