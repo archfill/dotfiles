@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Hyprland and ecosystem installation script
-# Installs Hyprland compositor and related Wayland tools
+# Legacy Hyprland and ecosystem installation script for Arch Linux.
+# NixOS and standalone home-manager hosts should use the Nix flake instead.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
@@ -11,6 +11,25 @@ source "$DOTFILES_DIR/bin/lib/install_checker.sh"
 source "$DOTFILES_DIR/bin/lib/symlink_manager.sh"
 
 setup_error_handling
+
+show_nix_hyprland_guidance() {
+    log_info "Current policy: manage Hyprland user tools and dotfiles through Nix/Home Manager."
+    log_info ""
+    log_info "NixOS:"
+    log_info "  make rebuild"
+    log_info ""
+    log_info "Arch standalone home-manager:"
+    log_info "  make rebuild NIX_ATTR='archfill@arch-desktop'"
+    log_info ""
+    log_info "Ubuntu standalone home-manager:"
+    log_info "  make rebuild NIX_ATTR='archfill@ubuntu-desktop'"
+    log_info ""
+    log_info "WSL Ubuntu standalone home-manager:"
+    log_info "  make rebuild NIX_ATTR='archfill@wsl-ubuntu'"
+    log_info ""
+    log_info "System-level pieces such as kernel, GPU drivers, display manager,"
+    log_info "Docker daemon, and OS services still belong to the host distribution."
+}
 
 # Check NVIDIA GPU
 check_nvidia_gpu() {
@@ -115,16 +134,22 @@ show_nvidia_setup() {
 }
 
 install_hyprland() {
-    log_info "Installing Hyprland and ecosystem..."
+    log_info "Checking legacy Hyprland installer..."
 
     # Parse command line options
     parse_install_options "$@"
 
+    if [[ -e /etc/NIXOS ]]; then
+        log_warning "This legacy Hyprland installer is disabled on NixOS."
+        show_nix_hyprland_guidance
+        return 0
+    fi
+
     # WSL check - Hyprland is not supported in WSL
     if is_wsl; then
-        log_warning "Hyprland installation is skipped on WSL"
-        log_info "Hyprland requires native Linux graphics stack (Wayland)"
-        log_info "WSL does not support Wayland compositors like Hyprland"
+        log_warning "This legacy Hyprland installer is disabled on WSL."
+        log_info "Hyprland itself requires a native Linux graphics stack."
+        show_nix_hyprland_guidance
         return 0
     fi
 
@@ -133,11 +158,16 @@ install_hyprland() {
     distro="$(get_os_distribution)"
 
     if [[ "$distro" != "arch" ]]; then
-        log_warning "Hyprland installation is only supported on Arch Linux"
-        log_info "For other distributions, please refer to:"
+        log_warning "This legacy Hyprland installer is only kept for Arch Linux."
+        show_nix_hyprland_guidance
+        log_info "For distro-specific system setup, see:"
         log_info "  https://wiki.hyprland.org/Getting-Started/Installation/"
         return 0
     fi
+
+    log_warning "This is a legacy Arch Linux installer."
+    show_nix_hyprland_guidance
+    log_info "Continuing because this host is detected as Arch Linux."
 
     # Log if Hyprland is already installed (but continue to check ecosystem packages)
     if command -v Hyprland >/dev/null 2>&1; then

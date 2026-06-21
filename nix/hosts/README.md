@@ -37,6 +37,8 @@ make rebuild NIX_ATTR='archfill@wsl-ubuntu'
 
 ホスト名と flake attr が一致している環境では `make rebuild` だけでもよい。
 
+`bin/apps/tools/hyprland.sh` は Arch Linux 用 legacy installer として残す。NixOS / Ubuntu / WSL では実行せず、必要な user 環境は上記 home-manager 出力で反映する。Arch でも Nix で管理できる範囲を優先し、OS 側に残す system package が不要になった時点で script ごと削除する。
+
 ## 実機 NixOS 追加手順
 
 1. NixOS installer で実機へインストールする。

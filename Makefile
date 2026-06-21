@@ -102,9 +102,9 @@ flutter-setup: ## Install and setup Flutter development environment
 	@echo "Setting up Flutter development environment..."
 	bash ./bin/apps/devops/flutter.sh
 
-# Hyprland環境（Arch Linuxのみ）
-hyprland-install: ## Install Hyprland compositor and ecosystem (Arch Linux only)
-	@echo "Installing Hyprland and ecosystem..."
+# Hyprland環境（legacy Arch Linux installer）
+hyprland-install: ## Legacy Arch-only Hyprland installer; prefer Nix/Home Manager
+	@echo "Running legacy Hyprland installer..."
 	@bash ./bin/apps/tools/hyprland.sh
 
 hyprland-status: ## Check Hyprland installation and configuration status
