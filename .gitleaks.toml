@@ -1,8 +1,14 @@
 title = "Custom Gitleaks config"
 version = 2
 
+[extend]
+useDefault = true
+
 [allowlist]
-files = ["README.md", "LICENSE"]
+paths = [
+  '''README\.md''',
+  '''LICENSE''',
+]
 
 [[rules]]
 id = "generic-password-assignment"
@@ -33,4 +39,3 @@ id = "jwt-detection"
 description = "Possible JWT token"
 regex = '''eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
 tags = ["jwt", "token"]
-
