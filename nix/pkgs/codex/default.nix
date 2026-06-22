@@ -20,7 +20,7 @@ let
 
   platform = platformMap.${stdenv.hostPlatform.system} or null;
 
-  # SRI hashes for codex rust-v${version}. Refresh: `make codex-bump VERSION=...`
+  # SRI hashes for codex rust-v${version}. Refresh: `make codex-update VERSION=...`
   hashes = {
     "aarch64-apple-darwin"       = "sha256-q96tX+68JZ3squwzRlQju7eQSzBJ+ijpIgnLkkaTwPQ=";
     "x86_64-apple-darwin"        = "sha256-e3OYuT3RajEjyHKG4xKnlCvjwT+WGfxYffwFVj/LyIg=";

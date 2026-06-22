@@ -59,7 +59,7 @@ make init DOTFILES_INSTALL_MODE=legacy
 ```bash
 make nix-rebuild      # nh 経由で Nix flake を反映
 make nix-diff         # 次の switch 差分を確認
-make nix-update       # flake.lock を更新して switch
+make nix-update       # Codex と flake.lock を更新して switch
 make nix-clean        # 最新 5 世代を残して掃除
 make config           # Git ユーザー設定
 make status           # 状態確認

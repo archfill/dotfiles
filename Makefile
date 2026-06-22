@@ -5,7 +5,7 @@
 # ヘルプ: make help
 
 .PHONY: all help init init-log config update backup clean status info debug validate \
-	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-bump \
+	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-update codex-bump \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -136,20 +136,13 @@ nix-diff: ## 次の switch で何が変わるかを表示 (適用しない)
 nix-clean: ## 古い generation を 5 世代残して掃除
 	nh clean all --keep 5
 
-nix-update: ## flake.lock を更新してから switch
+nix-update: codex-update ## Codex と flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF) -u
 
-codex-bump: ## codex の SRI hash を再取得 (usage: make codex-bump VERSION=0.142.0)
-	@test -n "$(VERSION)" || { echo "Usage: make codex-bump VERSION=<version>  (e.g. 0.142.0)"; exit 1; }
-	@echo "==> codex v$(VERSION) — SRI hashes for nix/pkgs/codex/default.nix"
-	@for plat in aarch64-apple-darwin x86_64-apple-darwin x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do \
-		hash=$$(nix store prefetch-file --hash-type sha256 --json \
-			"https://github.com/openai/codex/releases/download/rust-v$(VERSION)/codex-$$plat.tar.gz" \
-			2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin)['hash'])"); \
-		printf '    "%-31s = "%s";\n' "$$plat" "$$hash"; \
-	done
-	@echo ""
-	@echo "==> nix/pkgs/codex/default.nix の version + hashes を差し替えて 'make nix-diff' → 'make nix-rebuild'"
+codex-update: ## Codex CLI の最新 release を取得して Nix package 定義を更新
+	@bash ./bin/codex-update.sh $(VERSION)
+
+codex-bump: codex-update ## Alias for codex-update (usage: make codex-bump VERSION=0.142.0)
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader

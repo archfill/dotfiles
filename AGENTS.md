@@ -53,7 +53,7 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 
 - `make nix-rebuild` - flake を反映 (macOS: `nh darwin switch`, NixOS: `nh os switch`, それ以外 Linux: `nh home switch`)
 - `make nix-diff` - 次の switch で何が変わるかを表示 (適用しない、`--dry`)
-- `make nix-update` - flake.lock を更新してから switch (`-u`)
+- `make nix-update` - Codex と flake.lock を更新してから switch (`-u`)
 - `make nix-clean` - 古い generation を 5 世代残して掃除 (`nh clean all --keep 5`)
 
 ### Maintenance

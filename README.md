@@ -59,7 +59,7 @@ After `make init` has applied the Nix/Home Manager configuration, `nh` is provid
 ```bash
 make nix-rebuild      # Apply the Nix flake through nh
 make nix-diff         # Preview the next Nix switch
-make nix-update       # Update flake.lock and switch
+make nix-update       # Update Codex, flake.lock, and switch
 make nix-clean        # Keep the latest 5 generations
 make config           # Configure Git user settings
 make status           # Check status
