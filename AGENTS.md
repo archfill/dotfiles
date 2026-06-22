@@ -51,8 +51,8 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 
 ### Nix 運用 (nh 経由、OS 自動判定)
 
-- `make rebuild` - flake を反映 (macOS: `nh darwin switch`, NixOS: `nh os switch`, それ以外 Linux: `nh home switch`)
-- `make diff` - 次の switch で何が変わるかを表示 (適用しない、`--dry`)
+- `make nix-rebuild` - flake を反映 (macOS: `nh darwin switch`, NixOS: `nh os switch`, それ以外 Linux: `nh home switch`)
+- `make nix-diff` - 次の switch で何が変わるかを表示 (適用しない、`--dry`)
 - `make nix-update` - flake.lock を更新してから switch (`-u`)
 - `make nix-clean` - 古い generation を 5 世代残して掃除 (`nh clean all --keep 5`)
 
@@ -183,7 +183,7 @@ nix/
    - **standalone home-manager** (Arch / Ubuntu / WSL): `home.nix` のみ
    - **nix-darwin** (macOS): `darwin.nix` + `home.nix`
 3. `nix/flake.nix` の対応する出力 (`nixosConfigurations` / `homeConfigurations` / `darwinConfigurations`) にホストを追加（雛形コメントを解除）
-4. 切替コマンド (推奨は `make rebuild`、内部で `nh` が OS を判定して下記いずれかを呼ぶ):
+4. 切替コマンド (推奨は `make nix-rebuild`、内部で `nh` が OS を判定して下記いずれかを呼ぶ):
    - macOS: `nh darwin switch ~/dotfiles/nix` (= `sudo darwin-rebuild switch --flake ./nix#<host>`)
    - NixOS: `nh os switch ~/dotfiles/nix` (= `sudo nixos-rebuild switch --flake ./nix#<host>`)
    - その他 Linux: `nh home switch ~/dotfiles/nix` (= `home-manager switch --flake ./nix#<user>@<host>`)
@@ -192,7 +192,7 @@ nix/
 
 - 全ホストで `nh` を `home.packages` 経由で提供 (`nix/modules/common.nix`)
 - 利点: macOS / NixOS / standalone home-manager の rebuild コマンドが統一、`nvd` ベースの差分表示、`-u` で flake update + switch、`nh clean all` で古い世代の一括削除
-- `make rebuild` / `make diff` / `make nix-update` / `make nix-clean` で wrap 済み (OS 自動判定)
+- `make nix-rebuild` / `make nix-diff` / `make nix-update` / `make nix-clean` で wrap 済み (OS 自動判定)
 
 ### 設定ファイルの管理方針
 
@@ -233,7 +233,8 @@ bin/
 ├── linux-bootstrap.sh              # 非 NixOS Linux の最小 bootstrap
 ├── docker-setup.sh                 # 非 NixOS Linux の Docker daemon setup
 ├── sbarlua.sh                      # macOS SketchyBar Lua module setup
-└── test.sh                         # テストスクリプト
+├── sketchybar-test.sh              # SketchyBar 設定テスト
+└── git-health.sh                   # ghq 管理リポジトリの状態確認
 ```
 
 ### 🔄 実行フロー

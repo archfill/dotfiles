@@ -130,7 +130,7 @@ load_config_file "$CONFIG_DIR/versions.conf"
 ### Testing
 
 - Run focused checks before committing changes
-- Use `make diff` when Nix files are touched
+- Use `make nix-diff` when Nix files are touched
 - Test on target platforms when possible
 
 ### Script Template

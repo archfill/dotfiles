@@ -153,7 +153,8 @@ show_usage_examples() {
     log_info "Usage examples:"
     echo
     echo "🚀 Setup commands:"
-    echo "  make sketchybar-install   # Install SketchyBar + SbarLua"
+    echo "  make nix-rebuild          # Apply nix-darwin/Home Manager packages and config"
+    echo "  bash bin/sbarlua.sh       # Install SbarLua if needed"
     echo "  make sketchybar-test      # Test Lua configuration"
     echo
     echo "🔧 Service management:"

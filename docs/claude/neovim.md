@@ -17,7 +17,7 @@ Neovim は Nix で管理します。`nix/modules/common.nix` の `neovimPackage`
 
 - 通常は `pkgs.neovim`
 - nightly を使う場合は `useNeovimNightly = true` に変更し、`neovim-nightly-overlay` を使う
-- 反映は `make rebuild`
+- 反映は `make nix-rebuild`
 
 旧来の Homebrew/AppImage/HEAD ビルド用スクリプトと Makefile ターゲットは削除済みです。
 

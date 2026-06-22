@@ -62,7 +62,7 @@ apply_nix_linux_configuration() {
     else
       log_warning "Neither nh nor nixos-rebuild was found"
       log_info "Run manually after installing nh:"
-      log_info "  make rebuild"
+      log_info "  make nix-rebuild"
     fi
     return 0
   fi

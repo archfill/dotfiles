@@ -24,17 +24,17 @@ cd ~/dotfiles
 
 ### 2. Apply Nix Configuration
 
-Use `make rebuild` when Nix/nh is already available:
+Use `make nix-rebuild` after Nix and `nh` are already available. This is the normal day-to-day command after the first successful setup:
 
 ```bash
-make rebuild
+make nix-rebuild
 ```
 
-For first setup, install Nix first, then run `make init`. `make init` applies the right backend for the current OS:
+For first setup, install Nix first, then run `make init`. `make init` is the bootstrap entrypoint and does not require `nh` to be available yet:
 
-- NixOS: `nh os switch ~/dotfiles/nix`
-- macOS: `nh darwin switch ~/dotfiles/nix`
-- Arch / Ubuntu / WSL: `nh home switch ~/dotfiles/nix#<user>@<host>`
+- macOS: uses `darwin-rebuild` when available, otherwise prints the `nix run nix-darwin` command to run manually
+- NixOS: uses `nh os switch` when available, otherwise falls back to `nixos-rebuild`
+- Arch / Ubuntu / WSL: uses `nh home switch`, `home-manager switch`, or `nix run home-manager`
 
 ```bash
 # NixOS or macOS host declared in flake outputs
@@ -52,11 +52,13 @@ Minimal OS bootstrap packages are opt-in and only intended before installing Nix
 make init DOTFILES_INSTALL_MODE=legacy
 ```
 
+After `make init` has applied the Nix/Home Manager configuration, `nh` is provided by the shared Nix packages and `make nix-rebuild` / `make nix-diff` become the regular workflow.
+
 ### 3. Essential Commands
 
 ```bash
-make rebuild          # Apply the Nix flake through nh
-make diff             # Preview the next Nix switch
+make nix-rebuild      # Apply the Nix flake through nh
+make nix-diff         # Preview the next Nix switch
 make nix-update       # Update flake.lock and switch
 make nix-clean        # Keep the latest 5 generations
 make config           # Configure Git user settings
@@ -102,7 +104,7 @@ Hyprland is a modern Wayland compositor with GPU-accelerated animations and exte
 
 ```bash
 # NixOS: apply the declared Hyprland desktop
-make rebuild
+make nix-rebuild
 
 # Check installation status
 make hyprland-status

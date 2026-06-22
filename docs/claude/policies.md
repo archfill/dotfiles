@@ -200,7 +200,7 @@ NixOS Discourse / Reddit r/NixOS でのコンセンサス: **「flake.nix は個
 ### Update Process
 
 1. Modify functionality/add features
-2. Preview Nix changes with `make diff` when Nix files are touched
+2. Preview Nix changes with `make nix-diff` when Nix files are touched
 3. Update README.md (English) and README.ja.md (Japanese)
 4. Verify both versions are consistent
 5. Commit all changes together
@@ -211,6 +211,6 @@ NixOS Discourse / Reddit r/NixOS でのコンセンサス: **「flake.nix は個
 
 - **Always update READMEs** when making changes
 - **Use shared libraries** instead of duplicating code
-- **Verify changes** with the relevant command before committing (`make diff`, `make rebuild`, or a focused script check)
+- **Verify changes** with the relevant command before committing (`make nix-diff`, `make nix-rebuild`, or a focused script check)
 - **Follow naming conventions** and error handling patterns
 - **Document architectural changes** in both README files

@@ -11,28 +11,25 @@
 
 ## クイックスタート
 
-### 1. 基本セットアップ（選択肢）
+### 1. 基本セットアップ
 
 ```bash
 # dotfilesリポジトリをクローン
 git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
-# 【推奨】完全な開発環境セットアップ（全アプリ + 設定）
-make macos-setup
+# 【推奨】dotfiles + Nix 管理の開発環境セットアップ
+make init
 
 # 【軽量】必要最小限の開発環境セットアップ
-make macos-setup-essential
-
-# 【最小】Neovimビルド依存関係のみ
-make macos-setup-minimal
+DOTFILES_INSTALL_MODE=essential make init
 ```
 
 ### 2. Nix 設定の反映
 
 ```bash
 # Neovim を含む開発環境を反映
-make rebuild
+make nix-rebuild
 ```
 
 ## 詳細手順
@@ -67,7 +64,7 @@ xcode-select --install
 # 手動インストール
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 自動インストール（make macos-setup実行時）
+# 自動インストール（make init 実行時）
 # 未インストールの場合、自動的にインストールされます
 ```
 
@@ -116,17 +113,16 @@ altserver appflowy biscuit yt-music utm via warp xcodes lapce nextcloud gitup �
 
 ```bash
 # セットアップコマンド
-make macos-setup           # 完全な開発環境セットアップ（全パッケージ）
-make macos-setup-essential # 必要最小限の開発環境セットアップ
-make macos-setup-minimal   # Neovimビルド依存関係のみ
+make init                             # dotfiles + Nix 管理の開発環境セットアップ
+DOTFILES_INSTALL_MODE=essential make init # 必要最小限の開発環境セットアップ
 
 # Nix 設定確認
-make diff                  # 反映前の差分確認
+make nix-diff              # 反映前の差分確認
 ```
 
 ### Neovim
 
-Neovim は Nix の `nix/modules/common.nix` で管理します。macOS でも個別の Homebrew/ビルドスクリプトは使わず、`make rebuild` で反映します。
+Neovim は Nix の `nix/modules/common.nix` で管理します。macOS でも個別の Homebrew/ビルドスクリプトは使わず、`make nix-rebuild` で反映します。
 
 ## トラブルシューティング
 

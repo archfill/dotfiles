@@ -24,17 +24,17 @@ cd ~/dotfiles
 
 ### 2. Nix 設定の反映
 
-Nix と `nh` が使える状態なら、通常は `make rebuild` で反映します。
+Nix と `nh` が使える状態なら、通常運用は `make nix-rebuild` で反映します。これは初回セットアップ完了後の日常コマンドです。
 
 ```bash
-make rebuild
+make nix-rebuild
 ```
 
-初回セットアップでは先に Nix を導入してから `make init` を実行します。`make init` は OS に応じて以下へ分岐します。
+初回セットアップでは先に Nix を導入してから `make init` を実行します。`make init` は bootstrap 用の入口なので、この時点で `nh` がまだ使えなくても構いません。
 
-- NixOS: `nh os switch ~/dotfiles/nix`
-- macOS: `nh darwin switch ~/dotfiles/nix`
-- Arch / Ubuntu / WSL: `nh home switch ~/dotfiles/nix#<user>@<host>`
+- macOS: `darwin-rebuild` があれば実行し、なければ手動実行用の `nix run nix-darwin` コマンドを表示
+- NixOS: `nh os switch` があれば使い、なければ `nixos-rebuild` に fallback
+- Arch / Ubuntu / WSL: `nh home switch`、`home-manager switch`、`nix run home-manager` の順で fallback
 
 ```bash
 # NixOS / macOS の flake 定義済みホスト
@@ -52,11 +52,13 @@ Nix 導入前に最低限の OS パッケージだけ入れたい場合のみ、
 make init DOTFILES_INSTALL_MODE=legacy
 ```
 
+`make init` で Nix / Home Manager 設定が反映されると、共通 Nix パッケージとして `nh` が入ります。その後は `make nix-rebuild` / `make nix-diff` を通常の運用コマンドとして使います。
+
 ### 3. 基本コマンド
 
 ```bash
-make rebuild          # nh 経由で Nix flake を反映
-make diff             # 次の switch 差分を確認
+make nix-rebuild      # nh 経由で Nix flake を反映
+make nix-diff         # 次の switch 差分を確認
 make nix-update       # flake.lock を更新して switch
 make nix-clean        # 最新 5 世代を残して掃除
 make config           # Git ユーザー設定
@@ -88,7 +90,7 @@ Hyprland は GPU アクセラレーションによるアニメーションと豊
 
 ```bash
 # NixOS: 宣言済みの Hyprland デスクトップを反映
-make rebuild
+make nix-rebuild
 
 # インストール状態を確認
 make hyprland-status
