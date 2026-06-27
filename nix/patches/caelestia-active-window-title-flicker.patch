@@ -1,0 +1,39 @@
+--- share/caelestia-shell/modules/bar/components/ActiveWindow.qml
++++ share/caelestia-shell/modules/bar/components/ActiveWindow.qml
+@@ -30,1 +30,10 @@ Item {
++    readonly property string windowKey: {
++        const toplevel = Hypr.activeToplevel;
++        return toplevel ? String(toplevel.address) : "";
++    }
++    readonly property int titleCrossfadeInterval: 500
++    property string lastWindowKey: ""
++    property double lastTitleChangeTime: 0
++    property bool hasShownTitle: false
++
+     readonly property int maxHeight: {
+@@ -91,9 +100,22 @@ Item {
+         elideWidth: root.maxHeight - icon.height
+ 
+         onTextChanged: {
+-            const next = root.current === text1 ? text2 : text1;
+-            next.text = elidedText;
+-            root.current = next;
++            const now = Date.now();
++            const key = root.windowKey;
++            const isSameWindow = root.lastWindowKey === key;
++            const isRapidUpdate = now - root.lastTitleChangeTime < root.titleCrossfadeInterval;
++
++            root.lastWindowKey = key;
++            root.lastTitleChangeTime = now;
++
++            if (root.hasShownTitle && isSameWindow && isRapidUpdate) {
++                root.current.text = elidedText;
++            } else {
++                const next = root.current === text1 ? text2 : text1;
++                next.text = elidedText;
++                root.current = next;
++                root.hasShownTitle = true;
++            }
+         }
+         onElideWidthChanged: root.current.text = elidedText
+     }
