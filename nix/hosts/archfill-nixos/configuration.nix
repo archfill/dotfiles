@@ -88,6 +88,11 @@ in
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
+  services.udev.extraRules = ''
+    # The GSX 1000 reports its main wheel as Volume-Down in both directions.
+    ACTION=="add|change", SUBSYSTEM=="input", ATTRS{idVendor}=="1395", ATTRS{idProduct}=="00a0", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEY}="0", ENV{LIBINPUT_IGNORE_DEVICE}="1"
+  '';
+
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
