@@ -20,6 +20,7 @@
     };
   };
   boot.kernelPackages = pkgs.linuxPackages_zen;
+  system.boot.loader.kernelFile = "vmlinuz";
   boot.kernelModules = [
     "iptable_nat"
   ];
@@ -68,7 +69,7 @@
     powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
-    nvidiaPersistenced = true;
+    nvidiaPersistenced = false;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
