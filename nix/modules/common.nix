@@ -135,6 +135,7 @@ in
     clippy       # 同上
 
     # ─── Build / task runners ────────────────────────────────────────
+    gcc          # Rust crates のリンク時に必要な cc を提供
     gnumake      # GNU Make 4.x (macOS /usr/bin/make は GPL ライセンス
                  # 問題で 3.81 から更新されない。.RECIPEPREFIX / $(file) 等
                  # 4.x 機能を使う Makefile のため必須)
