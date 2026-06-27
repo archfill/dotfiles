@@ -22,6 +22,40 @@
   };
   environment.variables.LANGUAGE = "ja_JP:ja";
 
+  fonts = {
+    packages = with pkgs; [
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
+      noto-fonts-color-emoji
+      nerd-fonts.symbols-only
+      material-symbols
+    ];
+
+    fontconfig = {
+      enable = true;
+      defaultFonts = {
+        sansSerif = [
+          "Noto Sans CJK JP"
+          "Noto Sans"
+          "DejaVu Sans"
+        ];
+        serif = [
+          "Noto Serif CJK JP"
+          "Noto Serif"
+          "DejaVu Serif"
+        ];
+        monospace = [
+          "Noto Sans Mono CJK JP"
+          "DejaVu Sans Mono"
+        ];
+        emoji = [
+          "Noto Color Emoji"
+        ];
+      };
+    };
+  };
+
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";

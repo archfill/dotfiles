@@ -14,6 +14,9 @@
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       gtk-theme = "adw-gtk3-dark";
+      font-name = "Noto Sans CJK JP 10";
+      document-font-name = "Noto Sans CJK JP 10";
+      monospace-font-name = "Noto Sans Mono CJK JP 10";
     };
   };
 
