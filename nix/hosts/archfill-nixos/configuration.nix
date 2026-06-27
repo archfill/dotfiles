@@ -1,5 +1,35 @@
 { pkgs, config, ... }:
 
+let
+  onepasswordMcp = pkgs.stdenv.mkDerivation {
+    pname = "onepassword-mcp";
+    version = pkgs._1password-gui.version;
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [
+      pkgs.glibc
+      pkgs.stdenv.cc.cc.lib
+    ];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm555 ${pkgs._1password-gui}/share/1password/onepassword-mcp \
+        $out/bin/onepassword-mcp
+      runHook postInstall
+    '';
+
+    meta = with pkgs.lib; {
+      description = "1Password Environments MCP server from the 1Password desktop app";
+      homepage = "https://www.1password.dev/environments/mcp-codex-server";
+      license = licenses.unfree;
+      mainProgram = "onepassword-mcp";
+      platforms = platforms.linux;
+      sourceProvenance = [ sourceTypes.binaryNativeCode ];
+    };
+  };
+in
 {
   imports = [
     ../../modules/nixos-common.nix
@@ -77,6 +107,7 @@
     efibootmgr
     ghostty
     google-chrome
+    onepasswordMcp
     vscode
     winboat
     pciutils
