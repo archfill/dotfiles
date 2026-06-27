@@ -110,6 +110,7 @@ in
 
   environment.systemPackages = with pkgs; [
     efibootmgr
+    brave
     ghostty
     google-chrome
     onepasswordMcp
