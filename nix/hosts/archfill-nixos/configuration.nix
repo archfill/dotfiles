@@ -46,7 +46,15 @@ in
       efiSupport = true;
       efiInstallAsRemovable = true;
       gfxmodeEfi = "1024x768";
+      default = "saved";
       useOSProber = true;
+      extraEntries = ''
+        if [ "$grub_platform" = "efi" ]; then
+          menuentry "UEFI Firmware Settings" {
+            fwsetup
+          }
+        fi
+      '';
     };
   };
   boot.kernelPackages = pkgs.linuxPackages_zen;
