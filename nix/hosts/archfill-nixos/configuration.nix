@@ -115,6 +115,7 @@ in
     google-chrome
     onepasswordMcp
     vscode
+    zed-editor
     winboat
     pciutils
     usbutils
