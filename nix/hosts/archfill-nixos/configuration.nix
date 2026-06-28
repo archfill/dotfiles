@@ -121,6 +121,11 @@ in
     brave
     ghostty
     google-chrome
+    prismlauncher
+    jdk # System default Java; keep versioned JDKs below for Prism Launcher instances.
+    jdk8
+    jdk17
+    jdk21
     onepasswordMcp
     vscode
     zed-editor
