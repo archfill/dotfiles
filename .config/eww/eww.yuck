@@ -1,0 +1,53 @@
+; =====================================================
+; EWW Configuration
+; =====================================================
+; Submap overlay for Hyprland 40% keyboard
+
+; =====================================================
+; Variables
+; =====================================================
+
+; Current submap name (updated via script)
+(defvar submap "")
+
+; =====================================================
+; Workspace Submap Widget
+; =====================================================
+
+(defwidget workspace-hint []
+  (box :class "submap-container"
+       :orientation "v"
+       :space-evenly false
+    (label :class "submap-title" :text "Workspace Mode")
+    (box :class "submap-section"
+         :orientation "h"
+         :space-evenly true
+      (box :orientation "v" :space-evenly false
+        (label :class "submap-header" :text "Switch")
+        (label :class "submap-key" :text "A -> WS 1")
+        (label :class "submap-key" :text "S -> WS 2")
+        (label :class "submap-key" :text "D -> WS 3")
+        (label :class "submap-key" :text "F -> WS 4")
+        (label :class "submap-key" :text "G -> WS 5"))
+      (box :orientation "v" :space-evenly false
+        (label :class "submap-header" :text "Navigate")
+        (label :class "submap-key" :text "H -> Prev")
+        (label :class "submap-key" :text "L -> Next")
+        (label :class "submap-header" :text "Move Window")
+        (label :class "submap-key" :text "Shift+A-G")))
+    (label :class "submap-footer" :text "ESC / Enter to exit")))
+
+; =====================================================
+; Windows
+; =====================================================
+
+(defwindow submap-overlay
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "30%"
+                      :width "300px"
+                      :anchor "center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  (workspace-hint))
