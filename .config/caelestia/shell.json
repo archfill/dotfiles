@@ -2,10 +2,6 @@
     "bar": {
         "tray": {
             "iconSubs": [
-                {
-                    "icon": "org.gnome.Settings-keyboard-symbolic",
-                    "id": "Fcitx"
-                }
             ]
         }
     },

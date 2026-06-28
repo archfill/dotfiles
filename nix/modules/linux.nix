@@ -50,6 +50,9 @@
   xdg.dataFile."icons/hicolor/scalable/apps/input-keyboard.svg".source =
     "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-keyboard-symbolic.svg";
 
+  xdg.dataFile."icons/hicolor/scalable/apps/input-keyboard-symbolic.svg".source =
+    "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-keyboard-symbolic.svg";
+
   xdg.dataFile."icons/hicolor/scalable/apps/applications-system.svg".source =
     "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-applications-symbolic.svg";
 
