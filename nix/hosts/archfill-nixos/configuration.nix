@@ -106,6 +106,14 @@ in
     enable = true;
     polkitPolicyOwners = [ "archfill" ];
   };
+  users.groups.onepassword-mcp.gid = 31003;
+  security.wrappers.onepassword-mcp = {
+    source = "${onepasswordMcp}/bin/onepassword-mcp";
+    owner = "root";
+    group = "onepassword-mcp";
+    setuid = false;
+    setgid = true;
+  };
   programs.steam.enable = true;
 
   hardware.nvidia = {
@@ -127,7 +135,6 @@ in
     jdk8
     jdk17
     jdk21
-    onepasswordMcp
     vscode
     zed-editor
     winboat
