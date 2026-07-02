@@ -1,6 +1,30 @@
-{ pkgs, config, ... }:
+{ inputs, pkgs, config, ... }:
 
 let
+  ghosttyFcitxWorkaround = pkgs.runCommand "ghostty-fcitx-workaround" {
+    name = "ghostty-fcitx-workaround";
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    meta = pkgs.ghostty.meta;
+  } ''
+    cp -a --no-preserve=mode,ownership ${pkgs.ghostty}/. $out/
+    chmod -R u+w $out
+    chmod +x $out/bin/ghostty
+
+    wrapProgram $out/bin/ghostty --unset GTK_IM_MODULE
+
+    substituteInPlace $out/share/applications/com.mitchellh.ghostty.desktop \
+      --replace-fail ${pkgs.ghostty}/bin/ghostty $out/bin/ghostty
+    substituteInPlace $out/share/dbus-1/services/com.mitchellh.ghostty.service \
+      --replace-fail ${pkgs.ghostty}/bin/ghostty $out/bin/ghostty
+  '';
+
+  googleChromeWayland = pkgs.google-chrome.override {
+    commandLineArgs = [
+      "--ozone-platform=wayland"
+      "--enable-wayland-ime=true"
+    ];
+  };
+
   onepasswordMcp = pkgs.stdenv.mkDerivation {
     pname = "onepassword-mcp";
     version = pkgs._1password-gui.version;
@@ -127,13 +151,14 @@ in
   environment.systemPackages = with pkgs; [
     efibootmgr
     brave
-    ghostty
-    google-chrome
+    ghosttyFcitxWorkaround
+    googleChromeWayland
     prismlauncher
     jdk # System default Java; keep versioned JDKs below for Prism Launcher instances.
     jdk8
     jdk17
     jdk21
+    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
     vscode
     zed-editor
     winboat
