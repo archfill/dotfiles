@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "0.142.3";
+  version = "0.142.5";
 
   # codex publishes a single prebuilt native binary per (arch, os).
   # Map the Nix system triple to the upstream tarball suffix.
@@ -22,10 +22,10 @@ let
 
   # SRI hashes for codex rust-v${version}. Refresh: `make codex-update VERSION=...`
   hashes = {
-    "aarch64-apple-darwin"       = "sha256-wwMVy0HWbQAPya1mc19CiNn/DH/nSPaPcautcC1y+DI=";
-    "x86_64-apple-darwin"        = "sha256-s3ZJQyf7sNPJPddS8+c6HCIaRQS7/jRahCC9+PC9P0o=";
-    "x86_64-unknown-linux-musl"  = "sha256-+WgT9BaStNiuRNCBIWWi/MQpGW6zSB9rwiGv3slqF/g=";
-    "aarch64-unknown-linux-musl" = "sha256-1LsYeTzVOQJZPduSxAnyYsBdyA5CNfhl7eI3i6FaHdE=";
+    "aarch64-apple-darwin"       = "sha256-cVaxmWJzXJz7VVzde6voxA55dogfhxK3gRmSGdLjpwc=";
+    "x86_64-apple-darwin"        = "sha256-OWmjMytf4/Hfar0jcU5tkBFgRHUk7reOoSKRq8h7OWA=";
+    "x86_64-unknown-linux-musl"  = "sha256-y5M+w8thv0tfyI7s9eYUmCn6phclNbbvCvsBVL60qrg=";
+    "aarch64-unknown-linux-musl" = "sha256-sYx1xJZFkY+uI766CrQcBfB5QWAVEKJFG6l/5RlXPDg=";
   };
 in
 
