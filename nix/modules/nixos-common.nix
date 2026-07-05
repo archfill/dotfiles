@@ -108,7 +108,10 @@
     ];
   };
 
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    languagePacks = [ "ja" ];
+  };
   programs.zsh.enable = true;
 
   nix.settings = {
