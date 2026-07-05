@@ -159,6 +159,7 @@ in
     jdk17
     jdk21
     inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
+    nextcloud-client
     vscode
     zed-editor
     winboat

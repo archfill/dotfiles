@@ -83,6 +83,24 @@ in
     };
   };
 
+  systemd.user.services.nextcloud-client = {
+    Unit = {
+      Description = "Nextcloud desktop sync client";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      ExecStart = "${pkgs.nextcloud-client}/bin/nextcloud --background";
+      Restart = "on-failure";
+      RestartSec = "5s";
+      NoNewPrivileges = true;
+      RestrictRealtime = true;
+    };
+
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   systemd.user.paths.caelestia-matugen = {
     Unit = {
       Description = "Watch Caelestia scheme changes for matugen";
