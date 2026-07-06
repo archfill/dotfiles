@@ -10,9 +10,26 @@
 
   # ─── macOS 固有 symlink (mkOutOfStoreSymlink で dotfiles 編集を即反映) ──
   # Hammerspoon (macOS 自動化スクリプト)。~/.hammerspoon/init.lua がエントリ。
-  home.file.".hammerspoon".source =
+  # Hammerspoon が起動時に ~/.hammerspoon 自体の symlink を見落とす場合があるため、
+  # 親ディレクトリは home-manager に作らせ、中身だけ dotfiles へ向ける。
+  home.file.".hammerspoon/README.md".source =
     config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.hammerspoon";
+      "${config.home.homeDirectory}/dotfiles/.hammerspoon/README.md";
+  home.file.".hammerspoon/Spoons".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.hammerspoon/Spoons";
+  home.file.".hammerspoon/config.lua".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.hammerspoon/config.lua";
+  home.file.".hammerspoon/init.lua".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.hammerspoon/init.lua";
+  home.file.".hammerspoon/modules".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.hammerspoon/modules";
+  home.file.".hammerspoon/utils".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.hammerspoon/utils";
 
   # lazygit は最新バージョン (PR #3989, 2025) で
   # ~/.config/lazygit/config.yml をデフォルトで読むようになったため、
