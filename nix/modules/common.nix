@@ -17,6 +17,11 @@ let
   pipxPackage = pkgs.pipx.overridePythonAttrs (_: {
     doCheck = false;
   });
+
+  starshipPackage =
+    if pkgs.stdenv.hostPlatform.system == "aarch64-darwin"
+    then inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.starship-bin
+    else pkgs.starship;
 in
 {
   # 初回 install 時点の home-manager リリース版。以降は変更しない。
@@ -81,7 +86,7 @@ in
     bash             # dotfiles スクリプトが bash 4+ (mapfile / declare -g) を要求
 
     # Prompt
-    starship         # 設定は ~/.config/starship.toml をそのまま使用
+    starshipPackage  # 設定は ~/.config/starship.toml をそのまま使用
 
     # Fuzzy finder
     fzf              # ~/.fzf.zsh から share/fzf/ の completion/key-bindings を source

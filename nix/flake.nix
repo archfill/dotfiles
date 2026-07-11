@@ -81,8 +81,12 @@
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-darwin" "x86_64-linux" "aarch64-linux" ]
         (system:
-          let pkgs = nixpkgs.legacyPackages.${system}; in {
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+          in {
             codex = pkgs.callPackage ./pkgs/codex { };
+          } // nixpkgs.lib.optionalAttrs (system == "aarch64-darwin") {
+            starship-bin = pkgs.callPackage ./pkgs/starship-bin { };
           });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
