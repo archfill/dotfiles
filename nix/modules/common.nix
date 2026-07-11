@@ -179,6 +179,7 @@ in
                     # 利用。SSO / SSO+role / 通常 access key 全て対応。
     stripe-cli      # Stripe CLI (~/.config/stripe/config.toml で設定
                     # 済み、業務で利用)
+    firebase-tools  # Firebase CLI。Hosting / Functions / Firestore 等を管理。
 
     # ─── Mobile / Flutter ────────────────────────────────────────────
     fvm             # Flutter Version Management (Dart 製)。プロジェクト
