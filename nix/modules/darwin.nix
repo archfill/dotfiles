@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 # home-manager の macOS 固有設定。
 # nix-darwin システム設定の `nix/darwin.nix` (top-level) とは別物。
@@ -7,6 +7,12 @@
 {
   home.username = "chill-rf";
   home.homeDirectory = "/Users/chill-rf";
+
+  # system Rubyに依存せず、通常のshellと`flutter doctor`から利用する
+  # iOS / Flutter開発ツール。
+  home.packages = [
+    pkgs.cocoapods
+  ];
 
   # ─── macOS 固有 symlink (mkOutOfStoreSymlink で dotfiles 編集を即反映) ──
   # Hammerspoon (macOS 自動化スクリプト)。~/.hammerspoon/init.lua がエントリ。
