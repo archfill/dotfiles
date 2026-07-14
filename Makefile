@@ -5,7 +5,7 @@
 # ヘルプ: make help
 
 .PHONY: all help init init-log config update backup clean status info debug validate \
-	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-update codex-bump \
+	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-update codex-bump orca-update orca-bump \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -136,13 +136,18 @@ nix-diff: ## 次の switch で何が変わるかを表示 (適用しない)
 nix-clean: ## 古い generation を 5 世代残して掃除
 	nh clean all --keep 5
 
-nix-update: codex-update ## Codex と flake.lock を更新してから switch
+nix-update: codex-update orca-update ## AI CLI と flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF) -u
 
 codex-update: ## Codex CLI の最新 release を取得して Nix package 定義を更新
 	@bash ./bin/codex-update.sh $(VERSION)
 
 codex-bump: codex-update ## Alias for codex-update (usage: make codex-bump VERSION=0.142.0)
+
+orca-update: ## Orca の最新 release を取得して Nix package 定義を更新
+	@bash ./bin/orca-update.sh $(VERSION)
+
+orca-bump: orca-update ## Alias for orca-update (usage: make orca-bump VERSION=1.4.139)
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader
