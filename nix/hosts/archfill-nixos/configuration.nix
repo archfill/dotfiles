@@ -25,6 +25,15 @@ let
     ];
   };
 
+  llamaCppCuda = pkgs.llama-cpp.override {
+    cudaSupport = true;
+    cudaPackages = pkgs.cudaPackages // {
+      flags = pkgs.cudaPackages.flags // {
+        cmakeCudaArchitecturesString = "75;89";
+      };
+    };
+  };
+
   onepasswordMcp = pkgs.stdenv.mkDerivation {
     pname = "onepassword-mcp";
     version = pkgs._1password-gui.version;
@@ -159,6 +168,7 @@ in
     jdk17
     jdk21
     inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
+    llamaCppCuda
     nextcloud-client
     vscode
     zed-editor

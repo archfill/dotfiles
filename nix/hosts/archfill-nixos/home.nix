@@ -2,6 +2,11 @@
 
 let
   caelestiaPackage = inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli;
+  orcaIdeX11 = pkgs.writeShellScriptBin "orca-ide-x11" ''
+    unset NIXOS_OZONE_WL
+    exec ${inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.orca-ide}/bin/orca-ide \
+      --ozone-platform=x11 "$@"
+  '';
   patchedCaelestiaPackage = pkgs.runCommand "${caelestiaPackage.name}-active-window-title-patch" { } ''
     mkdir -p "$out"
     cp -a ${caelestiaPackage}/. "$out"/
@@ -38,6 +43,19 @@ in
 
   home.username = "archfill";
   home.homeDirectory = "/home/archfill";
+
+  home.packages = [ orcaIdeX11 ];
+
+  xdg.desktopEntries.orca-ide-x11 = {
+    name = "Orca IDE (XWayland IME)";
+    genericName = "AI coding environment";
+    comment = "Launch Orca through XWayland for reliable fcitx5 input";
+    exec = "orca-ide-x11";
+    icon = "orca-ide";
+    terminal = false;
+    type = "Application";
+    categories = [ "Development" "IDE" ];
+  };
 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
