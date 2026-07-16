@@ -87,8 +87,6 @@
             codex = pkgs.callPackage ./pkgs/codex { };
           } // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             orca-ide = pkgs.callPackage ./pkgs/orca { };
-          } // nixpkgs.lib.optionalAttrs (system == "aarch64-darwin") {
-            starship-bin = pkgs.callPackage ./pkgs/starship-bin { };
           });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
