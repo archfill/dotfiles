@@ -1,8 +1,16 @@
 {
+    "appearance": {
+        "font": {
+            "workspaces": "Symbols Nerd Font Mono"
+        }
+    },
     "bar": {
         "tray": {
             "iconSubs": [
             ]
+        },
+        "workspaces": {
+            "label": ""
         }
     },
     "launcher": {
