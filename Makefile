@@ -119,6 +119,10 @@ validate: ## Validate dotfiles configuration and structure
 NIX_FLAKE := $(CURDIR)/nix
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
+NIX_UPDATE_DEPS := codex-update
+ifneq ($(NH_TARGET),darwin)
+NIX_UPDATE_DEPS += orca-update
+endif
 
 nix-rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
@@ -136,7 +140,7 @@ nix-diff: ## 次の switch で何が変わるかを表示 (適用しない)
 nix-clean: ## 古い generation を 5 世代残して掃除
 	nh clean all --keep 5
 
-nix-update: codex-update orca-update ## AI CLI と flake.lock を更新してから switch
+nix-update: $(NIX_UPDATE_DEPS) ## AI CLI と flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF) -u
 
 codex-update: ## Codex CLI の最新 release を取得して Nix package 定義を更新
