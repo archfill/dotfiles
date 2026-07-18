@@ -172,7 +172,6 @@ in
     nextcloud-client
     vscode
     zed-editor
-    winboat
     pciutils
     usbutils
   ];
