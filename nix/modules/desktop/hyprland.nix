@@ -28,6 +28,7 @@
     hyprpolkitagent
 
     # Wayland desktop tools
+    grim
     rofi
     wl-clipboard
     cliphist
