@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Modern Powerline Left Status (2025 Edition)
 
 # カラーパレット (Tokyo Night)

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # IME Indicator Plugin for SketchyBar
 # Shows current input method (English/Japanese/etc)

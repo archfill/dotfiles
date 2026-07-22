@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Amphetamine status indicator for SketchyBar
 # Theme: Catppuccin Mocha
