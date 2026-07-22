@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Ghostty tmux session manager
 # 既存のtmuxセッションに接続、または新規作成
 

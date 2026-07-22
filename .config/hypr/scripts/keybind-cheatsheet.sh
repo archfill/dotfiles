@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Hyprland Keybind Cheatsheet
 # Parses keybind config and displays keybindings in rofi with categories
 
