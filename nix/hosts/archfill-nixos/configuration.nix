@@ -34,8 +34,8 @@ let
     };
   };
 
-  onepasswordMcp = pkgs.stdenv.mkDerivation {
-    pname = "onepassword-mcp";
+  onePasswordMcp = pkgs.stdenv.mkDerivation {
+    pname = "1password-mcp";
     version = pkgs._1password-gui.version;
 
     dontUnpack = true;
@@ -48,8 +48,8 @@ let
 
     installPhase = ''
       runHook preInstall
-      install -Dm555 ${pkgs._1password-gui}/share/1password/onepassword-mcp \
-        $out/bin/onepassword-mcp
+      install -Dm555 ${pkgs._1password-gui}/share/1password/1password-mcp \
+        $out/bin/1password-mcp
       runHook postInstall
     '';
 
@@ -57,7 +57,7 @@ let
       description = "1Password Environments MCP server from the 1Password desktop app";
       homepage = "https://www.1password.dev/environments/mcp-codex-server";
       license = licenses.unfree;
-      mainProgram = "onepassword-mcp";
+      mainProgram = "1password-mcp";
       platforms = platforms.linux;
       sourceProvenance = [ sourceTypes.binaryNativeCode ];
     };
@@ -138,11 +138,11 @@ in
     enable = true;
     polkitPolicyOwners = [ "archfill" ];
   };
-  users.groups.onepassword-mcp.gid = 31003;
-  security.wrappers.onepassword-mcp = {
-    source = "${onepasswordMcp}/bin/onepassword-mcp";
+  users.groups."1password-mcp".gid = 31003;
+  security.wrappers."1password-mcp" = {
+    source = "${onePasswordMcp}/bin/1password-mcp";
     owner = "root";
-    group = "onepassword-mcp";
+    group = "1password-mcp";
     setuid = false;
     setgid = true;
   };
