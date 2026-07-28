@@ -377,12 +377,12 @@ hyprctl reload
 
 ```bash
 # 左右配置（横並び）
-monitor=HDMI-A-2,1920x1080@60,0x0,1,transform,3      # 左
-monitor=DP-6,3440x1440@99,1080x0,1                   # 右 (x=1080はセカンダリの表示幅)
+monitor=HDMI-A-2,1920x1080@60,-1080x0,1,transform,3  # 左 (負の座標)
+monitor=DP-6,3440x1440@99,0x0,1                      # 右、プライマリを原点に固定
 
 # 上下配置（縦並び）
-monitor=HDMI-A-2,1920x1080@60,0x0,1,transform,3      # 上
-monitor=DP-6,3440x1440@99,0x1920,1                   # 下 (y=1920はセカンダリの表示高さ)
+monitor=HDMI-A-2,1920x1080@60,0x-1920,1,transform,3  # 上 (負の座標)
+monitor=DP-6,3440x1440@99,0x0,1                      # 下、プライマリを原点に固定
 ```
 
 ### Q: 複数のモニター設定例が欲しい

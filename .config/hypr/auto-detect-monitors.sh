@@ -524,30 +524,22 @@ else
 
     case $SECONDARY_POSITION in
         left)
-            # Secondary on left, primary on right
-            SECONDARY_X=0
+            # Keep primary at the layout origin and place secondary to its left
+            SECONDARY_X=$((-SECONDARY_DISPLAY_WIDTH))
             SECONDARY_Y=0
-            PRIMARY_X=$SECONDARY_DISPLAY_WIDTH
-            PRIMARY_Y=0
             ;;
         right)
-            # Primary on left, secondary on right
-            PRIMARY_X=0
-            PRIMARY_Y=0
+            # Keep primary at the layout origin and place secondary to its right
             SECONDARY_X=$PRIMARY_DISPLAY_WIDTH
             SECONDARY_Y=0
             ;;
         above)
-            # Secondary above, primary below
+            # Keep primary at the layout origin and place secondary above it
             SECONDARY_X=0
-            SECONDARY_Y=0
-            PRIMARY_X=0
-            PRIMARY_Y=$SECONDARY_DISPLAY_HEIGHT
+            SECONDARY_Y=$((-SECONDARY_DISPLAY_HEIGHT))
             ;;
         below)
-            # Primary above, secondary below
-            PRIMARY_X=0
-            PRIMARY_Y=0
+            # Keep primary at the layout origin and place secondary below it
             SECONDARY_X=0
             SECONDARY_Y=$PRIMARY_DISPLAY_HEIGHT
             ;;

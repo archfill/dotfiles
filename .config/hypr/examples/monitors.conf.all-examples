@@ -78,10 +78,10 @@
 
 # # Portrait monitor (left, rotated 90° counter-clockwise)
 # # transform: 0=normal, 1=90°, 2=180°, 3=270°
-# monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3
+# monitor=HDMI-A-1,1920x1080@60,-1080x0,1,transform,3
 #
-# # Main monitor (right, landscape)
-# monitor=DP-1,3440x1440@165,1080x0,1
+# # Main monitor (right, landscape, layout origin)
+# monitor=DP-1,3440x1440@165,0x0,1
 #
 # # Workspace assignment
 # workspace=1,monitor:DP-1
