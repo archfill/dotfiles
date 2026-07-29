@@ -456,6 +456,11 @@ if [[ "$MODE" == "single" ]]; then
 # Single Monitor Setup
 monitor=${PRIMARY_CONFIG}
 
+# Start the session on the selected primary monitor
+cursor {
+    default_monitor = ${PRIMARY_MONITOR}
+}
+
 # Workspace assignment (optional - all workspaces default to single monitor)
 # workspace=1,monitor:${PRIMARY_MONITOR}
 # workspace=2,monitor:${PRIMARY_MONITOR}
@@ -573,6 +578,11 @@ monitor=${PRIMARY_CONFIG}
 
 # Secondary Monitor (Sub)
 monitor=${SECONDARY_CONFIG}
+
+# Start the session on the selected primary monitor
+cursor {
+    default_monitor = ${PRIMARY_MONITOR}
+}
 
 # =====================================================
 # Workspace Assignment

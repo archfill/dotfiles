@@ -21,6 +21,11 @@
 # Syntax: monitor=NAME,RESOLUTION@REFRESH,POSITION,SCALE
 monitor=DP-1,preferred,auto,1
 
+# Start the session on this monitor
+cursor {
+    default_monitor = DP-1
+}
+
 # Workspace assignment (optional for single monitor)
 # All workspaces will default to the single monitor
 # Uncomment to explicitly assign:

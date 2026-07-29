@@ -206,6 +206,11 @@ nvim ~/.config/hypr/monitors.conf
 ```bash
 # Monitor configuration
 monitor=DP-6,preferred,auto,1  # 実際のモニター名に変更
+
+# ログイン時にカーソルを置くモニター
+cursor {
+    default_monitor = DP-6
+}
 ```
 
 **デュアルディスプレイの場合:**
@@ -420,6 +425,15 @@ workspace=7,monitor:HDMI-A-2
 workspace=8,monitor:HDMI-A-2
 workspace=9,monitor:HDMI-A-2
 workspace=10,monitor:HDMI-A-2
+```
+
+ログイン直後にカーソルと新規ウィンドウの基準にするモニターは、同じファイルの
+`cursor.default_monitor` で指定します。座標の `0x0` だけでは初期カーソル先は決まりません。
+
+```bash
+cursor {
+    default_monitor = DP-6
+}
 ```
 
 ### モニターの回転

@@ -47,6 +47,11 @@ workspace=10,monitor:HDMI-A-1
 # # Main monitor (right, landscape, layout origin)
 # monitor=DP-1,3440x1440@165,0x0,1
 #
+# # Start the session on the main monitor
+# cursor {
+#     default_monitor = DP-1
+# }
+#
 # # Workspace assignment
 # workspace=1,monitor:DP-1
 # workspace=2,monitor:DP-1
