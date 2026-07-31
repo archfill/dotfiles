@@ -7,6 +7,7 @@ let
     exec ${inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.orca-ide}/bin/orca-ide \
       --ozone-platform=x11 "$@"
   '';
+  rovehelmPackage = inputs.rovehelm.packages.${pkgs.stdenv.hostPlatform.system}.default;
   patchedCaelestiaPackage = pkgs.runCommand "${caelestiaPackage.name}-active-window-title-patch" { } ''
     mkdir -p "$out"
     cp -a ${caelestiaPackage}/. "$out"/
@@ -44,7 +45,10 @@ in
   home.username = "archfill";
   home.homeDirectory = "/home/archfill";
 
-  home.packages = [ orcaIdeX11 ];
+  home.packages = [
+    orcaIdeX11
+    rovehelmPackage
+  ];
 
   xdg.desktopEntries.orca-ide-x11 = {
     name = "Orca IDE (XWayland IME)";

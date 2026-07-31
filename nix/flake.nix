@@ -28,6 +28,11 @@
       url = "github:ogulcancelik/herdr";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    rovehelm = {
+      url = "git+ssh://git@github.com/archfill/rovehelm.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, ... }:
@@ -79,7 +84,7 @@
       # codex は nixpkgs で Rust ソースビルド (依存重) されるため更新が遅れ
       # やすい。GitHub release の prebuilt native binary を取って最新を追従。
       packages = nixpkgs.lib.genAttrs
-        [ "aarch64-darwin" "x86_64-darwin" "x86_64-linux" "aarch64-linux" ]
+        [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
         (system:
           let
             pkgs = nixpkgs.legacyPackages.${system};
