@@ -46,6 +46,7 @@ in
   home.homeDirectory = "/home/archfill";
 
   home.packages = [
+    pkgs.opencode
     orcaIdeX11
     rovehelmPackage
   ];
