@@ -49,6 +49,29 @@ if [ -f "$ZDOTDIR/zshenv/$(uname)/init.zsh" ]; then
   . "$ZDOTDIR/zshenv/$(uname)/init.zsh"
 fi
 
+# ===== Nix Home Manager session and profile =====
+# Make Nix-provided commands available to login and non-login zsh shells.
+# .zprofile calls this again after macOS path_helper has run.
+setup_nix_session() {
+  for _hm_dir in "/etc/profiles/per-user/$USER" "$HOME/.nix-profile"; do
+    source_if_exists "$_hm_dir/etc/profile.d/hm-session-vars.sh"
+  done
+
+  for _nix_bin in \
+    "/nix/var/nix/profiles/default/bin" \
+    "$HOME/.nix-profile/bin" \
+    "/etc/profiles/per-user/$USER/bin"; do
+    if [[ -d "$_nix_bin" ]]; then
+      path=("$_nix_bin" "${(@)path:#$_nix_bin}")
+    fi
+  done
+
+  unset _hm_dir _nix_bin
+  export PATH
+}
+
+setup_nix_session
+
 # ===== Basic PATH Setup =====
 # Essential directories for user binaries
 [[ -d "${HOME}/bin" ]] && add_to_path "${HOME}/bin"
