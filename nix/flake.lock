@@ -257,11 +257,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785518897,
-        "narHash": "sha256-CH8P7QLSsnTzi3x2BSRpSd1zVaEMywX0R9WMp29yvQk=",
+        "lastModified": 1785520921,
+        "narHash": "sha256-KktyT634GU+SFO4ViYGrha+BdxOn708oxHM9tfMgTko=",
         "ref": "refs/heads/main",
-        "rev": "fead2f9f405b5669308bf888b1ee3b8047c183f5",
-        "revCount": 106,
+        "rev": "17d7e41c243c753590b6e95c608419d0fbb26e67",
+        "revCount": 107,
         "type": "git",
         "url": "ssh://git@github.com/archfill/rovehelm.git"
       },
