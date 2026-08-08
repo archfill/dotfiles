@@ -156,11 +156,12 @@ go.work
 .config/ghostty/platform
 
 ### Hyprland ###
-.config/hypr/monitors.conf
+.config/hypr/monitors.lua
+.config/hypr/colors_generated.lua
 .config/hypr/current-wallpaper
 .config/hypr/hypridle.local.conf
 .config/hypr/scheme/
-# colors.conf は matugen で上書きされるが、デフォルトとして git 追跡する
+# colors.lua はデフォルト配色を保持し、Matugen 生成物は colors_generated.lua に分離する
 
 ### Sheldon ###
 .config/sheldon/

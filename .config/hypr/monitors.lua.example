@@ -1,0 +1,15 @@
+-- Copy to monitors.lua and edit it for this machine, or run
+-- auto-detect-monitors.sh. monitors.lua is intentionally gitignored.
+return {
+	cursor_default_monitor = "DP-1",
+	monitors = {
+		{
+			output = "DP-1",
+			mode = "preferred",
+			position = "auto",
+			scale = 1,
+		},
+	},
+	workspace_groups = {},
+	window_rules = {},
+}

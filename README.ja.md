@@ -135,7 +135,7 @@ make hyprland-status
 
 #### GPU 別設定
 
-NixOS の共通設定は Nix module で宣言します。ホスト固有の差分は `nix/hosts/<host>/` に置き、モニター配置は `~/.config/hypr/monitors.conf` に残します。
+NixOS の共通設定は Nix module で宣言します。ホスト固有の差分は `nix/hosts/<host>/` に置き、モニター配置は `~/.config/hypr/monitors.lua` に残します。
 
 **NVIDIA GPU (RTX 4070 など):**
 
@@ -157,7 +157,7 @@ NixOS の共通設定は Nix module で宣言します。ホスト固有の差�
 
 **全ユーザー向け:**
 
-1. 設定ファイルを確認: `~/.config/hypr/hyprland.conf`
+1. 設定ファイルを確認: `~/.config/hypr/hyprland.lua`
 2. 必要に応じてキーバインド調整（デフォルト: Super/Windows キー）
 3. 複数ディスプレイ使用時はモニターレイアウトを設定
 
@@ -184,7 +184,7 @@ Hyprland
 
 設定ファイルは Nix / Home Manager から symlink されます。
 
-- `~/.config/hypr/hyprland.conf` - メイン設定
+- `~/.config/hypr/hyprland.lua` - メイン設定
 - `~/.config/hypr/hypridle.conf` - アイドル管理（画面減光、DPMS、サスペンド。ロック UI は Caelestia）
 - `~/.config/caelestia/shell.json` - Caelestia Shell 設定
 - `~/.config/rofi/` - クリップボード / キーバインド一覧の fallback menu
@@ -254,7 +254,7 @@ Hyprland
 **モニターが検出されない:**
 
 - モニター一覧: `hyprctl monitors`
-- `~/.config/hypr/hyprland.conf` のモニターセクションを編集
+- `~/.config/hypr/monitors.lua` を編集
 
 詳細なヘルプ:
 

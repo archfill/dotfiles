@@ -1,479 +1,123 @@
-# Hyprland Configuration
+# Hyprland configuration
 
-環境固有のモニター設定を分離管理するHyprland設定です。シングル/デュアルディスプレイ両対応。
+Hyprland 0.55 以降の Lua 設定です。メインの読み込み先は
+`~/.config/hypr/hyprland.lua` です。設定の追加・変更は Lua に行います。
 
-## 📁 ファイル構成
+## ファイル構成
 
 ```
 .config/hypr/
-├── hyprland.conf           # メイン設定（Git管理）
-├── monitors.conf.example   # シングルディスプレイのデフォルト（Git管理）
-├── monitors.conf           # 環境固有設定（.gitignore）
-├── hypridle.conf           # アイドル管理設定
-├── examples/               # 設定例集
-│   ├── monitors.conf.dual  # デュアルディスプレイの例
-│   └── monitors.conf.all-examples  # 全例文集（シングル/デュアル/トリプル等）
-└── README.md               # このファイル
+├── hyprland.lua             # メイン設定（Git 管理）
+├── colors.lua               # 配色の安定ラッパーと既定値（Git 管理）
+├── colors_generated.lua     # Matugen の配色（.gitignore）
+├── modules/                 # 役割別の Lua モジュール（Git 管理）
+│   ├── appearance.lua       # 入力・見た目・アニメーション
+│   ├── autostart.lua        # セッション起動処理
+│   ├── environment.lua      # 環境変数
+│   ├── monitors.lua         # モニターとローカル規則の読み込み
+│   ├── rules.lua            # 共有ウィンドウ規則
+│   └── keybinds.lua         # キーバインド
+├── monitors.lua.example     # モニター設定の雛形（Git 管理）
+├── monitors.lua             # このマシンのモニター配置（.gitignore）
+├── auto-detect-monitors.sh  # monitors.lua の生成器
+├── hypridle.conf            # hypridle 用の hyprlang 設定
+└── README.md
 ```
 
-## 🚀 セットアップ
+`hyprland.lua` は各モジュールを順に読み込むだけの入口です。`monitors.lua` がない
+クリーンなチェックアウトでも、Hyprland は既定のモニター設定で起動できます。
 
-### オプション A: 自動検出（推奨）⭐
+`colors.lua` は `colors_generated.lua` を優先します。後者は Matugen が壁紙・配色変更時に
+生成するローカルファイルで、Git 管理の既定色を上書きしません。
 
-接続されているモニターを自動検出して、Hyprland の設定を自動生成します。
+## モニター設定
 
-#### 基本的な使い方
-
-**makeコマンド経由（推奨）:**
+モニター名・配置は機器固有なので Git 管理しません。自動生成するか、雛形から作成します。
 
 ```bash
-# インタラクティブメニューで選択
+cd ~/.config/hypr
+./auto-detect-monitors.sh
+
+# または手動で作成
+cp monitors.lua.example monitors.lua
+nvim monitors.lua
+```
+
+自動生成用の Make ターゲットも使えます。
+
+```bash
 make monitors
-
-# 自動検出（メニューをスキップ）
 make monitors-auto
-
-# シングルディスプレイを強制
 make monitors-single
-
-# デュアルディスプレイを強制
 make monitors-dual
 ```
 
-**スクリプト直接実行:**
+最小構成は次の形です。
 
-```bash
-cd ~/.config/hypr
-./auto-detect-monitors.sh
-```
-
-スクリプトを引数なしで実行すると、**インタラクティブメニュー**が表示されます：
-
-**ステップ1: ディスプレイモード選択**
-
-```
-═══════════════════════════════════════════════════════════
-  Display Mode Selection
-═══════════════════════════════════════════════════════════
-
-Detected: 2 monitor(s)
-
-Please select display mode:
-
-  1) Auto (recommended - Dual display)
-  2) Single display (use DP-6 only)
-  3) Dual display (use both monitors)
-  4) Cancel
-
-Enter your choice [1-4]:
-```
-
-**ステップ2: モニター向き選択**
-
-各モニターの向き（landscape/portrait）を個別に選択できます：
-
-```
-═══════════════════════════════════════════════════════════
-  Primary Monitor Orientation
-═══════════════════════════════════════════════════════════
-
-Monitor: DP-6
-
-Select orientation:
-
-  1) Landscape (0°) - Normal horizontal
-  2) Portrait Right (90°) - Rotated right
-  3) Upside Down (180°) - Flipped
-  4) Portrait Left (270°) - Rotated left [Recommended for portrait]
-
-Enter your choice [1-4] (default: 1):
-```
-
-デュアルディスプレイの場合、セカンダリモニターの向きも選択します（デフォルト: Portrait Left）。
-
-**ステップ3: サブディスプレイの配置選択（デュアルモードのみ）**
-
-サブディスプレイをメインディスプレイに対してどこに配置するか選択できます：
-
-```
-═══════════════════════════════════════════════════════════
-  Secondary Monitor Position
-═══════════════════════════════════════════════════════════
-
-Select where to place the secondary monitor:
-
-  1) Left of primary (default)
-  2) Right of primary
-  3) Above primary
-  4) Below primary
-
-Enter your choice [1-4] (default: 1):
-```
-
-**自動検出モードのデフォルト:**
-
-- プライマリモニター: Landscape (0°)
-- セカンダリモニター: Portrait Left (270°)
-- セカンダリ配置: Left of primary（メインの左側）
-
-#### コマンドラインオプション
-
-**非対話的に実行する場合（スクリプトやログイン時に便利）:**
-
-```bash
-# 自動検出（メニューをスキップ）
-./auto-detect-monitors.sh --auto
-
-# シングルディスプレイを強制
-./auto-detect-monitors.sh --mode single
-
-# デュアルディスプレイを強制
-./auto-detect-monitors.sh --mode dual
-
-# ヘルプを表示
-./auto-detect-monitors.sh --help
-```
-
-**利用可能なオプション:**
-
-- `-h, --help` - ヘルプメッセージを表示
-- `-a, --auto, -y` - インタラクティブメニューをスキップして自動検出
-- `-m, --mode MODE` - 表示モードを強制 (`single` または `dual`)
-
-#### このスクリプトは何をしますか？
-
-- 接続されているモニターを自動検出
-- シングル/デュアルを自動判定（またはユーザー選択）
-- **各モニターの向き（landscape/portrait）を個別に選択可能**
-- **サブディスプレイの配置（上下左右）を選択可能**
-- Hyprland `monitors.conf` を自動生成
-
-**出力例:**
-
-```
-ℹ  Detecting connected monitors...
-ℹ  Found 2 monitor(s)
-ℹ  Primary monitor: DP-6
-
-ℹ  Detected monitors:
-  ○ HDMI-A-2 - 1920x1080@60Hz
-  ● DP-6 - 3440x1440@164Hz (primary)
-
-✓  Monitor configuration completed!
-```
-
-### オプション B: 手動設定
-
-#### 1. モニター設定ファイルを作成
-
-`make init` 実行時に自動的に `monitors.conf.example` から `monitors.conf` が作成されます。
-
-手動で作成する場合:
-
-```bash
-cd ~/.config/hypr
-cp monitors.conf.example monitors.conf
-```
-
-#### 2. モニター名を確認
-
-```bash
-hyprctl monitors
-```
-
-出力例:
-
-```
-Monitor DP-6 (ID 1):
-    3440x1440@99.98200 at 1920x0
-    description: Huawei Technologies Co., Inc. ZQE-CAA
-    ...
-
-Monitor HDMI-A-2 (ID 0):
-    1920x1080@60.00000 at 0x0
-    description: BenQ BenQ RL2455
-    ...
-```
-
-#### 3. monitors.conf を編集
-
-```bash
-nvim ~/.config/hypr/monitors.conf
-```
-
-**シングルディスプレイの場合（デフォルト）:**
-
-```bash
-# Monitor configuration
-monitor=DP-6,preferred,auto,1  # 実際のモニター名に変更
-
-# ログイン時にカーソルを置くモニター
-cursor {
-    default_monitor = DP-6
+```lua
+return {
+  cursor_default_monitor = "DP-1",
+  monitors = {
+    {
+      output = "DP-1",
+      mode = "preferred",
+      position = "auto",
+      scale = 1,
+    },
+  },
+  workspace_groups = {},
+  window_rules = {},
 }
 ```
 
-**デュアルディスプレイの場合:**
-
-```bash
-# 例をコピー
-cp ~/.config/hypr/examples/monitors.conf.dual ~/.config/hypr/monitors.conf
-
-# 編集
-nvim ~/.config/hypr/monitors.conf
-```
-
-#### 4. Hyprlandを再起動
-
-```bash
-# Hyprland設定を再読み込み
-hyprctl reload
-
-# または Hyprlandを再起動
-# Super + M (exit) → 再ログイン
-```
-
-## 💡 トラブルシューティング
-
-### Q: GPU追加後にHyprlandが正しく表示されない
-
-**A:** モニター名が変わった可能性があります。自動検出スクリプトで再設定するのが最も簡単です。
-
-**方法1: makeコマンド経由（推奨）**
-
-```bash
-# インタラクティブメニューで選択
-make monitors
-
-# または自動検出（メニューをスキップ）
-make monitors-auto
-```
-
-このコマンドで以下が自動的に更新されます：
-
-- ✅ `monitors.conf` - モニター設定
-- ✅ Caelestia Shell 設定
-
-**方法2: スクリプト直接実行**
-
-```bash
-cd ~/.config/hypr
-./auto-detect-monitors.sh
-
-# または自動検出
-./auto-detect-monitors.sh --auto
-```
-
-**方法3: 手動修正**
-
-```bash
-# 現在のモニター名を確認
-hyprctl monitors
-
-# monitors.conf を更新
-nvim ~/.config/hypr/monitors.conf
-
-# Hyprlandを再起動
-hyprctl reload
-```
-
-### Q: シングル/デュアルディスプレイを切り替えたい
-
-**A:** 自動検出スクリプトを実行して、希望のモードを選択します。
-
-**makeコマンド経由（推奨）:**
-
-```bash
-# インタラクティブメニューで選択
-make monitors
-
-# または直接モードを指定
-make monitors-single  # シングルディスプレイ
-make monitors-dual    # デュアルディスプレイ
-make monitors-auto    # 自動検出
-```
-
-**スクリプト直接実行:**
-
-```bash
-# インタラクティブモード
-cd ~/.config/hypr
-./auto-detect-monitors.sh
-
-# コマンドラインで直接指定
-./auto-detect-monitors.sh --mode single  # シングル
-./auto-detect-monitors.sh --mode dual    # デュアル
-./auto-detect-monitors.sh --auto         # 自動検出
-```
-
-**メニュー選択肢:**
-
-- `1) Auto` - 接続されているモニター数に基づいて自動判定
-- `2) Single` - プライマリモニターのみ使用
-- `3) Dual` - 両方のモニターを使用
-
-### Q: モニターの向き（縦置き/横置き）を変更したい
-
-**A:** インタラクティブモードで各モニターの向きを個別に選択できます。
-
-**方法1: インタラクティブモード（推奨）**
-
-```bash
-make monitors
-```
-
-メニューでディスプレイモードを選択後、各モニターの向きを選択：
-
-- **Landscape (0°)** - 通常の横置き
-- **Portrait Right (90°)** - 右に90°回転
-- **Upside Down (180°)** - 180°反転
-- **Portrait Left (270°)** - 左に90°回転（縦置き推奨）
-
-**方法2: 手動で設定を編集**
-
-```bash
-# monitors.confを編集
-nvim ~/.config/hypr/monitors.conf
-
-# transform値を追加:
-# monitor=HDMI-A-2,1920x1080@60,0x0,1,transform,3
-# 0=landscape, 1=90°, 2=180°, 3=270°
-
-# Hyprlandを再読み込み
-hyprctl reload
-```
-
-**自動検出モードのデフォルト:**
-
-- `make monitors-auto` を実行すると、セカンダリモニターは自動的に Portrait Left (270°) に設定されます
-
-### Q: サブディスプレイの配置（上下左右）を変更したい
-
-**A:** インタラクティブモードで配置を選択できます。
-
-**方法1: インタラクティブモード（推奨）**
-
-```bash
-make monitors
-```
-
-ステップ3で配置を選択：
-
-- **Left of primary** - メインの左側（デフォルト）
-- **Right of primary** - メインの右側
-- **Above primary** - メインの上
-- **Below primary** - メインの下
-
-**方法2: 手動で座標を編集**
-
-```bash
-# monitors.confを編集
-nvim ~/.config/hypr/monitors.conf
-
-# 座標を変更（例: 右側に配置）
-# Primary: 0x0 (左)
-# Secondary: 3440x0 (プライマリの幅分右にオフセット)
-
-# Hyprlandを再読み込み
-hyprctl reload
-```
-
-**配置例:**
-
-```bash
-# 左右配置（横並び）
-monitor=HDMI-A-2,1920x1080@60,-1080x0,1,transform,3  # 左 (負の座標)
-monitor=DP-6,3440x1440@99,0x0,1                      # 右、プライマリを原点に固定
-
-# 上下配置（縦並び）
-monitor=HDMI-A-2,1920x1080@60,0x-1920,1,transform,3  # 上 (負の座標)
-monitor=DP-6,3440x1440@99,0x0,1                      # 下、プライマリを原点に固定
-```
-
-### Q: 複数のモニター設定例が欲しい
-
-**A:** `examples/monitors.conf.all-examples` に多数の例があります。
-
-```bash
-# 全例文集を確認
-cat ~/.config/hypr/examples/monitors.conf.all-examples
-
-# 例:
-# - シングルモニター（ラップトップ/デスクトップ）
-# - デュアルモニター（横配置/縦配置/ポートレート）
-# - トリプルモニター
-# - ラップトップ + 外部モニター
-```
-
-## 🎨 カスタマイズ
-
-### ワークスペース割り当てを変更
-
-monitors.confでワークスペースをモニターに割り当てできます:
-
-```bash
-# Main monitor: Workspaces 1-5
-workspace=1,monitor:DP-6
-workspace=2,monitor:DP-6
-workspace=3,monitor:DP-6
-workspace=4,monitor:DP-6
-workspace=5,monitor:DP-6
-
-# Sub monitor: Workspaces 6-10
-workspace=6,monitor:HDMI-A-2
-workspace=7,monitor:HDMI-A-2
-workspace=8,monitor:HDMI-A-2
-workspace=9,monitor:HDMI-A-2
-workspace=10,monitor:HDMI-A-2
-```
-
-ログイン直後にカーソルと新規ウィンドウの基準にするモニターは、同じファイルの
-`cursor.default_monitor` で指定します。座標の `0x0` だけでは初期カーソル先は決まりません。
-
-```bash
-cursor {
-    default_monitor = DP-6
+複数モニターでは `monitors` に出力を追加し、`workspace_groups` に範囲を指定します。
+出力名に依存するウィンドウ規則も `window_rules` に置きます。
+
+```lua
+workspace_groups = {
+  { first = 1, last = 5, monitor = "DP-1" },
+  { first = 6, last = 10, monitor = "HDMI-A-1" },
+}
+
+window_rules = {
+  { match = { class = "gamescope" }, monitor = "DP-1" },
 }
 ```
 
-### モニターの回転
+モニター名と現在の解像度は `hyprctl monitors` で確認できます。回転は各モニターに
+`transform = 0`（通常）から `7` の値を指定します。
 
-縦置きモニターの場合:
+## 反映と確認
+
+Lua は保存時に再読み込みされます。明示的には以下を使えます。
 
 ```bash
-# transform: 0=normal, 1=90°, 2=180°, 3=270°
-monitor=HDMI-A-1,1920x1080@60,0x0,1,transform,3  # 90° counter-clockwise
+hyprctl reload
+hyprctl configerrors
 ```
 
-## 📝 Git管理
+再読み込み前に Lua の構文だけを確認するには、リポジトリから次を実行します。
 
-### 追跡されるファイル
+```bash
+stylua --check .config/hypr/hyprland.lua .config/hypr/colors.lua .config/hypr/modules/*.lua ~/.config/hypr/monitors.lua
+```
 
-- `hyprland.conf` - メイン設定
-- `monitors.conf.example` - シングルディスプレイのデフォルト
-- `hypridle.conf` - アイドル管理設定（ロックは Caelestia Shell）
-- `examples/` - 設定例集
+`hyprctl reload` は稼働中のセッション設定を変えるため、モニター配置やキーバインドを
+変更した直後は、別の TTY またはログインに使える入力手段を確保してから実行してください。
 
-### 追跡されないファイル（.gitignore）
+## hypridle の設定
 
-- `monitors.conf` - 環境固有のモニター設定
+`hypridle.conf` は Hyprland 本体の Lua 移行対象ではなく、引き続き hypridle の設定として
+使います。
 
-## 🔗 関連設定
+## トラブルシューティング
 
-- **Caelestia Shell**: ステータスバー、ランチャー、通知、セッションメニュー、ロック画面を管理
-- **hypridle**: アイドル検知、輝度変更、DPMS、サスペンド、復帰後フックを管理
-- **rofi**: クリップボード履歴とキーバインド一覧の fallback picker として維持
-- **matugen**: Caelestia の配色を Hyprland/rofi/terminal に同期
-- **Hyprland公式ドキュメント**: https://wiki.hyprland.org
+- Lua の読み込みエラー: `hyprctl configerrors` と
+  `~/.local/state/hypr/` 配下のログを確認します。
+- モニターが表示されない: `hyprctl monitors all` で出力名を確認し、
+  `monitors.lua` を修正します。
+- 画面を戻せない: `monitors.lua` を削除または `monitors.lua.example` から作り直して、
+  `hyprctl reload` を実行します。
 
-## ❄️ NixOS でのパッケージ管理
-
-Hyprland 周辺ツールは `nix/modules/desktop/hyprland.nix`、NetworkManager/PipeWire/fcitx5/GNOME 系の共通サービスは `nix/modules/nixos-common.nix` で宣言管理します。
-
-足りないものがあれば Nix module に追加して `make rebuild` で反映します。
-
-## 🚨 NVIDIA GPU使用時の注意
-
-NVIDIA/VA-API など共有できる環境変数は `hyprland.conf` と NixOS module 側で管理します。ホスト固有の差分は `nix/hosts/<host>/` 配下で管理します。
-
-NVIDIA のホスト固有設定は `nix/hosts/<host>/configuration.nix` 側で管理します。
+公式仕様は [Hyprland の設定開始ガイド](https://wiki.hypr.land/Configuring/Start/) と
+[Lua バインド](https://wiki.hypr.land/Configuring/Basics/Binds/) を参照してください。

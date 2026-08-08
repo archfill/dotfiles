@@ -149,7 +149,7 @@ make hyprland-status
 
 #### GPU-Specific Configuration
 
-NixOS declares shared GPU settings in the Nix modules. Host-specific differences should live in `nix/hosts/<host>/`; monitor layout is still kept in `~/.config/hypr/monitors.conf`.
+NixOS declares shared GPU settings in the Nix modules. Host-specific differences should live in `nix/hosts/<host>/`; monitor layout is still kept in `~/.config/hypr/monitors.lua`.
 
 **NVIDIA GPU (RTX 4070, etc.):**
 
@@ -171,7 +171,7 @@ NixOS declares shared GPU settings in the Nix modules. Host-specific differences
 
 **For All Users:**
 
-1. Review configuration: `~/.config/hypr/hyprland.conf`
+1. Review configuration: `~/.config/hypr/hyprland.lua`
 2. Adjust keybindings if needed (default: Super/Windows key)
 3. Configure monitor layout if using multiple displays
 
@@ -234,7 +234,7 @@ Hyprland
 
 Configuration files are symlinked by Nix/Home Manager:
 
-- `~/.config/hypr/hyprland.conf` - Main configuration
+- `~/.config/hypr/hyprland.lua` - Main configuration
 - `~/.config/hypr/hypridle.conf` - Idle management (screen dim, DPMS, suspend; lock UI is Caelestia)
 - `~/.config/caelestia/shell.json` - Caelestia Shell settings
 - `~/.config/rofi/` - Fallback clipboard/keybind menus
@@ -306,7 +306,7 @@ Hyprland and the desktop stack are declared through Nix modules:
 **Monitor not detected:**
 
 - List monitors: `hyprctl monitors`
-- Edit `~/.config/hypr/hyprland.conf` monitor section
+- Edit `~/.config/hypr/monitors.lua`
 
 For more help:
 

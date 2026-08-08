@@ -178,10 +178,10 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	fi
 	@echo ""
 	@echo "=== Configuration Files ==="
-	@if [ -f ~/.config/hypr/hyprland.conf ]; then \
-		echo "✅ hyprland.conf: exists"; \
+	@if [ -f ~/.config/hypr/hyprland.lua ]; then \
+		echo "✅ hyprland.lua: exists"; \
 	else \
-		echo "❌ hyprland.conf: missing"; \
+		echo "❌ hyprland.lua: missing"; \
 	fi
 	@if [ -w ~/.config/caelestia/shell.json ]; then \
 		echo "✅ caelestia config: writable"; \
