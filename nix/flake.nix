@@ -90,8 +90,6 @@
             pkgs = nixpkgs.legacyPackages.${system};
           in {
             codex = pkgs.callPackage ./pkgs/codex { };
-          } // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-            orca-ide = pkgs.callPackage ./pkgs/orca { };
           });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────

@@ -2,11 +2,6 @@
 
 let
   caelestiaPackage = inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli;
-  orcaIdeX11 = pkgs.writeShellScriptBin "orca-ide-x11" ''
-    unset NIXOS_OZONE_WL
-    exec ${inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.orca-ide}/bin/orca-ide \
-      --ozone-platform=x11 "$@"
-  '';
   # Rovehelm's current Cargo.lock contains git dependencies from several
   # upstream workspaces. Its package expression does not provide the
   # outputHashes required by current nixpkgs, so supply the fixed-output
@@ -69,20 +64,8 @@ in
 
   home.packages = [
     pkgs.opencode
-    orcaIdeX11
     rovehelmPackage
   ];
-
-  xdg.desktopEntries.orca-ide-x11 = {
-    name = "Orca IDE (XWayland IME)";
-    genericName = "AI coding environment";
-    comment = "Launch Orca through XWayland for reliable fcitx5 input";
-    exec = "orca-ide-x11";
-    icon = "orca-ide";
-    terminal = false;
-    type = "Application";
-    categories = [ "Development" "IDE" ];
-  };
 
   dconf.settings = {
     "org/gnome/desktop/interface" = {

@@ -5,7 +5,7 @@
 # ヘルプ: make help
 
 .PHONY: all help init init-log config update backup clean status info debug validate \
-	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-update codex-bump orca-update orca-bump \
+	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-update codex-bump \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -120,9 +120,6 @@ NIX_FLAKE := $(CURDIR)/nix
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 NIX_UPDATE_DEPS := codex-update
-ifneq ($(NH_TARGET),darwin)
-NIX_UPDATE_DEPS += orca-update
-endif
 
 nix-rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
@@ -147,11 +144,6 @@ codex-update: ## Codex CLI の最新 release を取得して Nix package 定義�
 	@bash ./bin/codex-update.sh $(VERSION)
 
 codex-bump: codex-update ## Alias for codex-update (usage: make codex-bump VERSION=0.142.0)
-
-orca-update: ## Orca の最新 release を取得して Nix package 定義を更新
-	@bash ./bin/orca-update.sh $(VERSION)
-
-orca-bump: orca-update ## Alias for orca-update (usage: make orca-bump VERSION=1.4.139)
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader

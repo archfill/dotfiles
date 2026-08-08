@@ -201,11 +201,6 @@ in
     nerd-fonts.symbols-only   # Powerline / Nerd Font アイコン専用
     material-symbols          # Caelestia Shell の MaterialIcon 用
     nerd-fonts.caskaydia-cove # Caelestia Shell 既定 mono font
-  ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-    # Stably Orca は nixpkgs 未収録のため、公式 AppImage をラップした自前 package
-    # を使う。更新は `make nix-update` または `make orca-update`。GNOME の
-    # スクリーンリーダー `orca` と衝突しない実行名に固定。
-    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.orca-ide
   ];
 
   # Nix で配置するフォントを ~/Library/Fonts にも認識させる
