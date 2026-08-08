@@ -12,10 +12,20 @@ let
 
     wrapProgram $out/bin/ghostty --unset GTK_IM_MODULE
 
-    substituteInPlace $out/share/applications/com.mitchellh.ghostty.desktop \
-      --replace-fail ${pkgs.ghostty}/bin/ghostty $out/bin/ghostty
-    substituteInPlace $out/share/dbus-1/services/com.mitchellh.ghostty.service \
-      --replace-fail ${pkgs.ghostty}/bin/ghostty $out/bin/ghostty
+    ghostty_desktop_entry="$out/share/applications/com.mitchellh.ghostty.desktop"
+    ghostty_dbus_service="$out/share/dbus-1/services/com.mitchellh.ghostty.service"
+    for ghostty_entry in "$ghostty_desktop_entry" "$ghostty_dbus_service"; do
+      substituteInPlace "$ghostty_entry" \
+        --replace-quiet "${pkgs.ghostty}/bin/ghostty" "$out/bin/ghostty" \
+        --replace-quiet 'TryExec=ghostty' "TryExec=$out/bin/ghostty" \
+        --replace-quiet 'Exec=ghostty' "Exec=$out/bin/ghostty"
+    done
+    for ghostty_entry in "$ghostty_desktop_entry" "$ghostty_dbus_service"; do
+      if ! ${pkgs.gnugrep}/bin/grep -qF "$out/bin/ghostty" "$ghostty_entry"; then
+        echo "ghostty-fcitx-workaround: wrapper path missing from $ghostty_entry" >&2
+        exit 1
+      fi
+    done
   '';
 
   googleChromeWayland = pkgs.google-chrome.override {
