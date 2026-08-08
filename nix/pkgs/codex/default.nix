@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "0.146.0";
+  version = "0.147.0";
 
   # codex publishes a single prebuilt native binary per (arch, os).
   # Map the Nix system triple to the upstream tarball suffix.
@@ -22,10 +22,17 @@ let
 
   # SRI hashes for codex rust-v${version}. Refresh: `make codex-update VERSION=...`
   hashes = {
-    "aarch64-apple-darwin"       = "sha256-J1ATLTAOZPHb/7lePZE/2cnceBK8jhvOXGE1cki3kp4=";
-    "x86_64-apple-darwin"        = "sha256-cQ1yew+itKshiesb3Fq0AXfBaClq8mSRPrerPOhI0Es=";
-    "x86_64-unknown-linux-musl"  = "sha256-W6O5QFVDlTCB9mHQhU0mb3biq75R1BNJNVo23nZzd2o=";
-    "aarch64-unknown-linux-musl" = "sha256-l1uskVYqvu3rj3ljbVGoZkmzHzSp3mo7ywWVZbbPH4c=";
+    "aarch64-apple-darwin"       = "sha256-dZhLgfkqcbDA9LO1ytgOXFcXfk2Mi0seE9twOyDcQ1g=";
+    "x86_64-apple-darwin"        = "sha256-NueC9x2BZMw3wricZJSPIYDpovhFayfmYNp1vGtVdOI=";
+    "x86_64-unknown-linux-musl"  = "sha256-Akbi53ODTgfw+1JJ7W660S5FkeYI+Me7l91qlpBUTDY=";
+    "aarch64-unknown-linux-musl" = "sha256-62d8gPZmsauLSx0IO2bo1hSxKB2WC7b5/Yypj1izi5A=";
+  };
+
+  codeModeHostHashes = {
+    "aarch64-apple-darwin"       = "sha256-Vs2/YYe/kUEI07f+7qWjT/uhXlwWK+3OaeBi7pLd+14=";
+    "x86_64-apple-darwin"        = "sha256-cTGgUI3k3qYPecgWGIsLBrF/btQX2bOhhlsKSSf7xIo=";
+    "x86_64-unknown-linux-musl"  = "sha256-AUat+qyDY+yfzbWJX3Yk21suhheig4h5OLf7l6HdQ1Y=";
+    "aarch64-unknown-linux-musl" = "sha256-39T/mOpNsw7QeK+cMbb4bj2kg20Fc6qH4iXlpbVNPHw=";
   };
 in
 
@@ -41,8 +48,13 @@ stdenv.mkDerivation (finalAttrs: {
     hash = hashes.${platform};
   };
 
-  # The tarball is a single binary named `codex-<platform>` with no
-  # directory layout, so unpack manually in buildPhase.
+  codeModeHostSrc = fetchurl {
+    url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-code-mode-host-${platform}.tar.gz";
+    hash = codeModeHostHashes.${platform};
+  };
+
+  # Each release asset is a single binary named `<artifact>-<platform>` with
+  # no directory layout, so unpack both archives manually in buildPhase.
   dontUnpack = true;
   dontConfigure = true;
 
@@ -52,14 +64,17 @@ stdenv.mkDerivation (finalAttrs: {
     runHook preBuild
     mkdir -p build
     tar -xzf $src -C build
+    tar -xzf $codeModeHostSrc -C build
     mv "build/codex-${platform}" build/codex
-    chmod u+w,+x build/codex
+    mv "build/codex-code-mode-host-${platform}" build/codex-code-mode-host
+    chmod u+w,+x build/codex build/codex-code-mode-host
     runHook postBuild
   '';
 
   installPhase = ''
     runHook preInstall
     install -Dm555 build/codex $out/bin/codex
+    install -Dm555 build/codex-code-mode-host $out/bin/codex-code-mode-host
 
     # codex ships an in-place auto-updater that would rewrite the
     # /nix/store binary; disable it so Nix owns the version pinned here.

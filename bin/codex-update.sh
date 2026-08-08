@@ -52,17 +52,19 @@ sys.exit(1)
 prefetch_hash() {
   local version="$1"
   local platform="$2"
+  local artifact="${3:-codex}"
 
   nix store prefetch-file --hash-type sha256 --json \
-    "https://github.com/openai/codex/releases/download/rust-v${version}/codex-${platform}.tar.gz" |
+    "https://github.com/openai/codex/releases/download/rust-v${version}/${artifact}-${platform}.tar.gz" |
     python3 -c 'import json,sys; print(json.load(sys.stdin)["hash"])'
 }
 
 update_codex_nix() {
   local version="$1"
   local hashes_json="$2"
+  local code_mode_host_hashes_json="$3"
 
-  python3 - "$CODEX_NIX" "$version" "$hashes_json" <<'PY'
+  python3 - "$CODEX_NIX" "$version" "$hashes_json" "$code_mode_host_hashes_json" <<'PY'
 import json
 import re
 import sys
@@ -71,16 +73,30 @@ from pathlib import Path
 path = Path(sys.argv[1])
 version = sys.argv[2]
 hashes = json.loads(sys.argv[3])
+code_mode_host_hashes = json.loads(sys.argv[4])
 text = path.read_text()
 
 text = re.sub(r'version = "[^"]+";', f'version = "{version}";', text, count=1)
 
-for platform, hash_value in hashes.items():
-    pattern = rf'("{re.escape(platform)}"\s*=\s*)"[^"]+";'
-    replacement = rf'\1"{hash_value}";'
-    text, count = re.subn(pattern, replacement, text, count=1)
-    if count != 1:
-        raise SystemExit(f"Missing hash entry for {platform}")
+def replace_hash_block(text, name, values):
+    block_pattern = rf'(?P<prefix>\b{re.escape(name)}\s*=\s*\{{)(?P<body>.*?)(?P<suffix>\n\s*\}};)'
+    match = re.search(block_pattern, text, flags=re.DOTALL)
+    if match is None:
+        raise SystemExit(f"Missing hash block for {name}")
+
+    body = match.group("body")
+    for platform, hash_value in values.items():
+        pattern = rf'("{re.escape(platform)}"\s*=\s*)"[^"]+";'
+        replacement = rf'\1"{hash_value}";'
+        body, count = re.subn(pattern, replacement, body, count=1)
+        if count != 1:
+            raise SystemExit(f"Missing hash entry for {platform} in {name}")
+
+    return text[:match.start("body")] + body + text[match.end("body"):]
+
+
+text = replace_hash_block(text, "hashes", hashes)
+text = replace_hash_block(text, "codeModeHostHashes", code_mode_host_hashes)
 
 path.write_text(text)
 PY
@@ -114,7 +130,21 @@ main() {
   done
   hashes_json+="}"
 
-  update_codex_nix "$version" "$hashes_json"
+  local code_mode_host_hashes_json="{"
+  first=1
+  for platform in "${platforms[@]}"; do
+    echo "==> Prefetching code-mode host ${platform}"
+    local host_hash
+    host_hash="$(prefetch_hash "$version" "$platform" "codex-code-mode-host")"
+    if [[ "$first" -eq 0 ]]; then
+      code_mode_host_hashes_json+=","
+    fi
+    code_mode_host_hashes_json+="\"${platform}\":\"${host_hash}\""
+    first=0
+  done
+  code_mode_host_hashes_json+="}"
+
+  update_codex_nix "$version" "$hashes_json" "$code_mode_host_hashes_json"
   echo "==> Updated nix/pkgs/codex/default.nix"
 }
 
