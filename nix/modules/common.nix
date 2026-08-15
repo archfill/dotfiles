@@ -187,6 +187,12 @@ in
     # npm install -g は /nix/store の immutable と衝突するため不採用。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.codex
 
+    # Cursor Ultra の利用枠をターミナルから使う公式 Cursor Agent CLI。
+    # 公式 installer と同じ bundle を Nix に固定し、`agent` と
+    # `cursor-agent` の両コマンドを提供する。更新は
+    # `make cursor-agent-update` または `make nix-update` で行う。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.cursor-agent
+
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable

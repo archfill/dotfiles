@@ -5,7 +5,8 @@
 # ヘルプ: make help
 
 .PHONY: all help init init-log config update backup clean status info debug validate \
-	nix-rebuild nix-diff nix-bootloader nix-clean nix-update codex-update codex-bump \
+	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
+	codex-update codex-bump cursor-agent-update cursor-agent-bump \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -119,7 +120,7 @@ validate: ## Validate dotfiles configuration and structure
 NIX_FLAKE := $(CURDIR)/nix
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
-NIX_UPDATE_DEPS := codex-update
+NIX_UPDATE_DEPS := codex-update cursor-agent-update
 
 nix-rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
@@ -144,6 +145,11 @@ codex-update: ## Codex CLI の最新 release を取得して Nix package 定義�
 	@bash ./bin/codex-update.sh $(VERSION)
 
 codex-bump: codex-update ## Alias for codex-update (usage: make codex-bump VERSION=0.142.0)
+
+cursor-agent-update: ## Cursor Agent CLI の公式 installer 版を Nix package 定義へ反映
+	@bash ./bin/cursor-agent-update.sh $(VERSION)
+
+cursor-agent-bump: cursor-agent-update ## Alias (usage: make cursor-agent-bump VERSION=2026.08.11-e8db854)
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader

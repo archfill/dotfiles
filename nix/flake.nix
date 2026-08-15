@@ -81,15 +81,20 @@
         };
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
-      # codex は nixpkgs で Rust ソースビルド (依存重) されるため更新が遅れ
-      # やすい。GitHub release の prebuilt native binary を取って最新を追従。
+      # codex と cursor-agent は公式の prebuilt native binary を固定し、
+      # nixpkgs の更新待ちや CLI 自身による in-place update を避ける。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
         (system:
           let
-            pkgs = nixpkgs.legacyPackages.${system};
+            pkgs = import nixpkgs {
+              inherit system;
+              config.allowUnfreePredicate = pkg:
+                nixpkgs.lib.getName pkg == "cursor-agent";
+            };
           in {
             codex = pkgs.callPackage ./pkgs/codex { };
+            cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
           });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
