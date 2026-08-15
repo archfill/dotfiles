@@ -79,7 +79,6 @@ dotfiles/
 │   ├── kitty/         # Kitty設定
 │   ├── ghostty/       # Ghostty設定
 │   ├── alacritty/     # Alacritty設定
-│   ├── starship.toml  # Starshipプロンプト
 │   ├── aerc/          # Aerc (メールクライアント)
 │   ├── lazygit/       # Lazygit
 │   └── ...            # その他20+の設定
@@ -199,7 +198,7 @@ nix/
 - **設定の中身** は dotfiles 側に置き、`mkOutOfStoreSymlink` で symlink する（rebuild 不要、即反映、impure だが実用的）
 - **Nix attrset で設定生成** (`programs.<name>.settings`) は使わない方針
   - 例外: `programs.sheldon`（短い設定リスト）など宣言が自然なものは採用
-- **理由:** 公式 docs のコピペが効く / Linux など home-manager 非使用環境とも同じファイルを共有できる / NixOS コミュニティでも大設定 (starship.toml / nvim lua) はこの impure 方式が多数派
+- **理由:** 公式 docs のコピペが効く / Linux など home-manager 非使用環境とも同じファイルを共有できる / NixOS コミュニティでも大設定 (nvim lua / terminal emulator settings) はこの impure 方式が多数派
 
 ### 参考リンク
 

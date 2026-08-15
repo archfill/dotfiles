@@ -81,9 +81,6 @@ in
     # Shells / runtime
     bash             # dotfiles スクリプトが bash 4+ (mapfile / declare -g) を要求
 
-    # Prompt
-    starship  # 設定は ~/.config/starship.toml をそのまま使用
-
     # Fuzzy finder
     fzf              # ~/.fzf.zsh から share/fzf/ の completion/key-bindings を source
 
@@ -217,12 +214,12 @@ in
   };
 
   # ─── 設定ファイルの配置 (Impure / out-of-store symlink) ───────────
-  # 大きな宣言的設定 (starship の 318 行 Catppuccin Powerline 等) は
+  # 大きな宣言的設定 (Neovim Lua / terminal emulator configs 等) は
   # programs.<name>.settings で Nix attrset に変換せず、元の TOML を維持
   # したまま mkOutOfStoreSymlink で配置だけ home-manager 管理に寄せる。
   # 利点: 公式 docs からのコピペが効く / 編集が即反映 (rebuild 不要) /
   #       Linux など home-manager 非使用環境とも同じファイルを共有できる。
-  # NixOS コミュニティでも大設定 (starship.toml / neovim lua) は
+  # NixOS コミュニティでも大設定 (Neovim Lua / WezTerm Lua 等) は
   # この Impure 方式が多数派。bin/link.sh の symlink から本宣言へ移管。
   # ─── sheldon (programs.sheldon でプラグイン Nix 宣言管理) ────────────
   # plugins.toml は programs.sheldon.settings から生成される。
@@ -241,16 +238,17 @@ in
         fzf-tab                        = { github = "Aloxaf/fzf-tab"; };
         zsh-you-should-use             = { github = "MichaelAquilina/zsh-you-should-use"; };
         zsh-abbr                       = { github = "olets/zsh-abbr"; };
+        pure = {
+          github = "sindresorhus/pure";
+          tag = "v1.28.3";
+          use = [ "async.zsh" "pure.zsh" ];
+        };
       };
       templates = {
         defer = "{{ hooks?.pre | nl }}{% for plugin in plugins %}{{ plugin.raw }}{% endfor %}{{ hooks?.post | nl }}";
       };
     };
   };
-
-  xdg.configFile."starship.toml".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/starship.toml";
 
   xdg.configFile."lazygit".source =
     config.lib.file.mkOutOfStoreSymlink

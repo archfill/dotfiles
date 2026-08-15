@@ -263,7 +263,6 @@ install_npm_essentials
 #### bin/apps_setup.sh（追加）
 ```bash
 # CLI tools
-install_if_needed "${APPS_DIR}/tools/starship.sh"
 install_if_needed "${APPS_DIR}/tools/sheldon.sh"
 install_if_needed "${APPS_DIR}/tools/npm-essentials.sh"  # ← 追加
 ```
