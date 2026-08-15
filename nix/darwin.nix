@@ -75,7 +75,7 @@
       "jordanbaird-ice"
       "rectangle"
       "orbstack"
-      "hammerspoon"        # macOS 自動化 (~/.hammerspoon は home-manager 管理)
+      "hammerspoon"        # macOS 自動化 (設定パスは MJConfigFile で宣言)
       "karabiner-elements" # キーリマップ (Karabiner-EventViewer 同梱、
                            # complex_modifications は home-manager 管理)
       # オプション GUI (optional_casks 相当)
@@ -94,6 +94,15 @@
   # 基準: 新マシンで毎回手動設定するのが面倒 / 常に固定したい値のみ入れる。
   # 「気分で変えたい」ものは入れない。
   system.defaults = {
+
+    # Hammerspoon は login item として /nix の mount 前に起動することがある。
+    # Home Manager の /nix/store symlink を経由せず、Data volume 上の
+    # dotfiles を直接読むことで起動順への依存をなくす。
+    CustomUserPreferences = {
+      "org.hammerspoon.Hammerspoon" = {
+        MJConfigFile = "/Users/chill-rf/dotfiles/.hammerspoon/init.lua";
+      };
+    };
 
     # ─── グローバルドメイン ──────────────────────────────────────────
     NSGlobalDomain = {

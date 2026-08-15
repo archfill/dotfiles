@@ -21,7 +21,7 @@ function reload.init(config, helpers)
 
 	-- Auto-reload on config file changes
 	if settings.autoReload then
-		pathwatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", function(files)
+		pathwatcher = hs.pathwatcher.new(hs.configdir, function(files)
 			reload.doReload(settings, helpers)
 		end)
 		pathwatcher:start()
