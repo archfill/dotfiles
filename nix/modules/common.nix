@@ -193,6 +193,10 @@ in
     # `make cursor-agent-update` または `make nix-update` で行う。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.cursor-agent
 
+    # Pi coding agent harness (earendil-works)。GitHub release の Bun
+    # prebuilt を固定。npm -g は不採用。更新は `make pi-update`。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.pi
+
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable

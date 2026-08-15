@@ -81,7 +81,7 @@
         };
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
-      # codex と cursor-agent は公式の prebuilt native binary を固定し、
+      # codex / cursor-agent / pi は公式の prebuilt native binary を固定し、
       # nixpkgs の更新待ちや CLI 自身による in-place update を避ける。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
@@ -95,6 +95,7 @@
           in {
             codex = pkgs.callPackage ./pkgs/codex { };
             cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
+            pi = pkgs.callPackage ./pkgs/pi { };
           });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────

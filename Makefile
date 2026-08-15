@@ -7,6 +7,7 @@
 .PHONY: all help init init-log config update backup clean status info debug validate \
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
 	codex-update codex-bump cursor-agent-update cursor-agent-bump \
+	pi-update pi-bump \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -120,7 +121,7 @@ validate: ## Validate dotfiles configuration and structure
 NIX_FLAKE := $(CURDIR)/nix
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
-NIX_UPDATE_DEPS := codex-update cursor-agent-update
+NIX_UPDATE_DEPS := codex-update cursor-agent-update pi-update
 
 nix-rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
@@ -150,6 +151,11 @@ cursor-agent-update: ## Cursor Agent CLI の公式 installer 版を Nix package 
 	@bash ./bin/cursor-agent-update.sh $(VERSION)
 
 cursor-agent-bump: cursor-agent-update ## Alias (usage: make cursor-agent-bump VERSION=2026.08.11-e8db854)
+
+pi-update: ## Pi coding agent の最新 release を取得して Nix package 定義を更新
+	@bash ./bin/pi-update.sh $(VERSION)
+
+pi-bump: pi-update ## Alias (usage: make pi-bump VERSION=0.84.2)
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader
