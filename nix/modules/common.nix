@@ -116,6 +116,9 @@ in
     #   - mise はバージョンマネージャとして「プロジェクト override」
     #     用途に特化、グローバル管理から退場
     openjdk17    # Java 17 LTS (Flutter Android ビルド、yui バックエンド等)
+
+    # Android
+    android-cli   # Google 公式 Android CLI (`android`)
     nodejs_22    # Node.js 22 LTS
     python313    # Python 3.13
     go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)

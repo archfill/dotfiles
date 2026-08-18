@@ -58,7 +58,12 @@
       # standalone home-manager (Arch / Ubuntu / WSL 用、user 環境のみ管理)
       mkHomeConfig = { system, modules }:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs {
+            inherit system;
+            # Google 公式 Android CLI は Nixpkgs 上で unfree 扱いのため、対象だけ許可
+            config.allowUnfreePredicate = pkg:
+              nixpkgs.lib.getName pkg == "android-cli";
+          };
           extraSpecialArgs = { inherit inputs; };
           inherit modules;
         };
