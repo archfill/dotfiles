@@ -86,7 +86,7 @@
         };
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
-      # codex / cursor-agent / pi は公式の prebuilt native binary を固定し、
+      # codex / cursor-agent / origin / pi は公式の prebuilt native binary を固定し、
       # nixpkgs の更新待ちや CLI 自身による in-place update を避ける。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
@@ -95,11 +95,13 @@
             pkgs = import nixpkgs {
               inherit system;
               config.allowUnfreePredicate = pkg:
-                nixpkgs.lib.getName pkg == "cursor-agent";
+                nixpkgs.lib.getName pkg == "cursor-agent"
+                || nixpkgs.lib.getName pkg == "origin";
             };
           in {
             codex = pkgs.callPackage ./pkgs/codex { };
             cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
+            origin = pkgs.callPackage ./pkgs/origin { };
             pi = pkgs.callPackage ./pkgs/pi { };
           });
 

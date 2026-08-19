@@ -24,3 +24,13 @@
 
 [alias]
 	tree = log --graph --pretty=format:'%x09%C(auto) %h %Cgreen %ar %Creset%x09by\"%C(cyan ul)%an%Creset\" %x09%C(auto)%s %d'
+
+# Cursor Origin の git 認証。store path 直書きは `make origin-update` + GC で
+# 壊れるため PATH 参照 (`!origin ...`) で固定。`origin auth login` が書き直した
+# 場合は package 側ラッパー (nix/pkgs/origin) が自動でこの形へ正規化する。
+[credential "https://origin.cursor.com/git"]
+	helper = 
+	helper = !origin credential-helper
+[credential "https://origin.cursor.com"]
+	helper = 
+	helper = !origin credential-helper

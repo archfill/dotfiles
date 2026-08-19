@@ -196,6 +196,12 @@ in
     # `make cursor-agent-update` または `make nix-update` で行う。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.cursor-agent
 
+    # Cursor Origin (Cursor の git forge) 用 CLI。repo / PR / ruleset 等の
+    # hosting 操作を担い、AI agent である cursor-agent とは別物。公式
+    # installer と同じ bundle を Nix に固定し、自己更新 (`origin update`)
+    # ではなく `make origin-update` で追従する。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.origin
+
     # Pi coding agent harness (earendil-works)。GitHub release の Bun
     # prebuilt を固定。npm -g は不採用。更新は `make pi-update`。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.pi
