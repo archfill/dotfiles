@@ -31,6 +31,7 @@ spawn-sh-at-startup "pgrep -u \"$USER\" -x fcitx5 >/dev/null || exec fcitx5 -d"
 // DMS Include Configs
 include "dms/cursor.kdl"
 include "dms/layout.kdl"
+include "tab-indicator.kdl"
 include "dms/alttab.kdl"
 include "dms/binds.kdl"
 include "dms/outputs.kdl"

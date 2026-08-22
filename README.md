@@ -270,7 +270,7 @@ Hyprland and the desktop stack are declared through Nix modules:
 
 | Key                              | Action                                  |
 | -------------------------------- | --------------------------------------- |
-| `Super + T`                      | Open terminal (ghostty)                 |
+| `Super + Return`                  | Open terminal (ghostty)                 |
 | `Super + Space`                  | Toggle DMS launcher                     |
 | `Alt + Space`                    | Toggle DMS spotlight bar                |
 | `Super + V`                      | Open DMS clipboard                      |
@@ -289,16 +289,21 @@ Hyprland and the desktop stack are declared through Nix modules:
 | `Super + Shift + T`              | Toggle floating                        |
 | `Super + W`                      | Toggle tabbed column display            |
 | `Super + Shift + W`              | Toggle DMS window rules                 |
+| `Super + Ctrl + ,`               | Consume/expel with the left column      |
+| `Super + Ctrl + .`               | Consume/expel with the right column     |
+| `Super + .`                      | Expel window from column                |
 | `Super + h/j/k/l`                | Move focus (vim-like)                   |
 | `Super + Shift + h/j/k/l`        | Move window/column                      |
 | `Super + Ctrl + h/j/k/l`         | Focus monitor                           |
 | `Super + Ctrl + Shift + h/j/k/l` | Move column to monitor                  |
 | `Super + 1-9`                    | Focus workspace                         |
 | `Super + Shift + 1-9`            | Move column to workspace                |
+| `Super + U/I`                    | Focus workspace up/down                 |
+| `Super + Shift + U/I`            | Move workspace up/down                  |
 | `Super + P`                      | Cycle display profile                   |
-| `Print`                          | Screenshot region                       |
-| `Ctrl + Print`                   | Screenshot screen                       |
-| `Alt + Print`                    | Screenshot focused window               |
+| `Super + S`                      | Screenshot region                       |
+| `Super + Ctrl + S`               | Screenshot screen                       |
+| `Super + Alt + S`                | Screenshot focused window               |
 
 #### Troubleshooting
 

@@ -1,0 +1,20 @@
+// Custom tab indicator for Niri tabbed columns.
+// Keep this separate from DMS-generated layout files.
+
+layout {
+    tab-indicator {
+        hide-when-single-tab
+        place-within-column
+        position "right"
+
+        width 6
+        gap 6
+        length total-proportion=1.0
+        gaps-between-tabs 3
+        corner-radius 6
+
+        active-color "#d0bcff"
+        inactive-color "#948f99"
+        urgent-color "#f2b8b5"
+    }
+}

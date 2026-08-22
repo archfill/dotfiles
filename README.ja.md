@@ -218,7 +218,7 @@ Hyprland
 
 | キー                              | 動作                               |
 | --------------------------------- | ---------------------------------- |
-| `Super + T`                       | ターミナル起動（ghostty）          |
+| `Super + Return`                   | ターミナル起動（ghostty）          |
 | `Super + Space`                   | DMS ランチャー切り替え             |
 | `Alt + Space`                     | DMS Spotlight バー切り替え         |
 | `Super + V`                       | DMS クリップボード                 |
@@ -237,16 +237,21 @@ Hyprland
 | `Super + Shift + T`               | フローティング切り替え             |
 | `Super + W`                       | タブ表示切り替え                   |
 | `Super + Shift + W`               | DMS ウィンドウルール               |
+| `Super + Ctrl + ,`                | 左カラムとの間で取り込み / 排出     |
+| `Super + Ctrl + .`                | 右カラムとの間で取り込み / 排出     |
+| `Super + .`                       | カラムからウィンドウを排出          |
 | `Super + h/j/k/l`                 | フォーカス移動（vim スタイル）     |
 | `Super + Shift + h/j/k/l`         | ウィンドウ / カラム移動            |
 | `Super + Ctrl + h/j/k/l`          | モニター間フォーカス移動            |
 | `Super + Ctrl + Shift + h/j/k/l`  | カラムをモニターへ移動             |
 | `Super + 1-9`                     | ワークスペース切り替え             |
 | `Super + Shift + 1-9`             | カラムをワークスペースへ移動       |
+| `Super + U/I`                     | 上下のワークスペースへ移動         |
+| `Super + Shift + U/I`             | ワークスペースを上下に並べ替え     |
 | `Super + P`                       | ディスプレイプロファイル切り替え   |
-| `Print`                           | 範囲スクリーンショット             |
-| `Ctrl + Print`                    | 画面全体スクリーンショット         |
-| `Alt + Print`                     | ウィンドウスクリーンショット       |
+| `Super + S`                       | 範囲スクリーンショット             |
+| `Super + Ctrl + S`                | 画面全体スクリーンショット         |
+| `Super + Alt + S`                 | ウィンドウスクリーンショット       |
 
 #### トラブルシューティング
 
