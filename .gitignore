@@ -163,6 +163,12 @@ go.work
 .config/hypr/scheme/
 # colors.lua はデフォルト配色を保持し、Matugen 生成物は colors_generated.lua に分離する
 
+### DankMaterialShell (DMS) generated files ###
+.config/hypr/dms/
+.config/ghostty/themes/dankcolors
+.config/niri/config.kdl.backup*
+.config/niri/config.kdl.dmsbackup*
+
 ### Sheldon ###
 .config/sheldon/
 
