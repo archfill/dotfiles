@@ -82,8 +82,8 @@ in
     ./hardware.nix
   ];
 
-  # This host imports Hyprland and keeps it as the display manager default.
-  services.displayManager.defaultSession = "hyprland";
+  # Prefer Niri at login; Hyprland remains available as a fallback session.
+  services.displayManager.defaultSession = "niri";
 
   boot.loader = {
     efi.canTouchEfiVariables = false;
