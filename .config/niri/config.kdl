@@ -53,6 +53,9 @@ binds {
     Mod+V hotkey-overlay-title="Open DMS clipboard" {
         spawn "dms" "ipc" "call" "clipboard" "toggle";
     }
+    Mod+P hotkey-overlay-title="Capture screenshot region" {
+        spawn "dms" "screenshot";
+    }
     Mod+Slash hotkey-overlay-title="Show Niri hotkeys" { show-hotkey-overlay; }
 
     Mod+O repeat=false { toggle-overview; }
@@ -115,3 +118,10 @@ binds {
         spawn "dms" "ipc" "call" "brightness" "decrement" "5" "";
     }
 }
+
+// DMS Include Configs
+include "dms/cursor.kdl"
+include "dms/layout.kdl"
+include "dms/binds.kdl"
+include "dms/outputs.kdl"
+include "dms/windowrules.kdl"
