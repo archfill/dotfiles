@@ -82,6 +82,9 @@ in
     ./hardware.nix
   ];
 
+  # This host imports Hyprland and keeps it as the display manager default.
+  services.displayManager.defaultSession = "hyprland";
+
   boot.loader = {
     efi.canTouchEfiVariables = false;
     systemd-boot.enable = false;

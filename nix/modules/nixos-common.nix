@@ -84,7 +84,6 @@
     };
   };
   services.displayManager = {
-    defaultSession = "hyprland";
     gdm.enable = true;
   };
   services.desktopManager.gnome.enable = true;
