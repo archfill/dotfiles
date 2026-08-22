@@ -214,29 +214,39 @@ Hyprland
 | DMS | `nix/modules/desktop/dms.nix` のネイティブ `programs.dms-shell` module |
 | Niri | `nix/modules/desktop/niri.nix` の `programs.niri` / `xwayland-satellite` |
 
-#### デフォルトキーバインド
+#### 主なデフォルトキーバインド（DMS/Niri）
 
-| キー                  | 動作                               |
-| --------------------- | ---------------------------------- |
-| `Super + Return`      | ターミナル起動（ghostty）          |
-| `Super + D`           | DMS ランチャー切り替え              |
-| `Super + W`           | DMS ランチャー切り替え              |
-| `Super + Shift + W`   | DMS 壁紙ブラウザ                    |
-| `Super + N`           | DMS 通知センター切り替え            |
-| `Super + M`           | DMS 電源メニュー                    |
-| `Super + V`           | DMS クリップボード                  |
-| `Super + /`           | DMS キーバインド一覧               |
-| `Alt + Tab`           | Hyprland のウィンドウ巡回          |
-| `Alt + Shift + Tab`   | Hyprland の逆順ウィンドウ巡回      |
-| `Super + Q`           | アクティブウィンドウを閉じる       |
-| `Super + Space`       | フローティング切り替え             |
-| `Super + F`           | フルスクリーン                     |
-| `Super + S`           | workspace submap                   |
-| `Super + h/j/k/l`     | フォーカス移動（vim スタイル）     |
-| `Super + Shift + h/j/k/l` | アクティブウィンドウ移動       |
-| `Print`               | 領域スクリーンショット             |
-| `Shift + Print`       | ウィンドウスクリーンショット       |
-| `Ctrl + Print`        | 注釈付きスクリーンショット         |
+| キー                              | 動作                               |
+| --------------------------------- | ---------------------------------- |
+| `Super + T`                       | ターミナル起動（ghostty）          |
+| `Super + Space`                   | DMS ランチャー切り替え             |
+| `Alt + Space`                     | DMS Spotlight バー切り替え         |
+| `Super + V`                       | DMS クリップボード                 |
+| `Super + M`                       | DMS タスクマネージャー             |
+| `Super + X`                       | DMS 電源メニュー                   |
+| `Super + ,`                       | DMS 設定                           |
+| `Super + Y`                       | DMS 壁紙ブラウザ                   |
+| `Super + N`                       | DMS 通知センター                   |
+| `Super + Shift + N`               | DMS メモ帳                         |
+| `Super + Alt + L`                 | 画面ロック                         |
+| `Super + Tab`                     | Niri Overview                      |
+| `Super + Shift + /`               | Niri キーバインド一覧              |
+| `Super + Q`                       | アクティブウィンドウを閉じる       |
+| `Super + F`                       | カラム最大化                       |
+| `Super + Shift + F`               | フルスクリーン                     |
+| `Super + Shift + T`               | フローティング切り替え             |
+| `Super + W`                       | タブ表示切り替え                   |
+| `Super + Shift + W`               | DMS ウィンドウルール               |
+| `Super + h/j/k/l`                 | フォーカス移動（vim スタイル）     |
+| `Super + Shift + h/j/k/l`         | ウィンドウ / カラム移動            |
+| `Super + Ctrl + h/j/k/l`          | モニター間フォーカス移動            |
+| `Super + Ctrl + Shift + h/j/k/l`  | カラムをモニターへ移動             |
+| `Super + 1-9`                     | ワークスペース切り替え             |
+| `Super + Shift + 1-9`             | カラムをワークスペースへ移動       |
+| `Super + P`                       | ディスプレイプロファイル切り替え   |
+| `Print`                           | 範囲スクリーンショット             |
+| `Ctrl + Print`                    | 画面全体スクリーンショット         |
+| `Alt + Print`                     | ウィンドウスクリーンショット       |
 
 #### トラブルシューティング
 

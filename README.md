@@ -266,29 +266,39 @@ Hyprland and the desktop stack are declared through Nix modules:
 | DMS | Native `programs.dms-shell` module in `nix/modules/desktop/dms.nix` |
 | Niri | `programs.niri` and `xwayland-satellite` in `nix/modules/desktop/niri.nix` |
 
-#### Default Keybindings
+#### Main Default Keybindings (DMS/Niri)
 
-| Key                       | Action                                  |
-| ------------------------- | --------------------------------------- |
-| `Super + Return`          | Open terminal (ghostty)                 |
-| `Super + D`               | Toggle DMS launcher                     |
-| `Super + W`               | Toggle DMS launcher                     |
-| `Super + Shift + W`       | Open DMS wallpaper browser              |
-| `Super + N`               | Toggle DMS notifications                |
-| `Super + M`               | Toggle DMS power menu                   |
-| `Super + V`               | Open DMS clipboard                      |
-| `Super + /`               | DMS keybinds modal                      |
-| `Alt + Tab`               | Cycle windows via Hyprland              |
-| `Alt + Shift + Tab`       | Cycle windows backward via Hyprland     |
-| `Super + Q`               | Kill active window                      |
-| `Super + Space`           | Toggle floating                         |
-| `Super + F`               | Fullscreen                              |
-| `Super + S`               | Enter workspace submap                  |
-| `Super + h/j/k/l`         | Move focus (vim-like)                   |
-| `Super + Shift + h/j/k/l` | Move active window                      |
-| `Print`                   | Screenshot region                       |
-| `Shift + Print`           | Screenshot window                       |
-| `Ctrl + Print`            | Screenshot with annotation              |
+| Key                              | Action                                  |
+| -------------------------------- | --------------------------------------- |
+| `Super + T`                      | Open terminal (ghostty)                 |
+| `Super + Space`                  | Toggle DMS launcher                     |
+| `Alt + Space`                    | Toggle DMS spotlight bar                |
+| `Super + V`                      | Open DMS clipboard                      |
+| `Super + M`                      | Open DMS task manager                   |
+| `Super + X`                      | Toggle DMS power menu                   |
+| `Super + ,`                      | Open DMS settings                       |
+| `Super + Y`                      | Open DMS wallpaper browser              |
+| `Super + N`                      | Toggle DMS notifications                |
+| `Super + Shift + N`              | Toggle DMS notepad                      |
+| `Super + Alt + L`                | Lock screen                             |
+| `Super + Tab`                    | Toggle Niri overview                    |
+| `Super + Shift + /`              | Show Niri keybind overlay               |
+| `Super + Q`                      | Close focused window                   |
+| `Super + F`                      | Maximize column                        |
+| `Super + Shift + F`              | Fullscreen                              |
+| `Super + Shift + T`              | Toggle floating                        |
+| `Super + W`                      | Toggle tabbed column display            |
+| `Super + Shift + W`              | Toggle DMS window rules                 |
+| `Super + h/j/k/l`                | Move focus (vim-like)                   |
+| `Super + Shift + h/j/k/l`        | Move window/column                      |
+| `Super + Ctrl + h/j/k/l`         | Focus monitor                           |
+| `Super + Ctrl + Shift + h/j/k/l` | Move column to monitor                  |
+| `Super + 1-9`                    | Focus workspace                         |
+| `Super + Shift + 1-9`            | Move column to workspace                |
+| `Super + P`                      | Cycle display profile                   |
+| `Print`                          | Screenshot region                       |
+| `Ctrl + Print`                   | Screenshot screen                       |
+| `Alt + Print`                    | Screenshot focused window               |
 
 #### Troubleshooting
 
