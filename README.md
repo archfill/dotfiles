@@ -124,11 +124,11 @@ make hyprland-status
 
 **Shell and Wayland Tools:**
 
-- `caelestia-shell` - Bar, launcher, sidebar, session menu, wallpaper selector, notifications
+- `dms` - Bar, launcher, dashboard, power menu, wallpaper selector, notifications, clipboard, and lock screen
 - `rofi` - Fallback menus for clipboard history and keybind cheatsheet
 - `wl-clipboard` - Clipboard utilities
 - `cliphist` - Clipboard history
-- `matugen` - Color generation synced from the current Caelestia scheme
+- `matugen` - Material color generation used by the desktop theme and existing templates
 
 **Screenshot Tools (1):**
 
@@ -235,17 +235,18 @@ Hyprland
 Configuration files are symlinked by Nix/Home Manager:
 
 - `~/.config/hypr/hyprland.lua` - Main configuration
-- `~/.config/hypr/hypridle.conf` - Idle management (screen dim, DPMS, suspend; lock UI is Caelestia)
-- `~/.config/caelestia/shell.json` - Caelestia Shell settings
+- `~/.config/hypr/hypridle.conf` - Legacy Hypridle configuration retained for rollback
+- `~/.config/niri/config.kdl` - Niri compositor and DMS keybindings
+- `~/.config/DankMaterialShell/` - DMS user settings created by the shell
 - `~/.config/rofi/` - Fallback clipboard/keybind menus
 - `~/.config/matugen/` - Color generation templates
 
 #### Desktop Responsibilities
 
-- `caelestia-shell` owns the bar, launcher, sidebar, session menu, wallpaper selector, notifications, and lock UI.
-- `hypridle` owns idle timers, brightness dim/restore, DPMS, suspend, and resume hooks.
-- `rofi` remains the picker UI for clipboard history and the keybind cheatsheet.
-- `matugen` syncs the current Caelestia scheme into Hyprland, rofi, and terminal color files.
+- `dms` owns the bar, launcher, dashboard, power menu, wallpaper selector, notifications, clipboard, lock UI, and idle policy.
+- Hyprland remains the default session; Niri is available as an additional session.
+- `rofi` and `cliphist` remain installed as fallback tools while DMS is being evaluated.
+- `matugen` remains available for the existing Hyprland, rofi, and terminal templates.
 
 #### NixOS Hyprland Coverage
 
@@ -262,20 +263,21 @@ Hyprland and the desktop stack are declared through Nix modules:
 | Network and audio services | `networking.networkmanager` and `services.pipewire` in `nix/modules/nixos-common.nix` |
 | Japanese input method | `i18n.inputMethod.fcitx5` in `nix/modules/nixos-common.nix` |
 | GNOME integration | `services.desktopManager.gnome`, GDM, Nautilus, and GNOME keyring from `nix/modules/nixos-common.nix` |
-| Caelestia Shell | Home Manager module in `nix/hosts/archfill-nixos/home.nix` |
+| DMS | Native `programs.dms-shell` module in `nix/modules/desktop/dms.nix` |
+| Niri | `programs.niri` and `xwayland-satellite` in `nix/modules/desktop/niri.nix` |
 
 #### Default Keybindings
 
 | Key                       | Action                                  |
 | ------------------------- | --------------------------------------- |
 | `Super + Return`          | Open terminal (ghostty)                 |
-| `Super + D`               | Toggle Caelestia launcher               |
-| `Super + W`               | Toggle Caelestia launcher               |
-| `Super + Shift + W`       | Open Caelestia wallpaper selector       |
-| `Super + N`               | Toggle Caelestia sidebar                |
-| `Super + M`               | Toggle Caelestia session menu           |
-| `Super + V`               | Clipboard history via rofi/cliphist     |
-| `Super + /`               | Keybind cheatsheet via rofi             |
+| `Super + D`               | Toggle DMS launcher                     |
+| `Super + W`               | Toggle DMS launcher                     |
+| `Super + Shift + W`       | Open DMS wallpaper browser              |
+| `Super + N`               | Toggle DMS notifications                |
+| `Super + M`               | Toggle DMS power menu                   |
+| `Super + V`               | Open DMS clipboard                      |
+| `Super + /`               | DMS keybinds modal                      |
 | `Alt + Tab`               | Cycle windows via Hyprland              |
 | `Alt + Shift + Tab`       | Cycle windows backward via Hyprland     |
 | `Super + Q`               | Kill active window                      |

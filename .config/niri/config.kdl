@@ -1,0 +1,117 @@
+// Minimal Niri configuration for the DMS session.
+// DMS itself is started by the native NixOS systemd module.
+
+environment {
+    XDG_CURRENT_DESKTOP "niri"
+    QT_QPA_PLATFORM "wayland"
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    QT_QPA_PLATFORMTHEME "gtk3"
+    QT_QPA_PLATFORMTHEME_QT6 "gtk3"
+}
+
+// Keep the current physical monitor arrangement used by Hyprland.
+output "DP-6" {
+    mode "3440x1440@165"
+    position x=0 y=0
+    scale 1
+}
+
+output "HDMI-A-2" {
+    mode "1920x1080@60"
+    transform "270"
+    position x=-1080 y=0
+    scale 1
+}
+
+prefer-no-csd
+
+// Niri normally starts graphical-session.target, so only start Fcitx here.
+spawn-sh-at-startup "pgrep -u \"$USER\" -x fcitx5 >/dev/null || exec fcitx5 -d"
+
+binds {
+    Mod+Return hotkey-overlay-title="Open terminal" { spawn "ghostty"; }
+    Mod+E hotkey-overlay-title="Open file manager" { spawn "nautilus"; }
+
+    Mod+Space hotkey-overlay-title="Open DMS launcher" {
+        spawn "dms" "ipc" "call" "spotlight" "toggle";
+    }
+    Mod+D hotkey-overlay-title="Open DMS launcher" {
+        spawn "dms" "ipc" "call" "spotlight" "toggle";
+    }
+    Mod+W hotkey-overlay-title="Open DMS launcher" {
+        spawn "dms" "ipc" "call" "spotlight" "toggle";
+    }
+    Mod+Shift+W hotkey-overlay-title="Browse DMS wallpapers" {
+        spawn "dms" "ipc" "call" "dankdash" "wallpaper";
+    }
+    Mod+N hotkey-overlay-title="Open DMS notifications" {
+        spawn "dms" "ipc" "call" "notifications" "toggle";
+    }
+    Mod+M hotkey-overlay-title="Open DMS power menu" {
+        spawn "dms" "ipc" "call" "powermenu" "toggle";
+    }
+    Mod+V hotkey-overlay-title="Open DMS clipboard" {
+        spawn "dms" "ipc" "call" "clipboard" "toggle";
+    }
+    Mod+Slash hotkey-overlay-title="Show Niri hotkeys" { show-hotkey-overlay; }
+
+    Mod+O repeat=false { toggle-overview; }
+    Mod+Q repeat=false { close-window; }
+    Mod+F { fullscreen-window; }
+    Mod+Shift+Space { toggle-window-floating; }
+
+    Mod+H { focus-column-left; }
+    Mod+L { focus-column-right; }
+    Mod+K { focus-window-up; }
+    Mod+J { focus-window-down; }
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+    Mod+Shift+K { move-column-to-monitor-up; }
+    Mod+Shift+J { move-column-to-monitor-down; }
+
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+
+    Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock screen" {
+        spawn "dms" "ipc" "call" "lock" "lock";
+    }
+
+    XF86AudioRaiseVolume allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "increment" "3";
+    }
+    XF86AudioLowerVolume allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "decrement" "3";
+    }
+    XF86AudioMute allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "mute";
+    }
+    XF86AudioMicMute allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "micmute";
+    }
+    XF86AudioPlay allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "playPause";
+    }
+    XF86AudioPause allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "playPause";
+    }
+    XF86AudioPrev allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "previous";
+    }
+    XF86AudioNext allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "next";
+    }
+    XF86MonBrightnessUp allow-when-locked=true {
+        spawn "dms" "ipc" "call" "brightness" "increment" "5" "";
+    }
+    XF86MonBrightnessDown allow-when-locked=true {
+        spawn "dms" "ipc" "call" "brightness" "decrement" "5" "";
+    }
+}

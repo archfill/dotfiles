@@ -44,22 +44,22 @@ end
 -- Applications
 bind("01 Applications", main_mod .. " + Return", "Open terminal", exec("ghostty"))
 bind("01 Applications", main_mod .. " + E", "Open file manager", exec("nautilus"))
-bind("01 Applications", main_mod .. " + D", "Toggle launcher", exec("caelestia shell drawers toggle launcher"))
+bind("01 Applications", main_mod .. " + D", "Toggle launcher", exec("dms ipc call spotlight toggle"))
 bind(
 	"01 Applications",
 	main_mod .. " + V",
 	"Choose clipboard entry",
-	exec("pkill rofi || cliphist list | rofi -dmenu -p '󰅍' | cliphist decode | wl-copy")
+	exec("dms ipc call clipboard toggle")
 )
-bind("01 Applications", main_mod .. " + N", "Toggle sidebar", exec("caelestia shell drawers toggle sidebar"))
+bind("01 Applications", main_mod .. " + N", "Toggle notifications", exec("dms ipc call notifications toggle"))
 bind(
 	"01 Applications",
 	main_mod .. " + slash",
 	"Show keybind cheatsheet",
-	exec("pkill rofi || ~/.config/hypr/scripts/keybind-cheatsheet.sh")
+	exec("dms ipc call keybinds toggle hyprland")
 )
-bind("01 Applications", main_mod .. " + W", "Toggle launcher", exec("caelestia shell drawers toggle launcher"))
-bind("01 Applications", main_mod .. " + SHIFT + W", "Choose wallpaper", exec("caelestia wallpaper -r"))
+bind("01 Applications", main_mod .. " + W", "Toggle launcher", exec("dms ipc call spotlight toggle"))
+bind("01 Applications", main_mod .. " + SHIFT + W", "Choose wallpaper", exec("dms ipc call dankdash wallpaper"))
 
 -- Window management
 bind("02 Window management", main_mod .. " + Q", "Kill active window", hl.dsp.window.kill())
@@ -197,7 +197,7 @@ bind(
 bind("07 Session and media", main_mod .. " + R", "Restart shell", exec("~/.config/hypr/scripts/restart-shell.sh"))
 bind("07 Session and media", main_mod .. " + SHIFT + R", "Reload Hyprland", exec("hyprctl reload"))
 bind("07 Session and media", "SHIFT + Z", "Lock session", exec("~/.config/hypr/scripts/lock-session.sh"))
-bind("07 Session and media", main_mod .. " + M", "Toggle session menu", exec("caelestia shell drawers toggle session"))
+bind("07 Session and media", main_mod .. " + M", "Toggle power menu", exec("dms ipc call powermenu toggle"))
 bind("07 Session and media", main_mod .. " + ALT + W", "Next window and raise", function()
 	hl.dispatch(hl.dsp.window.cycle_next())
 	hl.dispatch(hl.dsp.window.bring_to_top())

@@ -76,7 +76,9 @@ in
 {
   imports = [
     ../../modules/nixos-common.nix
+    ../../modules/desktop/dms.nix
     ../../modules/desktop/hyprland.nix
+    ../../modules/desktop/niri.nix
     ./hardware.nix
   ];
 

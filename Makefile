@@ -176,10 +176,10 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ Hyprland: Not installed"; \
 	fi
-	@if command -v caelestia-shell >/dev/null 2>&1; then \
-		echo "✅ caelestia-shell: installed"; \
+	@if command -v dms >/dev/null 2>&1; then \
+		echo "✅ DMS: $$(dms --version 2>&1 | head -1)"; \
 	else \
-		echo "❌ caelestia-shell: Not installed"; \
+		echo "❌ DMS: Not installed"; \
 	fi
 	@if command -v rofi >/dev/null 2>&1; then \
 		echo "✅ rofi: $$(rofi -version 2>&1 | head -1) (clipboard/cheatsheet)"; \
@@ -193,20 +193,20 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	else \
 		echo "❌ hyprland.lua: missing"; \
 	fi
-	@if [ -w ~/.config/caelestia/shell.json ]; then \
-		echo "✅ caelestia config: writable"; \
+	@if [ -f ~/.config/niri/config.kdl ]; then \
+		echo "✅ niri config: exists"; \
 	else \
-		echo "❌ caelestia config: missing or read-only"; \
+		echo "❌ niri config: missing"; \
 	fi
 	@if [ -d ~/.config/rofi ]; then \
 		echo "✅ rofi config: exists (fallback menus)"; \
 	else \
 		echo "❌ rofi config: missing"; \
 	fi
-	@if systemctl --user is-active --quiet caelestia.service; then \
-		echo "✅ caelestia.service: active"; \
+	@if systemctl --user is-active --quiet dms.service; then \
+		echo "✅ dms.service: active"; \
 	else \
-		echo "❌ caelestia.service: inactive"; \
+		echo "❌ dms.service: inactive"; \
 	fi
 	@echo ""
 	@echo "=== NVIDIA Status ==="

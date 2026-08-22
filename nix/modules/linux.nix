@@ -35,6 +35,10 @@
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/hypr";
 
+  xdg.configFile."niri".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/niri";
+
   xdg.configFile."rofi".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/rofi";
@@ -42,10 +46,6 @@
   xdg.configFile."matugen".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/matugen";
-
-  xdg.configFile."caelestia/shell.json".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/caelestia/shell.json";
 
   xdg.dataFile."icons/hicolor/scalable/apps/input-keyboard.svg".source =
     "${pkgs.gnome-control-center}/share/icons/hicolor/scalable/apps/org.gnome.Settings-keyboard-symbolic.svg";

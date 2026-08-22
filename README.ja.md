@@ -110,11 +110,11 @@ make hyprland-status
 
 **Shell / Wayland ツール:**
 
-- `caelestia-shell` - バー、ランチャー、サイドバー、電源メニュー、壁紙選択、通知、ロック UI
+- `dms` - バー、ランチャー、ダッシュボード、電源メニュー、壁紙選択、通知、クリップボード、ロック UI
 - `rofi` - クリップボード履歴とキーバインド一覧の fallback UI
 - `wl-clipboard` - クリップボードユーティリティ
 - `cliphist` - クリップボード履歴
-- `matugen` - Caelestia の配色を Hyprland / rofi / terminal に同期
+- `matugen` - デスクトップテーマと既存テンプレート用の Material 配色生成
 
 **スクリーンショットツール:**
 
@@ -185,17 +185,18 @@ Hyprland
 設定ファイルは Nix / Home Manager から symlink されます。
 
 - `~/.config/hypr/hyprland.lua` - メイン設定
-- `~/.config/hypr/hypridle.conf` - アイドル管理（画面減光、DPMS、サスペンド。ロック UI は Caelestia）
-- `~/.config/caelestia/shell.json` - Caelestia Shell 設定
+- `~/.config/hypr/hypridle.conf` - ロールバック用に残す旧 Hypridle 設定
+- `~/.config/niri/config.kdl` - Niri コンポジタと DMS キーバインド
+- `~/.config/DankMaterialShell/` - DMS が作成するユーザー設定
 - `~/.config/rofi/` - クリップボード / キーバインド一覧の fallback menu
 - `~/.config/matugen/` - 配色生成テンプレート
 
 #### デスクトップ責務
 
-- `caelestia-shell` がバー、ランチャー、サイドバー、電源メニュー、壁紙選択、通知、ロック UI を担当
-- `hypridle` が idle timer、輝度の減光/復元、DPMS、サスペンド、復帰 hook を担当
-- `rofi` はクリップボード履歴とキーバインド一覧の picker UI として残す
-- `matugen` は Caelestia の現在の配色を Hyprland、rofi、terminal の配色ファイルに同期
+- `dms` がバー、ランチャー、ダッシュボード、電源メニュー、壁紙選択、通知、クリップボード、ロック UI、idle policy を担当
+- Hyprland を既定 session として維持し、Niri を追加 session として選択できる
+- `rofi` と `cliphist` は DMS 評価中の fallback 用に残す
+- `matugen` は既存の Hyprland、rofi、terminal テンプレート用に利用可能な状態を保つ
 
 #### NixOS Hyprland 管理範囲
 
@@ -210,20 +211,21 @@ Hyprland
 | ネットワーク / 音声 | `nix/modules/nixos-common.nix` の NetworkManager / PipeWire |
 | 日本語入力 | `nix/modules/nixos-common.nix` の `i18n.inputMethod.fcitx5` |
 | GNOME 連携 | GDM、GNOME、Nautilus、GNOME keyring |
-| Caelestia Shell | `nix/hosts/archfill-nixos/home.nix` の Home Manager module |
+| DMS | `nix/modules/desktop/dms.nix` のネイティブ `programs.dms-shell` module |
+| Niri | `nix/modules/desktop/niri.nix` の `programs.niri` / `xwayland-satellite` |
 
 #### デフォルトキーバインド
 
 | キー                  | 動作                               |
 | --------------------- | ---------------------------------- |
 | `Super + Return`      | ターミナル起動（ghostty）          |
-| `Super + D`           | Caelestia ランチャー切り替え       |
-| `Super + W`           | Caelestia ランチャー切り替え       |
-| `Super + Shift + W`   | Caelestia 壁紙選択                 |
-| `Super + N`           | Caelestia サイドバー切り替え       |
-| `Super + M`           | Caelestia 電源メニュー             |
-| `Super + V`           | rofi/cliphist クリップボード履歴   |
-| `Super + /`           | rofi キーバインド一覧              |
+| `Super + D`           | DMS ランチャー切り替え              |
+| `Super + W`           | DMS ランチャー切り替え              |
+| `Super + Shift + W`   | DMS 壁紙ブラウザ                    |
+| `Super + N`           | DMS 通知センター切り替え            |
+| `Super + M`           | DMS 電源メニュー                    |
+| `Super + V`           | DMS クリップボード                  |
+| `Super + /`           | DMS キーバインド一覧               |
 | `Alt + Tab`           | Hyprland のウィンドウ巡回          |
 | `Alt + Shift + Tab`   | Hyprland の逆順ウィンドウ巡回      |
 | `Super + Q`           | アクティブウィンドウを閉じる       |

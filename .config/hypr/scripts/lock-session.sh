@@ -22,7 +22,7 @@ watch_unlock_once() {
 
     locked_seen=false
     for _ in $(seq 1 50); do
-      if [ "$(caelestia shell lock isLocked 2>/dev/null || true)" = "true" ]; then
+      if [ "$(dms ipc call lock isLocked 2>/dev/null || true)" = "true" ]; then
         locked_seen=true
         break
       fi
@@ -31,7 +31,7 @@ watch_unlock_once() {
 
     [ "$locked_seen" = "true" ] || exit 0
 
-    while [ "$(caelestia shell lock isLocked 2>/dev/null || true)" = "true" ]; do
+    while [ "$(dms ipc call lock isLocked 2>/dev/null || true)" = "true" ]; do
       sleep 1
     done
 
@@ -41,4 +41,4 @@ watch_unlock_once() {
 }
 
 watch_unlock_once
-caelestia shell lock lock
+dms ipc call lock lock
