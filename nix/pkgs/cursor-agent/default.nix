@@ -3,6 +3,7 @@
   stdenv,
   fetchurl,
   autoPatchelfHook,
+  zlib,
 }:
 
 let
@@ -53,7 +54,14 @@ stdenv.mkDerivation {
 
   sourceRoot = "dist-package";
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  # The bundled native Node modules link against the C++ runtime and zlib.
+  # Keep these available to autoPatchelfHook so the prebuilt package can be
+  # used on NixOS instead of relying on host /usr/lib paths.
+  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+    autoPatchelfHook
+    stdenv.cc.cc.lib
+  ];
+  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ zlib ];
 
   installPhase = ''
     runHook preInstall

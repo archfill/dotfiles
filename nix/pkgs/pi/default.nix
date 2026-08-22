@@ -56,6 +56,9 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ makeWrapper ]
     ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
 
+  # The bundled clipboard native addon links against libgcc_s on Linux.
+  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ stdenv.cc.cc.lib ];
+
   installPhase = ''
     runHook preInstall
 

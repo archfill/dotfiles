@@ -123,6 +123,10 @@ NIX_FLAKE := $(CURDIR)/nix
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update
+# Rovehelm is pinned separately because its moving git input must update its
+# Cargo hashes and package expression in the upstream repository first.
+NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
+NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
 nix-rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
@@ -141,7 +145,7 @@ nix-clean: ## 古い generation を 5 世代残して掃除
 	nh clean all --keep 5
 
 nix-update: $(NIX_UPDATE_DEPS) ## AI CLI と flake.lock を更新してから switch
-	nh $(NH_TARGET) switch $(NIX_FLAKE_REF) -u
+	nh $(NH_TARGET) switch $(NIX_UPDATE_ARGS) $(NIX_FLAKE_REF)
 
 codex-update: ## Codex CLI の最新 release を取得して Nix package 定義を更新
 	@bash ./bin/codex-update.sh $(VERSION)
