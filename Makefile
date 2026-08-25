@@ -8,7 +8,7 @@
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
 	codex-update codex-bump cursor-agent-update cursor-agent-bump \
 	origin-update origin-bump \
-	pi-update pi-bump \
+	pi-update pi-bump chatgpt-update \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -120,8 +120,10 @@ validate: ## Validate dotfiles configuration and structure
 # 切替対象は OS / Linux ディストロで自動分岐。NixOS なら nh os、
 # macOS なら nh darwin、それ以外 (Arch / Ubuntu / WSL) は nh home。
 NIX_FLAKE := $(CURDIR)/nix
+# shellcheck disable=SC1009,SC1050,SC1072,SC1073
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
+# ChatGPT は公式 .deb が数百 MB あるため、通常の nix-update とは分離。
 NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update
 # Rovehelm is pinned separately because its moving git input must update its
 # Cargo hashes and package expression in the upstream repository first.
@@ -166,6 +168,9 @@ pi-update: ## Pi coding agent の最新 release を取得して Nix package 定�
 	@bash ./bin/pi-update.sh $(VERSION)
 
 pi-bump: pi-update ## Alias (usage: make pi-bump VERSION=0.84.2)
+
+chatgpt-update: ## ChatGPT Linux公式 .deb のversion/hashを更新
+	@bash ./bin/chatgpt-update.sh
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader

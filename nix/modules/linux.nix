@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, inputs, pkgs, ... }:
 
 # home-manager の Linux 共通設定。
 # ホスト固有 (home.username / homeDirectory / GUI 環境) は
@@ -8,11 +8,13 @@
 # - Arch / Ubuntu / WSL 上の standalone home-manager
 # - NixOS の home-manager モジュール経由 (homeManager.users.<user>)
 #
-# 共通の home-manager 設定はすべて nix/modules/common.nix にあるため、
-# 本ファイルは現状 placeholder。Linux でだけ必要な設定が出てきたら
-# (例: Wayland / X11 連携、Linux 固有の env var) ここに集約する。
+# 共通の home-manager 設定はすべて nix/modules/common.nix に置き、
+# Linux 固有の GUI パッケージや Wayland / X11 連携をここに集約する。
 {
   home.packages = with pkgs; [
+    # OpenAI 公式 ChatGPT Linux デスクトップアプリ。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.chatgpt
+
     cliphist
     curl
     ffmpeg

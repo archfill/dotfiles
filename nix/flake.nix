@@ -90,15 +90,20 @@
             pkgs = import nixpkgs {
               inherit system;
               config.allowUnfreePredicate = pkg:
-                nixpkgs.lib.getName pkg == "cursor-agent"
+                nixpkgs.lib.getName pkg == "chatgpt"
+                || nixpkgs.lib.getName pkg == "cursor-agent"
                 || nixpkgs.lib.getName pkg == "origin";
             };
-          in {
-            codex = pkgs.callPackage ./pkgs/codex { };
-            cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
-            origin = pkgs.callPackage ./pkgs/origin { };
-            pi = pkgs.callPackage ./pkgs/pi { };
-          });
+          in
+            {
+              codex = pkgs.callPackage ./pkgs/codex { };
+              cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
+              origin = pkgs.callPackage ./pkgs/origin { };
+              pi = pkgs.callPackage ./pkgs/pi { };
+            }
+            // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+              chatgpt = pkgs.callPackage ./pkgs/chatgpt { };
+            });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
       # 切替: sudo darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
