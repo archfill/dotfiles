@@ -120,6 +120,9 @@
   };
   programs.zsh.enable = true;
 
+  # Allow mise-managed prebuilt binaries (for example Node.js) to run on NixOS.
+  programs.nix-ld.enable = true;
+
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     trusted-users = [ "root" "archfill" ];
