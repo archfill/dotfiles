@@ -17,6 +17,24 @@ in
     rovehelmPackage
   ];
 
+  gtk = {
+    enable = true;
+
+    # GTK 2 cannot use the GTK 3 Adwaita port. Keep its legacy config
+    # unmanaged while making GTK 3/4 consistently prefer the dark scheme.
+    gtk2.enable = false;
+
+    gtk3 = {
+      theme = {
+        name = "adw-gtk3-dark";
+        package = pkgs.adw-gtk3;
+      };
+      colorScheme = "dark";
+    };
+
+    gtk4.colorScheme = "dark";
+  };
+
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";

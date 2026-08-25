@@ -45,6 +45,7 @@
     playerctl
     networkmanagerapplet
     nwg-look
+    adw-gtk3
     adwaita-icon-theme
     papirus-icon-theme
     hicolor-icon-theme
