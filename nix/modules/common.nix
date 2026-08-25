@@ -112,14 +112,14 @@ in
     # 方針:
     #   - グローバルバージョンは Nix で再現性最強の固定
     #   - プロジェクト毎の override は各リポジトリの mise.toml で
-    #     (yui は java 17 / node 22 / python 3.13 等を local 固定)
+    #     (yui は node 24 / python 3.13 等を local 固定)
     #   - mise はバージョンマネージャとして「プロジェクト override」
     #     用途に特化、グローバル管理から退場
     openjdk17    # Java 17 LTS (Flutter Android ビルド、yui バックエンド等)
 
     # Android
     android-cli   # Google 公式 Android CLI (`android`)
-    nodejs_22    # Node.js 22 LTS
+    nodejs_22    # Node.js 22 LTS (mise project toolのfallback)
     python313    # Python 3.13
     go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)
 
@@ -146,7 +146,7 @@ in
     uv           # Python 高速パッケージマネージャ (mise.toml の uv 指定は
                  # プロジェクト毎の固定として引き続き機能する)
     pipxPackage  # Python CLI apps を分離 venv で導入する補助ツール
-    pnpm         # Node.js パッケージマネージャ (nodejs_22 と組合せて運用)
+    pnpm         # Node.js パッケージマネージャ (mise project toolのfallback)
 
     # ─── Database clients ────────────────────────────────────────────
     # AI agent (Claude Code / Codex) からのワンライナー DB 操作で

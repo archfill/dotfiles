@@ -72,6 +72,15 @@ setup_nix_session() {
 
 setup_nix_session
 
+# ===== mise shims for every shell type =====
+# zshenv is loaded by login, interactive, and non-interactive shells. Keep
+# mise's project-aware shims ahead of Nix's global Node/pnpm fallback so tools
+# declared by a repository mise.toml are resolved consistently in scripts and
+# editor/Codex-launched shells as well as in a terminal.
+if command_exists mise; then
+  eval "$(mise activate zsh --shims)" 2>/dev/null || true
+fi
+
 # ===== Basic PATH Setup =====
 # Essential directories for user binaries
 [[ -d "${HOME}/bin" ]] && add_to_path "${HOME}/bin"

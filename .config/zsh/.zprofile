@@ -138,4 +138,9 @@ done
 unset _nix_bin
 export PATH
 
+# Keep project-specific mise tools ahead of the Nix fallback after
+# /etc/zprofile/path_helper and the Nix profile have modified PATH.
+if command_exists mise; then
+  eval "$(mise activate zsh --shims)" 2>/dev/null || true
+fi
 

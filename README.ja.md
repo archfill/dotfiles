@@ -289,7 +289,8 @@ Hyprland
 ### プログラミング言語
 
 - **Python**: Nix 提供の Python と uv / pipx によるパッケージ運用
-- **Node.js**: Nix 提供の Node.js と mise によるプロジェクト単位の上書き
+- **Node.js**: Nix 提供のNode.jsをfallbackとし、miseでプロジェクト単位に上書き
+- **pnpm**: miseでプロジェクトのバージョンを選択し、非interactive shellではshimsを利用
 - **Rust**: Nix 提供の cargo / rustc / clippy / rustfmt
 - **Go**: Nix 提供の Go と必要に応じたプロジェクト単位の上書き
 - **Java**: Nix 提供の OpenJDK と必要に応じたプロジェクト単位の上書き
@@ -301,6 +302,17 @@ Hyprland
 - **Git**: 高度設定、lazygit インターフェース
 - **コンテナ**: Docker、Docker Compose セットアップ
 - **モバイル**: Flutter、FVM バージョン管理
+
+### Node.js / pnpm のプロジェクト単位解決
+
+グローバルのfallbackはNixが提供し、プロジェクトの`mise.toml`に定義したバージョンを優先します。
+Zshはinteractive shellではmiseの実体PATHを、login/non-interactive shellではプロジェクトを認識するshimsを読み込みます。
+
+```bash
+cd ~/git/<project>
+node --version
+pnpm --version
+```
 
 ## 📄 ライセンス
 

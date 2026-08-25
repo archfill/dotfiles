@@ -59,6 +59,23 @@ mise use node@20
 npm install -g typescript
 ```
 
+### Shell resolution order
+
+Nix provides a global fallback for Node.js and pnpm. When a project contains
+`mise.toml`, its declared versions take priority over the Nix fallback.
+
+- Interactive zsh uses mise's project tool paths.
+- Login and non-interactive zsh uses project-aware mise shims.
+- `mise exec -- <command>` remains the explicit option for scripts and CI.
+
+Verify the active project context with:
+
+```bash
+cd /path/to/project
+node --version
+pnpm --version
+```
+
 ---
 
 ## Flutter Development

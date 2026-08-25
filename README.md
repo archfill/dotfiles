@@ -341,7 +341,8 @@ For more help:
 ### Programming Languages
 
 - **Python**: Nix-provided Python with uv / pipx for package workflows
-- **Node.js**: Nix-provided Node.js with mise for project overrides
+- **Node.js**: Nix-provided Node.js fallback with mise project overrides
+- **pnpm**: mise-selected project version, with shims available in non-interactive shells
 - **Rust**: Nix-provided cargo / rustc / clippy / rustfmt
 - **Go**: Nix-provided Go with project-level overrides when needed
 - **Java**: Nix-provided OpenJDK with project-level overrides when needed
@@ -353,6 +354,18 @@ For more help:
 - **Git**: Advanced configurations with lazygit interface
 - **Containers**: Docker and Docker Compose setup
 - **Mobile**: Flutter with FVM version management
+
+### Node.js and pnpm project resolution
+
+Nix provides the global fallback runtime, while a repository's `mise.toml`
+has priority for project-specific versions. Zsh loads mise's real tool paths
+for interactive shells and project-aware shims for login/non-interactive shells.
+
+```bash
+cd ~/git/<project>
+node --version
+pnpm --version
+```
 
 ## 📄 License
 
