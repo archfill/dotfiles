@@ -230,6 +230,7 @@ in
   # だが、本セッション変数が先に設定されるため Nix 経由で常に解決される。
   home.sessionVariables = {
     JAVA_HOME = "${pkgs.openjdk17}";
+    OP_BIOMETRIC_UNLOCK_ENABLED = "true";
   };
 
   # ─── 設定ファイルの配置 (Impure / out-of-store symlink) ───────────
