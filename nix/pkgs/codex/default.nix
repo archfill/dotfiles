@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "0.150.0";
+  version = "0.150.1";
 
   # codex publishes a single prebuilt native binary per (arch, os).
   # Map the Nix system triple to the upstream tarball suffix.
@@ -22,17 +22,17 @@ let
 
   # SRI hashes for codex rust-v${version}. Refresh: `make codex-update VERSION=...`
   hashes = {
-    "aarch64-apple-darwin"       = "sha256-bSmEDsplntce+GcfEGWjvUM6rVZncwlEXadxg6EZFYg=";
-    "x86_64-apple-darwin"        = "sha256-b019nYPyP+0iKcF5b1oqWoOESXIrgKNmXrSm/NBC5FU=";
-    "x86_64-unknown-linux-musl"  = "sha256-XpxACnQO5CoAl0NpnQp4qaRWdytTro/5O2OB1Vlnb7I=";
-    "aarch64-unknown-linux-musl" = "sha256-DrcmFobDPU4pSrpvc5svsgAnsr1AfRgMHgdbg0mQhDI=";
+    "aarch64-apple-darwin"       = "sha256-9m8cRfHtpJ1qiu+G+u4kEhsMiRPNkCPyPuRCYmBvx7Y=";
+    "x86_64-apple-darwin"        = "sha256-0AvesRPCy0K0P75JFraBqxQFdyrDj8isf6nMCTTR0Ko=";
+    "x86_64-unknown-linux-musl"  = "sha256-qzCIcLx/wEjCPcSdA/a4r5zn/Jm52ogtZoi+epAVXHo=";
+    "aarch64-unknown-linux-musl" = "sha256-W7H3XhoViIRbSjHyyY+ys5S+XCqNkKJKirDruuEWkmQ=";
   };
 
   codeModeHostHashes = {
-    "aarch64-apple-darwin"       = "sha256-qm/fAaH/q6keS9C/Rww51fD1jAy1qhIQGADblufeU18=";
-    "x86_64-apple-darwin"        = "sha256-jyX2WHehHq8l2s5IRh8Mgqe7372egygvNAzAaQd+VwQ=";
-    "x86_64-unknown-linux-musl"  = "sha256-cfutnzG8BwwulSOd7nQUg+NdpG9TTeWTOEjo1DEEuSA=";
-    "aarch64-unknown-linux-musl" = "sha256-IAKyIB8ZaYQ77Zyu3rN3P5EEOvM8Jd3DDgbKxi7YmIk=";
+    "aarch64-apple-darwin"       = "sha256-DjQoAdrDCgULsZML4u3nlArPE50yCStDvnh2VWsnwb8=";
+    "x86_64-apple-darwin"        = "sha256-qSK7TUIPWObZqz8PvlN1fIwsnsAc+WrlTWzYTD9qj9w=";
+    "x86_64-unknown-linux-musl"  = "sha256-tHZnhGElzfbbxGDG/cQYr7LvOSbFT02Zm7++sI3uT8U=";
+    "aarch64-unknown-linux-musl" = "sha256-zJNKiqNt6netMJbgJcvn8gl/AIPfkC5/Ptd9v5H6b5w=";
   };
 in
 
