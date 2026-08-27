@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "2026.08.11-e8db854";
+  version = "2026.08.25-3e8eec8";
 
   platformMap = {
     "aarch64-darwin" = {
@@ -33,10 +33,10 @@ let
   # Official installer version and archives. Refresh with
   # `make cursor-agent-update` rather than the CLI's in-place updater.
   hashes = {
-    "aarch64-darwin" = "sha256-RgRNbXvL17SaDPHNAapMp5qqLqXyx6MpZfwOvimEF5A=";
-    "x86_64-darwin" = "sha256-1cHOlt02Rp4CMdgY1MzzkMqsUtlOYHxW6+7MJHyrKxs=";
-    "x86_64-linux" = "sha256-v/9L9vTp3TDB0O8KcLYHewdAFd0pSOTFBoXVOv3Pzlo=";
-    "aarch64-linux" = "sha256-6hP5LilfUjqZzo2PV9aJTSHl0eLQMP+tcYzNWVXKLu0=";
+    "aarch64-darwin" = "sha256-gdTec0niCNTORBypwtTn0BnsL76xE3p5CZ/YxLhmL18=";
+    "x86_64-darwin" = "sha256-hR9UEvYDz/TLN9TYfVqUDF5kIHfARZI4OYyGamnT9JU=";
+    "x86_64-linux" = "sha256-eiEuWhf/kxb1rMeICOM8U2lA1UVWRQIuY4jZm6SMhCU=";
+    "aarch64-linux" = "sha256-8cHCMw2J+k71tswE/P+6FQEv9Q6s0H4PO67AcW8lrF0=";
   };
 in
 
