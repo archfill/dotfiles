@@ -419,17 +419,6 @@ local function cornerFrames(screen, currentFrame)
 	return frames
 end
 
-local function raiseTargetWindow(win)
-	if not settings.raiseTarget then
-		return
-	end
-
-	safeCall(function()
-		-- raise() does not request keyboard focus.
-		win:raise()
-	end)
-end
-
 local function currentAvoidWindow()
 	local focused = safeCall(function()
 		return hs.window.focusedWindow()
@@ -443,6 +432,18 @@ local function currentAvoidWindow()
 	end
 
 	return nil
+end
+
+local function raiseTargetWindow(win)
+	if not settings.raiseTarget then
+		return
+	end
+
+	safeCall(function()
+		-- Only raise after a meaningful reposition. Calling this for every
+		-- focus event can make browser popups take the active window.
+		win:raise()
+	end)
 end
 
 local function chooseBestCorner(currentFrame, avoidFrame, frames)
@@ -523,7 +524,6 @@ local function reposition()
 		return
 	end
 
-	raiseTargetWindow(targetWindow)
 	updateTargetBorder(currentFrame)
 
 	local targetArea = rectArea(currentFrame)
@@ -558,6 +558,7 @@ local function reposition()
 	safeCall(function()
 		targetWindow:setFrame(best.frame, settings.animationDuration or 0.2)
 	end)
+	raiseTargetWindow(targetWindow)
 end
 
 scheduleReposition = function()

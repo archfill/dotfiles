@@ -127,9 +127,8 @@ config.pipAvoidance = {
 	minOverlapRatio = 0.08,
 	-- Avoid noisy moves when a new corner is only marginally better.
 	minImprovementRatio = 0.05,
-	-- Raise the playback window without focusing it after a reposition event.
-	-- This improves visibility on the current Space but is not a universal
-	-- always-on-top guarantee for normal browser windows.
+	-- Raise only after the playback window is actually moved to a better corner.
+	-- Set false if the browser still activates the popup during that move.
 	raiseTarget = true,
 
 	-- Draw a visible outline around the registered playback window.
