@@ -59,6 +59,7 @@
     taps = [
       "grishka/grishka"
       "jakehilborn/jakehilborn"
+      "macpaw/taps"
     ];
 
     brews = [
@@ -90,6 +91,7 @@
       "zed"
       "beekeeper-studio"
       "grishka/grishka/neardrop"
+      "macpaw/taps/cleanmymac-cli"
     ];
   };
 
