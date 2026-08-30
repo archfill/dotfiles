@@ -66,9 +66,9 @@ stdenv.mkDerivation {
 
     # `origin auth login` / `auth setup-git` append a git credential-helper
     # entry carrying this package's absolute store path, which every version
-    # bump + GC invalidates (same known issue as gh's helper on NixOS —
-    # nixpkgs does not patch it; home-manager sidesteps it by owning the
-    # gitconfig, impossible here since gitconfig is an out-of-store symlink).
+    # bump + GC invalidates (same upstream issue as gh's helper on NixOS —
+    # nixpkgs does not patch it; this repository applies the same fix in the
+    # local gh wrapper, while home-manager sidesteps it by owning gitconfig).
     # The wrapper rewrites such entries to a PATH-based `origin` invocation
     # right after those subcommands succeed. `auth login --local` (repo-local
     # config) is intentionally not covered.

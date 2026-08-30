@@ -54,7 +54,8 @@ in
     gitleaks         # secret scan
 
     # GitHub
-    gh               # GitHub CLI
+    # gh auth login/setup-git が書く Nix store の絶対パスを PATH 参照へ正規化する wrapper
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.gh
 
     # ─── Nix 運用補助 ────────────────────────────────────────────────
     # nh (nix-helper): macOS / NixOS / standalone home-manager を統一 CLI 化。

@@ -82,7 +82,7 @@
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
       # codex / cursor-agent / origin / pi は公式の prebuilt native binary を固定し、
-      # nixpkgs の更新待ちや CLI 自身による in-place update を避ける。
+      # gh は Nix store の絶対パスを Git credential helper に残さない wrapper を使う。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
         (system:
@@ -97,6 +97,7 @@
           in
             {
               codex = pkgs.callPackage ./pkgs/codex { };
+              gh = pkgs.callPackage ./pkgs/gh { };
               cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
               origin = pkgs.callPackage ./pkgs/origin { };
               pi = pkgs.callPackage ./pkgs/pi { };
@@ -104,6 +105,12 @@
             // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               chatgpt = pkgs.callPackage ./pkgs/chatgpt { };
             });
+
+      checks = nixpkgs.lib.genAttrs
+        [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
+        (system: {
+          gh-credential-helper = self.packages.${system}.gh.tests.credential-helper;
+        });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
       # 切替: sudo darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini

@@ -34,3 +34,11 @@
 [credential "https://origin.cursor.com"]
 	helper = 
 	helper = !origin credential-helper
+# GitHub CLI の Git 認証は Nix store の絶対パスではなく PATH で解決する。
+# `gh auth login/setup-git` が書き直した場合は Nix 管理 wrapper が正規化する。
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
