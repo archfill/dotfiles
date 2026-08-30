@@ -37,3 +37,7 @@ fzf.init(config, helpers)
 -- Window groups (Hyprland-style stacking)
 local groups = require("modules.groups")
 groups.init(config, helpers)
+
+-- dアニメ playback popup avoidance
+local pipAvoidance = require("modules.pip_avoidance")
+pipAvoidance.init(config, helpers)

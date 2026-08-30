@@ -82,6 +82,69 @@ config.groups = {
 }
 
 --------------------------------------------------------------------------------
+-- dアニメ再生ポップアップの自動退避
+--------------------------------------------------------------------------------
+
+config.pipAvoidance = {
+	-- Enable the feature. The target is not moved until it is registered or
+	-- auto-detected.
+	enabled = true,
+
+	-- Register or unregister the focused playback window (Hyper + O).
+	-- Hyper + P is already used by window groups.
+	registerKey = "o",
+
+	-- Temporarily enable/disable automatic repositioning (Hyper + I).
+	toggleKey = "i",
+
+	-- Try to detect newly-created browser popups by app and title.
+	-- Manual registration with Hyper + O remains the reliable fallback.
+	autoDetect = true,
+	browserApps = {
+		"Safari",
+		"Safari Technology Preview",
+		"Google Chrome",
+		"Brave Browser",
+		"Microsoft Edge",
+		"Firefox",
+		"Arc",
+		"Vivaldi",
+	},
+	titlePatterns = {
+		"dアニメストア",
+		"dアニメ",
+		"animestore",
+	},
+
+	-- Layout and movement behavior.
+	inset = 16,
+	-- Keep all four corners as candidates. When candidates are equally good,
+	-- prefer the configured row: "top" or "bottom".
+	preferredVerticalPosition = "bottom",
+	debounce = 0.5,
+	animationDuration = 0.2,
+	-- Do not move for a small amount of overlap.
+	minOverlapRatio = 0.08,
+	-- Avoid noisy moves when a new corner is only marginally better.
+	minImprovementRatio = 0.05,
+	-- Raise the playback window without focusing it after a reposition event.
+	-- This improves visibility on the current Space but is not a universal
+	-- always-on-top guarantee for normal browser windows.
+	raiseTarget = true,
+
+	-- Draw a visible outline around the registered playback window.
+	border = {
+		enabled = true,
+		color = { red = 0.15, green = 0.85, blue = 1.0, alpha = 0.95 },
+		width = 3,
+		inset = 2,
+		radius = 6,
+		level = "floating",
+		syncInterval = 1 / 30,
+	},
+}
+
+--------------------------------------------------------------------------------
 -- General Settings
 --------------------------------------------------------------------------------
 
