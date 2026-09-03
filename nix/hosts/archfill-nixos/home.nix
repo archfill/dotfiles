@@ -1,7 +1,43 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 let
-  rovehelmPackage = inputs.rovehelm.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  rovehelmRuntimeLibraries = with pkgs; [
+    fontconfig
+    freetype
+    libxkbcommon
+    vulkan-loader
+    wayland
+    libxcb
+  ];
+
+  rovehelmBinary = name: pkgs.writeShellScriptBin name ''
+    set -euo pipefail
+
+    data_home="''${XDG_DATA_HOME:-$HOME/.local/share}"
+    rovehelm_data="''${ROVEHELM_DATA_HOME:-$data_home/rovehelm}"
+    current_link="''${ROVEHELM_CURRENT_LINK:-$rovehelm_data/current}"
+    binary="$current_link/bin/${name}"
+
+    if [[ ! -x "$binary" ]]; then
+      echo "Rovehelm is not installed. Run rovehelm-update first." >&2
+      exit 1
+    fi
+
+    version_dir="$(${pkgs.coreutils}/bin/readlink -f "$current_link")"
+    binary="$version_dir/bin/${name}"
+    if [[ ! -x "$binary" ]]; then
+      echo "Rovehelm bundle is incomplete: $binary" >&2
+      exit 1
+    fi
+
+    export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath rovehelmRuntimeLibraries}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+    exec "$binary" "$@"
+  '';
+
+  rovehelmUpdate = pkgs.writeShellScriptBin "rovehelm-update" ''
+    update_script="''${ROVEHELM_UPDATE_SCRIPT:-/home/archfill/dotfiles/bin/rovehelm-update.sh}"
+    exec ${pkgs.bash}/bin/bash "$update_script" "$@"
+  '';
 in
 {
   imports = [
@@ -14,7 +50,12 @@ in
 
   home.packages = [
     pkgs.opencode
-    rovehelmPackage
+    rovehelmUpdate
+    (rovehelmBinary "rovehelm-launcher")
+    (rovehelmBinary "rovehelm")
+    (rovehelmBinary "rovehelmd")
+    (rovehelmBinary "rovehelm-agent-hook")
+    (rovehelmBinary "rovehelm-messaging")
   ];
 
   gtk = {

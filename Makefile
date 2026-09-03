@@ -125,8 +125,6 @@ NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 # ChatGPT は公式 .deb が数百 MB あるため、通常の nix-update とは分離。
 NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update
-# Rovehelm is pinned separately because its moving git input must update its
-# Cargo hashes and package expression in the upstream repository first.
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
@@ -168,6 +166,9 @@ pi-update: ## Pi coding agent の最新 release を取得して Nix package 定�
 	@bash ./bin/pi-update.sh $(VERSION)
 
 pi-bump: pi-update ## Alias (usage: make pi-bump VERSION=0.84.2)
+
+rovehelm-update: ## Rovehelmをローカルcheckoutからrelease buildして更新
+	@bash ./bin/rovehelm-update.sh $(ARGS)
 
 chatgpt-update: ## ChatGPT Linux公式 .deb のversion/hashを更新
 	@bash ./bin/chatgpt-update.sh
