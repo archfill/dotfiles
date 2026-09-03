@@ -31,6 +31,9 @@
     unzip
     wl-clipboard
     zoxide
+  ] ++ lib.optionals (stdenv.hostPlatform.system == "x86_64-linux") [
+    # Grok Bot desktop agent (official Linux .deb, unpacked and wrapped by Nix).
+    inputs.self.packages.${stdenv.hostPlatform.system}.grok-bot
   ];
 
   xdg.configFile."hypr".source =

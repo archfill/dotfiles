@@ -78,6 +78,7 @@
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
       # codex / cursor-agent / origin / pi は公式の prebuilt native binary を固定し、
+      # grok-bot は公式 Linux .deb を展開した GUI アプリとして固定する。
       # gh は Nix store の絶対パスを Git credential helper に残さない wrapper を使う。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
@@ -88,7 +89,8 @@
               config.allowUnfreePredicate = pkg:
                 nixpkgs.lib.getName pkg == "chatgpt"
                 || nixpkgs.lib.getName pkg == "cursor-agent"
-                || nixpkgs.lib.getName pkg == "origin";
+                || nixpkgs.lib.getName pkg == "origin"
+                || nixpkgs.lib.getName pkg == "grok-bot";
             };
           in
             {
@@ -100,6 +102,9 @@
             }
             // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               chatgpt = pkgs.callPackage ./pkgs/chatgpt { };
+            }
+            // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
+              grok-bot = pkgs.callPackage ./pkgs/grok-bot { };
             });
 
       checks = nixpkgs.lib.genAttrs

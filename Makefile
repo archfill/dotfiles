@@ -8,7 +8,7 @@
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
 	codex-update codex-bump cursor-agent-update cursor-agent-bump \
 	origin-update origin-bump \
-	pi-update pi-bump chatgpt-update \
+	pi-update pi-bump grok-bot-update grok-bot-bump chatgpt-update \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -124,7 +124,7 @@ NIX_FLAKE := $(CURDIR)/nix
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 # ChatGPT は公式 .deb が数百 MB あるため、通常の nix-update とは分離。
-NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update
+NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update grok-bot-update
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
@@ -166,6 +166,11 @@ pi-update: ## Pi coding agent の最新 release を取得して Nix package 定�
 	@bash ./bin/pi-update.sh $(VERSION)
 
 pi-bump: pi-update ## Alias (usage: make pi-bump VERSION=0.84.2)
+
+grok-bot-update: ## Grok Bot Linux公式 .deb のversion/hashを更新
+	@bash ./bin/grok-bot-update.sh $(GROK_BOT_DEB_URL)
+
+grok-bot-bump: grok-bot-update ## Alias (usage: make grok-bot-bump GROK_BOT_DEB_URL=<official .deb URL>)
 
 rovehelm-update: ## Rovehelmをローカルcheckoutからrelease buildして更新
 	@bash ./bin/rovehelm-update.sh $(ARGS)
