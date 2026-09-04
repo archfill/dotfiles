@@ -8,6 +8,10 @@ Usage:
 
 Update the personal Rovehelm installation from a clean local checkout.
 
+The update always checks out main and fast-forwards it to origin/main
+before building, so any branch left checked out is not a build source.
+--no-pull skips that step and builds the current checkout as-is.
+
 Environment:
   ROVEHELM_REPO          Checkout path (default: /home/archfill/git/rovehelm)
   ROVEHELM_DATA_HOME    Application data root (default: XDG_DATA_HOME/rovehelm)
@@ -60,6 +64,7 @@ status="$(git -C "$repo_dir" status --porcelain=v1 --untracked-files=all)"
 [[ -z "$status" ]] || die "checkout has local changes; commit or stash them before updating"
 
 if [[ "$pull" == true ]]; then
+  git -C "$repo_dir" switch main
   git -C "$repo_dir" pull --ff-only
 fi
 

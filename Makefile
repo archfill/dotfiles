@@ -172,7 +172,7 @@ grok-bot-update: ## Grok Bot Linux公式 .deb のversion/hashを更新
 
 grok-bot-bump: grok-bot-update ## Alias (usage: make grok-bot-bump GROK_BOT_DEB_URL=<official .deb URL>)
 
-rovehelm-update: ## Rovehelmをローカルcheckoutからrelease buildして更新
+rovehelm-update: ## Rovehelmのmainをpullしてrelease buildし更新
 	@bash ./bin/rovehelm-update.sh $(ARGS)
 
 chatgpt-update: ## ChatGPT Linux公式 .deb のversion/hashを更新
