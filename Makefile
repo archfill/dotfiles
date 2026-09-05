@@ -123,8 +123,9 @@ NIX_FLAKE := $(CURDIR)/nix
 # shellcheck disable=SC1009,SC1050,SC1072,SC1073
 NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
-# ChatGPT は公式 .deb が数百 MB あるため、通常の nix-update とは分離。
-NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update grok-bot-update
+# chatgpt-update は上流バージョンが未変更なら数百 KB の Range リクエストだけで
+# スキップし、変更があった時だけ公式 .deb (数百 MB) を再取得する。
+NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update grok-bot-update chatgpt-update
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
