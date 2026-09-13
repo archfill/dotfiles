@@ -1,9 +1,10 @@
 { pkgs, ... }:
 
 {
-  # Google 公式 Android CLI は Nixpkgs 上で unfree 扱いのため、対象だけ許可
+  # Google 公式 CLI は Nixpkgs 上で unfree 扱いのため、対象だけ許可
   nixpkgs.config.allowUnfreePredicate = pkg:
-    pkgs.lib.getName pkg == "android-cli";
+    pkgs.lib.getName pkg == "android-cli"
+    || pkgs.lib.getName pkg == "antigravity-cli";
 
   networking.networkmanager.enable = true;
 

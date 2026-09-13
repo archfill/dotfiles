@@ -184,6 +184,10 @@ in
                     # (leoafarias/fvm) から Nix へ移管。
 
     # ─── AI coding agents ────────────────────────────────────────────
+    # Google Antigravity CLI。nixpkgs の固定済み prebuilt binary を利用し、
+    # `agy` コマンドを提供する。認証情報は初回起動時に設定する。
+    antigravity-cli
+
     # OpenAI 公式 Codex CLI。nixpkgs の codex は Rust ソースビルド (依存が
     # 重く libwebrtc/librusty_v8 を抱える) で更新 PR のラグが常態化するため、
     # 自前 packages.codex (GitHub release の prebuilt native binary) で最新を

@@ -51,9 +51,10 @@
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
-            # Google 公式 Android CLI は Nixpkgs 上で unfree 扱いのため、対象だけ許可
+            # Google 公式 CLI は Nixpkgs 上で unfree 扱いのため、対象だけ許可
             config.allowUnfreePredicate = pkg:
-              nixpkgs.lib.getName pkg == "android-cli";
+              nixpkgs.lib.getName pkg == "android-cli"
+              || nixpkgs.lib.getName pkg == "antigravity-cli";
           };
           extraSpecialArgs = { inherit inputs; };
           inherit modules;
