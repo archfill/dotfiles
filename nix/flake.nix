@@ -91,7 +91,8 @@
                 nixpkgs.lib.getName pkg == "chatgpt"
                 || nixpkgs.lib.getName pkg == "cursor-agent"
                 || nixpkgs.lib.getName pkg == "origin"
-                || nixpkgs.lib.getName pkg == "grok-bot";
+                || nixpkgs.lib.getName pkg == "grok-bot"
+                || nixpkgs.lib.getName pkg == "devin";
             };
           in
             {
@@ -100,6 +101,7 @@
               cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
               origin = pkgs.callPackage ./pkgs/origin { };
               pi = pkgs.callPackage ./pkgs/pi { };
+              devin = pkgs.callPackage ./pkgs/devin { };
             }
             // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               chatgpt = pkgs.callPackage ./pkgs/chatgpt { };

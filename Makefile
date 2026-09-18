@@ -8,7 +8,8 @@
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
 	codex-update codex-bump cursor-agent-update cursor-agent-bump \
 	origin-update origin-bump \
-	pi-update pi-bump grok-bot-update grok-bot-bump chatgpt-update \
+	pi-update pi-bump devin-update devin-bump \
+	grok-bot-update grok-bot-bump chatgpt-update \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	sketchybar-test \
@@ -125,7 +126,7 @@ NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 # chatgpt-update は上流バージョンが未変更なら数百 KB の Range リクエストだけで
 # スキップし、変更があった時だけ公式 .deb (数百 MB) を再取得する。
-NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update grok-bot-update chatgpt-update
+NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update devin-update grok-bot-update chatgpt-update
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
@@ -167,6 +168,11 @@ pi-update: ## Pi coding agent の最新 release を取得して Nix package 定�
 	@bash ./bin/pi-update.sh $(VERSION)
 
 pi-bump: pi-update ## Alias (usage: make pi-bump VERSION=0.84.2)
+
+devin-update: ## Devin CLI の最新版を Nix package 定義へ反映
+	@bash ./bin/devin-update.sh $(VERSION)
+
+devin-bump: devin-update ## Alias (usage: make devin-bump VERSION=3000.10.27)
 
 grok-bot-update: ## Grok Bot Linux公式 .deb のversion/hashを更新
 	@bash ./bin/grok-bot-update.sh $(GROK_BOT_DEB_URL)

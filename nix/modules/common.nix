@@ -211,6 +211,13 @@ in
     # prebuilt を固定。npm -g は不採用。更新は `make pi-update`。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.pi
 
+    # Cognition 公式 Devin CLI。static.devin.ai の versioned prebuilt
+    # native binary を固定し、`devin` コマンドを提供。バックグラウンド
+    # 自己更新は ~/.config/devin/config.json の auto_update: false で
+    # 無効化 (Nix がバージョンを所有)。更新は `make devin-update` または
+    # `make nix-update` で行う。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.devin
+
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable
@@ -373,6 +380,12 @@ in
   xdg.configFile."codex/env.refs".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/codex/env.refs";
+
+  # Devin CLI 設定。Nix がバージョンを所有するため、バックグラウンドの
+  # 自己更新 (auto_update) を無効化しておく。更新は `make devin-update`。
+  xdg.configFile."devin/config.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/devin/config.json";
 
   home.file.".local/bin/codex-env".source =
     config.lib.file.mkOutOfStoreSymlink
