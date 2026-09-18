@@ -1,3 +1,18 @@
 {
-  "auto_update": false
+  "auto_update": false,
+  "version": 1,
+  "devin": {
+    "org_id": "org-767667b2cdd248bfb39314ea70114263"
+  },
+  "shell": {
+    "setup_complete": true
+  },
+  "theme_mode": "dark",
+  "agent": {
+    "model": "swe-2-high",
+    "preferred_family_models": {
+      "swe-2": "swe-2-high",
+      "fusion": "fusion-claude-fable-5-1-medium-sidekick-swe-2-medium"
+    }
+  }
 }

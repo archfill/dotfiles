@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "3000.10.27";
+  version = "3000.10.31";
 
   # devin publishes versioned prebuilt native binary tarballs per (arch, os).
   # Map the Nix system triple to the upstream platform key
@@ -23,10 +23,10 @@ let
 
   # SRI hashes for devin v${version}. Refresh: `make devin-update VERSION=...`
   hashes = {
-    "aarch64-apple-darwin"  = "sha256-0l5QCGs/hChrbKGmn4kDMUNu+bdXyTf6GPcW++84Tt0=";
-    "x86_64-apple-darwin"   = "sha256-dL3EzQ6ZxS22/rGqlH4jWlC5V/OYrjVrfzTKNyJH4+M=";
-    "x86_64-unknown-linux"  = "sha256-9lFtwyuMLWc5kx5nJ3Wb0z5zGyXTgGwvN7j7OVwgUJk=";
-    "aarch64-unknown-linux" = "sha256-xZyBNyOpFVMEHNKE7WimVe71xJ7QRsvdhpBRAYMuFgw=";
+    "aarch64-apple-darwin"  = "sha256-BR388p4PXLXwoHx1edyXJV/ufwLOTG/qzH1AZc52tb0=";
+    "x86_64-apple-darwin"   = "sha256-ykUKE6fi2DosbmQcD4CEKCb5RMrTypO6iSp63jlIVVo=";
+    "x86_64-unknown-linux"  = "sha256-QyGNgO5JV29PhKH/1KTOx1XFRbXKmMWybvzlNAgk8zE=";
+    "aarch64-unknown-linux" = "sha256-balrnIwjN4ksDa0KEseqp+Vov+91crv1TnoOyIkWujM=";
   };
 in
 
