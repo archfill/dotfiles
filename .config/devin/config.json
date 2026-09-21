@@ -9,10 +9,10 @@
   },
   "theme_mode": "dark",
   "agent": {
-    "model": "swe-2-high",
+    "model": "fusion-claude-fable-5-1-medium-sidekick-swe-2-medium",
     "preferred_family_models": {
-      "swe-2": "swe-2-high",
-      "fusion": "fusion-claude-fable-5-1-medium-sidekick-swe-2-medium"
+      "fusion": "fusion-claude-fable-5-1-medium-sidekick-swe-2-medium",
+      "swe-2": "swe-2-high"
     }
   }
 }
