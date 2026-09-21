@@ -88,7 +88,8 @@
             pkgs = import nixpkgs {
               inherit system;
               config.allowUnfreePredicate = pkg:
-                nixpkgs.lib.getName pkg == "chatgpt"
+                nixpkgs.lib.getName pkg == "claude-code"
+                || nixpkgs.lib.getName pkg == "chatgpt"
                 || nixpkgs.lib.getName pkg == "cursor-agent"
                 || nixpkgs.lib.getName pkg == "origin"
                 || nixpkgs.lib.getName pkg == "grok-bot"
@@ -96,6 +97,7 @@
             };
           in
             {
+              claude-code = pkgs.callPackage ./pkgs/claude-code { };
               codex = pkgs.callPackage ./pkgs/codex { };
               gh = pkgs.callPackage ./pkgs/gh { };
               cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };

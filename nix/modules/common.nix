@@ -188,6 +188,13 @@ in
     # `agy` コマンドを提供する。認証情報は初回起動時に設定する。
     antigravity-cli
 
+    # Anthropic 公式 Claude Code CLI。公式 download service の prebuilt
+    # native binary を固定 (native installer と同じ配布物)。npm -g や
+    # ~/.local への自己更新は /nix/store の immutable と衝突するため
+    # DISABLE_AUTOUPDATER=1 で無効化済み。更新は `make claude-update` または
+    # `make nix-update`。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
+
     # OpenAI 公式 Codex CLI。nixpkgs の codex は Rust ソースビルド (依存が
     # 重く libwebrtc/librusty_v8 を抱える) で更新 PR のラグが常態化するため、
     # 自前 packages.codex (GitHub release の prebuilt native binary) で最新を

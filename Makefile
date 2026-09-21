@@ -126,7 +126,7 @@ NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 # chatgpt-update は上流バージョンが未変更なら数百 KB の Range リクエストだけで
 # スキップし、変更があった時だけ公式 .deb (数百 MB) を再取得する。
-NIX_UPDATE_DEPS := codex-update cursor-agent-update origin-update pi-update devin-update grok-bot-update chatgpt-update
+NIX_UPDATE_DEPS := claude-update codex-update cursor-agent-update origin-update pi-update devin-update grok-bot-update chatgpt-update
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
@@ -148,6 +148,11 @@ nix-clean: ## 古い generation を 5 世代残して掃除
 
 nix-update: $(NIX_UPDATE_DEPS) ## AI CLI と flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_UPDATE_ARGS) $(NIX_FLAKE_REF)
+
+claude-update: ## Claude Code の最新版を Nix package 定義へ反映
+	@bash ./bin/claude-update.sh $(VERSION)
+
+claude-bump: claude-update ## Alias (usage: make claude-bump VERSION=2.1.278)
 
 codex-update: ## Codex CLI の最新 release を取得して Nix package 定義を更新
 	@bash ./bin/codex-update.sh $(VERSION)
