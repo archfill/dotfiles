@@ -52,8 +52,8 @@
 }:
 
 let
-  version = "0.57.1";
-  buildId = "c4074f405d36a56b406f11cc6485404ff8b395eb";
+  version = "0.58.0";
+  buildId = "0f1d26934c1faa3a6cf9567ca3fa3f4313344fd5";
   downloadBase = "https://downloads.cursor.com/grokbot/stable";
 
   # Shared libraries loaded with dlopen() by the bundled Chromium runtime.
@@ -85,7 +85,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "${downloadBase}/${buildId}/linux/x64/${finalAttrs.debFile}";
-    hash = "sha256-ygNMwdslJuqHJ7ziMoGENAV8rKnloKc3chrQvypfS/M=";
+    hash = "sha256-R2dcQFpN71jOW2HfzHG1uj/6agRaMRjY/55DH/AvbJ4=";
   };
 
   nativeBuildInputs = [
