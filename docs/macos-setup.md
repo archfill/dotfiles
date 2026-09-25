@@ -1,195 +1,204 @@
 # macOS Setup Guide
 
-## 概要
+新しい Mac (Apple Silicon) に dotfiles を適用するまでの手順。
+macOS 環境は nix-darwin + home-manager + Homebrew モジュールで宣言的に管理しており、
+**手動で入れるのは Nix / Homebrew で入れられないものだけ**にしている。
 
-このガイドでは、macOS（Intel Mac および Apple Silicon Mac）でのdotfiles環境構築について説明します。
-
-## 前提条件
-
-- macOS 10.15 (Catalina) 以降
-- 管理者権限のあるユーザーアカウント
-
-## クイックスタート
-
-### 1. 基本セットアップ
-
-```bash
-# dotfilesリポジトリをクローン
-git clone ssh://git@forgejo.archfill.com:2222/archfill/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-
-# 【推奨】dotfiles + Nix 管理の開発環境セットアップ
-make init
-
-# 【軽量】必要最小限の開発環境セットアップ
-DOTFILES_INSTALL_MODE=essential make init
+```
+事前準備 (手動)          → make doctor → make init → セットアップ後の手動設定
+Homebrew / 1Password / Nix   チェックのみ    初回 switch    権限許可など
 ```
 
-### 2. Nix 設定の反映
+Rosetta 2 は Apple が段階的に廃止するため前提にしない (Intel 専用 cask は採用しない)。
+
+## 1. 事前準備 (手動)
+
+順番どおりに行う。
+
+### 1-1. Homebrew
+
+nix-darwin の Homebrew モジュールは brew 本体をインストールしないため事前に必要。
+Xcode Command Line Tools もこのインストーラーが一緒に入れる。
 
 ```bash
-# Neovim を含む開発環境を反映
-make nix-rebuild
-```
-
-## 詳細手順
-
-### Xcode Command Line Tools
-
-一部の macOS 向け開発ツールや Homebrew パッケージには Xcode Command Line Tools が必要です。
-
-```bash
-# 手動インストール
-xcode-select --install
-
-# 自動インストール（必要なセットアップ実行時）
-# 対話式でインストール確認が表示されます
-```
-
-### Homebrew
-
-パッケージ管理にはHomebrewを使用します。
-
-#### Apple Silicon Mac (M1/M2)
-
-- インストール先: `/opt/homebrew`
-- PATH: `/opt/homebrew/bin`
-
-#### Intel Mac
-
-- インストール先: `/usr/local`
-- PATH: `/usr/local/bin`
-
-```bash
-# 手動インストール
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# 自動インストール（make init 実行時）
-# 未インストールの場合、自動的にインストールされます
 ```
 
-### インストールされるパッケージ
+### 1-2. ターミナルに「アプリケーション管理」を許可
 
-#### 最小セット（minimal）
+システム設定 → プライバシーとセキュリティ → **アプリケーション管理** で、使うターミナルを ON にし、ターミナルを再起動する。
+未許可だと cask の upgrade / `--adopt` / uninstall が `Operation not permitted` で失敗する。
+
+### 1-3. 1Password (SSH 鍵)
+
+dotfiles の clone に SSH 鍵が必要なので、ここで入れる。
+cask として宣言済みなので **brew 経由で入れる** (手動 DL 版だと初回 switch で衝突する)。
 
 ```bash
-# 必須開発ツール
-git curl wget jq yq fzf ripgrep bat tmux make coreutils openssl readline xz zlib
-
-# プログラミング言語・ツール
-uv mise deno go openjdk openjdk@11
+brew install --cask 1password
 ```
 
-#### 基本セット（essential）
+1. サインインする
+2. 設定 → 開発者 → 「**SSH エージェントを使用**」と「**1Password CLI と連携**」を ON
+3. clone に使うターミナルで 1Password の SSH agent を指定し、認証できることを確認
 
-最小セット + 以下：
+   ```bash
+   export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+   ssh -T git@github.com
+   ```
+
+   `~/.ssh/config` は dotfiles が配置するので**手で作らない** (既にあると switch が止まる)。
+
+### 1-4. Nix (Determinate Nix)
+
+`nix/modules/darwin-system.nix` は Determinate Nix 前提 (`nix.enable = false`)。
 
 ```bash
-# 開発ユーティリティ
-ghq lazygit awscli stripe
-
-# GUI アプリケーション（Cask）
-wezterm aquaskk hammerspoon kitty android-platform-tools google-cloud-sdk brewlet cheatsheet
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 ```
 
-#### 完全セット（full）
+インストール後はターミナルを開き直す。
 
-基本セット + 以下：
+### (任意) セットアップ中に使うアプリ
+
+Chrome / Tailscale / Claude は cask として宣言済みで `make init` で入るが、
+先に使いたい場合は **brew 経由で**入れておく。
 
 ```bash
-# macOS専用ツール
-displayplacer dmg2img wakeonlan
-
-# 専門ツール
-bazelisk qmk ranger sqlite3 tcl-tk
-
-# オプションGUIアプリ
-altserver appflowy biscuit yt-music utm via warp xcodes lapce nextcloud gitup など
+brew install --cask google-chrome tailscale-app claude
 ```
 
-## 利用可能なコマンド
-
-### macOS専用コマンド
+公式サイトから手動で入れてしまった場合は、初回 switch 前に brew 管理へ取り込む
+(cask のバージョンと一致している必要があるため早めに行う)。
 
 ```bash
-# セットアップコマンド
-make init                             # dotfiles + Nix 管理の開発環境セットアップ
-DOTFILES_INSTALL_MODE=essential make init # 必要最小限の開発環境セットアップ
-
-# Nix 設定確認
-make nix-diff              # 反映前の差分確認
+brew install --cask --adopt 1password google-chrome tailscale-app claude
 ```
 
-### Neovim
+## 2. dotfiles を clone
 
-Neovim は Nix の `nix/modules/common.nix` で管理します。macOS でも個別の Homebrew/ビルドスクリプトは使わず、`make nix-rebuild` で反映します。
+パスは `~/dotfiles` 固定 (symlink や Hammerspoon の設定パスが前提にしている)。
+
+```bash
+git clone git@github.com:archfill/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+```
+
+## 3. ホスト定義を追加 (初めての Mac の場合)
+
+`darwinConfigurations` の attr 名は **`LocalHostName`** と一致させる。
+
+```bash
+scutil --get LocalHostName
+# 変更する場合:
+# sudo scutil --set LocalHostName <new-name>
+```
+
+既存ホストをコピーして、`nix/flake.nix` の `darwinConfigurations` に追加する。
+
+```bash
+cp -r nix/hosts/archfill-to-Mac-Studio-M4-Max nix/hosts/<host>
+```
+
+```nix
+"<host>" = mkDarwinHost {
+  system = "aarch64-darwin";
+  hostModule = ./hosts/<host>/darwin.nix;
+  homeModule = ./hosts/<host>/home.nix;
+  username = "<macOS のユーザー名>";   # whoami の値
+};
+```
+
+- ユーザー定義 (`users.users` / `system.primaryUser`) は `mkDarwinHost` が username から生成する
+- 全ホスト共通の設定は `nix/modules/darwin-system.nix` (system) と `nix/modules/home-darwin.nix` (home-manager)
+- ホスト固有の cask などは `nix/hosts/<host>/darwin.nix` に書く (リストは共通設定とマージされる)
+
+新規ファイルは flake から見えるように `git add` しておく (未追跡ファイルは flake に含まれない)。
+
+## 4. チェックと適用
+
+```bash
+make doctor   # 前提条件のチェックのみ (何もインストールしない)
+make init     # doctor → nix-darwin 初回 switch → Git 個人設定
+```
+
+`make init` の流れ:
+
+1. `make doctor` 相当のチェック。❌ があればここで停止
+2. `darwin-rebuild` が無ければ `sudo nix run nix-darwin/master#darwin-rebuild -- switch` で初回 bootstrap、あれば `darwin-rebuild switch`
+3. `bin/config.sh`: `config/personal.conf` が無ければ Git の user.name / user.email / ghq.root を対話で設定
+
+以降の日常運用は `make nix-rebuild` (差分確認は `make nix-diff`)。
+
+## 5. セットアップ後の手動設定
+
+宣言できない / デバイスごとに必要なもの:
+
+- **権限の許可** (システム設定 → プライバシーとセキュリティ)
+  - Hammerspoon / Rectangle / Alfred / BetterTouchTool: アクセシビリティ
+  - Chrome リモート デスクトップ ホスト: 画面収録・アクセシビリティ
+- **日本語入力**: macOS 標準の日本語入力 (ローマ字入力) が入力ソースにあることを確認。
+  切り替えは英数 / かなキー (⌃Space による入力ソース切替は無効化している)
+- **SSH の非公開の接続先**: 1Password のセキュアノート「SSH config (private)」の内容を `~/.ssh/config.d/private` に保存 (自宅サーバーなど。公開リポジトリのため dotfiles には入れない)。
+  鍵は 1Password の SSH agent から使い、ホストごとに鍵を指定する場合は `IdentityFile` に**公開鍵** (`~/.ssh/<name>.pub`) を書く。秘密鍵のファイルはディスクに置かない
+- **Chrome リモート デスクトップ**: `remotedesktop.google.com/access` でこの Mac のリモートアクセスを有効化 (PIN 設定)
+- **署名の無いアプリの初回起動**: zmk-battery-center (Mac Studio) は初回起動時にブロックされるので、システム設定 → プライバシーとセキュリティ で「このまま開く」を押す
+- **1Password Environments**: `codex-env` が使う `.env` のマウントを設定 (デバイスごと)
+- **Mac App Store アプリ**: 宣言しない方針 (`homebrew.masApps` は cleanup で宣言外の MAS アプリを消すため。`darwin-system.nix` のコメント参照)。必要なものは手動でインストール
+- **既定のブラウザ**: Chrome の初回起動時に既定のブラウザにする (macOS の確認ダイアログが必須のため宣言できない)
+- **既定のメール (mailto:)**: Chrome で Gmail を開き、アドレスバーのプロトコルハンドラから Gmail に mailto を許可 → メール.app の設定 → 一般 → デフォルトのメールソフトで Chrome を選ぶ
+- (任意) **優先する言語**: システム設定 → 一般 → 言語と地域 で English を追加
+- **Rectangle を再起動**: ショートカット設定 (`darwin-system.nix` で宣言) は起動時に読み込まれる
+- **一度ログアウト**: アイコンのスタイル・操作スペースなど一部の `system.defaults` はログアウトしないと反映されない
+- 新しいシェルを開いて zsh / nvim などが Nix 版になっていることを確認
 
 ## トラブルシューティング
 
-### 1. Homebrew PATH問題
+### `Unexpected files in /etc, aborting activation`
+
+Nix インストーラー等が作った `/etc/zshrc` / `/etc/bashrc` と nix-darwin が衝突している。
+表示されたメッセージどおり退避してから再実行する。
 
 ```bash
-# Apple Silicon Macの場合
-echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
-
-# Intel Macの場合
-echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
-
-# 設定を反映
-source ~/.zshrc
+sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
 ```
 
-### 2. Xcode Command Line Toolsエラー
+### `Existing file ... is in the way` (home-manager)
+
+home-manager が管理するパスに既存ファイルがある。中身を確認して退避してから再実行する。
+
+### `It seems there is already an App at ...`
+
+手動で入れたアプリと宣言済み cask が衝突している。既存の Mac で cask を新しく宣言したときにも起きる。
+switch の前に brew 管理へ取り込む:
 
 ```bash
-# 再インストール
-sudo xcode-select --reset
-xcode-select --install
+# アプリのバージョンが cask と一致している場合 (brew info --cask <name> で確認)
+brew install --cask --adopt <name>
+# 一致していない場合は上書きで入れ直す (設定・データは ~/Library に残る)
+brew install --cask --force <name>
 ```
 
-### 3. 権限エラー
+pkg 形式の cask (tailscale-app / google-drive など) は衝突しないのでそのまま入る。
+対象アプリは先に終了しておく。Tailscale 経由の SSH で作業すると再インストール時に接続が切れるので注意。
 
-```bash
-# Homebrewディレクトリの権限修正（Intel Mac）
-sudo chown -R $(whoami) /usr/local/bin /usr/local/lib /usr/local/sbin
+### pkg 形式の cask の uninstall でパスワードを求められて止まる
 
-# Apple Silicon Mac の場合
-sudo chown -R $(whoami) /opt/homebrew
-```
+宣言から外した cask は `cleanup = "uninstall"` で自動削除されるが、ドライバや入力メソッドを含む
+pkg 形式のもの (Karabiner-Elements など) は管理者パスワードが必要になることがある。
+宣言から外したら、次の switch の前に手動で `brew uninstall --cask <name>` しておく。
 
-### 4. ninja コマンドが見つからない
+### `untrusted tap` / tap trust で activation が止まる
 
-```bash
-# ninjaシンボリックリンクの手動作成
-brew_prefix=$(brew --prefix)
-ln -sf "$brew_prefix/bin/ninja-build" "$brew_prefix/bin/ninja"
-```
+Homebrew 6.0 以降は非公式 tap を trust しないと読み込めない。
+`darwin-system.nix` の `taps` に `{ name = "<tap>"; trusted = true; }` で宣言する。
 
-## ログとデバッグ
+### `chgrp: ... Operation not permitted`
 
-### 環境診断
+ターミナルに「アプリケーション管理」の権限が無い (1-2 参照)。許可後はターミナルの再起動が必要。
 
-```bash
-# システム情報表示
-make info
+### `Cask '<name>' has been disabled`
 
-# デバッグ情報表示
-make debug
-```
-
-## 参考情報
-
-- [Neovim公式ビルドドキュメント](https://github.com/neovim/neovim/wiki/Building-Neovim)
-- [Homebrew公式サイト](https://brew.sh/)
-- [Apple Developer Documentation](https://developer.apple.com/documentation/)
-
-## サポートプラットフォーム
-
-- ✅ macOS 14 (Sonoma) - Apple Silicon
-- ✅ macOS 14 (Sonoma) - Intel
-- ✅ macOS 13 (Ventura) - Apple Silicon
-- ✅ macOS 13 (Ventura) - Intel
-- ✅ macOS 12 (Monterey) - Apple Silicon
-- ✅ macOS 12 (Monterey) - Intel
-- ⚠️ macOS 11 (Big Sur) - 制限付きサポート
-- ❌ macOS 10.15以前 - サポート対象外
+Homebrew 側で cask が無効化された (Gatekeeper 非対応など)。
+`darwin-system.nix` の casks から外すか、nixpkgs 版に置き換える。

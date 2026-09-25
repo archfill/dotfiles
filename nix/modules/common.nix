@@ -120,7 +120,7 @@ in
 
     # Android
     android-cli   # Google 公式 Android CLI (`android`)
-    nodejs_22    # Node.js 22 LTS (mise project toolのfallback)
+    nodejs_24    # Node.js 24 LTS (mise project toolのfallback。26 は 2026-10 に LTS 化)
     python313    # Python 3.13
     go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)
 
@@ -357,7 +357,7 @@ in
   # Git 1.7.12+ / libgit2 ともに対応済み。include.path の
   # ~/.gitconfig.local はそのまま維持 (bin/config.sh が書き込む)。
   # 移管前に既存 ~/.gitconfig (regular file) を削除すること:
-  #   rm ~/.gitconfig && darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
+  #   rm ~/.gitconfig && make nix-rebuild
   xdg.configFile."git/config".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/git/config";

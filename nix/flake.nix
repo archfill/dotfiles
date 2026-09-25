@@ -30,6 +30,8 @@
     let
       # ─── ヘルパー ────────────────────────────────────────────────────
       # nix-darwin ホスト (macOS): システム + home-manager を一括宣言
+      # ユーザー定義はここで一元化する。home-manager の home.username /
+      # home.homeDirectory は users.users から自動設定される。
       mkDarwinHost = { system, hostModule, homeModule, username }:
         nix-darwin.lib.darwinSystem {
           inherit system;
@@ -38,6 +40,13 @@
             hostModule
             home-manager.darwinModules.home-manager
             {
+              users.users.${username} = {
+                name = username;
+                home = "/Users/${username}";
+              };
+              # homebrew.onActivation 等が primaryUser を要求する
+              system.primaryUser = username;
+
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs; };
@@ -119,12 +128,24 @@
         });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
-      # 切替: sudo darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
-      darwinConfigurations."archfill-to-Mac-mini" = mkDarwinHost {
-        system = "aarch64-darwin";
-        hostModule = ./darwin.nix;
-        homeModule = ./home.nix;
-        username = "chill-rf";
+      # attr 名は `scutil --get LocalHostName` と一致させる
+      # (make init / darwin-rebuild / nh がホスト名で自動選択するため)。
+      # 切替: make nix-rebuild (= nh darwin switch ./nix)
+      # 新規ホスト: nix/hosts/<host>/{darwin,home}.nix を作成して下に追加
+      darwinConfigurations = {
+        "archfill-to-Mac-mini" = mkDarwinHost {
+          system = "aarch64-darwin";
+          hostModule = ./hosts/archfill-to-Mac-mini/darwin.nix;
+          homeModule = ./hosts/archfill-to-Mac-mini/home.nix;
+          username = "chill-rf";
+        };
+
+        "archfill-to-Mac-Studio-M4-Max" = mkDarwinHost {
+          system = "aarch64-darwin";
+          hostModule = ./hosts/archfill-to-Mac-Studio-M4-Max/darwin.nix;
+          homeModule = ./hosts/archfill-to-Mac-Studio-M4-Max/home.nix;
+          username = "archfill";
+        };
       };
 
       # ─── Linux: standalone home-manager (Arch / Ubuntu / WSL) ─────

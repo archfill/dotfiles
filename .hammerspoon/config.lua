@@ -7,7 +7,7 @@ local config = {}
 -- Key Modifiers
 --------------------------------------------------------------------------------
 
--- Hyper key: Caps Lock remapped via Karabiner-Elements
+-- Hyper key: sent directly by the ZMK keymap (MONA2); no Caps Lock remapping
 config.hyper = { "ctrl", "cmd", "alt", "shift" }
 
 --------------------------------------------------------------------------------

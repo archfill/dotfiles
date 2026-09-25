@@ -45,6 +45,7 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 
 ### Core Setup
 
+- `make doctor` - 新規マシンの前提条件チェック (何もインストールしない、macOS)。新規 Mac の手順は [docs/macos-setup.md](docs/macos-setup.md)
 - `make init` - Complete dotfiles initialization and setup
 - `make config` - Setup Git configuration with personal settings
 - `make help` - Show all available commands
@@ -94,15 +95,15 @@ dotfiles/
 │   └── Codex/        # Codex向けドキュメント
 │
 ├── nix/               # Nix flake (nix-darwin / NixOS / home-manager)
-│   ├── flake.nix      # マルチホスト出力 (mkDarwinHost / mkHomeConfig)
-│   ├── darwin.nix     # macOS システム設定 (nix-darwin module)
-│   ├── home.nix       # macOS 用 home-manager エントリ
+│   ├── flake.nix      # マルチホスト出力 (mkDarwinHost / mkHomeConfig / mkNixosHost)
+│   ├── hosts/<host>/  # ホスト単位の設定 (attr 名 = ホスト名)
 │   └── modules/
-│       ├── common.nix # 全 OS 共通の home-manager 設定
-│       ├── darwin.nix # macOS 専用 user 設定
-│       └── linux.nix  # Linux 専用 user 設定 (placeholder)
+│       ├── common.nix         # 全 OS 共通の home-manager 設定
+│       ├── darwin-system.nix  # macOS 共通 nix-darwin system 設定 (homebrew / defaults)
+│       ├── home-darwin.nix    # macOS 共通 home-manager 設定
+│       └── linux.nix          # Linux 共通 home-manager 設定
 │
-├── macos/             # macOS固有ファイル
+├── .ssh/config       # SSH 共通設定 (macOS。接続先は含めない: 公開リポジトリ)
 ├── windows/           # Windows固有ファイル
 │
 ├── Makefile           # メインコマンドインターフェース
@@ -131,48 +132,30 @@ dotfiles/
   - yutkat/dotfiles など一部の流派だが少数派
   - 共有モジュールの参照が複雑化しがち
 
-### 現状（移行段階）
-
-macOS 1 ホストのみのためフラット配置を維持：
-
-```
-nix/
-├── flake.nix
-├── darwin.nix      # 旧 nix-darwin system module (将来 hosts/<host>/ に移管)
-├── home.nix        # 旧 home-manager エントリ (将来 hosts/<host>/ に移管)
-└── modules/
-    ├── common.nix
-    ├── darwin.nix
-    └── linux.nix
-```
-
-### 目標構成（Linux ホスト追加時に移行）
+### 現状の構成
 
 ```
 nix/
 ├── flake.nix
 ├── modules/
 │   ├── common.nix              # 全 OS 共通の user 環境
-│   ├── home-darwin.nix         # macOS 専用 user 設定
-│   ├── home-linux.nix          # Linux 専用 user 設定
+│   ├── darwin-system.nix       # macOS 共通 nix-darwin system 設定
+│   ├── home-darwin.nix         # macOS 共通 home-manager 設定
+│   ├── linux.nix / standalone-linux.nix / wsl.nix / nixos-common.nix
 │   └── desktop/
-│       ├── hyprland.nix        # 将来 Hyprland 用
-│       └── wayland.nix
 └── hosts/
-    ├── archfill-to-Mac-mini/
-    │   ├── darwin.nix          # nix-darwin system 設定
-    │   └── home.nix            # home-manager (imports common + home-darwin)
-    ├── arch-desktop/
-    │   └── home.nix            # standalone home-manager (Arch のため system は pacman)
-    ├── wsl-ubuntu/
-    │   └── home.nix            # WSL 用 (standalone home-manager)
-    └── nixos-server/
-        ├── configuration.nix   # NixOS system
-        ├── hardware.nix
-        └── home.nix
+    ├── archfill-to-Mac-mini/           # nix-darwin (user: chill-rf)
+    │   ├── darwin.nix                  # imports darwin-system + ホスト差分
+    │   └── home.nix                    # imports common + home-darwin
+    ├── archfill-to-Mac-Studio-M4-Max/  # nix-darwin (user: archfill)
+    ├── arch-desktop/ ubuntu-desktop/ wsl-ubuntu/   # standalone home-manager
+    ├── archfill-nixos/ nixos-vm/       # NixOS
+    └── _template/
 ```
 
-**移行ルール:** Linux ホスト 1 台でも追加する際に、既存 macOS も `hosts/archfill-to-Mac-mini/` 配下に統合する（git mv で履歴保持）。途中半端な状態は避ける。
+- macOS のユーザー定義 (`users.users` / `system.primaryUser`) は `mkDarwinHost` の `username` から生成する。home-manager の `home.username` / `home.homeDirectory` は nix-darwin の `users.users` から自動設定されるので書かない
+- 共通モジュールでホームディレクトリの絶対パスをハードコードしない (`config.home.homeDirectory` / `config.system.primaryUser` を使う)
+- darwin の attr 名は `scutil --get LocalHostName` と一致させる (`make init` / `nh` がホスト名で選択する)
 
 ### ホスト追加手順
 
@@ -180,7 +163,7 @@ nix/
 2. 構成タイプ別の最小ファイル:
    - **NixOS**: `configuration.nix` + `hardware.nix` + `home.nix`
    - **standalone home-manager** (Arch / Ubuntu / WSL): `home.nix` のみ
-   - **nix-darwin** (macOS): `darwin.nix` + `home.nix`
+   - **nix-darwin** (macOS): `darwin.nix` + `home.nix` (既存 macOS ホストをコピー。手順は [docs/macos-setup.md](docs/macos-setup.md))
 3. `nix/flake.nix` の対応する出力 (`nixosConfigurations` / `homeConfigurations` / `darwinConfigurations`) にホストを追加（雛形コメントを解除）
 4. 切替コマンド (推奨は `make nix-rebuild`、内部で `nh` が OS を判定して下記いずれかを呼ぶ):
    - macOS: `nh darwin switch ~/dotfiles/nix` (= `sudo darwin-rebuild switch --flake ./nix#<host>`)
@@ -216,7 +199,6 @@ Nix に寄せた結果、残っているセットアップスクリプトは `bi
 
 1. **linux-bootstrap.sh** - 非 NixOS Linux の最小 OS bootstrap
 2. **docker-setup.sh** - 非 NixOS Linux の Docker daemon setup
-3. **sbarlua.sh** - macOS SketchyBar 用 SbarLua setup
 
 ### 📂 詳細構造
 
@@ -227,12 +209,11 @@ bin/
 │   ├── config_loader.sh            # 設定ファイル読込 (versions.conf等)
 │   └── logger.sh                   # init-log 用ログヘルパー
 │
+├── doctor.sh                       # 新規マシンの前提条件チェック (make doctor、bash 3.2 互換)
 ├── init.sh                         # メインエントリーポイント (make init)
 ├── config.sh                       # Git設定
 ├── linux-bootstrap.sh              # 非 NixOS Linux の最小 bootstrap
 ├── docker-setup.sh                 # 非 NixOS Linux の Docker daemon setup
-├── sbarlua.sh                      # macOS SketchyBar Lua module setup
-├── sketchybar-test.sh              # SketchyBar 設定テスト
 └── git-health.sh                   # ghq 管理リポジトリの状態確認
 ```
 
@@ -243,14 +224,17 @@ make init
   ↓
 bin/init.sh
   ├─ プラットフォーム別セットアップ
-  │   ├─ [macOS]   darwin-rebuild switch --flake nix#archfill-to-Mac-mini
-  │   │             (nix-darwin + home-manager + homebrew モジュールで宣言管理)
+  │   ├─ [macOS]   bin/doctor.sh (❌ があれば停止)
+  │   │             → darwin-rebuild switch --flake nix#$(scutil --get LocalHostName)
+  │   │               (初回は sudo nix run nix-darwin/master#darwin-rebuild -- switch)
   │   └─ [Linux legacy] bin/linux-bootstrap.sh
   │
   └─ bin/config.sh (Git設定)
 ```
 
 ### 💡 設計原則
+
+0. **Nix 導入前に動くこと**: 新規 Mac では `make init` / `make doctor` を macOS 標準の `/usr/bin/make` (3.81) と `/bin/bash` (3.2) で実行する。Makefile・`bin/init.sh`・`bin/doctor.sh`・`bin/config.sh`・`bin/lib/` では bash 4 以降の機能 (`declare -g`, 連想配列, `mapfile` 等) や make 4 以降の挙動に依存しない
 
 1. **責務の分離**: Nix 管理外として残す必要がある処理だけを `bin/` 直下に配置
 2. **Nix 優先**: user-space CLI / runtimes / editor / fonts は Nix で管理

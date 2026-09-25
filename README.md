@@ -32,12 +32,13 @@ make nix-rebuild
 
 For first setup, install Nix first, then run `make init`. `make init` is the bootstrap entrypoint and does not require `nh` to be available yet:
 
-- macOS: uses `darwin-rebuild` when available, otherwise prints the `nix run nix-darwin` command to run manually
+- macOS: runs the `make doctor` prerequisite check, then uses `darwin-rebuild` when available, otherwise bootstraps with `nix run nix-darwin`. **For a new Mac, follow [docs/macos-setup.md](docs/macos-setup.md)**
 - NixOS: uses `nh os switch` when available, otherwise falls back to `nixos-rebuild`
 - Arch / Ubuntu / WSL: uses `nh home switch`, `home-manager switch`, or `nix run home-manager`
 
 ```bash
 # NixOS or macOS host declared in flake outputs
+make doctor   # macOS: prerequisite check only (installs nothing)
 make init
 
 # Standalone Home Manager hosts
@@ -78,7 +79,7 @@ make help             # Show all commands
 | Platform | Management layer | Desktop / WM        | Notes                     |
 | -------- | ---------------- | ------------------- | ------------------------- |
 | NixOS    | NixOS + Home Manager | GNOME / Hyprland | Main Linux target         |
-| macOS    | nix-darwin + Home Manager + Homebrew module | AeroSpace/SketchyBar | Declarative package setup |
+| macOS    | nix-darwin + Home Manager + Homebrew module | Hammerspoon / Rectangle | Declarative package setup |
 | Linux    | Home Manager     | Hyprland-ready user config | Arch / Ubuntu / WSL hosts |
 | Windows  | Manual scripts   | Native              | WSL2 config management    |
 

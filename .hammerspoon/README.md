@@ -59,7 +59,7 @@ end
 
 ### 2. Hyper Keyパターン
 
-Karabiner-ElementsでCaps Lockを「Hyper Key」（Ctrl+Cmd+Alt+Shift同時押し）にリマップ：
+キーボード (ZMK の MONA2) のキーマップに「Hyper Key」（Ctrl+Cmd+Alt+Shift同時押し）を割り当てる：
 
 ```lua
 local hyper = { "ctrl", "cmd", "alt", "shift" }
@@ -68,7 +68,7 @@ hs.hotkey.bind(hyper, "e", function() ... end)
 
 **メリット:**
 - 他のアプリとショートカットが衝突しない
-- Caps Lockの有効活用
+- 1キーで4修飾キーを同時に送れる
 - 覚えやすいキーバインド
 
 ### 3. 関数の再利用
@@ -252,7 +252,7 @@ local wifi = hs.wifi.currentNetwork()
 
 - **場所:** `.hammerspoon/`
 - **方式:** モジュラー構成 + データ駆動設計
-- **Hyper Key:** Ctrl + Cmd + Alt + Shift (Karabiner-Elementsで設定)
+- **Hyper Key:** Ctrl + Cmd + Alt + Shift (MONA2 の ZMK キーマップで設定)
 
 ### ディレクトリ構成
 

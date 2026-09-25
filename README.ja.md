@@ -32,12 +32,13 @@ make nix-rebuild
 
 初回セットアップでは先に Nix を導入してから `make init` を実行します。`make init` は bootstrap 用の入口なので、この時点で `nh` がまだ使えなくても構いません。
 
-- macOS: `darwin-rebuild` があれば実行し、なければ手動実行用の `nix run nix-darwin` コマンドを表示
+- macOS: `make doctor` 相当の前提チェック後、`darwin-rebuild` があれば実行し、なければ `nix run nix-darwin` で初回 bootstrap。**新しい Mac の手順は [docs/macos-setup.md](docs/macos-setup.md) を参照**
 - NixOS: `nh os switch` があれば使い、なければ `nixos-rebuild` に fallback
 - Arch / Ubuntu / WSL: `nh home switch`、`home-manager switch`、`nix run home-manager` の順で fallback
 
 ```bash
 # NixOS / macOS の flake 定義済みホスト
+make doctor   # macOS: 前提条件チェック (何もインストールしない)
 make init
 
 # standalone Home Manager ホスト
@@ -78,7 +79,7 @@ make help             # 全コマンド表示
 | プラットフォーム | 管理レイヤー | デスクトップ / WM | 備考 |
 | ---------------- | ------------ | ----------------- | ---- |
 | NixOS            | NixOS + Home Manager | GNOME / Hyprland | メイン Linux 環境 |
-| macOS            | nix-darwin + Home Manager + Homebrew module | AeroSpace/SketchyBar | 宣言的にパッケージ管理 |
+| macOS            | nix-darwin + Home Manager + Homebrew module | Hammerspoon / Rectangle | 宣言的にパッケージ管理 |
 | Linux            | Home Manager | Hyprland 向けユーザー設定 | Arch / Ubuntu / WSL |
 | Windows          | 手動スクリプト | Native | WSL2 設定管理 |
 
