@@ -164,6 +164,19 @@ in
         topHalf = hyperArrow 126;
       };
 
+      # ─── BetterTouchTool ──────────────────────────────────────────
+      # 修飾キー + ドラッグでウィンドウのどこをつかんでも移動・リサイズする
+      # (ウルトラワイドでタイトルバーを探さずに済むため)。
+      # 移動: ⌃⌘ + ドラッグ / リサイズ: ⌃⇧⌘ + ドラッグ。
+      # ⌥ は Finder のコピー等と衝突するため使わない。反映は BTT の再起動後。
+      "com.hegenberg.BetterTouchTool" = {
+        controlMove = true;
+        cmdMove = true;
+        controlResize = true;
+        shiftResize = true;
+        cmdResize = true;
+      };
+
       # ─── キーボードショートカット ──────────────────────────────────
       # AppleSymbolicHotKeys は丸ごと上書きされる。ここに無い項目は macOS の
       # 初期値になる。反映は postActivation の activateSettings -u で行う。
