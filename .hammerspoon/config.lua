@@ -67,7 +67,7 @@ config.fzf = {
 	-- Hotkey to show window switcher (Hyper + key)
 	hotkey = "w",
 	-- Path to fzf binary (auto-detected if not set)
-	-- fzfPath = "/opt/homebrew/bin/fzf",
+	-- fzfPath = "/opt/homebrew/bin/fzf", -- auto-detected from Nix profiles if unset
 	-- Search window titles in addition to app names
 	searchWindowTitles = true,
 	-- Immediately switch if there's only one match
