@@ -140,6 +140,7 @@ make init     # doctor → nix-darwin 初回 switch → Git 個人設定
 - **日本語入力**: macOS 標準の日本語入力 (ローマ字入力) が入力ソースにあることを確認。
   切り替えは英数 / かなキー (⌃Space による入力ソース切替は無効化している)
 - **SSH の非公開の接続先**: 1Password のセキュアノート「SSH config (private)」の内容を `~/.ssh/config.d/private` に保存 (自宅サーバーなど。公開リポジトリのため dotfiles には入れない)。
+  `~/.ssh/config` は `Include ~/.ssh/config.d/*` なので、`config.d/` にはバックアップなど設定以外のファイルを置かない。
   鍵は 1Password の SSH agent から使い、ホストごとに鍵を指定する場合は `IdentityFile` に**公開鍵** (`~/.ssh/<name>.pub`) を書く。秘密鍵のファイルはディスクに置かない
 - **Chrome リモート デスクトップ**: `remotedesktop.google.com/access` でこの Mac のリモートアクセスを有効化 (PIN 設定)
 - **署名の無いアプリの初回起動**: zmk-battery-center (Mac Studio) は初回起動時にブロックされるので、システム設定 → プライバシーとセキュリティ で「このまま開く」を押す
@@ -200,6 +201,17 @@ pkg 形式の cask (tailscale-app / google-drive など) は衝突しないの�
 宣言から外した cask は `cleanup = "uninstall"` で自動削除されるが、ドライバや入力メソッドを含む
 pkg 形式のもの (Karabiner-Elements など) は管理者パスワードが必要になることがある。
 宣言から外したら、次の switch の前に手動で `brew uninstall --cask <name>` しておく。
+
+### 非公式 tap のアプリを宣言から外したら `Refusing to load cask ... from untrusted tap` で止まる
+
+`brew bundle cleanup` は最初に trust ストアを Brewfile の宣言どおりに戻すため、tap ごと宣言から外すと
+その tap のアプリをアンインストールするための定義が読めなくなり、cleanup 全体 (他のアプリの削除も) が止まる。
+**宣言から外す前に**手動でアンインストールしておく。外した後なら一時的に trust してから個別に消す:
+
+```bash
+brew trust --cask <tap>/<name>
+brew uninstall --cask <tap>/<name>
+```
 
 ### `untrusted tap` / tap trust で activation が止まる
 
