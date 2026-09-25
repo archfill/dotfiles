@@ -145,6 +145,9 @@ make init     # doctor → nix-darwin 初回 switch → Git 個人設定
 - **Chrome リモート デスクトップ**: `remotedesktop.google.com/access` でこの Mac のリモートアクセスを有効化 (PIN 設定)
 - **署名の無いアプリの初回起動**: zmk-battery-center (Mac Studio) は初回起動時にブロックされるので、システム設定 → プライバシーとセキュリティ で「このまま開く」を押す
 - **1Password Environments**: `codex-env` が使う `.env` のマウントを設定 (デバイスごと)
+- **外付け SSD とローカル LLM (Mac Studio)**: 外付け `Storage` (常時接続) に作業領域を置く。`~/git` は `/Volumes/Storage/archfill/git` への symlink、モデルは `Models/` (`HF_HOME` は `home.nix` で宣言)
+  - Time Machine: `sudo tmutil removeexclusion -v /Volumes/Storage` で外付けを対象に含め、`tmutil addexclusion` で `Parallels/` と `Models/` を除外 (ビルド成果物は asimov が自動で除外)
+  - mlx-lm: `uv tool install mlx-lm` (nixpkgs の mlx は Metal なしで CPU 専用になるため Nix では入れない)
 - **Mac App Store アプリ**: 宣言しない方針 (`homebrew.masApps` は cleanup で宣言外の MAS アプリを消すため。`darwin-system.nix` のコメント参照)。必要なものは手動でインストール
 - **既定のブラウザ**: Chrome の初回起動時に既定のブラウザにする (macOS の確認ダイアログが必須のため宣言できない)
 - **既定のメール (mailto:)**: Chrome で Gmail を開き、アドレスバーのプロトコルハンドラから Gmail に mailto を許可 → メール.app の設定 → 一般 → デフォルトのメールソフトで Chrome を選ぶ
