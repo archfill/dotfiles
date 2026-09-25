@@ -11,6 +11,10 @@
 -- Load Dependencies
 --------------------------------------------------------------------------------
 
+-- Allow the `hs` CLI (installed by the Homebrew cask) to talk to Hammerspoon,
+-- e.g. `hs -c 'hs.reload()'` for reloading and debugging from a terminal.
+require("hs.ipc")
+
 local config = require("config")
 local helpers = require("utils.helpers")
 

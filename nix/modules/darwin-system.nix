@@ -148,20 +148,24 @@ in
       };
 
       # ─── Rectangle ────────────────────────────────────────────────
-      # 初期値からの変更点のみ宣言する。半分配置を Hyper (⌃⌥⇧⌘、キーボードの
-      # ZMK キーマップで送出) + 矢印に割り当てる。3 分割などは初期値のまま。
+      # 初期値からの変更点のみ宣言する。Hyper (⌃⌥⇧⌘、キーボードの ZMK キーマップで
+      # 送出) + キーに割り当てる。3 分割などは初期値のまま。
       # Hammerspoon の Hyper + 矢印 (enablePositioning) は無効にして Rectangle に任せている。
+      # Hammerspoon が使う Hyper + E/C/F/W/O/I/R/G/N/P/H/J/K/L とは重ねない。
       # GUI で変更しても次の switch で戻るため、変更はここで行う。
       "com.knollsoft.Rectangle" = let
-        hyperArrow = keyCode: { inherit keyCode; modifierFlags = 1966080; };
+        hyper = keyCode: { inherit keyCode; modifierFlags = 1966080; };
       in {
         alternateDefaultShortcuts = true;
         subsequentExecutionMode = 1;
         windowSnapping = 2;
-        leftHalf = hyperArrow 123;
-        rightHalf = hyperArrow 124;
-        bottomHalf = hyperArrow 125;
-        topHalf = hyperArrow 126;
+        # 半分: Hyper + 矢印
+        leftHalf = hyper 123;
+        rightHalf = hyper 124;
+        bottomHalf = hyper 125;
+        topHalf = hyper 126;
+        # ウルトラワイド用の 70/30 は Hammerspoon で Hyper + A/S/Z/X に割り当て
+        # (Rectangle は 70/30 を左右どちらにも作れないため。.hammerspoon/config.lua 参照)
       };
 
       # ─── BetterTouchTool ──────────────────────────────────────────
@@ -169,6 +173,8 @@ in
       # (ウルトラワイドでタイトルバーを探さずに済むため)。
       # 移動: ⌃⌘ + ドラッグ / リサイズ: ⌃⇧⌘ + ドラッグ。
       # ⌥ は Finder のコピー等と衝突するため使わない。反映は BTT の再起動後。
+      # Hammerspoon の eventtap では ⌃ + クリックを受け取れないため BTT で行う。
+      # 3 本指タップの中クリックは .config/bettertouchtool のプリセット。
       "com.hegenberg.BetterTouchTool" = {
         controlMove = true;
         cmdMove = true;

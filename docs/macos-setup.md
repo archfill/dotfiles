@@ -148,6 +148,18 @@ make init     # doctor → nix-darwin 初回 switch → Git 個人設定
 - **既定のブラウザ**: Chrome の初回起動時に既定のブラウザにする (macOS の確認ダイアログが必須のため宣言できない)
 - **既定のメール (mailto:)**: Chrome で Gmail を開き、アドレスバーのプロトコルハンドラから Gmail に mailto を許可 → メール.app の設定 → 一般 → デフォルトのメールソフトで Chrome を選ぶ
 - (任意) **優先する言語**: システム設定 → 一般 → 言語と地域 で English を追加
+- **BetterTouchTool のプリセットを読み込む**: BTT は修飾キー + ドラッグと 3 本指タップの中クリックに使う。トリガーは BTT の内部データベースに保存されるため `defaults` では宣言できないので、BTT を起動してから読み込む (修飾キー + ドラッグの移動・リサイズは `darwin-system.nix` で宣言済み、70/30 配置は Hammerspoon の設定にある)
+
+  ```bash
+  osascript -e 'tell application "BetterTouchTool" to import_preset "'"$HOME"'/dotfiles/.config/bettertouchtool/Default.bttpreset"'
+  ```
+
+  トリガーを変えたら書き出して dotfiles にコミットする:
+
+  ```bash
+  osascript -e 'tell application "BetterTouchTool" to export_preset "Default" outputPath "'"$HOME"'/dotfiles/.config/bettertouchtool/Default.bttpreset" includeSettings false compress false'
+  ```
+
 - **Rectangle を再起動**: ショートカット設定 (`darwin-system.nix` で宣言) は起動時に読み込まれる
 - **一度ログアウト**: アイコンのスタイル・操作スペースなど一部の `system.defaults` はログアウトしないと反映されない
 - 新しいシェルを開いて zsh / nvim などが Nix 版になっていることを確認

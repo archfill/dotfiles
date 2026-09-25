@@ -45,6 +45,16 @@ config.windows = {
 	enableDirectionalFocus = true,
 	-- Customize keys: { key = "direction" }
 	-- directionalFocusKeys = { h = "west", j = "south", k = "north", l = "east" },
+
+	-- Ultrawide 70/30 layouts (Hyper + key, unit rect of the screen).
+	-- Top row = main window on the left, bottom row = main window on the right.
+	-- Halves / thirds are handled by Rectangle.
+	layouts = {
+		a = { x = 0, y = 0, w = 0.7, h = 1 }, -- left 70%
+		s = { x = 0.7, y = 0, w = 0.3, h = 1 }, -- right 30%
+		z = { x = 0, y = 0, w = 0.3, h = 1 }, -- left 30%
+		x = { x = 0.3, y = 0, w = 0.7, h = 1 }, -- right 70%
+	},
 }
 
 --------------------------------------------------------------------------------
