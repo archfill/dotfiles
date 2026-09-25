@@ -115,6 +115,8 @@ in
       "obsidian"
       "spotify"
       "google-drive"
+      "cryptomator"        # Google Drive 上の vault をクライアント側で暗号化。
+                           # macOS 26 では FUSE-T のマウントが失敗するため WebDAV (AppleScript) で使う
       "nextcloud"
       "cleanmymac"
       # リモート / オーディオ
