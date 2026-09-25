@@ -199,8 +199,7 @@ if dir_exists "$HOME/.tfenv" && command_exists tfenv; then
   export TFENV_ROOT="$HOME/.tfenv"
 fi
 
-# Terraform workspace and cache directories
-init_env_var "TF_DATA_DIR" "$HOME/.terraform.d"
+# Terraform plugin cache (TF_DATA_DIR は共有するとプロジェクト間で backend 設定が混ざるので設定しない)
 init_env_var "TF_PLUGIN_CACHE_DIR" "$HOME/.terraform.d/plugin-cache"
 
 # Create plugin cache directory if it doesn't exist
