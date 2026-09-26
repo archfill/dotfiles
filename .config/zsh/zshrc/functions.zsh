@@ -16,37 +16,37 @@ function dotfiles() {
   return 0
 }
 
-# ghq-based project selection with enhanced fzf preview
+# ghq のリポジトリを「表示名<TAB>パス」で出す。表示名は ~ 始まり (~/git/kotorae, ~/dotfiles)。
+# ghq は主 root の symlink を解決して返すので、主 root 配下は設定上のパス (~/git) に戻す。
+function _ghq_candidates() {
+  ghq list --full-path | awk -v rs="$(ghq root)/" -v lr="$(_ghq_primary_root)/" \
+    -v h="$HOME/" -v OFS="\t" '{
+    p = $0
+    if (index(p, rs) == 1) p = lr substr(p, length(rs) + 1)
+    l = p
+    if (index(l, h) == 1) l = "~/" substr(l, length(h) + 1)
+    print l, p
+  }'
+}
+
+# 主 root の設定値 (symlink を解決しない)。ghq は最後の ghq.root を主 root にする
+function _ghq_primary_root() {
+  git config --path --get-all ghq.root | tail -n 1
+}
+
+# ghq-based project selection
 function g() {
-  local src=$(ghq list | fzf \
+  local src=$(_ghq_candidates | fzf \
+    --delimiter="\t" \
+    --with-nth=1 \
     --height=50% \
     --layout=reverse \
     --border \
-    --prompt="Project > " \
-    --preview-window="right:60%" \
-    --preview="
-      local repo_path=\$(ghq root)/{}
-      echo \"📁 Repository: {}\"
-      echo \"📍 Path: \$repo_path\"
-      echo \"\"
-      if [[ -f \"\$repo_path/README.md\" ]]; then
-        echo \"📄 README.md:\"
-        head -10 \"\$repo_path/README.md\" 2>/dev/null | sed 's/^/  /'
-      elif [[ -f \"\$repo_path/readme.md\" ]]; then
-        echo \"📄 readme.md:\"
-        head -10 \"\$repo_path/readme.md\" 2>/dev/null | sed 's/^/  /'
-      elif [[ -f \"\$repo_path/package.json\" ]]; then
-        echo \"📦 package.json:\"
-        cat \"\$repo_path/package.json\" 2>/dev/null | jq -r '.name, .description, .version' 2>/dev/null | sed 's/^/  /' || echo \"  Node.js project\"
-      else
-        echo \"📂 Directory contents:\"
-        ls -la \"\$repo_path\" | head -10 | tail -n+2 | sed 's/^/  /'
-      fi
-    "
+    --prompt="Project > " | cut -f2
   )
   
   if [[ -n "$src" ]]; then
-    local repo_path="$(ghq root)/$src"
+    local repo_path="$src"
     echo "🚀 Changing to: $repo_path"
     cd "$repo_path"
     return 0
@@ -63,6 +63,18 @@ function ghq-get() {
   fi
   ghq get "$1" && g
   return 0
+}
+
+function gq() {
+  local repo_path
+  repo_path=$(_ghq_candidates | fzf --delimiter="\t" --with-nth=1 | cut -f2)
+  [[ -n "$repo_path" ]] && cd "$repo_path" && exec "$SHELL"
+}
+
+# 削除候補は主 root (ghq get の clone 先) 配下だけ。追加 root の ~/harness-configs は実体なので出さない
+function ghq-remove() {
+  _ghq_candidates | awk -F "\t" -v rs="$(_ghq_primary_root)/" 'index($2, rs) == 1' |
+    fzf --multi --delimiter="\t" --with-nth=1 | cut -f2 | xargs -I {} rm -rf {}
 }
 
 function ghq-clone() {

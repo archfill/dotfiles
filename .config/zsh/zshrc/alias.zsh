@@ -87,9 +87,7 @@ alias cpclaudemd='cp -i ~/git/claude-configs/templates/CLAUDE-workflow.md ./CLAU
 alias ghq-list='ghq list'
 alias ghq-root='ghq root'
 alias ghq-look='ghq look'
-alias gq='ghq list | fzf --preview "echo {} && echo && cat $(ghq root)/{}/README.md 2>/dev/null || ls -la $(ghq root)/{}" | xargs -I {} sh -c "cd $(ghq root)/{} && exec $SHELL"'
-alias ghq-remove='ghq list | fzf --multi | xargs -I {} rm -rf $(ghq root)/{}'
-alias ghq-update='ghq list | xargs -I {} git -C $(ghq root)/{} pull'
+alias ghq-update='ghq list --full-path | xargs -I {} git -C {} pull'
 alias git-health='$HOME/dotfiles/bin/git-health.sh'
 
 ## Project navigation shortcuts

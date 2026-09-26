@@ -1,3 +1,10 @@
+# ghq の追加 root。~/git が外付けでロック中でも、内蔵ディスクの ~/harness-configs と ~/dotfiles を
+# ghq list --full-path に出す (リポジトリ自体を root にするため相対表示は "." になる)。
+# ghq は最後の root を主 root (ghq get の clone 先) にするため、config.local の include より前に書く。
+[ghq]
+	root = ~/harness-configs
+	root = ~/dotfiles
+
 [include]
 	path = ~/.config/git/config.local
 
