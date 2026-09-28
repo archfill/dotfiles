@@ -197,8 +197,9 @@ in
 
     # OpenAI 公式 Codex CLI。nixpkgs の codex は Rust ソースビルド (依存が
     # 重く libwebrtc/librusty_v8 を抱える) で更新 PR のラグが常態化するため、
-    # 自前 packages.codex (GitHub release の prebuilt native binary) で最新を
-    # 追従。バージョン更新は `make nix-update` または `make codex-update`。
+    # 自前 packages.codex (GitHub release の complete native package) で最新を
+    # 追従。daemon に必要な manifest/resources も同梱する。バージョン更新は
+    # `make nix-update` または `make codex-update`。
     # npm install -g は /nix/store の immutable と衝突するため不採用。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.codex
 

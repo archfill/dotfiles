@@ -52,19 +52,17 @@ sys.exit(1)
 prefetch_hash() {
   local version="$1"
   local platform="$2"
-  local artifact="${3:-codex}"
 
   nix store prefetch-file --hash-type sha256 --json \
-    "https://github.com/openai/codex/releases/download/rust-v${version}/${artifact}-${platform}.tar.gz" |
+    "https://github.com/openai/codex/releases/download/rust-v${version}/codex-package-${platform}.tar.gz" |
     python3 -c 'import json,sys; print(json.load(sys.stdin)["hash"])'
 }
 
 update_codex_nix() {
   local version="$1"
-  local hashes_json="$2"
-  local code_mode_host_hashes_json="$3"
+  local package_hashes_json="$2"
 
-  python3 - "$CODEX_NIX" "$version" "$hashes_json" "$code_mode_host_hashes_json" <<'PY'
+  python3 - "$CODEX_NIX" "$version" "$package_hashes_json" <<'PY'
 import json
 import re
 import sys
@@ -72,8 +70,7 @@ from pathlib import Path
 
 path = Path(sys.argv[1])
 version = sys.argv[2]
-hashes = json.loads(sys.argv[3])
-code_mode_host_hashes = json.loads(sys.argv[4])
+package_hashes = json.loads(sys.argv[3])
 text = path.read_text()
 
 text = re.sub(r'version = "[^"]+";', f'version = "{version}";', text, count=1)
@@ -95,8 +92,7 @@ def replace_hash_block(text, name, values):
     return text[:match.start("body")] + body + text[match.end("body"):]
 
 
-text = replace_hash_block(text, "hashes", hashes)
-text = replace_hash_block(text, "codeModeHostHashes", code_mode_host_hashes)
+text = replace_hash_block(text, "packageHashes", package_hashes)
 
 path.write_text(text)
 PY
@@ -116,35 +112,21 @@ main() {
 
   echo "==> Updating Codex to v${version}"
 
-  local hashes_json="{"
+  local package_hashes_json="{"
   local first=1
   for platform in "${platforms[@]}"; do
-    echo "==> Prefetching ${platform}"
+    echo "==> Prefetching complete package for ${platform}"
     local hash
     hash="$(prefetch_hash "$version" "$platform")"
     if [[ "$first" -eq 0 ]]; then
-      hashes_json+=","
+      package_hashes_json+=","
     fi
-    hashes_json+="\"${platform}\":\"${hash}\""
+    package_hashes_json+="\"${platform}\":\"${hash}\""
     first=0
   done
-  hashes_json+="}"
+  package_hashes_json+="}"
 
-  local code_mode_host_hashes_json="{"
-  first=1
-  for platform in "${platforms[@]}"; do
-    echo "==> Prefetching code-mode host ${platform}"
-    local host_hash
-    host_hash="$(prefetch_hash "$version" "$platform" "codex-code-mode-host")"
-    if [[ "$first" -eq 0 ]]; then
-      code_mode_host_hashes_json+=","
-    fi
-    code_mode_host_hashes_json+="\"${platform}\":\"${host_hash}\""
-    first=0
-  done
-  code_mode_host_hashes_json+="}"
-
-  update_codex_nix "$version" "$hashes_json" "$code_mode_host_hashes_json"
+  update_codex_nix "$version" "$package_hashes_json"
   echo "==> Updated nix/pkgs/codex/default.nix"
 }
 
