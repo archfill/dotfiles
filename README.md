@@ -30,7 +30,7 @@ Use `make nix-rebuild` after Nix and `nh` are already available. This is the nor
 make nix-rebuild
 ```
 
-The Mac mini M1 configuration is `archfill-to-Mac-mini-M1` (`nix/hosts/archfill-to-Mac-mini-M1/`). Set the Mac mini’s `LocalHostName` to this name before running `make nix-rebuild`:
+The Mac mini M1 configuration uses the macOS account `archfill` (`/Users/archfill`) and is named `archfill-to-Mac-mini-M1` (`nix/hosts/archfill-to-Mac-mini-M1/`). Set the Mac mini’s `LocalHostName` to this name before running `make nix-rebuild`:
 
 ```bash
 sudo scutil --set LocalHostName archfill-to-Mac-mini-M1

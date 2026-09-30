@@ -30,7 +30,7 @@ Nix と `nh` が使える状態なら、通常運用は `make nix-rebuild` で�
 make nix-rebuild
 ```
 
-Mac mini M1 の構成名は `archfill-to-Mac-mini-M1`（`nix/hosts/archfill-to-Mac-mini-M1/`）です。Mac mini 本体の `LocalHostName` をこの名前に合わせてから `make nix-rebuild` を実行してください。
+Mac mini M1 は macOS アカウント `archfill`（`/Users/archfill`）を使用し、構成名は `archfill-to-Mac-mini-M1`（`nix/hosts/archfill-to-Mac-mini-M1/`）です。Mac mini 本体の `LocalHostName` をこの名前に合わせてから `make nix-rebuild` を実行してください。
 
 ```bash
 sudo scutil --set LocalHostName archfill-to-Mac-mini-M1

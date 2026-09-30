@@ -144,7 +144,7 @@ nix/
 │   ├── linux.nix / standalone-linux.nix / wsl.nix / nixos-common.nix
 │   └── desktop/
 └── hosts/
-    ├── archfill-to-Mac-mini-M1/           # nix-darwin (user: chill-rf)
+    ├── archfill-to-Mac-mini-M1/           # nix-darwin (user: archfill)
     │   ├── darwin.nix                  # imports darwin-system + ホスト差分
     │   └── home.nix                    # imports common + home-darwin
     ├── archfill-to-Mac-Studio-M4-Max/  # nix-darwin (user: archfill)

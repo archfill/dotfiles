@@ -128,7 +128,7 @@
           system = "aarch64-darwin";
           hostModule = ./hosts/archfill-to-Mac-mini-M1/darwin.nix;
           homeModule = ./hosts/archfill-to-Mac-mini-M1/home.nix;
-          username = "chill-rf";
+          username = "archfill";
         };
 
         "archfill-to-Mac-Studio-M4-Max" = mkDarwinHost {
