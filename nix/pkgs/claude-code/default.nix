@@ -48,7 +48,7 @@ stdenv.mkDerivation {
 
   # The bundled Bun runtime links glibc / libstdc++ dynamically on Linux.
   # Patch interpreter and rpath for Nix/NixOS instead of relying on host
-  # /lib64 paths (same approach as cursor-agent).
+  # /lib64 paths.
   nativeBuildInputs = [ makeWrapper ]
     ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ stdenv.cc.cc.lib ];
