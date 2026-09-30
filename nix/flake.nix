@@ -124,10 +124,10 @@
       # 切替: make nix-rebuild (= nh darwin switch ./nix)
       # 新規ホスト: nix/hosts/<host>/{darwin,home}.nix を作成して下に追加
       darwinConfigurations = {
-        "archfill-to-Mac-mini" = mkDarwinHost {
+        "archfill-to-Mac-mini-M1" = mkDarwinHost {
           system = "aarch64-darwin";
-          hostModule = ./hosts/archfill-to-Mac-mini/darwin.nix;
-          homeModule = ./hosts/archfill-to-Mac-mini/home.nix;
+          hostModule = ./hosts/archfill-to-Mac-mini-M1/darwin.nix;
+          homeModule = ./hosts/archfill-to-Mac-mini-M1/home.nix;
           username = "chill-rf";
         };
 

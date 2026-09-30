@@ -1,6 +1,6 @@
 { ... }:
 
-# archfill-to-Mac-mini の nix-darwin system 設定。
+# archfill-to-Mac-mini-M1 の nix-darwin system 設定。
 # 共通設定は modules/darwin-system.nix、ユーザー定義は flake.nix の
 # mkDarwinHost で宣言する。ホスト固有の差分 (追加 cask 等) はここに書く。
 {

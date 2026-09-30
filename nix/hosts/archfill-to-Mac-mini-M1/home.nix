@@ -1,6 +1,6 @@
 { ... }:
 
-# archfill-to-Mac-mini の home-manager エントリ。
+# archfill-to-Mac-mini-M1 の home-manager エントリ。
 # home.username / home.homeDirectory は nix-darwin の users.users から
 # home-manager が自動設定する (flake.nix の mkDarwinHost で宣言)。
 {

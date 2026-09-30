@@ -30,6 +30,12 @@ Use `make nix-rebuild` after Nix and `nh` are already available. This is the nor
 make nix-rebuild
 ```
 
+The Mac mini M1 configuration is `archfill-to-Mac-mini-M1` (`nix/hosts/archfill-to-Mac-mini-M1/`). Set the Mac mini’s `LocalHostName` to this name before running `make nix-rebuild`:
+
+```bash
+sudo scutil --set LocalHostName archfill-to-Mac-mini-M1
+```
+
 For first setup, install Nix first, then run `make init`. `make init` is the bootstrap entrypoint and does not require `nh` to be available yet:
 
 - macOS: runs the `make doctor` prerequisite check, then uses `darwin-rebuild` when available, otherwise bootstraps with `nix run nix-darwin`. **For a new Mac, follow [docs/macos-setup.md](docs/macos-setup.md)**
