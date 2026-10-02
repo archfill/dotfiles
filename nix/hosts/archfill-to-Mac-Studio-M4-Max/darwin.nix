@@ -26,5 +26,10 @@
     # ZMK キーボード (MONA2) の電池残量をメニューバーに表示。
     # 署名が無いため初回起動時に「このまま開く」の許可が必要
     "kot149/tap/zmk-battery-center"
+
+    # Meta Quest をバーチャルディスプレイとして使う Mac 側アプリ。
+    # cask 名・pkg 名は旧称 Remote Desktop のまま (bundle ID は com.meta.virtualdesktop)。
+    # ヘッドセットと同じネットワーク (5/6GHz 推奨) で接続する
+    "meta-quest-remote-desktop"
   ];
 }
