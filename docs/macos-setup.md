@@ -117,6 +117,10 @@ cp -r nix/hosts/archfill-to-Mac-Studio-M4-Max nix/hosts/<host>
 
 ## 4. チェックと適用
 
+Mac mini (`archfill-to-Mac-mini-M1`) をエージェント専用機として運用する場合は、
+先に [エージェント専用機の移行手順](agent-machine.md)で独立 CLI profile を配備する。
+このホストでは Home Manager が Claude Code / Codex / Pi / Devin を導入しない。
+
 ```bash
 make doctor   # 前提条件のチェックのみ (何もインストールしない)
 make init     # doctor → nix-darwin 初回 switch → Git 個人設定

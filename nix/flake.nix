@@ -102,6 +102,10 @@
             };
           in
             {
+              agent-runtime = import ./pkgs/agent-runtime {
+                inherit pkgs;
+                agentPackages = self.packages.${system};
+              };
               claude-code = pkgs.callPackage ./pkgs/claude-code { };
               codex = pkgs.callPackage ./pkgs/codex { };
               gh = pkgs.callPackage ./pkgs/gh { };

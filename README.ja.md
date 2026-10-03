@@ -30,6 +30,8 @@ Nix と `nh` が使える状態なら、通常運用は `make nix-rebuild` で�
 make nix-rebuild
 ```
 
+Mac mini のエージェント専用運用では、先に [既存ユーザー `archfill` での独立 CLI 配備手順](docs/agent-machine.md)を実施してください。Claude Code / Codex / Pi / Devin は独立 profile で配備し、`make nix-rebuild` だけでは導入されません。
+
 Mac mini M1 は macOS アカウント `archfill`（`/Users/archfill`）を使用し、構成名は `archfill-to-Mac-mini-M1`（`nix/hosts/archfill-to-Mac-mini-M1/`）です。Mac mini 本体の `LocalHostName` をこの名前に合わせてから `make nix-rebuild` を実行してください。
 
 ```bash
@@ -84,10 +86,10 @@ make help             # 全コマンド表示
 
 | プラットフォーム | 管理レイヤー | デスクトップ / WM | 備考 |
 | ---------------- | ------------ | ----------------- | ---- |
-| NixOS            | NixOS + Home Manager | GNOME / Hyprland | メイン Linux 環境 |
-| macOS            | nix-darwin + Home Manager + Homebrew module | Hammerspoon / Rectangle | 宣言的にパッケージ管理 |
-| Linux            | Home Manager | Hyprland 向けユーザー設定 | Arch / Ubuntu / WSL |
-| Windows          | 手動スクリプト | Native | WSL2 設定管理 |
+| NixOS | NixOS + Home Manager | GNOME / Hyprland | メイン Linux 環境 |
+| macOS | nix-darwin + Home Manager + Homebrew module | Hammerspoon / Rectangle | 宣言的にパッケージ管理 |
+| Linux | Home Manager | Hyprland 向けユーザー設定 | Arch / Ubuntu / WSL |
+| Windows | 手動スクリプト | Native | WSL2 設定管理 |
 
 ### Hyprland セットアップ (NixOS / Arch Linux)
 
@@ -172,7 +174,7 @@ NixOS の共通設定は Nix module で宣言します。ホスト固有の差�
 
 NixOS では NVIDIA DRM modeset、fbdev、early modules、Hyprland 環境変数を Nix 設定で宣言します。Arch Linux など NixOS 以外では、必要に応じて各 OS 側の NVIDIA 設定を別途行います。
 
-詳細な NVIDIA セットアップ手順: https://wiki.hyprland.org/Nvidia/
+詳細な NVIDIA セットアップ手順: <https://wiki.hyprland.org/Nvidia/>
 
 #### Hyprland の起動
 
@@ -282,8 +284,8 @@ Hyprland
 
 詳細なヘルプ:
 
-- Hyprland Wiki: https://wiki.hyprland.org
-- Hyprland Discord: https://discord.gg/hQ9XvMUjjr
+- Hyprland Wiki: <https://wiki.hyprland.org>
+- Hyprland Discord: <https://discord.gg/hQ9XvMUjjr>
 
 ## 🇯🇵 日本語機能
 

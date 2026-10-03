@@ -30,6 +30,8 @@ Use `make nix-rebuild` after Nix and `nh` are already available. This is the nor
 make nix-rebuild
 ```
 
+For the dedicated agent Mac mini, first follow the [independent CLI deployment guide for the existing `archfill` user](docs/agent-machine.md). Claude Code, Codex, Pi, and Devin are deployed through a separate profile, not by `make nix-rebuild` alone.
+
 The Mac mini M1 configuration uses the macOS account `archfill` (`/Users/archfill`) and is named `archfill-to-Mac-mini-M1` (`nix/hosts/archfill-to-Mac-mini-M1/`). Set the Mac mini’s `LocalHostName` to this name before running `make nix-rebuild`:
 
 ```bash
@@ -218,13 +220,14 @@ On NixOS, NVIDIA DRM modeset, fbdev, early modules, and Hyprland environment var
    ```
 
 4. **Suspend/Resume Support** (OPTIONAL):
+
    ```bash
    sudo systemctl enable nvidia-suspend.service
    sudo systemctl enable nvidia-hibernate.service
    sudo systemctl enable nvidia-resume.service
    ```
 
-For detailed NVIDIA setup instructions, see: https://wiki.hyprland.org/Nvidia/
+For detailed NVIDIA setup instructions, see: <https://wiki.hyprland.org/Nvidia/>
 
 #### Starting Hyprland
 
@@ -336,8 +339,8 @@ Hyprland and the desktop stack are declared through Nix modules:
 
 For more help:
 
-- Hyprland Wiki: https://wiki.hyprland.org
-- Hyprland Discord: https://discord.gg/hQ9XvMUjjr
+- Hyprland Wiki: <https://wiki.hyprland.org>
+- Hyprland Discord: <https://discord.gg/hQ9XvMUjjr>
 
 ## 🇯🇵 Japanese Features
 

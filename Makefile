@@ -6,6 +6,7 @@
 
 .PHONY: all help doctor init init-log config update backup clean status info debug validate \
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
+	agent-prepare agent-apply agent-status agent-rollback agent-test \
 	codex-update codex-bump \
 	pi-update pi-bump devin-update devin-bump \
 	chatgpt-update \
@@ -152,6 +153,24 @@ nix-clean: ## 古い generation を 5 世代残して掃除
 
 nix-update: $(NIX_UPDATE_DEPS) ## AI CLI と flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_UPDATE_ARGS) $(NIX_FLAKE_REF)
+
+# エージェント専用 Mac mini: CLI 配備は darwin switch と独立。
+# 更新は管理ユーザーの clone で make claude-update codex-update pi-update devin-update
+# を実行して差分をレビューする。prepare は既存の lock を変更しない。
+agent-prepare: ## CLI 候補をビルド・起動確認 (稼働 profile は変更しない)
+	@python3 ./bin/agent-runtime.py prepare
+
+agent-apply: ## 停止・承認済みの CLI 候補を反映 (STORE_PATH 必須)
+	@python3 ./bin/agent-runtime.py apply "$(STORE_PATH)"
+
+agent-status: ## 候補・配備済み CLI と世代を表示
+	@python3 ./bin/agent-runtime.py status
+
+agent-rollback: ## 停止後に指定世代へ切り戻す (GENERATION 必須)
+	@python3 ./bin/agent-runtime.py rollback "$(GENERATION)"
+
+agent-test: ## 配備コマンドの回帰テスト (実機への配備なし)
+	@python3 -m unittest discover -s tests -p 'test_agent_runtime.py'
 
 claude-update: ## Claude Code の最新版を Nix package 定義へ反映
 	@bash ./bin/claude-update.sh $(VERSION)

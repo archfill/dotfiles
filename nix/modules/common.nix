@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, config, lib, ... }:
 
 let
   # ─── Neovim バージョン切替フラグ ────────────────────────────────
@@ -20,6 +20,8 @@ let
 
 in
 {
+  imports = [ ./agent-cli.nix ];
+
   # 初回 install 時点の home-manager リリース版。以降は変更しない。
   home.stateVersion = "25.05";
 
@@ -188,6 +190,7 @@ in
     # `agy` コマンドを提供する。認証情報は初回起動時に設定する。
     antigravity-cli
 
+  ] ++ lib.optionals config.dotfiles.managedAgentCli.enable [
     # Anthropic 公式 Claude Code CLI。公式 download service の prebuilt
     # native binary を固定 (native installer と同じ配布物)。npm -g や
     # ~/.local への自己更新は /nix/store の immutable と衝突するため
@@ -214,6 +217,7 @@ in
     # `make nix-update` で行う。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.devin
 
+  ] ++ (with pkgs; [
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable
@@ -225,7 +229,7 @@ in
     nerd-fonts.symbols-only   # Powerline / Nerd Font アイコン専用
     material-symbols          # Material icon glyphs used by the desktop shell
     nerd-fonts.caskaydia-cove # Terminal and desktop-shell monospace font
-  ];
+  ]);
 
   # Nix で配置するフォントを ~/Library/Fonts にも認識させる
   # (macOS の場合、~/.nix-profile/share/fonts を `fc-cache` できれば
