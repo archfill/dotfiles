@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 認証の取得・注入は Python 側で実施する。token を shell 環境へ export しない。
+exec python3 "${DOTFILES_DIR:-${HOME}/dotfiles}/bin/agent-auth.py" "$@"

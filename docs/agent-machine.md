@@ -23,6 +23,7 @@ Home Manager は Mac mini だけ上記 4 CLI をインストールせず、代�
 Antigravity 等それ以外のツールは従来どおり。基本作業ツールの一覧は
 `nix/pkgs/agent-runtime/default.nix` に置く。
 
+CLI ハーネス用の認証供給は [Keychain + Service Account の起動手順](agent-auth.md)を使用する。
 既存の Codex Desktop 用 1Password Environment / SSH agent / `codex-env` の運用は継続する。
 1Password の保管・供給と token の権限は別なので、エージェントに必要な情報と権限だけを渡す。
 秘密情報は repo や Nix derivation に埋め込まない。CLI 設定・hooks・Pi extensions も同じユーザー権限で

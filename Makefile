@@ -169,8 +169,8 @@ agent-status: ## 候補・配備済み CLI と世代を表示
 agent-rollback: ## 停止後に指定世代へ切り戻す (GENERATION 必須)
 	@python3 ./bin/agent-runtime.py rollback "$(GENERATION)"
 
-agent-test: ## 配備コマンドの回帰テスト (実機への配備なし)
-	@python3 -m unittest discover -s tests -p 'test_agent_runtime.py'
+agent-test: ## 配備・認証の回帰テスト (実機への配備・Keychain アクセスなし)
+	@python3 -m unittest discover -s tests -p 'test_agent*.py'
 
 claude-update: ## Claude Code の最新版を Nix package 定義へ反映
 	@bash ./bin/claude-update.sh $(VERSION)
