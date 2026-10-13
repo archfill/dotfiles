@@ -114,6 +114,22 @@ dotfiles/
 
 ## ❄️ Nix Configuration Architecture
 
+### ホスト一覧（OS を決めつけない）
+
+**メインマシン（`archfill-nixos`）は NixOS であり、Arch Linux ではない。** OS 依存の話をする前に `/etc/os-release` で確認すること。
+
+| ホスト                       | OS                  | 管理方法                             |
+| ---------------------------- | ------------------- | ------------------------------------ |
+| `archfill-nixos`             | **NixOS**           | `nixosConfigurations` (system + HM)  |
+| `nixos-vm`                   | NixOS (VM)          | `nixosConfigurations`                |
+| `archfill-to-Mac-mini`       | macOS               | `darwinConfigurations`               |
+| `arch-desktop`               | Arch Linux          | standalone home-manager (system は pacman) |
+| `ubuntu-desktop`/`wsl-ubuntu` | Ubuntu / WSL        | standalone home-manager              |
+
+- NixOS ホストのシステム設定（systemd / sshd / sleep / ドライバ等）は `nix/hosts/<host>/configuration.nix` と `nix/modules/nixos-common.nix` に宣言する。`systemctl mask` や pacman 等の手動変更はしない。
+- 反映は `make nix-rebuild`（NixOS では `nh os switch`）。
+- 以下の pacman / yay / AUR / Arch 関連の記述は **`arch-desktop` ホスト向け**であり、`archfill-nixos` には当てはまらない。
+
 ### 採用方針
 
 **`hosts/` 型 + plain flake.nix** を採用する（2025-2026 時点で最も主流のパターン）。
@@ -163,7 +179,7 @@ nix/
     │   ├── darwin.nix          # nix-darwin system 設定
     │   └── home.nix            # home-manager (imports common + home-darwin)
     ├── arch-desktop/
-    │   └── home.nix            # standalone home-manager (Arch のため system は pacman)
+    │   └── home.nix            # standalone home-manager (Arch のため system は pacman。メインマシンではない)
     ├── wsl-ubuntu/
     │   └── home.nix            # WSL 用 (standalone home-manager)
     └── nixos-server/
@@ -277,7 +293,9 @@ bin/init.sh
 3. バイナリ直接配置
 ```
 
-**Arch Linux:**
+**NixOS (`archfill-nixos`):** Nix で宣言管理する（`environment.systemPackages` / home-manager）。pacman / apt / Homebrew は使わない。
+
+**Arch Linux（`arch-desktop` ホストのみ）:**
 
 ```
 1. pacman（公式リポジトリ）
