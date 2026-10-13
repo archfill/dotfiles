@@ -152,22 +152,36 @@ dotfiles/
 
 ```
 nix/
-├── flake.nix
+├── flake.nix                       # mkDarwinHost / mkHomeConfig / mkNixosHost で各ホストを組み立てる
+├── flake.lock
 ├── modules/
-│   ├── common.nix              # 全 OS 共通の user 環境
-│   ├── darwin-system.nix       # macOS 共通 nix-darwin system 設定
-│   ├── home-darwin.nix         # macOS 共通 home-manager 設定
-│   ├── linux.nix / standalone-linux.nix / wsl.nix / nixos-common.nix
-│   └── desktop/
+│   ├── common.nix                  # 全 OS 共通の user 環境
+│   ├── agent-cli.nix               # AI CLI (codex / claude-code / pi 等) の導入
+│   ├── darwin-system.nix           # macOS 共通 nix-darwin system 設定
+│   ├── home-darwin.nix             # macOS 共通 home-manager 設定
+│   ├── nixos-common.nix            # NixOS 共通 system 設定 (openssh / user 等)
+│   ├── linux.nix                   # Linux 共通 home-manager 設定
+│   ├── standalone-linux.nix        # 非 NixOS Linux (standalone home-manager) 用
+│   ├── wsl.nix                     # WSL 用
+│   └── desktop/                    # dms.nix / hyprland.nix / niri.nix
+├── pkgs/                           # 自前パッケージ定義 (codex / claude-code / pi / chatgpt / gh ほか)
+├── patches/
 └── hosts/
-    ├── archfill-to-Mac-mini-M1/           # nix-darwin (user: archfill)
-    │   ├── darwin.nix                  # imports darwin-system + ホスト差分
-    │   └── home.nix                    # imports common + home-darwin
-    ├── archfill-to-Mac-Studio-M4-Max/  # nix-darwin (user: archfill)
-    ├── arch-desktop/ ubuntu-desktop/ wsl-ubuntu/   # standalone home-manager
-    ├── archfill-nixos/ nixos-vm/       # NixOS
-    └── _template/
+    ├── archfill-nixos/             # NixOS メインマシン: configuration.nix / hardware.nix / home.nix
+    ├── nixos-vm/                   # NixOS VM: 同上
+    ├── archfill-to-Mac-mini-M1/    # nix-darwin: darwin.nix (darwin-system + ホスト差分) / home.nix (common + home-darwin)
+    ├── archfill-to-Mac-Studio-M4-Max/  # nix-darwin: 同上
+    ├── arch-desktop/               # standalone home-manager (home.nix のみ)
+    ├── ubuntu-desktop/             # 同上
+    ├── wsl-ubuntu/                 # 同上
+    └── _template/nixos/            # 新規 NixOS ホスト用の雛形
 ```
+
+flake の出力名:
+
+- `nixosConfigurations`: `archfill-nixos` / `nixos-vm`
+- `darwinConfigurations`: `archfill-to-Mac-mini-M1` / `archfill-to-Mac-Studio-M4-Max`
+- `homeConfigurations`: `archfill@arch-desktop` / `archfill@ubuntu-desktop` / `archfill@wsl-ubuntu`
 
 - macOS のユーザー定義 (`users.users` / `system.primaryUser`) は `mkDarwinHost` の `username` から生成する。home-manager の `home.username` / `home.homeDirectory` は nix-darwin の `users.users` から自動設定されるので書かない
 - 共通モジュールでホームディレクトリの絶対パスをハードコードしない (`config.home.homeDirectory` / `config.system.primaryUser` を使う)
