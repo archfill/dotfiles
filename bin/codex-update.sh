@@ -52,7 +52,7 @@ sys.exit(1)
 prefetch_hash() {
   local version="$1"
   local platform="$2"
-  local artifact="${3:-codex}"
+  local artifact="codex-package"
 
   nix store prefetch-file --hash-type sha256 --json \
     "https://github.com/openai/codex/releases/download/rust-v${version}/${artifact}-${platform}.tar.gz" |
@@ -62,9 +62,8 @@ prefetch_hash() {
 update_codex_nix() {
   local version="$1"
   local hashes_json="$2"
-  local code_mode_host_hashes_json="$3"
 
-  python3 - "$CODEX_NIX" "$version" "$hashes_json" "$code_mode_host_hashes_json" <<'PY'
+  python3 - "$CODEX_NIX" "$version" "$hashes_json" <<'PY'
 import json
 import re
 import sys
@@ -73,7 +72,6 @@ from pathlib import Path
 path = Path(sys.argv[1])
 version = sys.argv[2]
 hashes = json.loads(sys.argv[3])
-code_mode_host_hashes = json.loads(sys.argv[4])
 text = path.read_text()
 
 text = re.sub(r'version = "[^"]+";', f'version = "{version}";', text, count=1)
@@ -96,7 +94,6 @@ def replace_hash_block(text, name, values):
 
 
 text = replace_hash_block(text, "hashes", hashes)
-text = replace_hash_block(text, "codeModeHostHashes", code_mode_host_hashes)
 
 path.write_text(text)
 PY
@@ -130,21 +127,7 @@ main() {
   done
   hashes_json+="}"
 
-  local code_mode_host_hashes_json="{"
-  first=1
-  for platform in "${platforms[@]}"; do
-    echo "==> Prefetching code-mode host ${platform}"
-    local host_hash
-    host_hash="$(prefetch_hash "$version" "$platform" "codex-code-mode-host")"
-    if [[ "$first" -eq 0 ]]; then
-      code_mode_host_hashes_json+=","
-    fi
-    code_mode_host_hashes_json+="\"${platform}\":\"${host_hash}\""
-    first=0
-  done
-  code_mode_host_hashes_json+="}"
-
-  update_codex_nix "$version" "$hashes_json" "$code_mode_host_hashes_json"
+  update_codex_nix "$version" "$hashes_json"
   echo "==> Updated nix/pkgs/codex/default.nix"
 }
 

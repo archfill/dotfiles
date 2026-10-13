@@ -42,18 +42,18 @@
 
 let
   pname = "chatgpt";
-  version = "26.917.71314";
+  version = "26.1007.21434";
 
   # OpenAI publishes the official Linux app as a Debian package. Keep the
   # latest artifact pinned so Nix can verify the mutable upstream URL.
   archives = {
     x86_64-linux = {
       url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb";
-      hash = "sha256-hR7Ci2W94v8dqfN9zfW24gqRXHVo+LLOmTwAQo8BiuU=";
+      hash = "sha256-J2tTQcPXSyYdOtUhBvf6ft3gaEHkdn/ipAy1QJmx8+0=";
     };
     aarch64-linux = {
       url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_arm64.deb";
-      hash = "sha256-IRSINiPa40pLx6Z/qtPmZS3Zv9x6KPV8Nu0D41C+HPE=";
+      hash = "sha256-Vfrh4/sdYGmpBiDp5wc33Pi/IlVgTRV+KCzGdIobr0k=";
     };
   };
 
