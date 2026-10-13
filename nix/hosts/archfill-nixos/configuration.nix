@@ -136,6 +136,14 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
+  # SSH で外部から常時使うため、スリープ / ハイバネートを無効化 (mask)
+  systemd.targets = {
+    sleep.enable = false;
+    suspend.enable = false;
+    hibernate.enable = false;
+    "hybrid-sleep".enable = false;
+  };
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
