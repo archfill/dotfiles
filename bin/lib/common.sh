@@ -4,8 +4,8 @@
 # このファイルは他のスクリプトからsourceして使用する
 
 # パフォーマンス向上のためのキャッシュ変数
-declare -g _CACHED_PLATFORM=""
-declare -g _CACHED_ARCHITECTURE=""
+_CACHED_PLATFORM=""
+_CACHED_ARCHITECTURE=""
 
 # エラーハンドリングの共通設定
 setup_error_handling() {
@@ -156,7 +156,7 @@ is_termux() {
 }
 
 # WSL環境検出（キャッシュ対応）
-declare -g _CACHED_IS_WSL=""
+_CACHED_IS_WSL=""
 is_wsl() {
     # キャッシュがあれば使用
     if [[ -n "$_CACHED_IS_WSL" ]]; then

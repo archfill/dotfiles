@@ -91,6 +91,32 @@ apply_nix_linux_configuration() {
   fi
 }
 
+apply_nix_darwin_configuration() {
+  # flake の darwinConfigurations は LocalHostName をキーにしている
+  local host flake_ref
+  host="$(scutil --get LocalHostName)"
+  flake_ref="${DOTFILES_DIR}/nix#${host}"
+
+  if command -v darwin-rebuild >/dev/null 2>&1; then
+    log_info "Applying nix-darwin configuration: ${host}"
+    if ! sudo darwin-rebuild switch --flake "$flake_ref"; then
+      log_error "nix-darwin switch failed"
+      exit 1
+    fi
+  else
+    # 初回: darwin-rebuild 自体がまだ無いので nix run で bootstrap する
+    local nix_bin
+    nix_bin="$(command -v nix || echo /nix/var/nix/profiles/default/bin/nix)"
+    log_info "darwin-rebuild not found; bootstrapping nix-darwin: ${host}"
+    if ! sudo "$nix_bin" run nix-darwin/master#darwin-rebuild -- switch --flake "$flake_ref"; then
+      log_error "nix-darwin bootstrap failed"
+      log_info "トラブルシューティング: docs/macos-setup.md"
+      exit 1
+    fi
+  fi
+  log_success "nix-darwin switch completed"
+}
+
 prepare_common_environment
 
 OS_NAME="$(uname)"
@@ -98,28 +124,17 @@ log_info "Detected OS: $OS_NAME"
 
 case "$OS_NAME" in
   Darwin)
-    install_mode="${DOTFILES_INSTALL_MODE:-full}"
-    log_info "macOS setup starting (mode: $install_mode)"
-
-    # macOS 固有 symlink は home-manager (nix/modules/darwin.nix) で完全に管理。
-    # 旧 bin/platform/macos/link.sh は不要になったため削除済み。
+    log_info "macOS setup starting"
 
     # macOS では nix-darwin + home-manager + homebrew モジュールで全管理。
-    # Brew の taps / brews / casks は nix/darwin.nix の宣言で同期される。
-    # フォントも home.nix の pkgs.moralerspace 等で配置される。
+    # Brew の taps / brews / casks は nix/modules/darwin-system.nix、
+    # macOS 固有 symlink は nix/modules/home-darwin.nix で宣言する。
     if [[ "${SKIP_PACKAGE_INSTALL:-}" != "1" ]]; then
-      if command -v darwin-rebuild >/dev/null 2>&1; then
-        log_info "Applying nix-darwin configuration..."
-        if sudo darwin-rebuild switch --flake "${DOTFILES_DIR}/nix#archfill-to-Mac-mini"; then
-          log_success "nix-darwin switch completed"
-        else
-          log_error "nix-darwin switch failed"
-        fi
-      else
-        log_warning "darwin-rebuild not found"
-        log_info "初回セットアップは以下を実行してください:"
-        log_info "  sudo nix run nix-darwin -- switch --flake ${DOTFILES_DIR}/nix#archfill-to-Mac-mini"
+      if ! bash "$DOTFILES_DIR/bin/doctor.sh"; then
+        log_error "Prerequisites are missing. Fix the errors above, then run make init again."
+        exit 1
       fi
+      apply_nix_darwin_configuration
     else
       log_info "Skipping package installation (CI environment)"
     fi

@@ -4,15 +4,14 @@
 # 使用方法: make <target>
 # ヘルプ: make help
 
-.PHONY: all help init init-log config update backup clean status info debug validate \
+.PHONY: all help doctor init init-log config update backup clean status info debug validate \
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
-	codex-update codex-bump cursor-agent-update cursor-agent-bump \
-	origin-update origin-bump \
+	agent-prepare agent-apply agent-status agent-rollback agent-test \
+	codex-update codex-bump \
 	pi-update pi-bump devin-update devin-bump \
-	grok-bot-update grok-bot-bump chatgpt-update \
+	chatgpt-update \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
-	sketchybar-test \
 	git-health tmux-reload \
 	docker-setup \
 	logs-list logs-latest logs-clean logs-view
@@ -28,6 +27,7 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Examples:"
+	@echo "  make doctor        # Check prerequisites before make init"
 	@echo "  make init          # Complete dotfiles setup"
 	@echo "  make nix-diff      # Preview Nix changes"
 	@echo "  make rebuild       # Alias for nix-rebuild"
@@ -35,6 +35,9 @@ help: ## Show this help message
 	@echo "  make monitors      # Configure monitors (interactive)"
 
 # 基本セットアップ
+doctor: ## Check prerequisites for a new machine (installs nothing)
+	@bash ./bin/doctor.sh
+
 init: ## Complete dotfiles initialization and setup
 	@echo "Starting complete dotfiles initialization..."
 	NIX_ATTR="$(NIX_ATTR)" DOTFILES_INSTALL_MODE="$(DOTFILES_INSTALL_MODE)" DOTFILES_LEGACY_INSTALL="$(DOTFILES_LEGACY_INSTALL)" bash ./bin/init.sh
@@ -121,12 +124,18 @@ validate: ## Validate dotfiles configuration and structure
 # 切替対象は OS / Linux ディストロで自動分岐。NixOS なら nh os、
 # macOS なら nh darwin、それ以外 (Arch / Ubuntu / WSL) は nh home。
 NIX_FLAKE := $(CURDIR)/nix
-# shellcheck disable=SC1009,SC1050,SC1072,SC1073
-NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),#$(NIX_ATTR),)
+# macOS 標準の make 3.81 は関数引数中の # をコメント扱いするため変数経由にする
+# (新規 Mac では Nix 導入前に /usr/bin/make で make init を実行する)
+HASH := \#
+NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),$(HASH)$(NIX_ATTR),)
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 # chatgpt-update は上流バージョンが未変更なら数百 KB の Range リクエストだけで
 # スキップし、変更があった時だけ公式 .deb (数百 MB) を再取得する。
-NIX_UPDATE_DEPS := claude-update codex-update cursor-agent-update origin-update pi-update devin-update grok-bot-update chatgpt-update
+# chatgpt は Linux 専用パッケージなので macOS では更新しない。
+NIX_UPDATE_DEPS := claude-update codex-update pi-update devin-update
+ifneq ($(NH_TARGET),darwin)
+NIX_UPDATE_DEPS += chatgpt-update
+endif
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
 
@@ -149,6 +158,24 @@ nix-clean: ## 古い generation を 5 世代残して掃除
 nix-update: $(NIX_UPDATE_DEPS) ## AI CLI と flake.lock を更新してから switch
 	nh $(NH_TARGET) switch $(NIX_UPDATE_ARGS) $(NIX_FLAKE_REF)
 
+# エージェント専用 Mac mini: CLI 配備は darwin switch と独立。
+# 更新は管理ユーザーの clone で make claude-update codex-update pi-update devin-update
+# を実行して差分をレビューする。prepare は既存の lock を変更しない。
+agent-prepare: ## CLI 候補をビルド・起動確認 (稼働 profile は変更しない)
+	@python3 ./bin/agent-runtime.py prepare
+
+agent-apply: ## 停止・承認済みの CLI 候補を反映 (STORE_PATH 必須)
+	@python3 ./bin/agent-runtime.py apply "$(STORE_PATH)"
+
+agent-status: ## 候補・配備済み CLI と世代を表示
+	@python3 ./bin/agent-runtime.py status
+
+agent-rollback: ## 停止後に指定世代へ切り戻す (GENERATION 必須)
+	@python3 ./bin/agent-runtime.py rollback "$(GENERATION)"
+
+agent-test: ## 配備・認証の回帰テスト (実機への配備・Keychain アクセスなし)
+	@python3 -m unittest discover -s tests -p 'test_agent*.py'
+
 claude-update: ## Claude Code の最新版を Nix package 定義へ反映
 	@bash ./bin/claude-update.sh $(VERSION)
 
@@ -159,16 +186,6 @@ codex-update: ## Codex CLI の最新 release を取得して Nix package 定義�
 
 codex-bump: codex-update ## Alias for codex-update (usage: make codex-bump VERSION=0.142.0)
 
-cursor-agent-update: ## Cursor Agent CLI の公式 installer 版を Nix package 定義へ反映
-	@bash ./bin/cursor-agent-update.sh $(VERSION)
-
-cursor-agent-bump: cursor-agent-update ## Alias (usage: make cursor-agent-bump VERSION=2026.08.11-e8db854)
-
-origin-update: ## Cursor Origin CLI の stable 版を Nix package 定義へ反映
-	@bash ./bin/origin-update.sh $(VERSION)
-
-origin-bump: origin-update ## Alias (usage: make origin-bump VERSION=2026.08.15-22-58-04-922a05a)
-
 pi-update: ## Pi coding agent の最新 release を取得して Nix package 定義を更新
 	@bash ./bin/pi-update.sh $(VERSION)
 
@@ -178,11 +195,6 @@ devin-update: ## Devin CLI の最新版を Nix package 定義へ反映
 	@bash ./bin/devin-update.sh $(VERSION)
 
 devin-bump: devin-update ## Alias (usage: make devin-bump VERSION=3000.10.27)
-
-grok-bot-update: ## Grok Bot Linux公式 .deb のversion/hashを更新
-	@bash ./bin/grok-bot-update.sh $(GROK_BOT_DEB_URL)
-
-grok-bot-bump: grok-bot-update ## Alias (usage: make grok-bot-bump GROK_BOT_DEB_URL=<official .deb URL>)
 
 rovehelm-update: ## Rovehelmのmainをpullしてrelease buildし更新
 	@bash ./bin/rovehelm-update.sh $(ARGS)
@@ -272,15 +284,6 @@ monitors-single: ## Force single display mode
 monitors-dual: ## Force dual display mode
 	@echo "Configuring for dual display mode..."
 	@bash ~/.config/hypr/auto-detect-monitors.sh --mode dual
-
-sketchybar-test: ## Test SketchyBar Lua configuration (usage: make sketchybar-test [MODE=full/syntax/performance/quick])
-	@echo "Testing SketchyBar Lua configuration..."
-	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
-		bash bin/sketchybar-test.sh $(MODE); \
-	else \
-		echo "❌ This command is only for macOS"; \
-		exit 1; \
-	fi
 
 git-health: ## Check health of all ghq-managed repositories
 	@bash ./bin/git-health.sh

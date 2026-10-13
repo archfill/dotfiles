@@ -1,5 +1,8 @@
 -- Window Management Module
--- Provides window manipulation features including temporary maximize toggle
+-- Provides window manipulation features: temporary maximize toggle, ultrawide
+-- layouts (70/30), directional focus.
+-- Modifier + drag move/resize is done by BetterTouchTool: Control + click does
+-- not reach Hammerspoon's eventtap (it is handled earlier as a secondary click).
 
 local windows = {}
 
@@ -128,6 +131,16 @@ function windows.init(config, helpers)
 			local win = hs.window.focusedWindow()
 			if win then
 				win:moveToUnit({ x = 0, y = 0.5, w = 1, h = 0.5 })
+			end
+		end)
+	end
+
+	-- Ultrawide layouts (e.g. 70/30)
+	for key, unit in pairs(windowConfig.layouts or {}) do
+		hs.hotkey.bind(hyper, key, function()
+			local win = hs.window.focusedWindow()
+			if win then
+				win:moveToUnit(unit, 0)
 			end
 		end)
 	end

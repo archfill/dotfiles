@@ -73,9 +73,3 @@ fi
 if [[ -d "$HOME/.opencode/bin" ]]; then
   export PATH="$HOME/.opencode/bin:$PATH"
 fi
-
-# claude-switch env (API backend credentials)
-[[ -f ~/.claude/env.sh ]] && source ~/.claude/env.sh
-claude-switch() {
-  command claude-switch "$@" && [[ -f ~/.claude/env.sh ]] && source ~/.claude/env.sh
-}

@@ -30,6 +30,8 @@
     let
       # ─── ヘルパー ────────────────────────────────────────────────────
       # nix-darwin ホスト (macOS): システム + home-manager を一括宣言
+      # ユーザー定義はここで一元化する。home-manager の home.username /
+      # home.homeDirectory は users.users から自動設定される。
       mkDarwinHost = { system, hostModule, homeModule, username }:
         nix-darwin.lib.darwinSystem {
           inherit system;
@@ -38,6 +40,13 @@
             hostModule
             home-manager.darwinModules.home-manager
             {
+              users.users.${username} = {
+                name = username;
+                home = "/Users/${username}";
+              };
+              # homebrew.onActivation 等が primaryUser を要求する
+              system.primaryUser = username;
+
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs; };
@@ -78,8 +87,7 @@
         };
     in {
       # ─── 自前 packages (nixpkgs の追従が遅れるものを prebuilt で最新化) ─
-      # codex / cursor-agent / origin / pi は公式の prebuilt native binary を固定し、
-      # grok-bot は公式 Linux .deb を展開した GUI アプリとして固定する。
+      # codex / pi は公式の prebuilt native binary を固定する。
       # gh は Nix store の絶対パスを Git credential helper に残さない wrapper を使う。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
@@ -90,26 +98,22 @@
               config.allowUnfreePredicate = pkg:
                 nixpkgs.lib.getName pkg == "claude-code"
                 || nixpkgs.lib.getName pkg == "chatgpt"
-                || nixpkgs.lib.getName pkg == "cursor-agent"
-                || nixpkgs.lib.getName pkg == "origin"
-                || nixpkgs.lib.getName pkg == "grok-bot"
                 || nixpkgs.lib.getName pkg == "devin";
             };
           in
             {
+              agent-runtime = import ./pkgs/agent-runtime {
+                inherit pkgs;
+                agentPackages = self.packages.${system};
+              };
               claude-code = pkgs.callPackage ./pkgs/claude-code { };
               codex = pkgs.callPackage ./pkgs/codex { };
               gh = pkgs.callPackage ./pkgs/gh { };
-              cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
-              origin = pkgs.callPackage ./pkgs/origin { };
               pi = pkgs.callPackage ./pkgs/pi { };
               devin = pkgs.callPackage ./pkgs/devin { };
             }
             // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               chatgpt = pkgs.callPackage ./pkgs/chatgpt { };
-            }
-            // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
-              grok-bot = pkgs.callPackage ./pkgs/grok-bot { };
             });
 
       checks = nixpkgs.lib.genAttrs
@@ -119,12 +123,24 @@
         });
 
       # ─── macOS (nix-darwin + home-manager) ─────────────────────────
-      # 切替: sudo darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
-      darwinConfigurations."archfill-to-Mac-mini" = mkDarwinHost {
-        system = "aarch64-darwin";
-        hostModule = ./darwin.nix;
-        homeModule = ./home.nix;
-        username = "chill-rf";
+      # attr 名は `scutil --get LocalHostName` と一致させる
+      # (make init / darwin-rebuild / nh がホスト名で自動選択するため)。
+      # 切替: make nix-rebuild (= nh darwin switch ./nix)
+      # 新規ホスト: nix/hosts/<host>/{darwin,home}.nix を作成して下に追加
+      darwinConfigurations = {
+        "archfill-to-Mac-mini-M1" = mkDarwinHost {
+          system = "aarch64-darwin";
+          hostModule = ./hosts/archfill-to-Mac-mini-M1/darwin.nix;
+          homeModule = ./hosts/archfill-to-Mac-mini-M1/home.nix;
+          username = "archfill";
+        };
+
+        "archfill-to-Mac-Studio-M4-Max" = mkDarwinHost {
+          system = "aarch64-darwin";
+          hostModule = ./hosts/archfill-to-Mac-Studio-M4-Max/darwin.nix;
+          homeModule = ./hosts/archfill-to-Mac-Studio-M4-Max/home.nix;
+          username = "archfill";
+        };
       };
 
       # ─── Linux: standalone home-manager (Arch / Ubuntu / WSL) ─────

@@ -30,14 +30,23 @@ Nix と `nh` が使える状態なら、通常運用は `make nix-rebuild` で�
 make nix-rebuild
 ```
 
+Mac mini のエージェント専用運用では、先に [既存ユーザー `archfill` での独立 CLI 配備手順](docs/agent-machine.md)を実施してください。Claude Code / Codex / Pi / Devin は独立 profile で配備し、`make nix-rebuild` だけでは導入されません。
+
+Mac mini M1 は macOS アカウント `archfill`（`/Users/archfill`）を使用し、構成名は `archfill-to-Mac-mini-M1`（`nix/hosts/archfill-to-Mac-mini-M1/`）です。Mac mini 本体の `LocalHostName` をこの名前に合わせてから `make nix-rebuild` を実行してください。
+
+```bash
+sudo scutil --set LocalHostName archfill-to-Mac-mini-M1
+```
+
 初回セットアップでは先に Nix を導入してから `make init` を実行します。`make init` は bootstrap 用の入口なので、この時点で `nh` がまだ使えなくても構いません。
 
-- macOS: `darwin-rebuild` があれば実行し、なければ手動実行用の `nix run nix-darwin` コマンドを表示
+- macOS: `make doctor` 相当の前提チェック後、`darwin-rebuild` があれば実行し、なければ `nix run nix-darwin` で初回 bootstrap。**新しい Mac の手順は [docs/macos-setup.md](docs/macos-setup.md) を参照**
 - NixOS: `nh os switch` があれば使い、なければ `nixos-rebuild` に fallback
 - Arch / Ubuntu / WSL: `nh home switch`、`home-manager switch`、`nix run home-manager` の順で fallback
 
 ```bash
 # NixOS / macOS の flake 定義済みホスト
+make doctor   # macOS: 前提条件チェック (何もインストールしない)
 make init
 
 # standalone Home Manager ホスト
@@ -77,10 +86,10 @@ make help             # 全コマンド表示
 
 | プラットフォーム | 管理レイヤー | デスクトップ / WM | 備考 |
 | ---------------- | ------------ | ----------------- | ---- |
-| NixOS            | NixOS + Home Manager | GNOME / Hyprland | メイン Linux 環境 |
-| macOS            | nix-darwin + Home Manager + Homebrew module | AeroSpace/SketchyBar | 宣言的にパッケージ管理 |
-| Linux            | Home Manager | Hyprland 向けユーザー設定 | Arch / Ubuntu / WSL |
-| Windows          | 手動スクリプト | Native | WSL2 設定管理 |
+| NixOS | NixOS + Home Manager | GNOME / Hyprland | メイン Linux 環境 |
+| macOS | nix-darwin + Home Manager + Homebrew module | Hammerspoon / Rectangle | 宣言的にパッケージ管理 |
+| Linux | Home Manager | Hyprland 向けユーザー設定 | Arch / Ubuntu / WSL |
+| Windows | 手動スクリプト | Native | WSL2 設定管理 |
 
 ### Hyprland セットアップ (NixOS / Arch Linux)
 
@@ -165,7 +174,7 @@ NixOS の共通設定は Nix module で宣言します。ホスト固有の差�
 
 NixOS では NVIDIA DRM modeset、fbdev、early modules、Hyprland 環境変数を Nix 設定で宣言します。Arch Linux など NixOS 以外では、必要に応じて各 OS 側の NVIDIA 設定を別途行います。
 
-詳細な NVIDIA セットアップ手順: https://wiki.hyprland.org/Nvidia/
+詳細な NVIDIA セットアップ手順: <https://wiki.hyprland.org/Nvidia/>
 
 #### Hyprland の起動
 
@@ -275,8 +284,8 @@ Hyprland
 
 詳細なヘルプ:
 
-- Hyprland Wiki: https://wiki.hyprland.org
-- Hyprland Discord: https://discord.gg/hQ9XvMUjjr
+- Hyprland Wiki: <https://wiki.hyprland.org>
+- Hyprland Discord: <https://discord.gg/hQ9XvMUjjr>
 
 ## 🇯🇵 日本語機能
 

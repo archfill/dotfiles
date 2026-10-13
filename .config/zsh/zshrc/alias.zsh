@@ -80,26 +80,16 @@ alias mrun='mise run'                # Run task from config
 ## npm aliases
 alias gemini-install='npm install -g @google/gemini-cli'
 
-## Claude Code utilities
-alias cpclaudemd='cp -i ~/git/claude-configs/templates/CLAUDE-workflow.md ./CLAUDE.md'
-
 ## ghq aliases
 alias ghq-list='ghq list'
 alias ghq-root='ghq root'
 alias ghq-look='ghq look'
-alias gq='ghq list | fzf --preview "echo {} && echo && cat $(ghq root)/{}/README.md 2>/dev/null || ls -la $(ghq root)/{}" | xargs -I {} sh -c "cd $(ghq root)/{} && exec $SHELL"'
-alias ghq-remove='ghq list | fzf --multi | xargs -I {} rm -rf $(ghq root)/{}'
-alias ghq-update='ghq list | xargs -I {} git -C $(ghq root)/{} pull'
+alias ghq-update='ghq list --full-path | xargs -I {} git -C {} pull'
 alias git-health='$HOME/dotfiles/bin/git-health.sh'
 
 ## Project navigation shortcuts
 alias p='g'  # Short alias for project selection
 alias repo='g'  # Alternative alias
-
-## Claude memory plugin
-if [[ -f "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs" ]]; then
-  alias claude-mem='bun "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
-fi
 
 ## Flutter development aliases (cross-platform)
 alias fl='flutter'

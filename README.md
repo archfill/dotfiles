@@ -30,14 +30,23 @@ Use `make nix-rebuild` after Nix and `nh` are already available. This is the nor
 make nix-rebuild
 ```
 
+For the dedicated agent Mac mini, first follow the [independent CLI deployment guide for the existing `archfill` user](docs/agent-machine.md). Claude Code, Codex, Pi, and Devin are deployed through a separate profile, not by `make nix-rebuild` alone.
+
+The Mac mini M1 configuration uses the macOS account `archfill` (`/Users/archfill`) and is named `archfill-to-Mac-mini-M1` (`nix/hosts/archfill-to-Mac-mini-M1/`). Set the Mac mini’s `LocalHostName` to this name before running `make nix-rebuild`:
+
+```bash
+sudo scutil --set LocalHostName archfill-to-Mac-mini-M1
+```
+
 For first setup, install Nix first, then run `make init`. `make init` is the bootstrap entrypoint and does not require `nh` to be available yet:
 
-- macOS: uses `darwin-rebuild` when available, otherwise prints the `nix run nix-darwin` command to run manually
+- macOS: runs the `make doctor` prerequisite check, then uses `darwin-rebuild` when available, otherwise bootstraps with `nix run nix-darwin`. **For a new Mac, follow [docs/macos-setup.md](docs/macos-setup.md)**
 - NixOS: uses `nh os switch` when available, otherwise falls back to `nixos-rebuild`
 - Arch / Ubuntu / WSL: uses `nh home switch`, `home-manager switch`, or `nix run home-manager`
 
 ```bash
 # NixOS or macOS host declared in flake outputs
+make doctor   # macOS: prerequisite check only (installs nothing)
 make init
 
 # Standalone Home Manager hosts
@@ -59,12 +68,14 @@ After `make init` has applied the Nix/Home Manager configuration, `nh` is provid
 ```bash
 make nix-rebuild      # Apply the Nix flake through nh
 make nix-diff         # Preview the next Nix switch
-make nix-update       # Update Codex, flake.lock, and switch
+make nix-update       # Update Claude Code / Codex / Pi / Devin / ChatGPT, flake.lock, and switch
 make nix-clean        # Keep the latest 5 generations
 make config           # Configure Git user settings
 make status           # Check status
 make help             # Show all commands
 ```
+
+Cursor Agent CLI, Cursor Origin CLI, and Grok Bot are no longer installed or updated by dotfiles. Run `make nix-rebuild` to apply their removal to an existing Nix-managed environment.
 
 ## 📁 Key Configurations
 
@@ -78,7 +89,7 @@ make help             # Show all commands
 | Platform | Management layer | Desktop / WM        | Notes                     |
 | -------- | ---------------- | ------------------- | ------------------------- |
 | NixOS    | NixOS + Home Manager | GNOME / Hyprland | Main Linux target         |
-| macOS    | nix-darwin + Home Manager + Homebrew module | AeroSpace/SketchyBar | Declarative package setup |
+| macOS    | nix-darwin + Home Manager + Homebrew module | Hammerspoon / Rectangle | Declarative package setup |
 | Linux    | Home Manager     | Hyprland-ready user config | Arch / Ubuntu / WSL hosts |
 | Windows  | Manual scripts   | Native              | WSL2 config management    |
 
@@ -209,13 +220,14 @@ On NixOS, NVIDIA DRM modeset, fbdev, early modules, and Hyprland environment var
    ```
 
 4. **Suspend/Resume Support** (OPTIONAL):
+
    ```bash
    sudo systemctl enable nvidia-suspend.service
    sudo systemctl enable nvidia-hibernate.service
    sudo systemctl enable nvidia-resume.service
    ```
 
-For detailed NVIDIA setup instructions, see: https://wiki.hyprland.org/Nvidia/
+For detailed NVIDIA setup instructions, see: <https://wiki.hyprland.org/Nvidia/>
 
 #### Starting Hyprland
 
@@ -327,8 +339,8 @@ Hyprland and the desktop stack are declared through Nix modules:
 
 For more help:
 
-- Hyprland Wiki: https://wiki.hyprland.org
-- Hyprland Discord: https://discord.gg/hQ9XvMUjjr
+- Hyprland Wiki: <https://wiki.hyprland.org>
+- Hyprland Discord: <https://discord.gg/hQ9XvMUjjr>
 
 ## 🇯🇵 Japanese Features
 

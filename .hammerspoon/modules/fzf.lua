@@ -34,8 +34,24 @@ function fzf.init(config, helpers)
 	end
 
 	-- Configure FzfFilter
-	if fzfConfig.fzfPath then
-		spoon.FzfFilter.fzfPath = fzfConfig.fzfPath
+	-- The Spoon only auto-detects Homebrew paths, but fzf is installed by Nix
+	-- (home-manager), so look in the Nix profiles first.
+	local fzfPath = fzfConfig.fzfPath
+	if not fzfPath then
+		local candidates = {
+			"/etc/profiles/per-user/" .. os.getenv("USER") .. "/bin/fzf", -- nix-darwin + home-manager
+			os.getenv("HOME") .. "/.nix-profile/bin/fzf", -- standalone home-manager
+			"/run/current-system/sw/bin/fzf",
+		}
+		for _, candidate in ipairs(candidates) do
+			if hs.fs.attributes(candidate) then
+				fzfPath = candidate
+				break
+			end
+		end
+	end
+	if fzfPath then
+		spoon.FzfFilter.fzfPath = fzfPath
 	end
 
 	-- Start FzfFilter (will auto-detect fzf path if not set)
@@ -59,6 +75,19 @@ function fzf.init(config, helpers)
 	-- Initialize and start
 	spoon.FzfWindowSwitcher:init()
 	spoon.FzfWindowSwitcher:start()
+
+	-- Replace the Spoon's show-only hotkey with a toggle (press again to close)
+	local switcher = spoon.FzfWindowSwitcher
+	if switcher.hotkeyBind then
+		switcher.hotkeyBind:delete()
+	end
+	switcher.hotkeyBind = hs.hotkey.bind(config.hyper, hotkey, function()
+		if switcher.windowChooser and switcher.windowChooser:isVisible() then
+			switcher.windowChooser:hide()
+		else
+			switcher:showWindowSwitcher()
+		end
+	end)
 end
 
 return fzf

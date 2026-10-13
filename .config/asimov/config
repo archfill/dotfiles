@@ -1,0 +1,4 @@
+# asimov の設定 (Mac Studio のみ。nix/hosts/archfill-to-Mac-Studio-M4-Max/home.nix で配置)
+# ~/git は外付けへの symlink で asimov は symlink を辿らないため、実体を追加で走査する。
+[scan]
+extra = /Volumes/Storage/archfill/git

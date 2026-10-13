@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, config, lib, ... }:
 
 let
   # ─── Neovim バージョン切替フラグ ────────────────────────────────
@@ -20,6 +20,8 @@ let
 
 in
 {
+  imports = [ ./agent-cli.nix ];
+
   # 初回 install 時点の home-manager リリース版。以降は変更しない。
   home.stateVersion = "25.05";
 
@@ -120,7 +122,7 @@ in
 
     # Android
     android-cli   # Google 公式 Android CLI (`android`)
-    nodejs_22    # Node.js 22 LTS (mise project toolのfallback)
+    nodejs_24    # Node.js 24 LTS (mise project toolのfallback。26 は 2026-10 に LTS 化)
     python313    # Python 3.13
     go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)
 
@@ -188,6 +190,7 @@ in
     # `agy` コマンドを提供する。認証情報は初回起動時に設定する。
     antigravity-cli
 
+  ] ++ lib.optionals config.dotfiles.managedAgentCli.enable [
     # Anthropic 公式 Claude Code CLI。公式 download service の prebuilt
     # native binary を固定 (native installer と同じ配布物)。npm -g や
     # ~/.local への自己更新は /nix/store の immutable と衝突するため
@@ -197,22 +200,11 @@ in
 
     # OpenAI 公式 Codex CLI。nixpkgs の codex は Rust ソースビルド (依存が
     # 重く libwebrtc/librusty_v8 を抱える) で更新 PR のラグが常態化するため、
-    # 自前 packages.codex (GitHub release の prebuilt native binary) で最新を
-    # 追従。バージョン更新は `make nix-update` または `make codex-update`。
+    # 自前 packages.codex (GitHub release の complete native package) で最新を
+    # 追従。daemon に必要な manifest/resources も同梱する。バージョン更新は
+    # `make nix-update` または `make codex-update`。
     # npm install -g は /nix/store の immutable と衝突するため不採用。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.codex
-
-    # Cursor Ultra の利用枠をターミナルから使う公式 Cursor Agent CLI。
-    # 公式 installer と同じ bundle を Nix に固定し、`agent` と
-    # `cursor-agent` の両コマンドを提供する。更新は
-    # `make cursor-agent-update` または `make nix-update` で行う。
-    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.cursor-agent
-
-    # Cursor Origin (Cursor の git forge) 用 CLI。repo / PR / ruleset 等の
-    # hosting 操作を担い、AI agent である cursor-agent とは別物。公式
-    # installer と同じ bundle を Nix に固定し、自己更新 (`origin update`)
-    # ではなく `make origin-update` で追従する。
-    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.origin
 
     # Pi coding agent harness (earendil-works)。GitHub release の Bun
     # prebuilt を固定。npm -g は不採用。更新は `make pi-update`。
@@ -225,6 +217,7 @@ in
     # `make nix-update` で行う。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.devin
 
+  ] ++ (with pkgs; [
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)
     # で日本語環境に Monaspace 由来の Texture Healing と 3 軸 Variable
@@ -236,7 +229,7 @@ in
     nerd-fonts.symbols-only   # Powerline / Nerd Font アイコン専用
     material-symbols          # Material icon glyphs used by the desktop shell
     nerd-fonts.caskaydia-cove # Terminal and desktop-shell monospace font
-  ];
+  ]);
 
   # Nix で配置するフォントを ~/Library/Fonts にも認識させる
   # (macOS の場合、~/.nix-profile/share/fonts を `fc-cache` できれば
@@ -357,7 +350,7 @@ in
   # Git 1.7.12+ / libgit2 ともに対応済み。include.path の
   # ~/.gitconfig.local はそのまま維持 (bin/config.sh が書き込む)。
   # 移管前に既存 ~/.gitconfig (regular file) を削除すること:
-  #   rm ~/.gitconfig && darwin-rebuild switch --flake ./nix#archfill-to-Mac-mini
+  #   rm ~/.gitconfig && make nix-rebuild
   xdg.configFile."git/config".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/git/config";

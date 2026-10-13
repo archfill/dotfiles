@@ -1,0 +1,52 @@
+{
+  "BTTPresetName" : "Default",
+  "BTTPresetUUID" : "2A575B63-84AE-45B9-ADB3-E78920048F4E",
+  "BTTPresetContent" : [
+    {
+      "BTTAppBundleIdentifier" : "BT.G",
+      "BTTAppName" : "Global",
+      "BTTAppAutoInvertIcon" : 1,
+      "BTTTriggers" : [
+        {
+          "BTTLastUpdatedAt" : 1790335937.8350658,
+          "BTTTriggerType" : 104,
+          "BTTTriggerTypeDescriptionReadOnly" : "3本指でタップ",
+          "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+          "BTTUUID" : "CBD9FB39-43EE-4601-9782-FC985D24A122",
+          "BTTAdditionalConfiguration" : "3本指タップで中クリック",
+          "BTTOrder" : 0,
+          "BTTActionsToExecute" : [
+            {
+              "BTTLastUpdatedAt" : 1790335937.8362689,
+              "BTTTriggerParentUUID" : "CBD9FB39-43EE-4601-9782-FC985D24A122",
+              "BTTIsPureAction" : true,
+              "BTTUUID" : "CC04561A-570E-496F-A216-D755C9F4D0A8",
+              "BTTPredefinedActionType" : 1,
+              "BTTPredefinedActionName" : "中クリック (At Current Mouse Position)",
+              "BTTOrder" : 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BTTAppBundleIdentifier" : "BT.L",
+      "BTTAppName" : "Recently Used",
+      "BTTAppAutoInvertIcon" : 1,
+      "BTTTriggers" : [
+
+      ]
+    },
+    {
+      "BTTAppBundleIdentifier" : "com.apple.finder",
+      "BTTAppName" : "Finder",
+      "BTTAppAutoInvertIcon" : 1,
+      "BTTTriggers" : [
+
+      ]
+    }
+  ],
+  "BTTPresetSnapAreas" : [
+
+  ]
+}

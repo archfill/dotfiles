@@ -7,10 +7,11 @@
 }:
 
 let
-  version = "0.162.1";
+  version = "0.161.0";
 
-  # Use the complete runtime package: daemon startup requires its manifest,
-  # helper binaries, and resources, not just the standalone CLI executable.
+  # Codex publishes a complete package per (arch, os). The package metadata and
+  # bundled resources are required by the background app-server daemon.
+  # Map the Nix system triple to the upstream tarball suffix.
   platformMap = {
     "aarch64-darwin" = "aarch64-apple-darwin";
     "x86_64-darwin"  = "x86_64-apple-darwin";
@@ -21,11 +22,11 @@ let
   platform = platformMap.${stdenv.hostPlatform.system} or null;
 
   # SRI hashes for codex rust-v${version}. Refresh: `make codex-update VERSION=...`
-  hashes = {
-    "aarch64-apple-darwin"       = "sha256-iON8zd9aD06p3BvhPGaiqU+cLRoE86zpBT1xs5OeiF0=";
-    "x86_64-apple-darwin"        = "sha256-iUrCCv6BnU+ipL6M0nxU/WBjOLhgNujtm2yZeMLceu0=";
-    "x86_64-unknown-linux-musl"  = "sha256-pnb1ciquDYbL43ZDMvCOqx/didwKMAs61P+/SGEfo+M=";
-    "aarch64-unknown-linux-musl" = "sha256-U6nOC5S+snpj/esvdwTZUZnheziYqjO2BGGhqTrA2Is=";
+  packageHashes = {
+    "aarch64-apple-darwin"       = "sha256-8P7uhTfa+N1rTgo252RUmtFK/btBnYd1rquf6yAYIxM=";
+    "x86_64-apple-darwin"        = "sha256-U/fJCBq4NoSj1Ps128SwXT67IEvrLqsABibBXwsV5zg=";
+    "x86_64-unknown-linux-musl"  = "sha256-BNirnby53w7fPGfcpQcqN0ur/fdiqbxK5kmuFAuOLPA=";
+    "aarch64-unknown-linux-musl" = "sha256-PALirjS+DQbmJVfpj8XAp4O+xaL+1Ab+AOVlgDv4Tug=";
   };
 in
 
@@ -38,38 +39,34 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-package-${platform}.tar.gz";
-    hash = hashes.${platform};
+    hash = packageHashes.${platform};
   };
 
-  # Preserve the upstream package layout when extracting the archive.
+  # The archive has bin/, codex-package.json, codex-path/, and
+  # codex-resources/ at its root. Preserve that layout verbatim under libexec;
+  # app-server daemon package detection resolves the real executable and looks
+  # for the manifest next to its bin directory.
   dontUnpack = true;
   dontConfigure = true;
+  dontBuild = true;
 
   nativeBuildInputs = [ makeWrapper ];
 
-  buildPhase = ''
-    runHook preBuild
-    mkdir -p build
-    tar -xzf $src -C build
-    runHook postBuild
-  '';
-
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/libexec/codex $out/bin
-    cp -R build/. $out/libexec/codex/
-    # Keep bin/codex inside the package a native executable. The daemon checks
-    # its contents against current_exe before copying the package.
-    ln -s $out/libexec/codex/bin/codex-code-mode-host $out/bin/codex-code-mode-host
+    packageRoot=$out/libexec/codex-package
+    mkdir -p $packageRoot $out/bin
+    tar -xzf $src -C $packageRoot
 
-    # codex ships an in-place auto-updater that would rewrite the
-    # /nix/store binary; disable it so Nix owns the version pinned here.
-    # Linux needs bubblewrap on PATH for codex's sandboxing (landlock/seccomp).
-    makeWrapper $out/libexec/codex/bin/codex $out/bin/codex \
+    # Keep the upstream package entrypoint untouched: daemon bootstrap verifies
+    # that it is byte-identical to the running executable. Put the Nix-specific
+    # environment wrapper outside the complete package instead.
+    makeWrapper $packageRoot/bin/codex $out/bin/codex \
       --set DISABLE_AUTOUPDATER 1 \
       ${lib.optionalString stdenv.hostPlatform.isLinux ''
         --prefix PATH : ${lib.makeBinPath [ bubblewrap ]}
       ''}
+    ln -s $packageRoot/bin/codex-code-mode-host $out/bin/codex-code-mode-host
     runHook postInstall
   '';
 

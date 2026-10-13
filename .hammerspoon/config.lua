@@ -7,7 +7,7 @@ local config = {}
 -- Key Modifiers
 --------------------------------------------------------------------------------
 
--- Hyper key: Caps Lock remapped via Karabiner-Elements
+-- Hyper key: sent directly by the ZMK keymap (MONA2); no Caps Lock remapping
 config.hyper = { "ctrl", "cmd", "alt", "shift" }
 
 --------------------------------------------------------------------------------
@@ -45,6 +45,16 @@ config.windows = {
 	enableDirectionalFocus = true,
 	-- Customize keys: { key = "direction" }
 	-- directionalFocusKeys = { h = "west", j = "south", k = "north", l = "east" },
+
+	-- Ultrawide 70/30 layouts (Hyper + key, unit rect of the screen).
+	-- Top row = main window on the left, bottom row = main window on the right.
+	-- Halves / thirds are handled by Rectangle.
+	layouts = {
+		a = { x = 0, y = 0, w = 0.7, h = 1 }, -- left 70%
+		s = { x = 0.7, y = 0, w = 0.3, h = 1 }, -- right 30%
+		z = { x = 0, y = 0, w = 0.3, h = 1 }, -- left 30%
+		x = { x = 0.3, y = 0, w = 0.7, h = 1 }, -- right 70%
+	},
 }
 
 --------------------------------------------------------------------------------
@@ -57,7 +67,7 @@ config.fzf = {
 	-- Hotkey to show window switcher (Hyper + key)
 	hotkey = "w",
 	-- Path to fzf binary (auto-detected if not set)
-	-- fzfPath = "/opt/homebrew/bin/fzf",
+	-- fzfPath = "/opt/homebrew/bin/fzf", -- auto-detected from Nix profiles if unset
 	-- Search window titles in addition to app names
 	searchWindowTitles = true,
 	-- Immediately switch if there's only one match
