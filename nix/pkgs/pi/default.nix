@@ -4,10 +4,11 @@
   fetchurl,
   autoPatchelfHook,
   makeWrapper,
+  libxcb,
 }:
 
 let
-  version = "1.1.0";
+  version = "1.2.0";
 
   platformMap = {
     "aarch64-darwin" = {
@@ -32,10 +33,10 @@ let
 
   # Official GitHub release binaries. Refresh with `make pi-update`.
   hashes = {
-    "aarch64-darwin" = "sha256-NFWxPeNcFaWJPN68kiZ4GZ6Qp86ZsGy8I/N4YOkNY8c=";
-    "x86_64-darwin" = "sha256-j92RSa4n50cKahDtinwO2Ac41VreyAqNd2T2OG0eZYs=";
-    "x86_64-linux" = "sha256-P6qUZmzThJ03rzIP90lAfQJxsHqblPQgyH4whm4Q4ok=";
-    "aarch64-linux" = "sha256-87DKxFn531Qg5OSLSOldgb+rV7cB3T/ksI/afRHSfas=";
+    "aarch64-darwin" = "sha256-q933aItLZ4HZET9jzVeOPAHc24fnH2bn7ByexsdheNE=";
+    "x86_64-darwin" = "sha256-4Hn/AWrngnnPvWwbT//gchYvSnu4ea1hsE4uQ7zFNFU=";
+    "x86_64-linux" = "sha256-APw2z/3rzupaSCMNpizz+0YxePj+GFdmZS+WACokaEc=";
+    "aarch64-linux" = "sha256-2Fl+46IFBZLTjmf2tgmrVROd7tfoIAINkQ2E8Xu3q9Y=";
   };
 in
 
@@ -56,8 +57,12 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ makeWrapper ]
     ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
 
-  # The bundled clipboard native addon links against libgcc_s on Linux.
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ stdenv.cc.cc.lib ];
+  # The bundled native addons link against libgcc_s (clipboard) and
+  # libxcb (linux-platform-x11.node) on Linux.
+  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+    stdenv.cc.cc.lib
+    libxcb
+  ];
 
   installPhase = ''
     runHook preInstall
