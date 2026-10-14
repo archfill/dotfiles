@@ -101,6 +101,10 @@ in
       # AI
       "chatgpt"
       "antigravity"
+      # xAI Grok Bot desktop agent (The X Subscription Premium 以上に付帯)
+      "grok-bot"
+      # Cursor IDE (The X Subscription に使用枠が含まれる)
+      "cursor"
       # ランチャー / ウィンドウ管理 / 常駐ユーティリティ
       "alfred"
       "rectangle"

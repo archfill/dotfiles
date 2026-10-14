@@ -9,6 +9,10 @@ pkgs.buildEnv {
     agentPackages.codex
     agentPackages.pi
     agentPackages.devin
+    # The X Subscription 付帯の agent CLI 陣。いずれも自前 pin で stable 最新追従。
+    agentPackages.grok-build
+    agentPackages.cursor-agent
+    agentPackages.origin
   ] ++ (with pkgs; [
     git agentPackages.gh openssh bash coreutils findutils gnugrep
     ripgrep fd jq gnumake tmux nodejs_24 python313 bun uv pnpm

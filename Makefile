@@ -8,7 +8,11 @@
 	nix-rebuild nix-diff nix-bootloader nix-clean nix-update \
 	agent-prepare agent-apply agent-status agent-rollback agent-test \
 	codex-update codex-bump \
+	cursor-agent-update cursor-agent-bump \
+	grok-build-update grok-build-bump \
+	origin-update origin-bump \
 	pi-update pi-bump devin-update devin-bump \
+	grok-bot-update grok-bot-bump \
 	chatgpt-update \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
@@ -55,12 +59,14 @@ update: ## Update dotfiles and submodules (fast-forward only)
 	@git submodule update --init --recursive
 	@echo "Update completed."
 
+# make の backup 用変数。make 変数にして $(shell date) は parse 時に一度だけ
+# 評価されるようにしている (同一タイムスタンプ、shellcheck にも素直な形)
+BACKUP_DIR := $$HOME/.dotfiles_backup/full_backup_$(shell date +%Y%m%d_%H%M%S)
 backup: ## Create backup of current configuration
 	@echo "Creating backup..."
-	@BACKUP_DIR="$$HOME/.dotfiles_backup/full_backup_$(shell date +%Y%m%d_%H%M%S)"; \
-	mkdir -p "$$BACKUP_DIR"; \
-	cp -r . "$$BACKUP_DIR/" 2>/dev/null || true; \
-	echo "Backup created at: $$BACKUP_DIR"
+	@mkdir -p "$(BACKUP_DIR)"
+	@cp -r . "$(BACKUP_DIR)/" 2>/dev/null || true
+	@echo "Backup created at: $(BACKUP_DIR)"
 
 clean: ## Clean up temporary files and caches
 	@echo "Cleaning up temporary files..."
@@ -127,14 +133,18 @@ NIX_FLAKE := $(CURDIR)/nix
 # macOS 標準の make 3.81 は関数引数中の # をコメント扱いするため変数経由にする
 # (新規 Mac では Nix 導入前に /usr/bin/make で make init を実行する)
 HASH := \#
-NIX_FLAKE_REF := $(NIX_FLAKE)$(if $(NIX_ATTR),$(HASH)$(NIX_ATTR),)
+NIX_FLAKE_REF := $(NIX_FLAKE)
+ifneq "$(NIX_ATTR)" ""
+NIX_FLAKE_REF := $(NIX_FLAKE)$(HASH)$(NIX_ATTR)
+endif
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
-# chatgpt-update は上流バージョンが未変更なら数百 KB の Range リクエストだけで
-# スキップし、変更があった時だけ公式 .deb (数百 MB) を再取得する。
-# chatgpt は Linux 専用パッケージなので macOS では更新しない。
-NIX_UPDATE_DEPS := claude-update codex-update pi-update devin-update
-ifneq ($(NH_TARGET),darwin)
-NIX_UPDATE_DEPS += chatgpt-update
+# update script は上流バージョンが未変更ならスキップし、変更があった時だけ
+# 公式配布物 (origin / grok-build / cursor-agent は prebuilt tarball、
+# chatgpt / grok-bot は .deb) を再取得する。
+# chatgpt / grok-bot は Linux 専用パッケージなので macOS では更新しない。
+NIX_UPDATE_DEPS := claude-update codex-update cursor-agent-update grok-build-update origin-update pi-update devin-update
+ifneq "$(NH_TARGET)" "darwin"
+NIX_UPDATE_DEPS := $(NIX_UPDATE_DEPS) chatgpt-update grok-bot-update
 endif
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
@@ -143,10 +153,7 @@ nix-rebuild: ## Nix flake を反映 (nh で OS 自動判定)
 	nh $(NH_TARGET) switch $(NIX_FLAKE_REF)
 
 nix-bootloader: ## NixOS の bootloader も再インストールして反映
-	@if [ "$(NH_TARGET)" != "os" ]; then \
-		echo "nix-bootloader is only for NixOS"; \
-		exit 1; \
-	fi
+	@test "$(NH_TARGET)" = "os" || { echo "nix-bootloader is only for NixOS"; exit 1; }
 	nh os switch $(NIX_FLAKE_REF) --install-bootloader
 
 nix-diff: ## 次の switch で何が変わるかを表示 (適用しない)
@@ -196,6 +203,26 @@ devin-update: ## Devin CLI の最新版を Nix package 定義へ反映
 
 devin-bump: devin-update ## Alias (usage: make devin-bump VERSION=3000.10.27)
 
+cursor-agent-update: ## Cursor CLI の最新版を Nix package 定義へ反映
+	@bash ./bin/cursor-agent-update.sh $(VERSION)
+
+cursor-agent-bump: cursor-agent-update ## Alias (usage: make cursor-agent-bump VERSION=2026.10.14-0f9edde)
+
+grok-build-update: ## Grok Build の stable 版を Nix package 定義へ反映
+	@bash ./bin/grok-build-update.sh $(VERSION)
+
+grok-build-bump: grok-build-update ## Alias (usage: make grok-build-bump VERSION=1.0.52)
+
+origin-update: ## Cursor Origin CLI の stable 版を Nix package 定義へ反映
+	@bash ./bin/origin-update.sh $(VERSION)
+
+origin-bump: origin-update ## Alias (usage: make origin-bump VERSION=2026.10.13-04-14-45-7ea7628)
+
+grok-bot-update: ## Grok Bot Linux公式 .deb のversion/hashを更新
+	@bash ./bin/grok-bot-update.sh $(GROK_BOT_DEB_URL)
+
+grok-bot-bump: grok-bot-update ## Alias (usage: make grok-bot-bump GROK_BOT_DEB_URL=<official .deb URL>)
+
 rovehelm-update: ## Rovehelmのmainをpullしてrelease buildし更新
 	@bash ./bin/rovehelm-update.sh $(ARGS)
 
@@ -210,46 +237,46 @@ hyprland-status: ## Check Hyprland installation and configuration status
 	@echo "Checking Hyprland status..."
 	@echo ""
 	@echo "=== Package Status ==="
-	@if command -v Hyprland >/dev/null 2>&1; then \
+	@:; if command -v Hyprland >/dev/null 2>&1; then \
 		echo "✅ Hyprland: $$(Hyprland --version 2>&1 | head -1)"; \
 	else \
 		echo "❌ Hyprland: Not installed"; \
 	fi
-	@if command -v dms >/dev/null 2>&1; then \
+	@:; if command -v dms >/dev/null 2>&1; then \
 		echo "✅ DMS: $$(dms --version 2>&1 | head -1)"; \
 	else \
 		echo "❌ DMS: Not installed"; \
 	fi
-	@if command -v rofi >/dev/null 2>&1; then \
+	@:; if command -v rofi >/dev/null 2>&1; then \
 		echo "✅ rofi: $$(rofi -version 2>&1 | head -1) (clipboard/cheatsheet)"; \
 	else \
 		echo "❌ rofi: Not installed"; \
 	fi
 	@echo ""
 	@echo "=== Configuration Files ==="
-	@if [ -f ~/.config/hypr/hyprland.lua ]; then \
+	@:; if [ -f ~/.config/hypr/hyprland.lua ]; then \
 		echo "✅ hyprland.lua: exists"; \
 	else \
 		echo "❌ hyprland.lua: missing"; \
 	fi
-	@if [ -f ~/.config/niri/config.kdl ]; then \
+	@:; if [ -f ~/.config/niri/config.kdl ]; then \
 		echo "✅ niri config: exists"; \
 	else \
 		echo "❌ niri config: missing"; \
 	fi
-	@if [ -d ~/.config/rofi ]; then \
+	@:; if [ -d ~/.config/rofi ]; then \
 		echo "✅ rofi config: exists (fallback menus)"; \
 	else \
 		echo "❌ rofi config: missing"; \
 	fi
-	@if systemctl --user is-active --quiet dms.service; then \
+	@:; if systemctl --user is-active --quiet dms.service; then \
 		echo "✅ dms.service: active"; \
 	else \
 		echo "❌ dms.service: inactive"; \
 	fi
 	@echo ""
 	@echo "=== NVIDIA Status ==="
-	@if lspci | grep -i nvidia >/dev/null 2>&1; then \
+	@:; if lspci | grep -i nvidia >/dev/null 2>&1; then \
 		echo "🎮 NVIDIA GPU detected"; \
 		if [ -f /sys/module/nvidia_drm/parameters/modeset ]; then \
 			MODESET=$$(cat /sys/module/nvidia_drm/parameters/modeset 2>/dev/null || sudo -n cat /sys/module/nvidia_drm/parameters/modeset 2>/dev/null || true); \
@@ -290,7 +317,7 @@ git-health: ## Check health of all ghq-managed repositories
 
 tmux-reload: ## Reload tmux configuration
 	@echo "Reloading tmux configuration..."
-	@if tmux info >/dev/null 2>&1; then \
+	@:; if tmux info >/dev/null 2>&1; then \
 		tmux source-file ~/.config/tmux/tmux.conf; \
 		echo "✅ tmux configuration reloaded"; \
 	else \
@@ -306,7 +333,7 @@ docker-setup: ## Setup Docker Engine
 # ===== ログ管理コマンド =====
 logs-list: ## List all log files
 	@echo "Available log files:"
-	@if ls .logs/*.log >/dev/null 2>&1; then \
+	@:; if ls .logs/*.log >/dev/null 2>&1; then \
 		ls -lht .logs/*.log | head -20; \
 	else \
 		echo "No log files found"; \
@@ -314,7 +341,7 @@ logs-list: ## List all log files
 
 logs-latest: ## Show the latest log file (last 100 lines)
 	@echo "=== Latest Log File (last 100 lines) ==="
-	@if latest=$$(ls -t .logs/*.log 2>/dev/null | head -1) && [ -n "$$latest" ]; then \
+	@:; if latest=$$(ls -t .logs/*.log 2>/dev/null | head -1) && [ -n "$$latest" ]; then \
 		tail -100 "$$latest"; \
 	else \
 		echo "No log files found"; \
@@ -326,7 +353,7 @@ logs-clean: ## Clean up log files older than 30 days
 	@echo "Cleanup completed"
 
 logs-view: ## View specific log file (usage: make logs-view LOG=filename)
-	@if [ -z "$(LOG)" ]; then \
+	@:; if [ -z "$(LOG)" ]; then \
 		echo "Usage: make logs-view LOG=<filename>"; \
 		echo ""; \
 		echo "Available logs:"; \

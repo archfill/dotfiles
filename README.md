@@ -68,14 +68,14 @@ After `make init` has applied the Nix/Home Manager configuration, `nh` is provid
 ```bash
 make nix-rebuild      # Apply the Nix flake through nh
 make nix-diff         # Preview the next Nix switch
-make nix-update       # Update Claude Code / Codex / Pi / Devin / ChatGPT, flake.lock, and switch
+make nix-update       # Update Claude Code / Codex / Cursor Agent / Origin / Pi / Devin / Grok Build / Grok Bot / ChatGPT, flake.lock, and switch
 make nix-clean        # Keep the latest 5 generations
 make config           # Configure Git user settings
 make status           # Check status
 make help             # Show all commands
 ```
 
-Cursor Agent CLI, Cursor Origin CLI, and Grok Bot are no longer installed or updated by dotfiles. Run `make nix-rebuild` to apply their removal to an existing Nix-managed environment.
+The X Subscription CLIs (Grok Build `grok`, Cursor CLI `cursor-agent`, Origin CLI `origin`) and Grok Bot (Linux) are pinned prebuilt packages updated via `make grok-build-update` / `make cursor-agent-update` / `make origin-update` / `make grok-bot-update` (all wired into `make nix-update`). On macOS, Grok Bot and Cursor are installed as Homebrew casks declared in `nix/modules/darwin-system.nix`.
 
 ## 📁 Key Configurations
 

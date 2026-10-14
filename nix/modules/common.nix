@@ -217,6 +217,26 @@ in
     # `make nix-update` で行う。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.devin
 
+    # xAI 公式 Grok Build CLI (`grok` / `agent`)。公式 prebuilt binary を
+    # https://x.ai/cli/stable の stable ポインタで固定。nixpkgs にもあるが
+    # stable への同日追従を優先して自前 packages にする。SuperGrok /
+    # The X Subscription Premium 以上のアカウントで `grok login` して利用。
+    # 更新は `make grok-build-update` または `make nix-update`。公式
+    # installer / 自己更新は /nix/store と衝突するため不採用。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.grok-build
+
+    # Cursor CLI (`cursor-agent`)。公式 installer と同じ bundle を固定。
+    # nixpkgs にもあるが最新追従を優先して自前 packages にする。canonical
+    # 名 `agent` は Grok Build 側が専有するため、この side は `cursor-agent`
+    # のみ提供。更新は `make cursor-agent-update` または `make nix-update`。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.cursor-agent
+
+    # Cursor Origin (Cursor の git forge) 用 CLI。repo / PR / ruleset 等の
+    # hosting 操作を担い、AI agent である cursor-agent とは別物。公式
+    # installer と同じ bundle を Nix に固定し、自己更新 (`origin update`)
+    # ではなく `make origin-update` で追従する。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.origin
+
   ] ++ (with pkgs; [
     # ─── Fonts ───────────────────────────────────────────────────────
     # メインは Moralerspace Argon (GitHub Monaspace + IBM Plex Sans JP)

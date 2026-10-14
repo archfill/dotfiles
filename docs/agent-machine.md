@@ -107,10 +107,13 @@ Home Manager が `/opt/agent-runtime/profile/bin` を session PATH に追加す�
 
 ```bash
 whoami                         # archfill
-command -v claude codex pi devin
+command -v claude codex pi devin grok cursor-agent origin
 claude --version
 codex --version
 pi --version
+grok --version
+cursor-agent --version
+origin --version
 ```
 
 CLI が `/opt/agent-runtime/profile/bin` から解決されることを確認する。

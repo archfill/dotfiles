@@ -5,6 +5,6 @@
   options.dotfiles.managedAgentCli.enable = lib.mkOption {
     type = lib.types.bool;
     default = true;
-    description = "Install Claude Code, Codex, Pi and Devin through Home Manager";
+    description = "Install agent CLIs (Claude Code, Codex, Grok Build, Cursor CLI, Origin, Pi, Devin) through Home Manager";
   };
 }

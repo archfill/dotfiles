@@ -31,6 +31,10 @@
     unzip
     wl-clipboard
     zoxide
+  ] ++ pkgs.lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
+    # Grok Bot desktop agent (official Linux .deb, unpacked and wrapped by Nix).
+    # 更新は `make grok-bot-update` (上流バージョン未変更なら prefetch をスキップ)。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.grok-bot
   ];
 
   xdg.configFile."hypr".source =
