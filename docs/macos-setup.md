@@ -233,3 +233,20 @@ Homebrew 6.0 以降は非公式 tap を trust しないと読み込めない。
 
 Homebrew 側で cask が無効化された (Gatekeeper 非対応など)。
 `darwin-system.nix` の casks から外すか、nixpkgs 版に置き換える。
+
+
+## Pi の認証と隔離起動
+
+macOS の通常の `pi` は Agent Safehouse と起動中だけの認証プロキシを使う。
+Docker・VM・常駐サービスは不要。既定は ZAI (`glm-5.3-flash`)。
+API key はホスト側で扱い、OAuth は Pi 本来の token 管理を維持する。
+
+Safehouse は `nix/pkgs/agent-safehouse/default.nix` の 0.12.0 に固定し、
+`nix/modules/home-darwin.nix` が macOS 共通で導入する。
+Nix の反映後、harness-configs で `make install-pi` と `make install-pi-local` を実行する。
+既存ターミナルは `source ~/.config/zsh/zshrc/functions.zsh` で起動関数を更新する。
+
+設定・拡張を変更したときは harness-configs の `make install-pi-local` で実行用コピーを更新する。
+通常の入口は `pi` 一つ。導入失敗時に隔離なしで起動する fallback はない。
+詳細は [harness-configs の Pi 運用手順](../../harness-configs/pi/local/README.md)。
+Linux は別の sandbox backend と認証保管先が必要で、この macOS 実装の対象外。
