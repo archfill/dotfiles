@@ -9,7 +9,6 @@
   # system Rubyに依存せず、通常のshellと`flutter doctor`から利用する
   # iOS / Flutter開発ツール。
   home.packages = [
-    (pkgs.callPackage ../pkgs/agent-safehouse { })
     pkgs.cocoapods
   ];
 

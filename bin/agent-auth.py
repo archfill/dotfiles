@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import pwd
 import re
+import shutil
 import stat
 import subprocess
 import sys
@@ -112,10 +113,33 @@ def check_auth(op, token):
 
 
 def run_harness(op, token, refs, command):
-    # op resolves references and retains its normal output masking. env removes
-    # the bootstrap token before the harness (and its descendants) starts.
-    args = [op, "run", "--", "/usr/bin/env", "-u", TOKEN_VAR, *command]
-    os.execve(op, args, op_environment(token, refs))
+    # `op run` pipes the child's stdout/stderr, which breaks TUIs. Resolve each
+    # reference with `op read` and execve the harness directly to keep the tty.
+    # The service account token is used only for these reads, never passed on.
+    read_env = op_environment(token, {})
+    values = {}
+    for name, ref in refs.items():
+        try:
+            result = subprocess.run(
+                [op, "read", "--no-newline", ref], env=read_env,
+                capture_output=True, text=True, timeout=60, check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise ValueError(f"Could not read the secret for {name}") from error
+        if result.returncode != 0 or not result.stdout:
+            # Raw CLI stderr / stdout may contain sensitive context. Don't echo it.
+            raise ValueError(f"Could not read the secret for {name}; check the reference, token and network")
+        values[name] = result.stdout
+    # Resolve the command from the current PATH, not from the child environment.
+    program = shutil.which(command[0])
+    if program is None:
+        raise ValueError("Harness command not found in PATH")
+    env = {
+        name: value for name, value in os.environ.items()
+        if not name.startswith("OP_") and not value.startswith("op://")
+    }
+    env.update(values)
+    os.execve(program, [command[0], *command[1:]], env)
 
 
 def main():

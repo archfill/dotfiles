@@ -112,16 +112,64 @@ class AuthTests(unittest.TestCase):
             "GITHUB_PAT": "op://Agents/GitHub/token",
         })
 
-    def test_run_uses_op_masking_and_scrubs_bootstrap_token(self):
-        with patch.object(auth.os, "execve") as execute:
-            auth.run_harness("/opt/homebrew/bin/op", FAKE_TOKEN,
-                             {"KEY": "op://Agents/item/token"}, ["pi", "--help"])
-        op, args, env = execute.call_args.args
-        self.assertEqual(op, "/opt/homebrew/bin/op")
-        self.assertEqual(args, [op, "run", "--", "/usr/bin/env", "-u", auth.TOKEN_VAR, "pi", "--help"])
-        self.assertEqual(env[auth.TOKEN_VAR], FAKE_TOKEN)
-        self.assertNotIn("--no-masking", args)
+    def run_harness_with(self, reads, refs=None, which="/usr/bin/pi", parent=None):
+        refs = refs or {"KEY": "op://Agents/item/token", "OTHER": "op://Agents/other/key"}
+        parent = parent or {"PATH": "/usr/bin", "KEEP": "v", "OP_CONNECT_TOKEN": "old",
+                            "OP_SERVICE_ACCOUNT_TOKEN": "old-token", "AMBIENT": "op://Personal/x/y"}
+        with patch.dict(os.environ, parent, clear=True), \
+                patch.object(auth.subprocess, "run", side_effect=reads) as run, \
+                patch.object(auth.shutil, "which", return_value=which), \
+                patch.object(auth.os, "execve") as execute:
+            try:
+                auth.run_harness("/opt/homebrew/bin/op", FAKE_TOKEN, refs, ["pi", "--help"])
+            finally:
+                self.reads, self.execute = run, execute
+
+    def test_run_reads_each_ref_and_execs_without_service_token(self):
+        reads = [SimpleNamespace(returncode=0, stdout="resolved-1", stderr=""),
+                 SimpleNamespace(returncode=0, stdout="resolved-2", stderr="")]
+        self.run_harness_with(reads)
+        calls = self.reads.call_args_list
+        self.assertEqual([c.args[0] for c in calls], [
+            ["/opt/homebrew/bin/op", "read", "--no-newline", "op://Agents/item/token"],
+            ["/opt/homebrew/bin/op", "read", "--no-newline", "op://Agents/other/key"],
+        ])
+        for call in calls:
+            self.assertEqual(call.kwargs["env"][auth.TOKEN_VAR], FAKE_TOKEN)
+            self.assertNotIn("OP_CONNECT_TOKEN", call.kwargs["env"])
+            self.assertEqual(call.kwargs["timeout"], 60)
+            self.assertTrue(call.kwargs["capture_output"])
+        program, args, env = self.execute.call_args.args
+        self.assertEqual(program, "/usr/bin/pi")
+        self.assertEqual(args, ["pi", "--help"])
+        self.assertEqual((env["KEY"], env["OTHER"]), ("resolved-1", "resolved-2"))
+        self.assertEqual(env["KEEP"], "v")
+        self.assertNotIn(auth.TOKEN_VAR, env)
+        self.assertFalse(any(name.startswith("OP_") for name in env))
+        self.assertNotIn("AMBIENT", env)
         self.assertNotIn(FAKE_TOKEN, args)
+
+    def test_run_failed_read_never_execs_and_hides_values(self):
+        failures = (
+            [SimpleNamespace(returncode=0, stdout="resolved-1", stderr=""),
+             SimpleNamespace(returncode=1, stdout=FAKE_TOKEN, stderr=FAKE_TOKEN)],
+            [SimpleNamespace(returncode=0, stdout="resolved-1", stderr=""), subprocess.TimeoutExpired("op", 60)],
+            [SimpleNamespace(returncode=0, stdout="", stderr="")],
+        )
+        for reads in failures:
+            with self.subTest(reads=reads):
+                with self.assertRaises(ValueError) as error:
+                    self.run_harness_with(reads)
+                self.execute.assert_not_called()
+                for secret in (FAKE_TOKEN, "resolved-1"):
+                    self.assertNotIn(secret, str(error.exception))
+
+    def test_run_missing_command_never_execs(self):
+        reads = [SimpleNamespace(returncode=0, stdout="a", stderr=""),
+                 SimpleNamespace(returncode=0, stdout="b", stderr="")]
+        with self.assertRaises(ValueError):
+            self.run_harness_with(reads, which=None)
+        self.execute.assert_not_called()
 
     def test_check_suppresses_raw_success_and_failure_output(self):
         for code in (0, 1):
@@ -173,50 +221,6 @@ class AuthTests(unittest.TestCase):
                     patch.object(auth, "read_token") as read, self.assertRaises(ValueError):
                 auth.main()
             read.assert_not_called()
-
-    def test_process_boundary_injects_secret_but_not_service_token(self):
-        fake_op = self.directory / "op"
-        fake_op.write_text(f"""#!{sys.executable}
-import os, subprocess, sys
-assert os.environ['OP_SERVICE_ACCOUNT_TOKEN'] == {FAKE_TOKEN!r}
-assert 'OP_CONNECT_TOKEN' not in os.environ
-assert 'UNRELATED_REF' not in os.environ
-assert os.environ['HARNESS_SECRET'] == 'op://Agents/item/token'
-if os.environ.get('FAKE_FAIL'):
-    sys.exit(7)
-env = dict(os.environ)
-env['HARNESS_SECRET'] = 'synthetic-resolved-secret'
-sys.exit(subprocess.call(sys.argv[sys.argv.index('--') + 1:], env=env))
-""")
-        fake_op.chmod(0o755)
-        output = self.directory / "started"
-        harness = self.directory / "harness.py"
-        harness.write_text("""import os, pathlib, sys
-assert 'OP_SERVICE_ACCOUNT_TOKEN' not in os.environ
-assert 'OP_CONNECT_TOKEN' not in os.environ
-assert os.environ['HARNESS_SECRET'] == 'synthetic-resolved-secret'
-pathlib.Path(sys.argv[1]).write_text('started')
-sys.exit(9)
-""")
-        launcher = self.directory / "launcher.py"
-        launcher.write_text(f"""import importlib.util, sys
-spec = importlib.util.spec_from_file_location('auth', {str(SCRIPT)!r})
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
-module.run_harness({str(fake_op)!r}, {FAKE_TOKEN!r},
-    {{'HARNESS_SECRET': 'op://Agents/item/token'}},
-    [sys.executable, {str(harness)!r}, {str(output)!r}])
-""")
-        env = dict(os.environ, OP_CONNECT_TOKEN="old-connect", UNRELATED_REF="op://Personal/unrelated/token")
-        env.pop("FAKE_FAIL", None)
-        result = subprocess.run([sys.executable, str(launcher)], env=env, capture_output=True, text=True)
-        self.assertEqual(result.returncode, 9, result.stderr)
-        self.assertTrue(output.exists())
-        self.assertNotIn(FAKE_TOKEN, result.stdout + result.stderr)
-        output.unlink()
-        result = subprocess.run([sys.executable, str(launcher)], env=dict(env, FAKE_FAIL="1"), capture_output=True, text=True)
-        self.assertEqual(result.returncode, 7, result.stderr)
-        self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":

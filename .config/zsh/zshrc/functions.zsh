@@ -16,14 +16,9 @@ function dotfiles() {
   return 0
 }
 
-# macOS の通常 Pi は Safehouse + セッション専用の認証プロキシで起動。
-# インストール不備時に隔離なしの Pi へ fallback しない。
+# Pi は agent-auth 経由で起動し、1Password の key を起動時に環境変数へ注入する。
 function pi() {
-  if [[ "$OSTYPE" == darwin* ]]; then
-    "$HOME/.local/bin/pi-local" "$@"
-  else
-    "${DOTFILES_DIR:-$HOME/dotfiles}/.local/bin/agent-auth" run -- pi "$@"
-  fi
+  "${DOTFILES_DIR:-$HOME/dotfiles}/.local/bin/agent-auth" run -- pi "$@"
 }
 
 # ghq のリポジトリを「表示名<TAB>パス」で出す。表示名は ~ 始まり (~/git/kotorae, ~/dotfiles)。
