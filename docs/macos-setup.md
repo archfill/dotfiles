@@ -143,7 +143,7 @@ make init     # doctor → nix-darwin 初回 switch → Git 個人設定
   - Chrome リモート デスクトップ ホスト: 画面収録・アクセシビリティ
 - **日本語入力**: macOS 標準の日本語入力 (ローマ字入力) が入力ソースにあることを確認。
   切り替えは英数 / かなキー (⌃Space による入力ソース切替は無効化している)
-- **SSH の非公開の接続先**: 1Password のセキュアノート「SSH config (private)」の内容を `~/.ssh/config.d/private` に保存 (自宅サーバーなど。公開リポジトリのため dotfiles には入れない)。
+- **SSH の非公開の接続先**: 1Password のセキュアノート「SSH config(private)」の内容を `~/.ssh/config.d/private` に保存 (自宅サーバーなど。公開リポジトリのため dotfiles には入れない)。
   `~/.ssh/config` は `Include ~/.ssh/config.d/*` なので、`config.d/` にはバックアップなど設定以外のファイルを置かない。
   鍵は 1Password の SSH agent から使い、ホストごとに鍵を指定する場合は `IdentityFile` に**公開鍵** (`~/.ssh/<name>.pub`) を書く。秘密鍵のファイルはディスクに置かない
 - **Chrome リモート デスクトップ**: `remotedesktop.google.com/access` でこの Mac のリモートアクセスを有効化 (PIN 設定)
