@@ -44,14 +44,26 @@ sys.exit(1)
 '
 }
 
-prefetch_hash() {
-  local version="$1"
-  local os="$2"
-  local arch="$3"
+# Print the SRI hash for one asset from the release's published digest
+# (sha256:<hex>). Reads the release JSON passed as $4; no downloads.
+asset_hash() {
+  local os="$1"
+  local arch="$2"
+  local release_json="$3"
 
-  nix store prefetch-file --hash-type sha256 --json \
-    "https://github.com/earendil-works/pi/releases/download/v${version}/pi-${os}-${arch}.tar.gz" |
-    python3 -c 'import json,sys; print(json.load(sys.stdin)["hash"])'
+  python3 -c '
+import base64
+import json
+import sys
+
+name = f"pi-{sys.argv[1]}-{sys.argv[2]}.tar.gz"
+assets = {a["name"]: a.get("digest") or "" for a in json.loads(sys.argv[3]).get("assets", [])}
+digest = assets.get(name, "")
+if not digest.startswith("sha256:"):
+    print(f"No sha256 digest published for {name}", file=sys.stderr)
+    sys.exit(1)
+print("sha256-" + base64.b64encode(bytes.fromhex(digest[7:])).decode())
+' "$os" "$arch" "$release_json"
 }
 
 update_pi_nix() {
@@ -101,12 +113,15 @@ main() {
 
   echo "==> Updating Pi to v${version}"
 
+  echo "==> Reading published sha256 digests from the GitHub release"
+  local release_json
+  release_json="$(curl -fsSL "https://api.github.com/repos/earendil-works/pi/releases/tags/v${version}")"
+
   local hashes_json="{}"
   local entry system os arch hash
   for entry in "${platforms[@]}"; do
     IFS='|' read -r system os arch <<<"$entry"
-    echo "==> Prefetching $system"
-    hash="$(prefetch_hash "$version" "$os" "$arch")"
+    hash="$(asset_hash "$os" "$arch" "$release_json")"
     hashes_json="$(
       python3 -c \
         'import json,sys; data=json.loads(sys.argv[1]); data[sys.argv[2]]=sys.argv[3]; print(json.dumps(data))' \

@@ -49,13 +49,29 @@ sys.exit(1)
 '
 }
 
-prefetch_hash() {
+# Print a JSON map {platform: SRI hash} from the release's published asset
+# digests (sha256:<hex>). One API call covers every platform; no downloads.
+release_hashes() {
   local version="$1"
-  local platform="$2"
 
-  nix store prefetch-file --hash-type sha256 --json \
-    "https://github.com/openai/codex/releases/download/rust-v${version}/codex-package-${platform}.tar.gz" |
-    python3 -c 'import json,sys; print(json.load(sys.stdin)["hash"])'
+  curl -fsSL "https://api.github.com/repos/openai/codex/releases/tags/rust-v${version}" |
+    python3 -c '
+import base64
+import json
+import sys
+
+platforms = sys.argv[1:]
+assets = {a["name"]: a.get("digest") or "" for a in json.load(sys.stdin).get("assets", [])}
+result = {}
+for platform in platforms:
+    name = f"codex-package-{platform}.tar.gz"
+    digest = assets.get(name, "")
+    if not digest.startswith("sha256:"):
+        print(f"No sha256 digest published for {name}", file=sys.stderr)
+        sys.exit(1)
+    result[platform] = "sha256-" + base64.b64encode(bytes.fromhex(digest[7:])).decode()
+print(json.dumps(result))
+' "${platforms[@]}"
 }
 
 update_codex_nix() {
@@ -112,19 +128,9 @@ main() {
 
   echo "==> Updating Codex to v${version}"
 
-  local package_hashes_json="{"
-  local first=1
-  for platform in "${platforms[@]}"; do
-    echo "==> Prefetching complete package for ${platform}"
-    local hash
-    hash="$(prefetch_hash "$version" "$platform")"
-    if [[ "$first" -eq 0 ]]; then
-      package_hashes_json+=","
-    fi
-    package_hashes_json+="\"${platform}\":\"${hash}\""
-    first=0
-  done
-  package_hashes_json+="}"
+  echo "==> Reading published sha256 digests from the GitHub release"
+  local package_hashes_json
+  package_hashes_json="$(release_hashes "$version")"
 
   update_codex_nix "$version" "$package_hashes_json"
   echo "==> Updated nix/pkgs/codex/default.nix"

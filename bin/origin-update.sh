@@ -41,13 +41,24 @@ print(match.group(1))
 '
 }
 
-prefetch_hash() {
+# Print the SRI hash from Cursor's published co.tar.gz.sha256 (hex); the
+# tarball itself is not downloaded.
+fetch_hash() {
   local version="$1"
   local platform="$2"
 
-  nix store prefetch-file --hash-type sha256 --json \
-    "https://downloads.cursor.com/co/${version}/${platform}/co.tar.gz" |
-    python3 -c 'import json,sys; print(json.load(sys.stdin)["hash"])'
+  curl -fsSL "https://downloads.cursor.com/co/${version}/${platform}/co.tar.gz.sha256" |
+    python3 -c '
+import base64
+import re
+import sys
+
+match = re.match(r"\s*([0-9a-fA-F]{64})\b", sys.stdin.read())
+if match is None:
+    print("Invalid sha256 file content", file=sys.stderr)
+    sys.exit(1)
+print("sha256-" + base64.b64encode(bytes.fromhex(match.group(1))).decode())
+'
 }
 
 update_origin_nix() {
@@ -105,7 +116,7 @@ main() {
     exit 1
   fi
 
-  # 未変更なら prefetch (4 プラットフォーム分のダウンロード) をスキップする。
+  # 未変更なら sha256 取得 (4 プラットフォーム分の HTTP リクエスト) をスキップする。
   current_version="$(sed -n 's/^  version = "\(.*\)";$/\1/p' "$ORIGIN_NIX" | head -1)"
   if [[ "$version" == "$current_version" ]]; then
     echo "==> Already at stable Origin version $version; nothing to do"
@@ -118,8 +129,8 @@ main() {
   local entry system platform hash
   for entry in "${platforms[@]}"; do
     IFS='|' read -r system platform <<<"$entry"
-    echo "==> Prefetching $system"
-    hash="$(prefetch_hash "$version" "$platform")"
+    echo "==> Fetching published sha256 for $system"
+    hash="$(fetch_hash "$version" "$platform")"
     hashes_json="$(
       python3 -c \
         'import json,sys; data=json.loads(sys.argv[1]); data[sys.argv[2]]=sys.argv[3]; print(json.dumps(data))' \

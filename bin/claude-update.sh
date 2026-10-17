@@ -40,13 +40,28 @@ latest_version() {
   echo "$version"
 }
 
-prefetch_hash() {
+# Print a JSON map {platform: SRI hash} from the release manifest's published
+# sha256 checksums (hex). One small request covers every platform.
+manifest_hashes() {
   local version="$1"
-  local platform="$2"
+  shift
 
-  nix store prefetch-file --hash-type sha256 --json \
-    "$DOWNLOAD_BASE_URL/$version/$platform/claude" |
-    python3 -c 'import json,sys; print(json.load(sys.stdin)["hash"])'
+  curl -fsSL "$DOWNLOAD_BASE_URL/$version/manifest.json" |
+    python3 -c '
+import base64
+import json
+import sys
+
+platforms = json.load(sys.stdin).get("platforms", {})
+result = {}
+for platform in sys.argv[1:]:
+    checksum = (platforms.get(platform) or {}).get("checksum", "")
+    if len(checksum) != 64:
+        print(f"No sha256 checksum in manifest for {platform}", file=sys.stderr)
+        sys.exit(1)
+    result[platform] = "sha256-" + base64.b64encode(bytes.fromhex(checksum)).decode()
+print(json.dumps(result))
+' "$@"
 }
 
 update_claude_nix() {
@@ -98,20 +113,9 @@ main() {
 
   echo "==> Updating Claude Code to v${version}"
 
-  local hashes_json="{"
-  local first=1
-  for system in "${!PLATFORM_MAP[@]}"; do
-    local platform="${PLATFORM_MAP[$system]}"
-    echo "==> Prefetching ${platform} (~200MB)"
-    local hash
-    hash="$(prefetch_hash "$version" "$platform")"
-    if [[ "$first" -eq 0 ]]; then
-      hashes_json+=","
-    fi
-    hashes_json+="\"${platform}\":\"${hash}\""
-    first=0
-  done
-  hashes_json+="}"
+  echo "==> Reading sha256 checksums from the release manifest"
+  local hashes_json
+  hashes_json="$(manifest_hashes "$version" "${PLATFORM_MAP[@]}")"
 
   update_claude_nix "$version" "$hashes_json"
   echo "==> Updated nix/pkgs/claude-code/default.nix"
