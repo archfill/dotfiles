@@ -6,12 +6,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CURSOR_AGENT_NIX="$DOTFILES_DIR/nix/pkgs/cursor-agent/default.nix"
 
-platforms=(
-  "aarch64-darwin|darwin|arm64"
-  "x86_64-darwin|darwin|x64"
-  "x86_64-linux|linux|x64"
-  "aarch64-linux|linux|arm64"
-)
+# Nix system -> "os|arch" for Cursor's download URL.
+platform_for_system() {
+  case "$1" in
+    aarch64-darwin) echo "darwin|arm64" ;;
+    x86_64-darwin) echo "darwin|x64" ;;
+    x86_64-linux) echo "linux|x64" ;;
+    aarch64-linux) echo "linux|arm64" ;;
+    *) return 1 ;;
+  esac
+}
 
 usage() {
   cat <<'USAGE'
@@ -21,6 +25,10 @@ Usage:
 
 If VERSION is omitted, the version embedded in Cursor's official installer is
 used. The Nix package owns updates, so the CLI should use its static channel.
+
+Only the entry (version and hash) for the current machine's Nix system is
+updated; entries for other systems are left untouched and refreshed by running
+this script on those hosts.
 USAGE
 }
 
@@ -54,28 +62,26 @@ prefetch_hash() {
 }
 
 update_cursor_agent_nix() {
-  local version="$1"
-  local hashes_json="$2"
+  local system="$1"
+  local version="$2"
+  local hash="$3"
 
-  python3 - "$CURSOR_AGENT_NIX" "$version" "$hashes_json" <<'PY'
-import json
+  python3 - "$CURSOR_AGENT_NIX" "$system" "$version" "$hash" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 path = Path(sys.argv[1])
-version = sys.argv[2]
-hashes = json.loads(sys.argv[3])
+system, version, hash_value = sys.argv[2:5]
 text = path.read_text()
 
-text = re.sub(r'version = "[^"]+";', f'version = "{version}";', text, count=1)
-
-for system, hash_value in hashes.items():
-    pattern = rf'("{re.escape(system)}"\s*=\s*)"[^"]+";'
-    replacement = rf'\1"{hash_value}";'
-    text, count = re.subn(pattern, replacement, text, count=1)
-    if count != 1:
-        raise SystemExit(f"Missing hash entry for {system}")
+# Rewrite only this system's entry inside the `sources` attrset.
+pattern = rf'("{re.escape(system)}" = \{{\s*version = )"[^"]+"(;\s*hash = )"[^"]+"(;)'
+text, count = re.subn(
+    pattern, rf'\g<1>"{version}"\g<2>"{hash_value}"\g<3>', text, count=1
+)
+if count != 1:
+    raise SystemExit(f"Missing sources entry for {system}")
 
 path.write_text(text)
 PY
@@ -100,28 +106,34 @@ main() {
 
   echo "==> Cursor Agent version: $version"
 
-  # 未変更なら prefetch (4 プラットフォーム分のダウンロード) をスキップする。
-  current_version="$(sed -n 's/^  version = "\(.*\)";$/\1/p' "$CURSOR_AGENT_NIX" | head -1)"
+  local system platform os arch
+  system="$(nix eval --impure --raw --expr builtins.currentSystem)"
+  if ! platform="$(platform_for_system "$system")"; then
+    echo "Unsupported Nix system: $system" >&2
+    exit 1
+  fi
+  IFS='|' read -r os arch <<<"$platform"
+  if ! grep -q "^    \"$system\" = {" "$CURSOR_AGENT_NIX"; then
+    echo "No sources entry for $system in $CURSOR_AGENT_NIX" >&2
+    exit 1
+  fi
+
+  # 未変更なら prefetch をスキップする (自 system のエントリの version と比較)。
+  local current_version
+  current_version="$(
+    sed -n "/^    \"$system\" = {/,/};/s/^      version = \"\(.*\)\";\$/\1/p" "$CURSOR_AGENT_NIX" | head -1
+  )"
   if [[ "$version" == "$current_version" ]]; then
-    echo "==> Already at latest Cursor Agent version $version; nothing to do"
+    echo "==> $system is already at Cursor Agent version $version; nothing to do"
     exit 0
   fi
 
-  local hashes_json="{}"
-  local entry system os arch hash
-  for entry in "${platforms[@]}"; do
-    IFS='|' read -r system os arch <<<"$entry"
-    echo "==> Prefetching $system"
-    hash="$(prefetch_hash "$version" "$os" "$arch")"
-    hashes_json="$(
-      python3 -c \
-        'import json,sys; data=json.loads(sys.argv[1]); data[sys.argv[2]]=sys.argv[3]; print(json.dumps(data))' \
-        "$hashes_json" "$system" "$hash"
-    )"
-  done
+  echo "==> Prefetching $system"
+  local hash
+  hash="$(prefetch_hash "$version" "$os" "$arch")"
 
-  update_cursor_agent_nix "$version" "$hashes_json"
-  echo "==> Updated nix/pkgs/cursor-agent/default.nix"
+  update_cursor_agent_nix "$system" "$version" "$hash"
+  echo "==> Updated $system entry in nix/pkgs/cursor-agent/default.nix"
 }
 
 main "$@"

@@ -6,11 +6,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 GROK_BUILD_NIX="$DOTFILES_DIR/nix/pkgs/grok-build/default.nix"
 
-platforms=(
-  "aarch64-darwin|macos-aarch64"
-  "x86_64-linux|linux-x86_64"
-  "aarch64-linux|linux-aarch64"
-)
+# Nix system -> platform suffix in x.ai's download URL.
+platform_for_system() {
+  case "$1" in
+    aarch64-darwin) echo "macos-aarch64" ;;
+    x86_64-linux) echo "linux-x86_64" ;;
+    aarch64-linux) echo "linux-aarch64" ;;
+    *) return 1 ;;
+  esac
+}
 
 usage() {
   cat <<'USAGE'
@@ -21,6 +25,10 @@ Usage:
 If VERSION is omitted, the stable-channel version pointer
 (https://x.ai/cli/stable) is used. The Nix package owns updates, so the CLI
 should not update itself in place.
+
+Only the entry (version and hash) for the current machine's Nix system is
+updated; entries for other systems are left untouched and refreshed by running
+this script on those hosts.
 USAGE
 }
 
@@ -38,37 +46,28 @@ prefetch_hash() {
 }
 
 update_grok_build_nix() {
-  local version="$1"
-  local hashes_json="$2"
+  local system="$1"
+  local version="$2"
+  local hash="$3"
 
-  python3 - "$GROK_BUILD_NIX" "$version" "$hashes_json" <<'PY'
-import json
+  python3 - "$GROK_BUILD_NIX" "$system" "$version" "$hash" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 path = Path(sys.argv[1])
-version = sys.argv[2]
-hashes = json.loads(sys.argv[3])
+system, version, hash_value = sys.argv[2:5]
 text = path.read_text()
 
-# 置換対象を `hashes = {` 以降に限定する (platform attrset の行も同じ形を
-# しているため、素朴に置換すると platform 側の値を壊す)。
-head, sep, tail = text.partition("  hashes = {")
-if not sep:
-    raise SystemExit("hashes block not found")
-
-head, count = re.subn(r'(^  version = ")[^"]+(";$)', rf'\g<1>{version}\g<2>', head, count=1, flags=re.MULTILINE)
+# Rewrite only this system's entry inside the `sources` attrset.
+pattern = rf'("{re.escape(system)}" = \{{\s*version = )"[^"]+"(;\s*hash = )"[^"]+"(;)'
+text, count = re.subn(
+    pattern, rf'\g<1>"{version}"\g<2>"{hash_value}"\g<3>', text, count=1
+)
 if count != 1:
-    raise SystemExit("missing version line")
+    raise SystemExit(f"missing sources entry for {system}")
 
-for system, hash_value in hashes.items():
-    pattern = rf'(^    "{re.escape(system)}" = ")[^"]+(";$)'
-    tail, count = re.subn(pattern, rf'\g<1>{hash_value}\g<2>', tail, count=1, flags=re.MULTILINE)
-    if count != 1:
-        raise SystemExit(f"missing hash entry for {system}")
-
-Path(path).write_text(head + sep + tail)
+path.write_text(text)
 PY
 }
 
@@ -93,30 +92,34 @@ main() {
     exit 1
   fi
 
-  # 未変更なら prefetch (3 プラットフォーム分のダウンロード) をスキップする。
-  current_version="$(sed -n 's/^  version = "\(.*\)";$/\1/p' "$GROK_BUILD_NIX" | head -1)"
+  local system platform
+  system="$(nix eval --impure --raw --expr builtins.currentSystem)"
+  if ! platform="$(platform_for_system "$system")"; then
+    echo "Unsupported Nix system: $system" >&2
+    exit 1
+  fi
+  if ! grep -q "^    \"$system\" = {" "$GROK_BUILD_NIX"; then
+    echo "No sources entry for $system in $GROK_BUILD_NIX" >&2
+    exit 1
+  fi
+
+  # 未変更なら prefetch をスキップする (自 system のエントリの version と比較)。
+  local current_version
+  current_version="$(
+    sed -n "/^    \"$system\" = {/,/};/s/^      version = \"\(.*\)\";\$/\1/p" "$GROK_BUILD_NIX" | head -1
+  )"
   if [[ "$version" == "$current_version" ]]; then
-    echo "==> Already at stable Grok Build version $version; nothing to do"
+    echo "==> $system is already at Grok Build version $version; nothing to do"
     exit 0
   fi
 
   echo "==> Grok Build version: $version"
+  echo "==> Prefetching $system"
+  local hash
+  hash="$(prefetch_hash "$version" "$platform")"
 
-  local hashes_json="{}"
-  local entry system platform hash
-  for entry in "${platforms[@]}"; do
-    IFS='|' read -r system platform <<<"$entry"
-    echo "==> Prefetching $system"
-    hash="$(prefetch_hash "$version" "$platform")"
-    hashes_json="$(
-      python3 -c \
-        'import json,sys; data=json.loads(sys.argv[1]); data[sys.argv[2]]=sys.argv[3]; print(json.dumps(data))' \
-        "$hashes_json" "$system" "$hash"
-    )"
-  done
-
-  update_grok_build_nix "$version" "$hashes_json"
-  echo "==> Updated nix/pkgs/grok-build/default.nix"
+  update_grok_build_nix "$system" "$version" "$hash"
+  echo "==> Updated $system entry in nix/pkgs/grok-build/default.nix"
 }
 
 main "$@"

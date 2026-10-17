@@ -7,8 +7,6 @@
 }:
 
 let
-  version = "1.0.52";
-
   # https://x.ai/cli/stable の stable ポインタを固定する。更新は
   # `make grok-build-update` (bin/grok-build-update.sh) で行い、CLI 自身の
   # in-place update は使わない。nixpkgs の grok-build も同様の構成だが
@@ -19,19 +17,33 @@ let
     "aarch64-linux" = "linux-aarch64";
   };
 
-  hashes = {
-    "aarch64-darwin" = "sha256-wsqpiV3XYyl6dej7YHfhddnFMExTkD5Sz/iJGhOEu7k=";
-    "x86_64-linux" = "sha256-FmhBSwR+EFCpbSX+F9/D7+YxkPv2bYzBw96GM8r1DRE=";
-    "aarch64-linux" = "sha256-/DJBC2iDwVo5ufM+wEpr+30HCzg+XbrX77xIx4flBQ0=";
+  # Per-system pins: each host refreshes only its own entry with
+  # `make grok-build-update`, so other systems may lag behind.
+  sources = {
+    "aarch64-darwin" = {
+      version = "1.0.62";
+      hash = "sha256-7ENOgxr9z86HeA8oFf1zKx34pKjelqSRcWrXXRNgWk4=";
+    };
+    "x86_64-linux" = {
+      version = "1.0.62";
+      hash = "sha256-KkbZ5Nfr16nP9/lXFnFLGdrV8h3SpJeCJACx+xKJaao=";
+    };
+    "aarch64-linux" = {
+      version = "1.0.62";
+      hash = "sha256-C4CKIglyh4jS43w06hhG1GC0FSip/H7cdpi5597BL+E=";
+    };
   };
+  source =
+    sources.${stdenvNoCC.hostPlatform.system}
+      or (throw "grok-build prebuilt unavailable for ${stdenvNoCC.hostPlatform.system}");
 in
 stdenvNoCC.mkDerivation {
   pname = "grok-build";
-  inherit version;
+  inherit (source) version;
 
   src = fetchurl {
-    url = "https://x.ai/cli/grok-${version}-${platform.${stdenvNoCC.hostPlatform.system} or (throw "grok-build prebuilt unavailable for ${stdenvNoCC.hostPlatform.system}")}";
-    hash = hashes.${stdenvNoCC.hostPlatform.system};
+    url = "https://x.ai/cli/grok-${source.version}-${platform.${stdenvNoCC.hostPlatform.system}}";
+    inherit (source) hash;
   };
 
   dontUnpack = true;

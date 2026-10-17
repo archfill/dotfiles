@@ -7,8 +7,6 @@
 }:
 
 let
-  version = "2026.10.14-0f9edde";
-
   platformMap = {
     "aarch64-darwin" = {
       os = "darwin";
@@ -30,26 +28,39 @@ let
 
   platform = platformMap.${stdenv.hostPlatform.system} or null;
 
-  # Official installer version and archives. Refresh with
-  # `make cursor-agent-update` rather than the CLI's in-place updater.
-  hashes = {
-    "aarch64-darwin" = "sha256-78OYOe47wLBUZ81uS68jpD41ja5h0RUS2cW/TruzIXs=";
-    "x86_64-darwin" = "sha256-Ga5ivPUax5CcP0IsFAgygQyNzoAyDBvIz5IkNbD0sq4=";
-    "x86_64-linux" = "sha256-dPrJMf41eJgNBwcBhyt9q1Trh6mr+bbi5r4ZvuuRZ6c=";
-    "aarch64-linux" = "sha256-KAKOituCZsi3wA0RlQdl+/mjucrHepi3ySsXJkazX0s=";
+  # Per-system pins: each host refreshes only its own entry with
+  # `make cursor-agent-update`, so other systems may lag behind.
+  sources = {
+    "aarch64-darwin" = {
+      version = "2026.10.16-e3cb207";
+      hash = "sha256-XwTRlqhN21wgpKRmvddONpW/tEfjxKHmBxNksrlJfdA=";
+    };
+    "x86_64-darwin" = {
+      version = "2026.10.16-e3cb207";
+      hash = "sha256-kzcuOE6Tl7VLHk/bGBJmL2jnthwMYMs/L0t4jJ4HecQ=";
+    };
+    "x86_64-linux" = {
+      version = "2026.10.16-e3cb207";
+      hash = "sha256-OqP0jNejkJqYybPypAhfDAIQiL+CZpCyLGH0JMhD5VI=";
+    };
+    "aarch64-linux" = {
+      version = "2026.10.16-e3cb207";
+      hash = "sha256-TPB38VDrjR4nC/HeppcAGEw5pIR/4ZLVI/W7NNS2JZc=";
+    };
   };
+  source = sources.${stdenv.hostPlatform.system} or null;
 in
 
-assert platform != null
+assert platform != null && source != null
   || throw "cursor-agent prebuilt unavailable for ${stdenv.hostPlatform.system}";
 
 stdenv.mkDerivation {
   pname = "cursor-agent";
-  inherit version;
+  inherit (source) version;
 
   src = fetchurl {
-    url = "https://downloads.cursor.com/lab/${version}/${platform.os}/${platform.arch}/agent-cli-package.tar.gz";
-    hash = hashes.${stdenv.hostPlatform.system};
+    url = "https://downloads.cursor.com/lab/${source.version}/${platform.os}/${platform.arch}/agent-cli-package.tar.gz";
+    inherit (source) hash;
   };
 
   sourceRoot = "dist-package";
