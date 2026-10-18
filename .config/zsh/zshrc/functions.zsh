@@ -17,8 +17,10 @@ function dotfiles() {
 }
 
 # Pi は agent-auth 経由で起動し、1Password の key を起動時に環境変数へ注入する。
+# PI_BG_FEATURES は pi-background-tasks の機能選択: シェルジョブ(process)と読み取り専用委譲(delegate)のみ有効化。
 function pi() {
-  "${DOTFILES_DIR:-$HOME/dotfiles}/.local/bin/agent-auth" run -- pi "$@"
+  PI_BG_FEATURES="${PI_BG_FEATURES:-process,delegate}" \
+    "${DOTFILES_DIR:-$HOME/dotfiles}/.local/bin/agent-auth" run -- pi "$@"
 }
 
 # ghq のリポジトリを「表示名<TAB>パス」で出す。表示名は ~ 始まり (~/git/kotorae, ~/dotfiles)。
