@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "2.1.302";
+  version = "2.1.303";
 
   # Anthropic 公式 download service (native installer と同じ配布物)。
   # 単一の prebuilt native binary が platform 名ごとに置かれている。
@@ -24,10 +24,10 @@ let
 
   # SRI hashes for claude-code v${version}. Refresh: `make claude-update VERSION=...`
   hashes = {
-    "darwin-arm64" = "sha256-UmLOnehiQ/7Q0h7cObJxVV1WeA0BEuKxlEOf4cZmLTc=";
-    "darwin-x64"   = "sha256-uakTEU9Chw7I44hIyIyFXXP3MYeHHsLhrQW75UAp2aw=";
-    "linux-x64"    = "sha256-YNfrfxL7sopSUz/ovliECXQDViqgLcc5kaAhxwZ+KaU=";
-    "linux-arm64"  = "sha256-K9T05e1csJlVtJAJj3RTIctUkefqjHUroeO7AQza2xA=";
+    "darwin-arm64" = "sha256-0to7AD3Ai4i3IwRpAU/j4dxv6UvI9kjomzQXXTAmk3A=";
+    "darwin-x64"   = "sha256-bF1jtDVoxdYJY9QPBbAIfLA7pEqQdA0nrcUF9BV4Bts=";
+    "linux-x64"    = "sha256-N1mI9Fd1ZSQjRpXPLY9krOmcX2hoLkfqJIYqhDwZFFA=";
+    "linux-arm64"  = "sha256-84T0mCYzbUrASErGrJ2NFvZNJE0YbOIny9fMCIwDMV0=";
   };
 in
 
