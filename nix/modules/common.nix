@@ -81,6 +81,13 @@ in
     # Network
     wget
 
+    # Research: harness-configs の imozuru スキルが原文取得に使う
+    poppler-utils    # pdftotext / pdftoppm
+    # テキスト層の無い PDF の OCR。既定の全言語データは約 1GiB あるため絞る
+    (tesseract.override { enableLanguages = [ "eng" "jpn" ]; })
+    yt-dlp           # YouTube 字幕
+    inputs.ax.packages.${pkgs.stdenv.hostPlatform.system}.default  # HTML → markdown
+
     # Shells / runtime
     bash             # dotfiles スクリプトが bash 4+ (mapfile / declare -g) を要求
 
