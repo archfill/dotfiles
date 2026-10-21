@@ -22,4 +22,29 @@
   xdg.configFile."agent-auth/env.refs.example".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/agent-auth/env.refs.example";
+
+  # ai-company (Hermes / OpenClaw) のサンドボックスもこの VM で動かす。
+  # 自律エージェントのコンテナから見える範囲を絞るため、ホーム全体は VM に共有せず
+  # 必要なディレクトリだけを並べる (mounts を書くと既定のホーム共有は置き換わる)。
+  # mutableSettings: colima が書き出した colima.yaml にこの差分だけ上書きする。
+  services.colima.profiles.default = {
+    mutableSettings = true;
+    settings = {
+      cpu = 2;
+      memory = 4;
+      # Hermes は sandbox の bind 元に実体パスを使う。~/.hermes-hakua は互換 symlink の
+      # ため、そちらを共有すると VM 内で skills 等が空になる (~/git/mac-mini-hermes)。
+      mounts = let
+        home = config.home.homeDirectory;
+        hakua = "${home}/.local/state/ai-company/hermes-home/profiles/hakua";
+      in [
+        { location = "${home}/agents/hakua"; writable = true; }
+        { location = "${home}/agents/ritsuka"; writable = true; }
+        { location = "${hakua}/sandboxes"; writable = true; }
+        { location = "${hakua}/skills"; writable = false; }
+        { location = "${hakua}/cache"; writable = false; }
+        { location = "${hakua}/attachments"; writable = true; }
+      ];
+    };
+  };
 }
