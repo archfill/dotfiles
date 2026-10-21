@@ -95,7 +95,6 @@ in
       "android-platform-tools"
       "android-studio"
       "1password-cli"
-      "orbstack"
       "xcodes-app"
       "beekeeper-studio"
       # AI

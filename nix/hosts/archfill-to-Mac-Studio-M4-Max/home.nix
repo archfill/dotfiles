@@ -35,6 +35,18 @@ in
     HF_HOME = "/Volumes/Storage/archfill/Models/huggingface";
   };
 
+  # ~/git は外付けへの symlink のため、ホームだけ共有する colima の既定では
+  # リポジトリを bind mount できない。外付けも VM に共有する。
+  # mounts を書くと既定 (ホーム) が置き換わるのでホームも並べる。
+  # mutableSettings: colima が書き出した colima.yaml にこの差分だけ上書きする。
+  services.colima.profiles.default = {
+    mutableSettings = true;
+    settings.mounts = [
+      { location = config.home.homeDirectory; writable = true; }
+      { location = "/Volumes/Storage"; writable = true; }
+    ];
+  };
+
   xdg.configFile."asimov/config".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/asimov/config";

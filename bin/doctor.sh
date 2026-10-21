@@ -131,7 +131,7 @@ check_ssh_config() {
     ng "~/.ssh/config is a regular file (dotfiles will manage it)" \
       "接続先 (Host ブロック) があれば ~/.ssh/config.d/private に移す" \
       "  mkdir -p ~/.ssh/config.d && mv ~/.ssh/config ~/.ssh/config.d/private" \
-      "  (Host * / IdentityAgent / OrbStack の Include は dotfiles 側にあるので消してよい)"
+      "  (Host * / IdentityAgent は dotfiles 側にあるので消してよい)"
   else
     ok "~/.ssh/config not present yet (dotfiles will create it)"
   fi

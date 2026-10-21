@@ -10,7 +10,22 @@
   # iOS / Flutter開発ツール。
   home.packages = [
     pkgs.cocoapods
+    # Docker CLI (compose / buildx プラグイン同梱)。エンジンは下の Colima
+    pkgs.docker
   ];
+
+  # コンテナランタイム。launchd でログイン時に default プロファイルを起動し、
+  # docker context を colima に切り替える。VM の設定は colima の既定値
+  # (macOS 13+ は vz + virtiofs) のまま。DOCKER_HOST は context を
+  # 読まないツール (testcontainers 等) 向けに設定する。
+  services.colima = {
+    enable = true;
+    profiles.default = {
+      isActive = true;
+      isService = true;
+      setDockerHost = true;
+    };
+  };
 
   # Hammerspoon は login item として /nix の mount 前に起動し得るため、
   # home.file では管理しない。modules/darwin-system.nix の MJConfigFile で
@@ -24,7 +39,7 @@
   # そちらを優先するため、移行時に当該ディレクトリを手動削除すること:
   #   rm -rf ~/Library/Application\ Support/lazygit
 
-  # SSH の共通設定 (1Password SSH agent / OrbStack)。公開リポジトリのため
+  # SSH の共通設定 (1Password SSH agent)。公開リポジトリのため
   # 接続先は含めず、~/.ssh/config.d/private (1Password のセキュアノートが原本) を
   # Include する。既存の ~/.ssh/config (通常ファイル) があると switch が止まるので、
   # 接続先を config.d/private に移してから削除する (bin/doctor.sh が検出する)。
