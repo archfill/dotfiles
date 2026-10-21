@@ -122,6 +122,12 @@ in
 
   networking.hostName = "archfill-nixos";
 
+  # オンボード RTL8111H (r8169) で Wake-on-LAN (magic packet)。
+  # BIOS 側で ErP 無効 + PCI-E からの復帰を有効にしておくこと。
+  networking.interfaces.enp34s0.wakeOnLan.enable = true;
+  # NetworkManager が接続の既定値で WoL を上書きしないよう、全体の既定を magic にする
+  networking.networkmanager.connectionConfig."ethernet.wake-on-lan" = "magic";
+
   security.sudo.extraRules = [
     {
       users = [ "archfill" ];
@@ -197,6 +203,7 @@ in
     zed-editor
     pciutils
     usbutils
+    ethtool
   ];
 
   system.stateVersion = "26.05";
