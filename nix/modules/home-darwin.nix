@@ -24,6 +24,9 @@
       isActive = true;
       isService = true;
       setDockerHost = true;
+      # colima は runtime の無い colima.yaml を「設定なし」とみなし、ホストで
+      # mutableSettings を足しても既定値で起動する (v0.10.3 Config.Empty)。
+      settings.runtime = "docker";
     };
   };
 
