@@ -36,6 +36,7 @@
   openssl,
   pango,
   systemd,
+  tpm2-tss,
   vulkan-loader,
   xz,
 }:
@@ -99,6 +100,7 @@ let
     libxfixes
     libxrandr
     libxcb
+    tpm2-tss
   ];
 in
 stdenv.mkDerivation {

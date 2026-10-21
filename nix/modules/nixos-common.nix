@@ -6,6 +6,19 @@
     pkgs.lib.getName pkg == "android-cli"
     || pkgs.lib.getName pkg == "antigravity-cli";
 
+  # Qt 6.12 の uic が先頭 "::" 付きクラス名を拒否し mozc のビルドが失敗するため除去する
+  # (nixpkgs / upstream で修正されたら削除)
+  nixpkgs.overlays = [
+    (final: prev: {
+      mozc = prev.mozc.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace src/gui/dictionary_tool/dictionary_tool.ui \
+            --replace-fail '::mozc::gui::DictionaryContentTableWidget' 'mozc::gui::DictionaryContentTableWidget'
+        '';
+      });
+    })
+  ];
+
   networking.networkmanager.enable = true;
 
   time.timeZone = "Asia/Tokyo";
