@@ -82,6 +82,10 @@ make help             # 全コマンド表示
 - **ターミナル**: `.config/wezterm/` - モダンターミナル設定
 - **Git**: グローバル git 設定、lazygit 統合
 
+macOS では [1Password Service Account 認証](docs/agent-auth.md)を設定し、`~/.config/agent-auth/env.refs` と wrapper がある場合、Zsh の `pi` コマンドが自動で `agent-auth` を経由します。GLM Coding Plan は `pi --model zai/glm-5.3` で起動できます。認証設定後はシェルを再読み込みしてください。`command pi` は wrapper を経由しません。
+
+参照は `op read` で解決し、ハーネスを直接 exec するため、対話起動でも端末はそのまま渡ります。op の出力マスキングは使わないため、ハーネスが出力した秘密情報は伏せられません。
+
 ## 🌍 プラットフォーム対応
 
 | プラットフォーム | 管理レイヤー | デスクトップ / WM | 備考 |

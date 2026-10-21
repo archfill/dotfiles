@@ -131,3 +131,6 @@ setup_android_sdk "$HOME/Android/Sdk"  # Common Linux location
 
 # ===== Local Overrides =====
 if [ -f "$HOME/zshenv_local.zsh" ]; then . "$HOME/zshenv_local.zsh"; fi
+
+# Reconcile the managed CLI path after shell-specific PATH setup.
+[[ -f "$ZDOTDIR/lib/agent-cli.zsh" ]] && source "$ZDOTDIR/lib/agent-cli.zsh"

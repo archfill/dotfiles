@@ -144,3 +144,6 @@ if command_exists mise; then
   eval "$(mise activate zsh --shims)" 2>/dev/null || true
 fi
 
+
+# Reconcile the managed CLI path after shell-specific PATH setup.
+[[ -f "$ZDOTDIR/lib/agent-cli.zsh" ]] && source "$ZDOTDIR/lib/agent-cli.zsh"

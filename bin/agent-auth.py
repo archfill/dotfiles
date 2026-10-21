@@ -16,7 +16,7 @@ SERVICE = "com.archfill.agent-auth.service-account"
 TOKEN_VAR = "OP_SERVICE_ACCOUNT_TOKEN"
 RESERVED = {
     "PATH", "HOME", "SHELL", "ENV", "BASH_ENV", "ZDOTDIR",
-    "PYTHONPATH", "PYTHONHOME", "__PYVENV_LAUNCHER__",
+    "PYTHONPATH", "PYTHONHOME", "__PYVENV_LAUNCHER__", "AGENT_AUTH_ACTIVE",
 }
 
 
@@ -44,13 +44,26 @@ def read_token(home, account):
             str(home / "Library/Keychains/login.keychain-db"),
         ], capture_output=True, text=True, timeout=30, check=False)
     except (OSError, subprocess.TimeoutExpired) as error:
-        raise ValueError("Cannot access login Keychain; unlock it and check item permissions") from error
+        raise ValueError("Cannot access login Keychain; run agent-auth unlock in a terminal and check item permissions") from error
     if result.returncode != 0:
-        raise ValueError("Service account item unavailable; check login Keychain and access permissions")
+        raise ValueError("Service account item unavailable; run agent-auth unlock in a terminal, then check item access permissions")
     token = result.stdout.strip()
     if not token or any(char.isspace() for char in token):
         raise ValueError("Keychain item contains an empty or invalid service account token")
     return token
+
+
+def unlock_keychain(home):
+    # security prompts on the terminal; passwords never enter argv or Python.
+    if not sys.stdin.isatty() or not sys.stderr.isatty():
+        raise ValueError("Keychain unlock requires a terminal; reconnect with ssh -t and run agent-auth unlock")
+    result = subprocess.run([
+        "/usr/bin/security", "unlock-keychain",
+        str(home / "Library/Keychains/login.keychain-db"),
+    ], check=False)
+    if result.returncode != 0:
+        raise ValueError("Keychain unlock failed")
+    print("Login Keychain unlocked; retry the harness command")
 
 
 def load_refs(path):
@@ -113,7 +126,7 @@ def check_auth(op, token):
 
 
 def run_harness(op, token, refs, command):
-    # `op run` pipes the child's stdout/stderr, which breaks TUIs. Resolve each
+    # Running under op pipes the child's stdout/stderr, which breaks TUIs. Resolve each
     # reference with `op read` and execve the harness directly to keep the tty.
     # The service account token is used only for these reads, never passed on.
     read_env = op_environment(token, {})
@@ -139,6 +152,9 @@ def run_harness(op, token, refs, command):
         if not name.startswith("OP_") and not value.startswith("op://")
     }
     env.update(values)
+    # Avoid reacquiring credentials when explicit `run -- pi` reaches the
+    # runtime's executable wrapper. This flag carries no credentials.
+    env["AGENT_AUTH_ACTIVE"] = "1"
     os.execve(program, [command[0], *command[1:]], env)
 
 
@@ -146,24 +162,36 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
     sub.add_parser("check", help="Check Keychain and service account authentication without showing secrets")
+    sub.add_parser("unlock", help="Unlock login Keychain using a terminal password prompt (SSH: ssh -t)")
     launch = sub.add_parser("run", help="Inject configured secrets and start a harness")
+    automatic = sub.add_parser("auto", help=argparse.SUPPRESS)
+    automatic.add_argument("command", nargs=argparse.REMAINDER)
     launch.add_argument("--env-file", type=Path, help="Reference-only env file (default: ~/.config/agent-auth/env.refs)")
     launch.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if sys.platform != "darwin" or os.getuid() == 0:
         raise ValueError("Run as the existing macOS user, without sudo")
-    op = find_op()
     user = pwd.getpwuid(os.getuid())
     home = Path(user.pw_dir)
+    if args.action == "unlock":
+        unlock_keychain(home)
+        return
     refs = {}
     command = []
-    if args.action == "run":
+    if args.action in ("run", "auto"):
         command = args.command
         if command and command[0] == "--":
             command = command[1:]
         if not command:
             raise ValueError("Specify a harness command after run --")
-        refs = load_refs(args.env_file or home / ".config/agent-auth/env.refs")
+        refs_path = getattr(args, "env_file", None) or home / ".config/agent-auth/env.refs"
+        if args.action == "auto":
+            informational = len(command) == 2 and command[1] in ("--version", "--help")
+            if informational or os.environ.get("AGENT_AUTH_ACTIVE") == "1" or not refs_path.exists():
+                os.execvp(command[0], command)
+                return
+        refs = load_refs(refs_path)
+    op = find_op()
     token = read_token(home, user.pw_name)
     if args.action == "check":
         check_auth(op, token)

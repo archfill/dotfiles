@@ -28,6 +28,101 @@ class AuthTests(unittest.TestCase):
         self.directory = Path(self.temp.name).resolve()
         self.refs = self.directory / "env.refs"
 
+    def test_unlock_uses_terminal_prompt_without_password_arguments(self):
+        with patch.object(auth.sys.stdin, "isatty", return_value=True), \
+                patch.object(auth.sys.stderr, "isatty", return_value=True), \
+                patch.object(auth.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run, \
+                redirect_stdout(io.StringIO()):
+            auth.unlock_keychain(self.directory)
+        run.assert_called_once_with([
+            "/usr/bin/security", "unlock-keychain",
+            str(self.directory / "Library/Keychains/login.keychain-db"),
+        ], check=False)
+
+    def test_unlock_without_terminal_never_starts_security(self):
+        for stdin, stderr in ((False, False), (True, False), (False, True)):
+            with patch.object(auth.sys.stdin, "isatty", return_value=stdin), \
+                    patch.object(auth.sys.stderr, "isatty", return_value=stderr), \
+                    patch.object(auth.subprocess, "run") as run, \
+                    self.assertRaisesRegex(ValueError, "ssh -t"):
+                auth.unlock_keychain(self.directory)
+            run.assert_not_called()
+
+    def test_unlock_failure_is_reported(self):
+        with patch.object(auth.sys.stdin, "isatty", return_value=True), \
+                patch.object(auth.sys.stderr, "isatty", return_value=True), \
+                patch.object(auth.subprocess, "run", return_value=SimpleNamespace(returncode=1)), \
+                self.assertRaisesRegex(ValueError, "unlock failed"):
+            auth.unlock_keychain(self.directory)
+
+    def test_unlock_does_not_require_op_or_read_the_token(self):
+        with patch.object(auth.sys, "argv", ["agent-auth", "unlock"]), \
+                patch.object(auth.sys, "platform", "darwin"), \
+                patch.object(auth.os, "getuid", return_value=501), \
+                patch.object(auth.pwd, "getpwuid", return_value=SimpleNamespace(pw_dir=str(self.directory))), \
+                patch.object(auth, "find_op") as op, \
+                patch.object(auth, "read_token") as token, \
+                patch.object(auth, "unlock_keychain") as unlock:
+            auth.main()
+        unlock.assert_called_once_with(self.directory)
+        op.assert_not_called()
+        token.assert_not_called()
+
+    def test_auto_mode_injects_for_configured_direct_execution(self):
+        config = self.directory / '.config/agent-auth/env.refs'
+        config.parent.mkdir(parents=True)
+        config.write_text('KEY=op://Agents/item/token\n')
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(auth.sys, 'argv', ['agent-auth', 'auto', '--', '/runtime/pi', '-p', 'two words']), \
+                patch.object(auth.sys, 'platform', 'darwin'), patch.object(auth.os, 'getuid', return_value=501), \
+                patch.object(auth.pwd, 'getpwuid', return_value=SimpleNamespace(pw_dir=str(self.directory), pw_name='archfill')), \
+                patch.object(auth, 'find_op', return_value='/fake/op'), \
+                patch.object(auth, 'read_token', return_value=FAKE_TOKEN), \
+                patch.object(auth, 'run_harness') as run:
+            auth.main()
+        run.assert_called_once_with('/fake/op', FAKE_TOKEN, {'KEY': 'op://Agents/item/token'},
+                                    ['/runtime/pi', '-p', 'two words'])
+
+    def test_auto_mode_discovery_and_nested_auth_do_not_read_keychain(self):
+        config = self.directory / '.config/agent-auth/env.refs'
+        config.parent.mkdir(parents=True)
+        config.write_text('KEY=op://Agents/item/token\n')
+        for tail, active in ((['--version'], ''), (['--help'], ''), (['-p', 'two words'], '1')):
+            with patch.dict(os.environ, {'AGENT_AUTH_ACTIVE': active}, clear=True), \
+                    patch.object(auth.sys, 'argv', ['agent-auth', 'auto', '--', '/runtime/pi', *tail]), \
+                    patch.object(auth.sys, 'platform', 'darwin'), patch.object(auth.os, 'getuid', return_value=501), \
+                    patch.object(auth.pwd, 'getpwuid', return_value=SimpleNamespace(pw_dir=str(self.directory), pw_name='archfill')), \
+                    patch.object(auth, 'find_op') as op, patch.object(auth, 'read_token') as read, \
+                    patch.object(auth.os, 'execvp') as execute:
+                auth.main()
+            execute.assert_called_once_with('/runtime/pi', ['/runtime/pi', *tail])
+            read.assert_not_called()
+            op.assert_not_called()
+
+    def test_auto_mode_without_refs_preserves_native_auth(self):
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(auth.sys, 'argv', ['agent-auth', 'auto', '--', '/runtime/pi', '-p', 'test']), \
+                patch.object(auth.sys, 'platform', 'darwin'), patch.object(auth.os, 'getuid', return_value=501), \
+                patch.object(auth.pwd, 'getpwuid', return_value=SimpleNamespace(pw_dir=str(self.directory), pw_name='archfill')), \
+                patch.object(auth, 'read_token') as read, patch.object(auth.os, 'execvp') as execute:
+            auth.main()
+        execute.assert_called_once_with('/runtime/pi', ['/runtime/pi', '-p', 'test'])
+        read.assert_not_called()
+
+    def test_auto_mode_invalid_refs_does_not_fall_back_to_native_auth(self):
+        config = self.directory / '.config/agent-auth/env.refs'
+        config.parent.mkdir(parents=True)
+        config.write_text('KEY=plaintext\n')
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(auth.sys, 'argv', ['agent-auth', 'auto', '--', '/runtime/pi']), \
+                patch.object(auth.sys, 'platform', 'darwin'), patch.object(auth.os, 'getuid', return_value=501), \
+                patch.object(auth.pwd, 'getpwuid', return_value=SimpleNamespace(pw_dir=str(self.directory), pw_name='archfill')), \
+                patch.object(auth, 'read_token') as read, patch.object(auth.os, 'execvp') as execute, \
+                self.assertRaises(ValueError):
+            auth.main()
+        read.assert_not_called()
+        execute.assert_not_called()
+
     def test_op_uses_homebrew_path_not_project_path(self):
         import stat
         mode = SimpleNamespace(st_mode=stat.S_IFREG | 0o755)
@@ -50,7 +145,7 @@ class AuthTests(unittest.TestCase):
                      "KEY=op://$VAULT/b/c", "KEY=op://a/b/c\x00x",
                      "KEY='op://a/b/c'", "OP_SERVICE_ACCOUNT_TOKEN=op://a/b/c",
                      "OP_CONNECT_TOKEN=op://a/b/c", "PATH=op://a/b/c", "HOME=op://a/b/c",
-                     "BASH_ENV=op://a/b/c", "PYTHONPATH=op://a/b/c", "DYLD_INSERT_LIBRARIES=op://a/b/c",
+                     "BASH_ENV=op://a/b/c", "AGENT_AUTH_ACTIVE=op://a/b/c", "PYTHONPATH=op://a/b/c", "DYLD_INSERT_LIBRARIES=op://a/b/c",
                      "KEY=op://a/b/c\nKEY=op://a/b/d"):
             with self.subTest(text=text):
                 self.refs.write_text(text)
@@ -147,6 +242,7 @@ class AuthTests(unittest.TestCase):
         self.assertNotIn(auth.TOKEN_VAR, env)
         self.assertFalse(any(name.startswith("OP_") for name in env))
         self.assertNotIn("AMBIENT", env)
+        self.assertEqual(env["AGENT_AUTH_ACTIVE"], "1")
         self.assertNotIn(FAKE_TOKEN, args)
 
     def test_run_failed_read_never_execs_and_hides_values(self):
@@ -221,6 +317,56 @@ class AuthTests(unittest.TestCase):
                     patch.object(auth, "read_token") as read, self.assertRaises(ValueError):
                 auth.main()
             read.assert_not_called()
+
+    def test_process_boundary_injects_secret_but_not_service_token(self):
+        fake_op = self.directory / "op"
+        fake_op.write_text(f"""#!{sys.executable}
+import os, sys
+assert sys.argv[1:] == ['read', '--no-newline', 'op://Agents/item/token']
+assert os.environ['OP_SERVICE_ACCOUNT_TOKEN'] == {FAKE_TOKEN!r}
+assert 'OP_CONNECT_TOKEN' not in os.environ
+assert 'UNRELATED_REF' not in os.environ
+if os.environ.get('FAKE_FAIL'):
+    sys.exit(7)
+sys.stdout.write('synthetic-resolved-secret')
+""")
+        fake_op.chmod(0o755)
+        output = self.directory / "started"
+        harness = self.directory / "harness.py"
+        harness.write_text("""import os, pathlib, sys
+assert 'OP_SERVICE_ACCOUNT_TOKEN' not in os.environ
+assert os.environ['AGENT_AUTH_ACTIVE'] == '1'
+assert 'OP_CONNECT_TOKEN' not in os.environ
+assert 'UNRELATED_REF' not in os.environ
+assert os.environ['HARNESS_SECRET'] == 'synthetic-resolved-secret'
+pathlib.Path(sys.argv[1]).write_text('started')
+sys.exit(9)
+""")
+        launcher = self.directory / "launcher.py"
+        launcher.write_text(f"""import importlib.util, sys
+spec = importlib.util.spec_from_file_location('auth', {str(SCRIPT)!r})
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+try:
+    module.run_harness({str(fake_op)!r}, {FAKE_TOKEN!r},
+        {{'HARNESS_SECRET': 'op://Agents/item/token'}},
+        [sys.executable, {str(harness)!r}, {str(output)!r}])
+except ValueError as error:
+    print(f'agent-auth: {{error}}', file=sys.stderr)
+    sys.exit(1)
+""")
+        env = dict(os.environ, OP_CONNECT_TOKEN="old-connect", UNRELATED_REF="op://Personal/unrelated/token")
+        env.pop("FAKE_FAIL", None)
+        result = subprocess.run([sys.executable, str(launcher)], env=env, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 9, result.stderr)
+        self.assertTrue(output.exists())
+        self.assertNotIn(FAKE_TOKEN, result.stdout + result.stderr)
+        output.unlink()
+        result = subprocess.run([sys.executable, str(launcher)], env=dict(env, FAKE_FAIL="1"), capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("Could not read the secret for HARNESS_SECRET", result.stderr)
+        self.assertNotIn(FAKE_TOKEN, result.stdout + result.stderr)
+        self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":

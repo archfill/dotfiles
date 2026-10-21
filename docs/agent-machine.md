@@ -1,8 +1,29 @@
-# Mac mini をエージェント専用機として運用する
+# Mac mini を AI 開発の実行サーバーとして運用する
 
 対象: `archfill-to-Mac-mini-M1`。**既存ユーザー `archfill` のまま運用し、別ユーザーは作成しない。**
 Mac Studio / Linux の既存管理方式は変更しない。
 この変更は設定と手順だけ。CLI 配備・darwin switch は自動実行しない。
+
+## 実行の目的
+
+スマホ等の ChatGPT から依頼し、Mac mini 上の Codex / ローカル実行環境が開発を行う。
+必要に応じて Claude Code / Pi / Devin 等のハーネスを子プロセスとして呼び出す。
+人の SSH 接続はサーバー管理用で、ハーネス利用の前提にしない。
+
+CLI は `/opt/agent-runtime/profile/bin` の executable として提供する。
+Zsh の関数・対話ログイン・tmux に依存せず、`sh` や Python の `subprocess` から同じ入口を使う。
+Pi の参照ファイルが設定済みなら起動時に Keychain / 1Password から認証を供給する。
+Claude / Codex の subscription login は継続し、API key へ自動で切り替えない。
+起動する実行環境が shell 初期化を読まない場合は、CLI の絶対パスを使う。
+
+```python
+subprocess.run(["/opt/agent-runtime/profile/bin/pi", "-p", "開発タスク"], check=True)
+```
+
+`pi --version` / `pi --help` は認証取得なしで実行できる。
+Keychain がロック中・item が利用不可ならハーネスは失敗し、端末での管理操作を案内する。
+開発タスクからの自動解除や GUI 操作は行わない。`agent-auth check` で実行アカウントからの
+読み取りを事前検証する。再起動直後のログイン・接続維持は CLI 配備とは別の条件。
 
 ## 管理方式
 
@@ -117,7 +138,13 @@ origin --version
 ```
 
 CLI が `/opt/agent-runtime/profile/bin` から解決されることを確認する。
-別の手動インストールが PATH の先頭にある場合は、二重管理を解消する。
+Zsh は `.config/zsh/lib/agent-cli.zsh` を起動時に読み、runtime を `~/.local/bin` より前に置く。
+既存の project tools / mise の PATH 順序は維持し、login / interactive 初期化の後でも再調整する。
+runtime 内の `claude` executable は `claude update` / `claude install` を拒否し、dotfiles の更新手順を表示する。
+この保護は `sh` / `subprocess` からも有効。`whence -p claude` で実体の PATH を確認できる。
+別の手動インストールを見つけた場合は、二重管理を解消する。
+Mac mini の `pi` は executable 入口で認証するため、Codex の直接呼び出しでも同じ認証経路を使う。
+Keychain がロックされている場合は、TTY 付き SSH 接続で `agent-auth unlock` を実行する（[認証手順](agent-auth.md)）。
 非 zsh の shell や launchd など、Home Manager の session 設定を読まない起動経路では
 PATH を明示し、CLI executable は `/opt/agent-runtime/profile/bin/claude` などの絶対パスで指定する。
 長時間のセッションでは混在を避けるため、タスク開始時に

@@ -50,3 +50,6 @@ source-safe "$HOME/zshrc_local.zsh"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# Reconcile the managed CLI path after shell-specific PATH setup.
+[[ -f "$ZDOTDIR/lib/agent-cli.zsh" ]] && source "$ZDOTDIR/lib/agent-cli.zsh"

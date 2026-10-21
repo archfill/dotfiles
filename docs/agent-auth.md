@@ -8,9 +8,9 @@ Service Account token は **login Keychain** に保管し、`.zshenv` / plist / 
 macOS ログイン → login Keychain のロック解除
 agent-auth run -- pi
   → Keychain から Service Account token を取得
-  → op run が env.refs の参照を解決
-  → bootstrap token を除去
-  → 必要な秘密情報だけを受け取った Pi を起動
+  → op read が env.refs の参照を 1 件ずつ解決
+  → OP_* と op:// 値を除いた環境に解決値を設定
+  → 必要な秘密情報だけを受け取った Pi を execve で直接起動
 ```
 
 この機能は実装と手順のみ。実際の token 登録・Keychain アクセス・認証・Nix の反映は自動実行しない。
@@ -28,7 +28,7 @@ Service Account にはこの vault の read 権限だけを付ける。不要な
 変更が必要なら新しい account / token を用意して切り替える。
 
 CLI は `op` 2.18.0 以上が必要。Homebrew の `1password-cli` cask は既存の宣言で導入される。
-この実装は標準の `op run` と secret references を使用し、Environments beta の CLI 機能には依存しない。
+この実装は標準の `op read` と secret references を使用し、Environments beta の CLI 機能には依存しない。
 
 ## 2. token を login Keychain に登録する（人が一度だけ実施）
 
@@ -101,10 +101,45 @@ Home Manager の反映前は `~/dotfiles/.local/bin/agent-auth` を直接実行�
 Python 3 と起動する CLI が PATH に必要。`op` はプロジェクトの PATH を信用せず、
 Homebrew の `/opt/homebrew/bin/op` または `/usr/local/bin/op` を使用する。sudo は使わない。
 `check` は Keychain と `op whoami` の成功だけを確認し、token・アカウント情報・CLI の生のエラーは表示しない。
-各 secret にアクセスできるかは `run` で確認する。参照解決に失敗すると op がハーネスの起動前に終了する。
+各 secret にアクセスできるかは `run` で確認する。参照解決に失敗するとハーネスを起動せずに終了する。
 
-通常の `pi` / `codex` / `claude` コマンドを自動で置換しない。
-**注入が必要なセッションは `agent-auth run -- ...` から起動する。**
+Mac mini の独立 runtime では、`pi` 自体の executable が `agent-auth auto` を経由する。
+Zsh 関数の有無によらず `sh` / Python `subprocess` / Codex の子プロセスで認証を供給する。
+実行環境は `/opt/agent-runtime/profile/bin/pi` を直接指定できる。
+
+- 参照ファイルがある通常起動: 検証 → Keychain → `op read` → 実際の Pi。
+- 参照ファイルが不正、取得・参照解決に失敗: 起動を中止する。
+- 参照ファイルがない場合: Pi 本来の認証方式を維持する。
+- `--version` / `--help` だけの呼び出し: Keychain を読まず実行する。
+- 明示的な `agent-auth run -- pi ...` の内側: 非秘密の `AGENT_AUTH_ACTIVE=1` を見て二重注入を避ける。
+
+この marker は認証や権限の証明ではなく、同じユーザーのプロセス内での重複防止に限る。
+参照ファイルからの marker 上書きは拒否する。
+他ホスト向けの従来の Zsh 関数は runtime wrapper 未導入の場合だけ使用する。
+
+### SSH からの Keychain 解除
+
+SSH 接続だけで login Keychain が利用可能になることは前提にしない。
+ロックされている場合は、端末から明示的に解除して起動し直す。
+
+```bash
+ssh -t host
+agent-auth unlock
+pi
+```
+
+`agent-auth unlock` は `security unlock-keychain` の端末入力を使う。
+パスワードは引数・環境変数・設定ファイルに保存しない。非 TTY では実行を拒否する。
+解除後も item の Access Control によって GUI 承認が必要な場合は、初回に実機で権限を設定する。
+自動解除・Keychain のロック方針変更は行わない。
+
+解除はその SSH セッションにだけ効く (macOS は SSH ログインごとに security session を分ける)。
+同じセッションで解除してからハーネスを起動する。tmux は server を起動したセッションで解除すれば全ペインで使える。
+GUI ログイン中の launchd ジョブ (エージェント) は解除操作なしで読める。
+
+認証・参照解決に失敗した場合は起動を中止する。Mac mini の `command pi` も executable wrapper を経由する。
+`codex` / `claude` で参照注入が必要なスクリプトでは、
+**注入が必要なセッションを `agent-auth run -- ...` から起動する。**
 launchd 等でハーネスを起動する際も、この wrapper を使い、Python / CLI が見える PATH を指定する。
 現在の実装では自動起動ジョブは追加しない。
 
@@ -119,24 +154,24 @@ Service Account token がハーネスに渡らないため、子プロセスで�
   - 伝播: 起動ごとに固定 service・現在の OS account・login Keychain から再取得。token の常駐 cache は作らない。
   - 非同期: security の取得は最大 30 秒。未登録・ロック・拒否・timeout は static error で終了し、op / ハーネスを起動しない。
   - 劣化: desktop authentication や平文ファイルへの fallback はしない。token 更新後の次の起動で再取得する。
-- **参照ファイル / `agent-auth` と `op run`**
-  - 伝播: wrapper が起動ごとに読み、検証済みの参照を op の環境へ設定する。op に参照ファイルを再読込させない。
-  - 非同期: 空・不正・予約変数は Keychain 取得前に拒否。別セッションはそれぞれ独立して参照を解決する。
-  - 劣化: Personal vault、権限不足、期限切れ token、ネットワーク障害は op が失敗し、ハーネスを起動しない。
-- **Service Account token / `op` と bootstrap の `env` プロセス**
-  - 伝播: wrapper は `os.execve` で op に token を渡す。op の子の `/usr/bin/env -u OP_SERVICE_ACCOUNT_TOKEN` が除去する。
-  - 非同期: op とハーネスは同じ foreground process tree。通常の終了 code・割り込みは op に委ねる。token の自前ログは作らない。
-  - 劣化: 親の `OP_*` と無関係な ambient `op://` 参照は除去して別認証の混入を防ぐ。check の stdout / stderr は公開しない。
+- **参照ファイル / `agent-auth` と `op read`**
+  - 伝播: wrapper が起動ごとに読み、検証済みの参照を 1 件ずつ `op read --no-newline` で解決する。op に参照ファイルを渡さない。
+  - 非同期: 空・不正・予約変数は Keychain 取得前に拒否。各 read は最大 60 秒。別セッションはそれぞれ独立して参照を解決する。
+  - 劣化: Personal vault、権限不足、期限切れ token、ネットワーク障害、空の値は read の失敗として扱い、op の生の出力は表示せずハーネスを起動しない。
+- **Service Account token / `op read` のプロセス**
+  - 伝播: token は `op read` の環境にだけ渡す。ハーネスの環境からは親の `OP_*` と ambient `op://` 値を除去し、`AGENT_AUTH_ACTIVE=1` を付ける。
+  - 非同期: ハーネスは op を親にせず `os.execve` で直接起動する。TTY はそのまま渡り、終了 code・シグナルはハーネスから直接返る。token の自前ログは作らない。
+  - 劣化: 親の `OP_*` と無関係な ambient `op://` 参照は除去して別認証の混入を防ぐ。check / read の stdout / stderr は公開しない。
 - **解決済み secrets / ハーネスとその子プロセス**
-  - 伝播: 指定した参照の解決結果を環境変数で渡す。bootstrap token は渡さない。op の標準 output masking は維持する。
+  - 伝播: 指定した参照の解決結果を環境変数で渡す。bootstrap token は渡さない。op の output masking は対話・非対話とも使わないため、ハーネスや子プロセスが出力した秘密情報は自動で伏せられない。
   - 非同期: 実行中の secrets は自動更新しない。rotation 後はセッションを再起動する。
   - 劣化: 親 shell・launchctl は変更しない。ただし既に親が持っていた通常の環境変数は引き継ぐ。
 
 これは同じ OS ユーザー内での供給範囲の整理であり、ユーザー権限のセキュリティ境界ではない。
 `/usr/bin/security` に読み取りを許可すれば、同じユーザーの他プロセスもそれを起動できる。
-注入した secrets はハーネスの子プロセスから使える。op の masking も、ファイル出力・別表現への変換まで
-防ぐものではない。Service Account の vault と credentials 自体の権限を限定する。
+注入した secrets はハーネスの子プロセスから使え、出力も伏せられない。
+Service Account の vault と credentials 自体の権限を限定する。
 
 参考: [Service Account CLI](https://www.1password.dev/service-accounts/use-with-1password-cli)、
-[op run](https://www.1password.dev/cli/reference/commands/run)、
+[op read](https://www.1password.dev/cli/reference/commands/read)、
 [Service Account limitations](https://www.1password.dev/service-accounts/get-started)。
