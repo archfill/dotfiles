@@ -88,6 +88,9 @@ in
     yt-dlp           # YouTube 字幕
     inputs.ax.packages.${pkgs.stdenv.hostPlatform.system}.default  # HTML → markdown
 
+    # Media
+    ffmpeg           # 音声・動画の変換と組み立て
+
     # Shells / runtime
     bash             # dotfiles スクリプトが bash 4+ (mapfile / declare -g) を要求
 
