@@ -41,6 +41,13 @@
     options = [ "subvol=@tmp" "compress=zstd" "ssd" "discard=async" ];
   };
 
+  # NVMe 上の Windows C: を縮小して作った LLM モデル置き場 (localllm-strata)
+  fileSystems."/mnt/models" = {
+    device = "/dev/disk/by-uuid/089b50bf-082c-4477-9cfe-abca6cde1a33";
+    fsType = "ext4";
+    options = [ "noatime" "nofail" ];
+  };
+
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

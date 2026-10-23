@@ -80,6 +80,7 @@ in
     ../../modules/desktop/hyprland.nix
     ../../modules/desktop/niri.nix
     ./hardware.nix
+    ./strata.nix
   ];
 
   # Prefer Niri at login; Hyprland remains available as a fallback session.

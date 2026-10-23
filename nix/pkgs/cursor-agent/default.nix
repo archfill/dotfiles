@@ -40,8 +40,8 @@ let
       hash = "sha256-kzcuOE6Tl7VLHk/bGBJmL2jnthwMYMs/L0t4jJ4HecQ=";
     };
     "x86_64-linux" = {
-      version = "2026.10.19-6bbf2c4";
-      hash = "sha256-z4DMGNizO/M+diNTl3yhhoz8RSkMksD/3O+Du4s3tE8=";
+      version = "2026.10.22-27dcf5f";
+      hash = "sha256-hSlpRORgCoPEt2T1eNFQK/nEFtsgDTOlk+jz7Kv9wpQ=";
     };
     "aarch64-linux" = {
       version = "2026.10.16-e3cb207";
