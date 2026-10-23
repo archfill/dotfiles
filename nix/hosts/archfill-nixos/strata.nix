@@ -4,17 +4,17 @@
 # ops/strata/run-server.sh、ダッシュボードは同リポジトリの ops/strata-switch にある。ここは unit と polkit の定義だけを持つ。
 # リポジトリは /home/archfill/git/strata に置く前提。元の例とその説明は hosts/archfill-nixos/nixos-strata.nix.example。
 #
-# - strata-gyro_m: 起動時に自動で立ち上がる（既定、2026-10-20 から）。strata-iq3_s / strata-iq2_xs: 手動（wantedBy なし）。3 つは互いに conflicts。
+# - strata-gyro_m: 起動時に自動で立ち上がる（既定、2026-10-20 から）。strata-iq3_s / strata-iq2_xs / strata-gyro_m_abl: 手動（wantedBy なし）。4 つは互いに conflicts。
 # - strata-switch: モデル切替ダッシュボード。Tailscale IP:8081。自動起動しない（2026-10-20 から。使うときは `sudo systemctl start strata-switch`）。事前に `bash ops/strata-switch/build.sh` で build/strata-switch を作る。
-#   systemctl の start/stop は下の polkit ルール（strata-gyro_m / strata-iq2_xs / strata-iq3_s の start・stop のみ）で許可する。
+#   systemctl の start/stop は下の polkit ルール（strata-gyro_m / strata-gyro_m_abl / strata-iq2_xs / strata-iq3_s の start・stop のみ）で許可する。
 # - 確認: `systemctl status strata-gyro_m` / `systemctl status strata-switch` / `journalctl -u strata-gyro_m -f`。
 # - 前提: /mnt/models のマウントは ./hardware.nix、API キーは /mnt/models/qwen-work/strata.env（STRATA_API_KEY=...、権限600、git 管理外）。
 { config, lib, pkgs, ... }:
 
 let
   repo = "/home/archfill/git/strata";
-  sizes = [ "iq2_xs" "iq3_s" "gyro_m" ];
-  limits = { iq2_xs = "60G"; iq3_s = "61G"; gyro_m = "57G"; };
+  sizes = [ "iq2_xs" "iq3_s" "gyro_m" "gyro_m_abl" ];
+  limits = { iq2_xs = "60G"; iq3_s = "61G"; gyro_m = "57G"; gyro_m_abl = "57G"; };
   mkService = size: {
     description = "Strata Qwen3.8-Flash-Next ${size} (OpenAI/Anthropic API on Tailscale)";
     wantedBy = lib.optional (size == "gyro_m") "multi-user.target";
@@ -108,7 +108,7 @@ in
     polkit.addRule(function(action, subject) {
       if (subject.user == "archfill" &&
           action.id == "org.freedesktop.systemd1.manage-units" &&
-          /^strata-(iq2_xs|iq3_s|gyro_m)\.service$/.test(action.lookup("unit")) &&
+          /^strata-(iq2_xs|iq3_s|gyro_m|gyro_m_abl)\.service$/.test(action.lookup("unit")) &&
           (action.lookup("verb") == "start" || action.lookup("verb") == "stop")) {
         return polkit.Result.YES;
       }
