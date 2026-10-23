@@ -16,11 +16,19 @@ function dotfiles() {
   return 0
 }
 
-# Pi は agent-auth 経由で起動し、1Password の key を起動時に環境変数へ注入する。
+# macOS の Pi は agent-auth 経由で起動し、1Password の key を起動時に環境変数へ注入する。
+# agent-auth は macOS 専用なので、Linux は STRATA_API_KEY_FILE（~/zshenv_local.zsh で設定）の key を Pi にだけ渡す。
 # PI_BG_FEATURES は pi-background-tasks の機能選択: シェルジョブ(process)と読み取り専用委譲(delegate)のみ有効化。
 function pi() {
-  PI_BG_FEATURES="${PI_BG_FEATURES:-process,delegate}" \
-    "${DOTFILES_DIR:-$HOME/dotfiles}/.local/bin/agent-auth" run -- pi "$@"
+  if [[ "$OSTYPE" == darwin* ]]; then
+    PI_BG_FEATURES="${PI_BG_FEATURES:-process,delegate}" \
+      "${DOTFILES_DIR:-$HOME/dotfiles}/.local/bin/agent-auth" run -- pi "$@"
+  elif [[ -n "${STRATA_API_KEY_FILE:-}" && -r "$STRATA_API_KEY_FILE" ]]; then
+    STRATA_API_KEY="$(< "$STRATA_API_KEY_FILE")" PI_BG_FEATURES="${PI_BG_FEATURES:-process,delegate}" \
+      command pi "$@"
+  else
+    PI_BG_FEATURES="${PI_BG_FEATURES:-process,delegate}" command pi "$@"
+  fi
 }
 
 # ghq のリポジトリを「表示名<TAB>パス」で出す。表示名は ~ 始まり (~/git/kotorae, ~/dotfiles)。
