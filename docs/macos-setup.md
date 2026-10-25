@@ -152,6 +152,7 @@ make init     # doctor → nix-darwin 初回 switch → Git 個人設定
 - **外付け SSD とローカル LLM (Mac Studio)**: 外付け `Storage` (常時接続) に作業領域を置く。`~/git` は `/Volumes/Storage/archfill/git` への symlink、モデルは `Models/` (`HF_HOME` は `home.nix` で宣言)
   - Time Machine: `sudo tmutil removeexclusion -v /Volumes/Storage` で外付けを対象に含め、`tmutil addexclusion` で `Parallels/` と `Models/` を除外 (ビルド成果物は asimov が自動で除外)
   - mlx-lm: `uv tool install mlx-lm` (nixpkgs の mlx は Metal なしで CPU 専用になるため Nix では入れない)
+- **Colab CLI**: `uv tool install google-colab-cli` (nixpkgs に無いため。更新は `uv tool upgrade google-colab-cli`)。Colab の GPU をターミナルから使う。初回の `colab usage` で表示される URL をブラウザで開いてログインし、ページに出たコードを貼る (gcloud の OAuth の仕組みを借りるのでページには「gcloud CLI にサインイン」と出るが、gcloud 自体は不要。ログイン情報は `~/.config/colab-cli/`)
 - **Mac App Store アプリ**: 宣言しない方針 (`homebrew.masApps` は cleanup で宣言外の MAS アプリを消すため。`darwin-system.nix` のコメント参照)。必要なものは手動でインストール
 - **既定のブラウザ**: Chrome の初回起動時に既定のブラウザにする (macOS の確認ダイアログが必須のため宣言できない)
 - **既定のメール (mailto:)**: Chrome で Gmail を開き、アドレスバーのプロトコルハンドラから Gmail に mailto を許可 → メール.app の設定 → 一般 → デフォルトのメールソフトで Chrome を選ぶ
