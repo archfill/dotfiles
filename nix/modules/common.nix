@@ -119,7 +119,8 @@ in
     # login shell で bun を解決する必要があるため、mise ではなく Nix で
     # グローバル提供する。プロジェクト固有のバージョン (例: yui の
     # mise.toml の bun = "1.3.x") は mise が override する設計。
-    bun
+    # nixpkgs の更新待ちの間は自前 pin (nix/pkgs/bun)。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.bun
 
     # ─── Language runtimes (グローバル固定、Nix で管理) ─────────────
     # 方針:
@@ -132,7 +133,7 @@ in
 
     # Android
     android-cli   # Google 公式 Android CLI (`android`)
-    nodejs_24    # Node.js 24 LTS (mise project toolのfallback。26 は 2026-10 に LTS 化)
+    nodejs_26    # Node.js 26 LTS (mise project toolのfallback)
     python313    # Python 3.13
     go           # Go (最新版、go.mod がプロジェクト毎の互換性を担う)
 

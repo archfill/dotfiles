@@ -38,7 +38,7 @@ pkgs.buildEnv {
     agentPackages.origin
   ] ++ (with pkgs; [
     git agentPackages.gh openssh bash coreutils findutils gnugrep
-    ripgrep fd jq gnumake tmux nodejs_24 python313 bun uv pnpm
+    ripgrep fd jq gnumake tmux nodejs_26 python313 agentPackages.bun uv pnpm
   ]);
   pathsToLink = [ "/bin" ];
   # Marker for shell setup and an explicit raw entry point for diagnostics.

@@ -119,6 +119,7 @@
                 agentPackages = self.packages.${system};
               };
               claude-code = pkgs.callPackage ./pkgs/claude-code { };
+              bun = pkgs.callPackage ./pkgs/bun { };
               codex = pkgs.callPackage ./pkgs/codex { };
               gh = pkgs.callPackage ./pkgs/gh { };
               pi = pkgs.callPackage ./pkgs/pi { };
