@@ -6,6 +6,28 @@
     pkgs.lib.getName pkg == "android-cli"
     || pkgs.lib.getName pkg == "antigravity-cli";
 
+  # HTTP2Shell (CVE-2026-111497): brotli 1.2.0 の decoder に OOB write がある。
+  # nixpkgs の修正 (1.2.1) は staging 止まりで、overlay で上げると curl / nix / qtbase
+  # 等が全部再ビルドになるため、system closure 内の brotli だけを graft で差し替える。
+  # nodejs (--shared-brotli) と python brotli (USE_SYSTEM_BROTLI) もこれで直る。
+  # (nixos-unstable の brotli が 1.2.1 以上になったら削除)
+  system.replaceDependencies.replacements =
+    let
+      brotliFixed = pkgs.brotli.overrideAttrs (_: {
+        version = "1.2.1";
+        src = pkgs.fetchFromGitHub {
+          owner = "google";
+          repo = "brotli";
+          tag = "v1.2.1";
+          hash = "sha256-llY72cYffDv0ugsH0p89xIPEbElV4L8u7U/Fe8hT3gI=";
+        };
+      });
+    in
+    map (output: {
+      oldDependency = pkgs.brotli.${output};
+      newDependency = brotliFixed.${output};
+    }) [ "out" "lib" ];
+
   networking.networkmanager.enable = true;
 
   time.timeZone = "Asia/Tokyo";
