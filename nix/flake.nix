@@ -37,12 +37,34 @@
       # nix-darwin ホスト (macOS): システム + home-manager を一括宣言
       # ユーザー定義はここで一元化する。home-manager の home.username /
       # home.homeDirectory は users.users から自動設定される。
-      mkDarwinHost = { system, hostModule, homeModule, username }:
+      # system.replaceDependencies.replacements (modules/darwin-replace-dependencies.nix)
+      # があれば、評価済みの toplevel を差し替え済みのものに置き換える。
+      # nix-darwin の toplevel は自分自身を参照して上書きできないため、
+      # 一度評価した base を extendModules で拡張する。
+      mkDarwinHost = args:
+        let
+          base = mkDarwinBase args;
+          inherit (base.config.system.replaceDependencies) replacements;
+          replaceDependencies = import ./pkgs/replace-dependencies-darwin {
+            inherit (base) pkgs;
+          };
+        in
+        if replacements == [ ] then base else base.extendModules {
+          modules = [{
+            system.build.toplevel = nixpkgs.lib.mkForce (replaceDependencies {
+              drv = base.config.system.build.toplevel;
+              inherit replacements;
+            });
+          }];
+        };
+
+      mkDarwinBase = { system, hostModule, homeModule, username }:
         nix-darwin.lib.darwinSystem {
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
             hostModule
+            ./modules/darwin-replace-dependencies.nix
             home-manager.darwinModules.home-manager
             {
               users.users.${username} = {

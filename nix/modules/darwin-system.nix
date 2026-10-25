@@ -32,6 +32,29 @@ in
     pkgs.lib.getName pkg == "android-cli"
     || pkgs.lib.getName pkg == "antigravity-cli";
 
+  # brotli 1.2.0 の decoder の修正 (1.2.1) が nixpkgs では staging 止まり。
+  # overlay で上げると curl / freetype 以下 (rustc / ghc / ffmpeg / qemu 等) が
+  # 全部再ビルドになるため、system closure 内の brotli (out / lib) だけを
+  # graft で差し替える (NixOS の nixos-common.nix と同じ。仕組みは
+  # modules/darwin-replace-dependencies.nix と pkgs/replace-dependencies-darwin)。
+  # (nixpkgs-unstable の brotli が 1.2.1 以上になったら削除)
+  system.replaceDependencies.replacements =
+    let
+      brotliFixed = pkgs.brotli.overrideAttrs (_: {
+        version = "1.2.1";
+        src = pkgs.fetchFromGitHub {
+          owner = "google";
+          repo = "brotli";
+          tag = "v1.2.1";
+          hash = "sha256-llY72cYffDv0ugsH0p89xIPEbElV4L8u7U/Fe8hT3gI=";
+        };
+      });
+    in
+    map (output: {
+      oldDependency = pkgs.brotli.${output};
+      newDependency = brotliFixed.${output};
+    }) [ "out" "lib" ];
+
   # ─── state version (nix-darwin 自体のスキーマバージョン) ────────────
   # 変更時はマニュアルを必ず確認すること。気軽に上げない。
   system.stateVersion = 6;
