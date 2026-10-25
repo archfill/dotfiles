@@ -9,7 +9,8 @@
   # HTTP2Shell (CVE-2026-111497): brotli 1.2.0 の decoder に OOB write がある。
   # nixpkgs の修正 (1.2.1) は staging 止まりで、overlay で上げると curl / nix / qtbase
   # 等が全部再ビルドになるため、system closure 内の brotli だけを graft で差し替える。
-  # nodejs (--shared-brotli) と python brotli (USE_SYSTEM_BROTLI) もこれで直る。
+  # python brotli (USE_SYSTEM_BROTLI) や nodejs_24 (--shared-brotli) もこれで直る。
+  # nodejs_22 / nodejs_26 は nixpkgs 側でパッチ済みの別 brotli を使うので対象外。
   # (nixos-unstable の brotli が 1.2.1 以上になったら削除)
   system.replaceDependencies.replacements =
     let
