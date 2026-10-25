@@ -136,10 +136,22 @@
             };
           in
             {
-              agent-runtime = import ./pkgs/agent-runtime {
-                inherit pkgs;
-                agentPackages = self.packages.${system};
-              };
+              # /opt/agent-runtime は system closure 外なので brotli の graft を個別に掛ける
+              # (darwin は Mach-O 再署名つき)。結果名は agent-runtime のまま。
+              agent-runtime =
+                let
+                  replaceDependencies =
+                    if pkgs.stdenv.hostPlatform.isDarwin
+                    then import ./pkgs/replace-dependencies-darwin { inherit pkgs; }
+                    else pkgs.replaceDependencies;
+                in
+                replaceDependencies {
+                  drv = import ./pkgs/agent-runtime {
+                    inherit pkgs;
+                    agentPackages = self.packages.${system};
+                  };
+                  replacements = import ./pkgs/brotli-replacements { inherit pkgs; };
+                };
               claude-code = pkgs.callPackage ./pkgs/claude-code { };
               bun = pkgs.callPackage ./pkgs/bun { };
               codex = pkgs.callPackage ./pkgs/codex { };
