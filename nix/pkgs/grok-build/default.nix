@@ -21,8 +21,8 @@ let
   # `make grok-build-update`, so other systems may lag behind.
   sources = {
     "aarch64-darwin" = {
-      version = "1.0.62";
-      hash = "sha256-7ENOgxr9z86HeA8oFf1zKx34pKjelqSRcWrXXRNgWk4=";
+      version = "1.0.70";
+      hash = "sha256-XIpoglG/YeNTcLgotqNTsKIPzD9kAA3oqR1CYDnynOw=";
     };
     "x86_64-linux" = {
       version = "1.0.67";
