@@ -19,6 +19,10 @@
     # インストール後処理 (inittool) で sudo のパスワードを求められることがある
     "parallels"
 
+    # Android エミュレータ (cask 名は bluestacks だが中身は BlueStacks Air、Apple Silicon 専用)。
+    # pkg インストーラのため導入時に sudo のパスワードを求められることがある
+    "bluestacks"
+
     # 周辺機器
     "logitech-g-hub"
     "logitune"
