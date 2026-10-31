@@ -30,6 +30,20 @@
     };
   };
 
+  # colima start -f は VM が launchd の外で動いていると "already running" で
+  # 正常終了し、KeepAlive (SuccessfulExit=true) により 10 秒ごとに起動し直し
+  # 続ける。switch などでエージェントだけ止まり VM が残ると起きるため、
+  # 残った VM を止めてから前景で起動し、VM を常に launchd の管理下に置く。
+  # 引数には home-manager が組み立てた `colima start default -f ...` が続く。
+  launchd.agents.colima-default.config.ProgramArguments = pkgs.lib.mkBefore [
+    "${pkgs.writeShellScript "colima-default-start" ''
+      if "$1" status default >/dev/null 2>&1; then
+        "$1" stop default
+      fi
+      exec "$@"
+    ''}"
+  ];
+
   # Hammerspoon は login item として /nix の mount 前に起動し得るため、
   # home.file では管理しない。modules/darwin-system.nix の MJConfigFile で
   # Data volume 上の dotfiles を直接参照させる。
