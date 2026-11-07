@@ -27,12 +27,12 @@ in
     # `uv tool install mlx-lm` で入れる (更新は `uv tool upgrade mlx-lm`)。
   ];
 
-  # モデル置き場は外付け (外付け常時接続が前提。未マウント時に書き込むと
-  # /Volumes 配下に実ディレクトリが作られる)。llama.cpp の `-hf` も
+  # HF のモデル置き場は USB の外付け SSD (Archive、常時接続が前提。未マウント時に
+  # 書き込むと /Volumes 配下に実ディレクトリが作られる)。llama.cpp の `-hf` も
   # LLAMA_CACHE 未設定時は $HF_HOME/hub (HF Hub キャッシュ形式) に保存するため共用する。
   # 手動で置く GGUF は /Volumes/Storage/archfill/Models/gguf を `-m` で指定する。
   home.sessionVariables = {
-    HF_HOME = "/Volumes/Storage/archfill/Models/huggingface";
+    HF_HOME = "/Volumes/Archive/Models/huggingface";
   };
 
   # ~/git は外付けへの symlink のため、ホームだけ共有する colima の既定では
