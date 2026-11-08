@@ -119,6 +119,7 @@
       # grok-build / cursor-agent は nixpkgs 収録だが stable 最新追従を優先して自前固定する。
       # grok-bot は公式 Linux .deb を展開した GUI アプリとして固定する。
       # gh は Nix store の絶対パスを Git credential helper に残さない wrapper を使う。
+      # nsc は Namespace 公式 CLI の release を固定する (nixpkgs の nsc は NATS の別ツール)。
       packages = nixpkgs.lib.genAttrs
         [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ]
         (system:
@@ -161,6 +162,7 @@
               origin = pkgs.callPackage ./pkgs/origin { };
               grok-build = pkgs.callPackage ./pkgs/grok-build { };
               cursor-agent = pkgs.callPackage ./pkgs/cursor-agent { };
+              nsc = pkgs.callPackage ./pkgs/nsc { };
             }
             // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               chatgpt = pkgs.callPackage ./pkgs/chatgpt { };

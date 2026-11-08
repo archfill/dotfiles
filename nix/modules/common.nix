@@ -243,6 +243,12 @@ in
     # のみ提供。更新は `make cursor-agent-update` または `make nix-update`。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.cursor-agent
 
+    # Namespace (namespace.so) 公式 CLI (`nsc`)。GitHub Actions の runner
+    # profile や cache volume を操作する。nixpkgs の `nsc` は NATS の別ツール
+    # なので自前 packages で release を固定する。`nsc version update` は
+    # /nix/store と衝突するため使わず、更新は pkgs/nsc の version と hash を書き換える。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.nsc
+
     # Cursor Origin (Cursor の git forge) 用 CLI。repo / PR / ruleset 等の
     # hosting 操作を担い、AI agent である cursor-agent とは別物。公式
     # installer と同じ bundle を Nix に固定し、自己更新 (`origin update`)
