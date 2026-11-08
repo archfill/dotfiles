@@ -32,8 +32,8 @@ let
   # `make cursor-agent-update`, so other systems may lag behind.
   sources = {
     "aarch64-darwin" = {
-      version = "2026.10.22-27dcf5f";
-      hash = "sha256-L1sKPdX7lRzs/6yBOGfYoI2BDlmDfVn9XxLWm5IjmNc=";
+      version = "2026.11.05-86047df";
+      hash = "sha256-Z4R+R+Pr0ytkw/tObzbUdfGXG3bgM7DtbJ4Bo8G0QNc=";
     };
     "x86_64-darwin" = {
       version = "2026.10.16-e3cb207";

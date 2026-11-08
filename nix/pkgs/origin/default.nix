@@ -6,7 +6,7 @@
 }:
 
 let
-  version = "2026.10.23-18-47-36-f52be1e";
+  version = "2026.11.03-22-10-56-fbcd8ba";
 
   # Origin publishes one self-contained binary per (os, arch) at
   # downloads.cursor.com/co/<version>/<os>-<arch>/co.tar.gz.
@@ -23,10 +23,10 @@ let
   # Official installer version and archives. Refresh with
   # `make origin-update` rather than the CLI's `origin update`.
   hashes = {
-    "aarch64-darwin" = "sha256-ZoRMsJSme6EhejlDDJJxtqLne3oKrDE8yeeUnM/W4+I=";
-    "x86_64-darwin"  = "sha256-V1c8cXv5swDUNl98pzg34NmqhVB2QFRnEiYg3Y/N21k=";
-    "x86_64-linux"   = "sha256-TEXVI21XN0l+wYZeE28aZOw516rovzqFR2CJIVDnxGI=";
-    "aarch64-linux"  = "sha256-qs/ro2H+Jaz83mfsRs6lgwbtKGp9/KN/BPCOPKWehe0=";
+    "aarch64-darwin" = "sha256-6cHq93Iols/UP2VbVyMV/rGsgfv1KjIu7/lU0RTxEuA=";
+    "x86_64-darwin"  = "sha256-6YxCqsHZQzk4KBXrAjB4ZiqRoks53nH40RMLy34mXRs=";
+    "x86_64-linux"   = "sha256-5P88PzGfABeAt2pTme6wE4tTaGao2GPEfaIHXHt47Fc=";
+    "aarch64-linux"  = "sha256-eb41MQnb2EBK7k/YHQaPfCr3ShorWRv2pf2zrQGsAEE=";
   };
 in
 
