@@ -98,7 +98,7 @@ config.groups = {
 config.pipAvoidance = {
 	-- Enable the feature. The target is not moved until it is registered or
 	-- auto-detected.
-	enabled = true,
+	enabled = false,
 
 	-- Register or unregister the focused playback window (Hyper + O).
 	-- Hyper + P is already used by window groups.
