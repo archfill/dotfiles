@@ -1,0 +1,29 @@
+{
+  "id": "bacc27df0",
+  "name": "Codex device login",
+  "command": "hermes auth add openai-codex",
+  "description": "OpenAI Codex OAuth device-code ログインを開始してユーザーのブラウザ認証を待つ",
+  "status": "completed",
+  "outputPath": ".pi/tasks/01a17d0b-7589-7527-8fd3-161f9f0a3d84-9808/bacc27df0.output",
+  "cwd": "/Users/archfill/dotfiles",
+  "startTime": 1793101349886,
+  "endTime": 1793101414671,
+  "exitCode": 0,
+  "signal": null,
+  "pid": 12644,
+  "bytesWritten": 383,
+  "isAgent": false,
+  "surviveReload": false,
+  "notified": true,
+  "notifyOnCompletion": true,
+  "triggerOnCompletion": true,
+  "timeoutSeconds": 600,
+  "shellPolicy": {
+    "policy": "inherit",
+    "executable": "/bin/zsh",
+    "argvPrefix": [
+      "-c"
+    ],
+    "dialect": "posix"
+  }
+}

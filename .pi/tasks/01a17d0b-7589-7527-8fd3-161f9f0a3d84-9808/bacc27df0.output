@@ -1,0 +1,13 @@
+Signing in to OpenAI Codex...
+(Hermes creates its own session — won't affect Codex CLI or VS Code)
+
+To continue, follow these steps:
+
+  1. Open this URL in your browser:
+     [94mhttps://auth.openai.com/codex/device[0m
+
+  2. Enter this code:
+     [94mKDUU-RSYS8[0m
+
+Waiting for sign-in... (press Ctrl+C to cancel)
+Added openai-codex OAuth credential #1: "openai-codex-oauth-1"
