@@ -119,8 +119,7 @@ in
     # login shell で bun を解決する必要があるため、mise ではなく Nix で
     # グローバル提供する。プロジェクト固有のバージョン (例: yui の
     # mise.toml の bun = "1.3.x") は mise が override する設計。
-    # nixpkgs の更新待ちの間は自前 pin (nix/pkgs/bun)。
-    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.bun
+    bun
 
     # ─── Language runtimes (グローバル固定、Nix で管理) ─────────────
     # 方針:
