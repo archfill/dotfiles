@@ -189,6 +189,7 @@ in
 
   environment.systemPackages = with pkgs; [
     efibootmgr
+    (callPackage ../../pkgs/brave { }) # nixos-unstable に brave が戻るまでの一時 vendor
     ghosttyFcitxWorkaround
     googleChromeWayland
     prismlauncher
