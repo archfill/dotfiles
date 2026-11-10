@@ -254,3 +254,6 @@ out/
 # darwin-rebuild build / nix build の成果物 symlink
 /result
 /result-*
+
+# pi (coding agent) のローカルタスク状態
+.pi/
