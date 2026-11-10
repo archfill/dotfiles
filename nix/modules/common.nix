@@ -14,10 +14,6 @@ let
     then neovimNightly
     else pkgs.neovim;
 
-  pipxPackage = pkgs.pipx.overridePythonAttrs (_: {
-    doCheck = false;
-  });
-
 in
 {
   imports = [ ./agent-cli.nix ];
@@ -159,7 +155,7 @@ in
     # ─── Package managers (language-specific) ────────────────────────
     uv           # Python 高速パッケージマネージャ (mise.toml の uv 指定は
                  # プロジェクト毎の固定として引き続き機能する)
-    pipxPackage  # Python CLI apps を分離 venv で導入する補助ツール
+    pipx  # Python CLI apps を分離 venv で導入する補助ツール
     pnpm         # Node.js パッケージマネージャ (mise project toolのfallback)
 
     # ─── Database clients ────────────────────────────────────────────
