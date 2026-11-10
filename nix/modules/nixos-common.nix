@@ -6,10 +6,6 @@
     pkgs.lib.getName pkg == "android-cli"
     || pkgs.lib.getName pkg == "antigravity-cli";
 
-  # HTTP2Shell 対策の brotli 1.2.1 graft (詳細は pkgs/brotli-replacements)。
-  system.replaceDependencies.replacements =
-    import ../pkgs/brotli-replacements { inherit pkgs; };
-
   networking.networkmanager.enable = true;
 
   time.timeZone = "Asia/Tokyo";

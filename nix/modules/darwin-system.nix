@@ -32,11 +32,6 @@ in
     pkgs.lib.getName pkg == "android-cli"
     || pkgs.lib.getName pkg == "antigravity-cli";
 
-  # HTTP2Shell 対策の brotli 1.2.1 graft (詳細は pkgs/brotli-replacements。仕組みは
-  # modules/darwin-replace-dependencies.nix と pkgs/replace-dependencies-darwin)。
-  system.replaceDependencies.replacements =
-    import ../pkgs/brotli-replacements { inherit pkgs; };
-
   # ─── state version (nix-darwin 自体のスキーマバージョン) ────────────
   # 変更時はマニュアルを必ず確認すること。気軽に上げない。
   system.stateVersion = 6;
