@@ -43,35 +43,6 @@ let
       };
     };
   };
-
-  onePasswordMcp = pkgs.stdenv.mkDerivation {
-    pname = "1password-mcp";
-    version = pkgs._1password-gui.version;
-
-    dontUnpack = true;
-
-    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-    buildInputs = [
-      pkgs.glibc
-      pkgs.stdenv.cc.cc.lib
-    ];
-
-    installPhase = ''
-      runHook preInstall
-      install -Dm555 ${pkgs._1password-gui}/share/1password/1password-mcp \
-        $out/bin/1password-mcp
-      runHook postInstall
-    '';
-
-    meta = with pkgs.lib; {
-      description = "1Password Environments MCP server from the 1Password desktop app";
-      homepage = "https://www.1password.dev/environments/mcp-codex-server";
-      license = licenses.unfree;
-      mainProgram = "1password-mcp";
-      platforms = platforms.linux;
-      sourceProvenance = [ sourceTypes.binaryNativeCode ];
-    };
-  };
 in
 {
   imports = [
@@ -168,11 +139,12 @@ in
     enable = true;
     polkitPolicyOwners = [ "archfill" ];
   };
-  users.groups."1password-mcp".gid = 31003;
+  # Same setup as the 1Password installer; replace with the module option once NixOS/nixpkgs#565408 lands.
+  users.groups.onepassword-mcp.gid = 31003;
   security.wrappers."1password-mcp" = {
-    source = "${onePasswordMcp}/bin/1password-mcp";
+    source = "${pkgs._1password-gui}/share/1password/1password-mcp";
     owner = "root";
-    group = "1password-mcp";
+    group = "onepassword-mcp";
     setuid = false;
     setgid = true;
   };
