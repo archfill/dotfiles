@@ -1,0 +1,8 @@
+# Claude Code の個人用設定
+**/.claude/settings.local.json
+
+# pi の拡張が作業ディレクトリに書く実行時の状態
+# (.pi/ そのものはプロジェクト設定の置き場なので除外しない)
+.pi/tasks/
+.pi/delegate/
+.pi/fusion/

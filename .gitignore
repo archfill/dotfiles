@@ -255,5 +255,3 @@ out/
 /result
 /result-*
 
-# pi (coding agent) のローカルタスク状態
-.pi/

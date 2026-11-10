@@ -394,6 +394,12 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/git/config";
 
+  # グローバルの gitignore (git が既定で読む ~/.config/git/ignore)。
+  # 移管前に既存 ~/.config/git/ignore (regular file) を削除すること。
+  xdg.configFile."git/ignore".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.config/git/ignore";
+
   # aicommit2 (AI コミットメッセージ生成 CLI) は ~/.aicommit2 を読みに行く。
   # XDG 標準パスをサポートしないため、ホーム直下に symlink を置く。
   home.file.".aicommit2".source =
