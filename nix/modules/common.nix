@@ -297,6 +297,12 @@ in
   # xdg.configFile."sheldon" と home.packages の sheldon は本モジュールが代替。
   programs.sheldon = {
     enable = true;
+    # nixpkgs の Rust ビルドが LIBGIT2_NO_VENDOR=1 になり、sheldon が libgit2 不足で
+    # ビルドに失敗する。上流の修正 (NixOS/nixpkgs 5d32767c, 2026-11-08) と同じものを当てる。
+    # (nixos-unstable に 5d32767c が入ったら削除)
+    package = pkgs.sheldon.overrideAttrs (old: {
+      buildInputs = old.buildInputs ++ [ pkgs.libgit2 ];
+    });
     settings = {
       shell = "zsh";
       plugins = {
