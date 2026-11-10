@@ -189,7 +189,6 @@ in
 
   environment.systemPackages = with pkgs; [
     efibootmgr
-    brave
     ghosttyFcitxWorkaround
     googleChromeWayland
     prismlauncher
