@@ -13,7 +13,7 @@
 	origin-update origin-bump \
 	pi-update pi-bump devin-update devin-bump \
 	grok-bot-update grok-bot-bump \
-	chatgpt-update \
+	chatgpt-update claude-desktop-update \
 	rebuild diff rebuild-bootloader \
 	hyprland-status monitors monitors-auto monitors-single monitors-dual \
 	git-health tmux-reload \
@@ -140,11 +140,11 @@ endif
 NH_TARGET := $(shell uname -s | grep -qi darwin && echo darwin || ([ -e /etc/NIXOS ] && echo os || echo home))
 # update script は上流バージョンが未変更ならスキップし、変更があった時だけ
 # 公式配布物 (origin / grok-build / cursor-agent は prebuilt tarball、
-# chatgpt / grok-bot は .deb) を再取得する。
-# chatgpt / grok-bot は Linux 専用パッケージなので macOS では更新しない。
+# chatgpt / claude-desktop / grok-bot は .deb) を再取得する。
+# chatgpt / claude-desktop / grok-bot は Linux 専用パッケージなので macOS では更新しない。
 NIX_UPDATE_DEPS := claude-update codex-update cursor-agent-update grok-build-update origin-update pi-update devin-update
 ifneq "$(NH_TARGET)" "darwin"
-NIX_UPDATE_DEPS := $(NIX_UPDATE_DEPS) chatgpt-update grok-bot-update
+NIX_UPDATE_DEPS := $(NIX_UPDATE_DEPS) chatgpt-update claude-desktop-update grok-bot-update
 endif
 NIX_UPDATE_INPUTS := nixpkgs nix-darwin home-manager neovim-nightly-overlay herdr
 NIX_UPDATE_ARGS := $(foreach input,$(NIX_UPDATE_INPUTS),--update-input $(input))
@@ -228,6 +228,9 @@ rovehelm-update: ## Rovehelmのmainをpullしてrelease buildし更新
 
 chatgpt-update: ## ChatGPT Linux公式 .deb のversion/hashを更新
 	@bash ./bin/chatgpt-update.sh
+
+claude-desktop-update: ## Claude Desktop Linux公式 .deb のversion/hashを更新
+	@bash ./bin/claude-desktop-update.sh
 
 rebuild: nix-rebuild
 rebuild-bootloader: nix-bootloader

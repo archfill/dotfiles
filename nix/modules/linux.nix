@@ -15,6 +15,9 @@
     # OpenAI 公式 ChatGPT Linux デスクトップアプリ。
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.chatgpt
 
+    # Anthropic 公式 Claude Desktop Linux アプリ (beta)。
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop
+
     cliphist
     curl
     ffmpeg

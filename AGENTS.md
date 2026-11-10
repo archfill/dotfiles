@@ -54,7 +54,7 @@ This is a comprehensive **cross-platform dotfiles repository** that automates de
 
 - `make nix-rebuild` - flake を反映 (macOS: `nh darwin switch`, NixOS: `nh os switch`, それ以外 Linux: `nh home switch`)
 - `make nix-diff` - 次の switch で何が変わるかを表示 (適用しない、`--dry`)
-- `make nix-update` - AI CLI パッケージ定義 (claude-code / codex / cursor-agent / origin / pi / devin / grok-build / grok-bot / chatgpt) と flake.lock を更新してから switch (chatgpt / grok-bot は上流変更時のみ .deb を再取得)
+- `make nix-update` - AI CLI パッケージ定義 (claude-code / codex / cursor-agent / origin / pi / devin / grok-build / grok-bot / chatgpt / claude-desktop) と flake.lock を更新してから switch (chatgpt / claude-desktop / grok-bot は上流変更時のみ .deb を再取得)
 - `make nix-clean` - 古い generation を 5 世代残して掃除 (`nh clean all --keep 5`)
 
 ### Maintenance
@@ -164,7 +164,7 @@ nix/
 │   ├── standalone-linux.nix        # 非 NixOS Linux (standalone home-manager) 用
 │   ├── wsl.nix                     # WSL 用
 │   └── desktop/                    # dms.nix / hyprland.nix / niri.nix
-├── pkgs/                           # 自前パッケージ定義 (codex / claude-code / pi / chatgpt / gh ほか)
+├── pkgs/                           # 自前パッケージ定義 (codex / claude-code / pi / chatgpt / claude-desktop / gh ほか)
 ├── patches/
 └── hosts/
     ├── archfill-nixos/             # NixOS メインマシン: configuration.nix / hardware.nix / home.nix
