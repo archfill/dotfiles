@@ -8,7 +8,7 @@
 }:
 
 let
-  version = "1.5.1";
+  version = "1.5.2";
 
   platformMap = {
     "aarch64-darwin" = {
@@ -33,10 +33,10 @@ let
 
   # Official GitHub release binaries. Refresh with `make pi-update`.
   hashes = {
-    "aarch64-darwin" = "sha256-7svuT7thKMYlukT/4wz8FYhKd5HSQgF7qTePV0hZcdU=";
-    "x86_64-darwin" = "sha256-n6YqT7aLcDbBUaHGEo2Kkd1Pg/RR9rM+R56ny23hoCY=";
-    "x86_64-linux" = "sha256-y2mXnAqBYr8ivO4HYvPDcBpFtRtVL6Fqc21GfGBoUJ8=";
-    "aarch64-linux" = "sha256-mPF2L1atxXA/kxmWroAiFtrUkN3gtnk67R47sDg98fc=";
+    "aarch64-darwin" = "sha256-VrXhlNSFztVVZnuLoydhV6gnLp7N6eAB5CivgJhb3Zs=";
+    "x86_64-darwin" = "sha256-+ZegiGE1FKyX2ROu6nZCCU2E/m1GhU/35k4sEuU23FA=";
+    "x86_64-linux" = "sha256-gRxvLJ56ruJStUBCUuVW+3E6ognB9/kkImqnfU73DLU=";
+    "aarch64-linux" = "sha256-QoBc1WFZUvy7/JxWsE+P64Q5UTSVLhaabNyNdnaXVmY=";
   };
 in
 
