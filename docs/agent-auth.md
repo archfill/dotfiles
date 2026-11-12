@@ -13,9 +13,11 @@ agent-auth run -- pi
   → 必要な秘密情報だけを受け取った Pi を execve で直接起動
 ```
 
+Pi は起動時の注入ではなく、key を必要なときに `agent-auth read` で取り出す（[Pi の key](#pi-の-key)）。
+
 この機能は実装と手順のみ。実際の token 登録・Keychain アクセス・認証・Nix の反映は自動実行しない。
-Mac mini の Home Manager は `agent-auth` と参照ファイルの example だけを配置する。
-他ホストでも repo 内の wrapper は手動実行できるが、自動配置は Mac mini のみ。
+全 darwin host の Home Manager が `~/.local/bin/agent-auth` を配置する。
+参照ファイルの example を配置するのは Mac mini だけ。
 
 ## 1. Service Account を用意する
 
@@ -115,7 +117,31 @@ Zsh 関数の有無によらず `sh` / Python `subprocess` / Codex の子プロ�
 
 この marker は認証や権限の証明ではなく、同じユーザーのプロセス内での重複防止に限る。
 参照ファイルからの marker 上書きは拒否する。
-他ホスト向けの従来の Zsh 関数は runtime wrapper 未導入の場合だけ使用する。
+
+## Pi の key
+
+Pi は `~/.pi/agent/auth.json` の `key` に `!` で始まる command を書くと、key が最初に必要になったときに
+その command を shell で実行し、出力を process の終了まで memory に持つ。runtime wrapper の無い host では、
+これで key を環境変数へ注入せずに済む。
+
+```json
+{
+  "zai":            { "type": "api_key", "key": "!agent-auth read ZAI_API_KEY" },
+  "strata":         { "type": "api_key", "key": "!agent-auth read STRATA_API_KEY" },
+  "archfill-nixos": { "type": "api_key", "key": "!agent-auth read STRATA_API_KEY" }
+}
+```
+
+- `agent-auth read <NAME>` は env.refs の `<NAME>` の参照を `op read` で解決し、値だけを改行なしで標準出力へ書く。
+  Service Account token は Pi に渡らない。
+- 名前の解決は PATH による。Home Manager が `~/.local/bin/agent-auth` を置き、Rovehelm など
+  シェル関数を通らない起動も `~/.local/bin` を探すため、絶対パスは書かない。
+- `read` は Keychain の解除を求めない。ロックされていれば失敗し、Pi はその key を再起動まで未解決として扱う。
+- `pi auth login <provider> --api-key` を実行すると、この項目が平文の key で上書きされる。使わない。
+- auth.json の key は `models.json` の `apiKey`（`$ZAI_API_KEY` など）より優先される。Linux は従来どおり
+  環境変数（`STRATA_API_KEY_FILE`）で渡す。
+- Pi の道具（bash など）からも `agent-auth read` は実行できる。key が子プロセスの環境変数に見えなくなるだけで、
+  Pi の中の道具に対する境界ではない。
 
 ### SSH からの Keychain 解除
 

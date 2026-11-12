@@ -23,13 +23,9 @@ setup_agent_runtime_path() {
 
 setup_agent_runtime_path
 
-# Legacy fallback for hosts without the runtime executable wrappers.
-# Mac mini uses the executable entry points even from sh / subprocess.
-if [[ ! -e /opt/agent-runtime/profile/libexec/pi && "$OSTYPE" == darwin* && -f "$HOME/.config/agent-auth/env.refs" ]] && (( $+commands[agent-auth] )); then
-  function pi() {
-    command agent-auth run -- pi "$@"
-  }
-fi
+# Hosts without the runtime executable wrappers start pi directly: its auth.json
+# runs `agent-auth read <NAME>` when a key is first needed, so no wrapper injects
+# keys into the environment. Mac mini uses the executable entry points instead.
 
 # Native installation would create a second, unmanaged Claude installation.
 if [[ ! -e /opt/agent-runtime/profile/libexec/pi && -x /opt/agent-runtime/profile/bin/claude ]]; then

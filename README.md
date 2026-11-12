@@ -84,7 +84,7 @@ The X Subscription CLIs (Grok Build `grok`, Cursor CLI `cursor-agent`, Origin CL
 - **Terminal**: `.config/wezterm/` - Modern terminal configuration
 - **Git**: Global git settings and lazygit integration
 
-On macOS, after configuring [1Password Service Account authentication](docs/agent-auth.md), the Zsh `pi` command automatically runs through `agent-auth` when `~/.config/agent-auth/env.refs` and the wrapper are available. For GLM Coding Plan, use `pi --model zai/glm-5.3`. Reload the shell after configuring authentication; `command pi` bypasses the wrapper.
+On macOS, after configuring [1Password Service Account authentication](docs/agent-auth.md), write `!agent-auth read <NAME>` keys in Pi's `~/.pi/agent/auth.json`; Pi then fetches each key when it first needs it. This works however Pi is started, including `command pi` and Rovehelm conversations, without a shell function or wrapper. For GLM Coding Plan, use `pi --model zai/glm-5.3`.
 
 References are resolved with `op read` and the harness is exec'd directly, so interactive launches keep the terminal. op's output masking is not used, so secrets printed by the harness are not redacted.
 

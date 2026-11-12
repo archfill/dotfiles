@@ -64,6 +64,12 @@
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.ssh/config";
 
+  # Pi の ~/.pi/agent/auth.json に書く `!agent-auth read <NAME>` を PATH で解決させる。
+  # Rovehelm などシェル関数を通らない起動も ~/.local/bin を探すため、絶対パスを書かずに済む。
+  home.file.".local/bin/agent-auth".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles/.local/bin/agent-auth";
+
   # Codex Desktop を Dock / Finder から起動しても MCP token が見えるよう、
   # 1Password Environment の mounted .env を login session の launchctl
   # environment へ定期投入する。

@@ -309,6 +309,60 @@ class AuthTests(unittest.TestCase):
             auth.main()
         run.assert_not_called()
 
+    def test_read_writes_only_the_named_secret_without_newline(self):
+        response = SimpleNamespace(returncode=0, stdout="resolved-1", stderr="")
+        output = io.StringIO()
+        with patch.dict(os.environ, {"PATH": "/usr/bin", "OP_CONNECT_TOKEN": "old"}, clear=True), \
+                patch.object(auth.subprocess, "run", return_value=response) as run, redirect_stdout(output):
+            auth.read_secret("/opt/homebrew/bin/op", FAKE_TOKEN,
+                             {"KEY": "op://Agents/item/token", "OTHER": "op://Agents/other/key"}, "KEY")
+        self.assertEqual(output.getvalue(), "resolved-1")
+        call = run.call_args
+        self.assertEqual(call.args[0], ["/opt/homebrew/bin/op", "read", "--no-newline", "op://Agents/item/token"])
+        self.assertEqual(call.kwargs["env"][auth.TOKEN_VAR], FAKE_TOKEN)
+        self.assertNotIn("OP_CONNECT_TOKEN", call.kwargs["env"])
+        self.assertNotIn(FAKE_TOKEN, output.getvalue())
+
+    def test_read_failure_writes_nothing_and_hides_values(self):
+        failures = (
+            SimpleNamespace(returncode=1, stdout=FAKE_TOKEN, stderr=FAKE_TOKEN),
+            SimpleNamespace(returncode=0, stdout="", stderr=""),
+            subprocess.TimeoutExpired("op", 60),
+        )
+        for failure in failures:
+            with self.subTest(failure=failure):
+                output = io.StringIO()
+                with patch.object(auth.subprocess, "run", side_effect=[failure]), redirect_stdout(output), \
+                        self.assertRaises(ValueError) as error:
+                    auth.read_secret("/fake/op", FAKE_TOKEN, {"KEY": "op://Agents/item/token"}, "KEY")
+                self.assertEqual(output.getvalue(), "")
+                self.assertNotIn(FAKE_TOKEN, str(error.exception))
+
+    def test_read_unknown_name_never_reads_keychain(self):
+        self.refs.write_text("KEY=op://Agents/item/token")
+        with patch.object(auth.sys, "argv", ["agent-auth", "read", "--env-file", str(self.refs), "MISSING"]), \
+                patch.object(auth.sys, "platform", "darwin"), \
+                patch.object(auth.os, "getuid", return_value=501), \
+                patch.object(auth.pwd, "getpwuid", return_value=SimpleNamespace(pw_dir=str(self.directory), pw_name="archfill")), \
+                patch.object(auth, "find_op", return_value="/fake/op"), \
+                patch.object(auth, "read_token") as read, self.assertRaises(ValueError):
+            auth.main()
+        read.assert_not_called()
+
+    def test_read_never_prompts_to_unlock_the_keychain(self):
+        self.refs.write_text("KEY=op://Agents/item/token")
+        with patch.object(auth.sys, "argv", ["agent-auth", "read", "--env-file", str(self.refs), "KEY"]), \
+                patch.object(auth.sys, "platform", "darwin"), \
+                patch.object(auth.os, "getuid", return_value=501), \
+                patch.object(auth.pwd, "getpwuid", return_value=SimpleNamespace(pw_dir=str(self.directory), pw_name="archfill")), \
+                patch.object(auth, "find_op", return_value="/fake/op"), \
+                patch.object(auth, "read_token", side_effect=ValueError("locked")), \
+                patch.object(auth, "unlock_keychain") as unlock, \
+                patch.object(auth, "read_secret") as read, self.assertRaises(ValueError):
+            auth.main()
+        unlock.assert_not_called()
+        read.assert_not_called()
+
     def test_root_and_non_macos_are_rejected_before_keychain(self):
         for platform, uid in (("darwin", 0), ("linux", 501)):
             with patch.object(auth.sys, "argv", ["agent-auth", "check"]), \

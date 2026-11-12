@@ -158,6 +158,28 @@ def run_harness(op, token, refs, command):
     os.execve(program, [command[0], *command[1:]], env)
 
 
+def read_secret(op, token, refs, name):
+    """Write one configured secret to stdout for a harness's key command.
+
+    Harnesses such as Pi run `agent-auth read NAME` when they first need a key and
+    keep the value in memory, so the key never enters an environment or a file.
+    """
+    if name not in refs:
+        raise ValueError("Unknown secret name; add its op:// reference to env.refs")
+    try:
+        result = subprocess.run(
+            [op, "read", "--no-newline", refs[name]], env=op_environment(token, {}),
+            capture_output=True, text=True, timeout=60, check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise ValueError(f"Could not read the secret for {name}") from error
+    if result.returncode != 0 or not result.stdout:
+        # Raw CLI stderr / stdout may contain sensitive context. Don't echo it.
+        raise ValueError(f"Could not read the secret for {name}; check the reference, token and network")
+    sys.stdout.write(result.stdout)
+    sys.stdout.flush()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
@@ -168,6 +190,9 @@ def main():
     automatic.add_argument("command", nargs=argparse.REMAINDER)
     launch.add_argument("--env-file", type=Path, help="Reference-only env file (default: ~/.config/agent-auth/env.refs)")
     launch.add_argument("command", nargs=argparse.REMAINDER)
+    reader = sub.add_parser("read", help="Print one configured secret for a harness key command (never prompts)")
+    reader.add_argument("--env-file", type=Path, help="Reference-only env file (default: ~/.config/agent-auth/env.refs)")
+    reader.add_argument("name", help="Variable name in env.refs, e.g. ZAI_API_KEY")
     args = parser.parse_args()
     if sys.platform != "darwin" or os.getuid() == 0:
         raise ValueError("Run as the existing macOS user, without sudo")
@@ -191,10 +216,16 @@ def main():
                 os.execvp(command[0], command)
                 return
         refs = load_refs(refs_path)
+    elif args.action == "read":
+        refs = load_refs(args.env_file or home / ".config/agent-auth/env.refs")
+        if args.name not in refs:
+            raise ValueError("Unknown secret name; add its op:// reference to env.refs")
     op = find_op()
     token = read_token(home, user.pw_name)
     if args.action == "check":
         check_auth(op, token)
+    elif args.action == "read":
+        read_secret(op, token, refs, args.name)
     else:
         run_harness(op, token, refs, command)
 

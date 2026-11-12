@@ -51,24 +51,24 @@ setup_agent_runtime_path "$3"
 ''', self.local, self.home / 'missing')
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    @unittest.skipIf(Path('/opt/agent-runtime/profile/libexec/pi').exists(),
-                         'Mac mini authenticates through the deployed executable wrapper')
-    def test_pi_noninteractive_forwards_arguments_to_auth(self):
+    def test_helper_does_not_wrap_pi_with_agent_auth(self):
+        # Pi resolves its keys itself through `agent-auth read` in auth.json, so the
+        # shared helper must not reintroduce environment injection even when
+        # agent-auth and env.refs are present.
         refs = self.home / '.config/agent-auth/env.refs'
         refs.parent.mkdir(parents=True)
         refs.write_text('# synthetic references; never read by this test\n')
         executable = self.local / 'agent-auth'
-        executable.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\nexit 7\n')
+        executable.write_text('#!/bin/sh\nexit 7\n')
         executable.chmod(0o755)
         result = self.shell('''
 OSTYPE=darwin
 path=("$2" /usr/bin /bin)
 source "$1"
-pi --prompt 'two words' ''
+(( $+functions[pi] )) && exit 3
+exit 0
 ''', self.local)
-        self.assertEqual(result.returncode, 7, result.stderr)
-        self.assertEqual(result.stdout.splitlines(), ['run', '--', 'pi', '--prompt', 'two words', ''])
-
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 if __name__ == '__main__':
     unittest.main()
