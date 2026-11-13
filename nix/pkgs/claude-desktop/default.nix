@@ -44,18 +44,18 @@
 
 let
   pname = "claude-desktop";
-  version = "4.23118.1";
+  version = "5.11492.2";
 
   # Anthropic publishes the official Linux app through an apt repository. The
   # versioned pool URLs are immutable, so pin them directly.
   archives = {
     x86_64-linux = {
-      url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_4.23118.1_amd64.deb";
-      hash = "sha256-sJzN1ys4kWyWN9SFSNtw53xCXrLgm7RnRlQJ0v+dKHo=";
+      url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_5.11492.2_amd64.deb";
+      hash = "sha256-0QlE+lZjuZdADPZsXHc4/WrPZU+KrqyluZTrFHqms18=";
     };
     aarch64-linux = {
-      url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_4.23118.1_arm64.deb";
-      hash = "sha256-wxzPrSJUD2E2gaO38LXmuaDx7EiSKaHebp6vW3Bb12c=";
+      url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_5.11492.2_arm64.deb";
+      hash = "sha256-IItjfpUfU9RiHW7cFZjCG9pmRgLtQJrTe2c1AhvphA4=";
     };
   };
 

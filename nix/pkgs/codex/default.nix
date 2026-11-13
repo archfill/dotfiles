@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "0.167.2";
+  version = "0.169.0";
 
   # Codex publishes a complete package per (arch, os). The package metadata and
   # bundled resources are required by the background app-server daemon.
@@ -23,10 +23,10 @@ let
 
   # SRI hashes for codex rust-v${version}. Refresh: `make codex-update VERSION=...`
   packageHashes = {
-    "aarch64-apple-darwin"       = "sha256-55EpBlG85Bk4+xYLXeK9n/i880Aco+I2xz9IX8pL4bs=";
-    "x86_64-apple-darwin"        = "sha256-0ML/UL9zZquJ2CE6SY7q0FygFRUJiykPs3qbjcrT4FQ=";
-    "x86_64-unknown-linux-musl"  = "sha256-PXe+F0jTWkuw5/h1LN47EYkMYzOOjFmfAer6Slnhez0=";
-    "aarch64-unknown-linux-musl" = "sha256-VrCMEhTgYqW2FoS6y1AzxDcqAQYqR8h8SaMr6Dr3BpU=";
+    "aarch64-apple-darwin"       = "sha256-iiMiYN96EsXoPgtLdlnhyNklm0GUJRe8AGjYq1XDZGE=";
+    "x86_64-apple-darwin"        = "sha256-Cjw5IjW0cSQJSVztArvgZiznoDgjJ2bRwcNK906QXC8=";
+    "x86_64-unknown-linux-musl"  = "sha256-O47QkRScxjpZBGufCUvPohzbTdoV7eRBzjabzuSnG6A=";
+    "aarch64-unknown-linux-musl" = "sha256-yNC0qyqXxZW3CxBBLTbQ1UZNzvHh0yRrBz1IAXzfWk8=";
   };
 in
 
