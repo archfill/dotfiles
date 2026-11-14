@@ -77,7 +77,7 @@ in
       '';
     };
   };
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [
     "iptable_nat"
   ];
