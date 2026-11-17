@@ -12,6 +12,8 @@
   # 作者配布の tap は非公式なので trusted = true が必要 (darwin-system.nix 参照)。
   homebrew.taps = [
     { name = "kot149/tap"; trusted = true; }
+    # repo 名が homebrew- で始まらないため clone_target で URL を指定する
+    { name = "yksr-melt/Meltype"; clone_target = "https://github.com/yksr-melt/Meltype.git"; trusted = true; }
   ];
 
   homebrew.casks = [
@@ -35,5 +37,9 @@
     # cask 名・pkg 名は旧称 Remote Desktop のまま (bundle ID は com.meta.virtualdesktop)。
     # ヘッドセットと同じネットワーク (5/6GHz 推奨) で接続する
     "meta-quest-remote-desktop"
+
+    # 日本語 IME（試用中、2026-11-17〜）。入れた後に入力ソースへ手で追加する。
+    # 設定と学習は ~/Library に残る（cleanup は uninstall なので消えない）
+    "yksr-melt/meltype/meltype"
   ];
 }
