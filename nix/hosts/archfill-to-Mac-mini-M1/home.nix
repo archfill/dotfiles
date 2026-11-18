@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 # archfill-to-Mac-mini-M1 の home-manager エントリ。
 # home.username / home.homeDirectory は nix-darwin の users.users から
@@ -26,6 +26,9 @@
   # 必要なディレクトリだけを並べる (mounts を書くと既定のホーム共有は置き換わる)。
   # mutableSettings: colima が書き出した colima.yaml にこの差分だけ上書きする。
   services.colima.profiles.default = {
+    # ログイン時には起動しない。ハクアは休止中で、空の VM がメモリを約 4GB 抱えるため
+    # (2026-11-18)。使うときは `colima start default`、止めるときは `colima stop default`。
+    isService = lib.mkForce false;
     mutableSettings = true;
     settings = {
       cpu = 2;
