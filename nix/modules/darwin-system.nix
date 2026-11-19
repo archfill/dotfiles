@@ -304,6 +304,17 @@ in
     menuExtraClock.Show24Hour = true;
   };
 
+  # ─── 前面のウィンドウの枠 (JankyBorders) ─────────────────────────────
+  # WM なしで、前面のウィンドウに枠を描くだけの道具。Hyprland の active_border に相当。
+  # 濃い青・太さ 8 (5 や淡い青ではどれが前面か見分けにくかった)。後ろのウィンドウには枠を付けない
+  services.jankyborders = {
+    enable = true;
+    active_color = "0xff1f6fff";
+    inactive_color = "0x00000000";
+    width = 8.0;
+    hidpi = true;
+  };
+
   # symbolichotkeys などの変更をログアウトせずに反映する
   system.activationScripts.postActivation.text = ''
     launchctl asuser "$(id -u -- ${primaryUser})" sudo --user=${primaryUser} -- \
