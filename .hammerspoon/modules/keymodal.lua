@@ -6,6 +6,8 @@
 -- on Esc, and exits when another key is pressed with all four Hyper modifiers
 -- (that key still reaches its own binding).
 
+local keymap = require("modules.keymap")
+
 local keymodal = {}
 
 local DEFAULT_TIMEOUT = 1 -- seconds before the modal exits by itself
@@ -57,8 +59,18 @@ function keymodal.new(hyper, key, helpText, timeout)
 		end
 	end
 
-	--- Bind a key inside the modal: exit first, then run fn
-	function modal:bindAction(actionKey, fn)
+	--- Bind a key inside the modal: exit first, then run fn.
+	--- With info ({ category, description }) the key is also recorded for the
+	--- cheatsheet as "Hyper + key → actionKey", running fn directly.
+	function modal:bindAction(actionKey, fn, info)
+		if info then
+			keymap.add({
+				category = info.category,
+				label = keymap.formatLabel(hyper, key, actionKey),
+				description = info.description,
+				fn = fn,
+			})
+		end
 		self:bind({}, actionKey, function()
 			self:exit()
 			fn()

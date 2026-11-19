@@ -1,6 +1,8 @@
 -- FZF Window Switcher Module
 -- Provides fzf-powered window switching using FzfWindowSwitcher Spoon
 
+local keymap = require("modules.keymap")
+
 local fzf = {}
 
 --- Initialize fzf window switcher
@@ -97,21 +99,31 @@ function fzf.init(config, helpers)
 	if switcher.hotkeyBind then
 		switcher.hotkeyBind:delete()
 	end
+	local function showSwitcher()
+		-- hs.chooser:width() takes a percentage of the screen width, so a
+		-- fixed percentage is too wide on ultrawide and too narrow on a
+		-- portrait screen. Recompute it for the screen it opens on.
+		if ui.widthPixels then
+			local screenWidth = hs.screen.mainScreen():frame().w
+			local percent = math.min(ui.widthPixels / screenWidth * 100, ui.maxWidthPercent or 90)
+			switcher.windowChooser:width(percent)
+		end
+		switcher:showWindowSwitcher()
+	end
 	switcher.hotkeyBind = hs.hotkey.bind(config.hyper, hotkey, function()
 		if switcher.windowChooser and switcher.windowChooser:isVisible() then
 			switcher.windowChooser:hide()
 		else
-			-- hs.chooser:width() takes a percentage of the screen width, so a
-			-- fixed percentage is too wide on ultrawide and too narrow on a
-			-- portrait screen. Recompute it for the screen it opens on.
-			if ui.widthPixels then
-				local screenWidth = hs.screen.mainScreen():frame().w
-				local percent = math.min(ui.widthPixels / screenWidth * 100, ui.maxWidthPercent or 90)
-				switcher.windowChooser:width(percent)
-			end
-			switcher:showWindowSwitcher()
+			showSwitcher()
 		end
 	end)
+	-- Recorded only: the hotkey above is bound here, not through keymap.bind
+	keymap.add({
+		category = keymap.categories.move,
+		label = keymap.formatLabel(config.hyper, hotkey),
+		description = "ウィンドウを検索して移る",
+		fn = showSwitcher,
+	})
 end
 
 return fzf

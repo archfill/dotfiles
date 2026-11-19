@@ -107,6 +107,19 @@ config.fzf = {
 }
 
 --------------------------------------------------------------------------------
+-- Key Cheatsheet
+--------------------------------------------------------------------------------
+
+config.cheatsheet = {
+	-- Hyper + key lists every registered key (modules.keymap) in a chooser.
+	-- Appearance follows config.fzf.ui.
+	enabled = true,
+	-- Not "/" "." ",": macOS takes Hyper + those before any app ("." starts
+	-- sysdiagnose, "," stackshot, "/" never arrives either).
+	key = "u",
+}
+
+--------------------------------------------------------------------------------
 -- Window Groups (Hyprland-style stacking)
 --------------------------------------------------------------------------------
 

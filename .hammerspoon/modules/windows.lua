@@ -5,6 +5,7 @@
 -- not reach Hammerspoon's eventtap (it is handled earlier as a secondary click).
 
 local keymodal = require("modules.keymodal")
+local keymap = require("modules.keymap")
 
 local windows = {}
 
@@ -288,6 +289,41 @@ local function swapDirection(direction)
 	windows.moveMouseInto(win)
 end
 
+-- Cheatsheet descriptions (UI strings) per direction
+local DIRECTION_FOCUS_TEXT = {
+	west = "左のウィンドウへ移る",
+	south = "下のウィンドウへ移る",
+	north = "上のウィンドウへ移る",
+	east = "右のウィンドウへ移る",
+}
+local DIRECTION_SWAP_TEXT = {
+	west = "左のウィンドウと入れ替える",
+	south = "下のウィンドウと入れ替える",
+	north = "上のウィンドウと入れ替える",
+	east = "右のウィンドウと入れ替える",
+}
+
+--- Keys of a table in sorted order (keeps the cheatsheet order stable)
+local function sortedKeys(t)
+	local list = {}
+	for key in pairs(t) do
+		list[#list + 1] = key
+	end
+	table.sort(list)
+	return list
+end
+
+--- Cheatsheet description of a layout unit rect (e.g. left 70%)
+local function layoutDescription(unit)
+	local percent = math.floor(unit.w * 100 + 0.5)
+	if unit.h == 1 and unit.x == 0 then
+		return ("画面の左 %d%% に配置"):format(percent)
+	elseif unit.h == 1 and math.abs(unit.x + unit.w - 1) < 1e-6 then
+		return ("画面の右 %d%% に配置"):format(percent)
+	end
+	return "指定の位置に配置"
+end
+
 --- Initialize window management hotkeys
 --- @param config table Configuration table with hyper key and window settings
 --- @param helpers table Helper functions
@@ -299,13 +335,19 @@ function windows.init(config, helpers)
 	-- Temporary maximize toggle
 	if windowConfig.enableMaximizeToggle ~= false then
 		local key = windowConfig.maximizeToggleKey or "f"
-		hs.hotkey.bind(hyper, key, toggleMaximize)
+		keymap.bind(hyper, key, {
+			category = keymap.categories.layout,
+			description = "最大化と元の大きさを切り替える",
+		}, toggleMaximize)
 	end
 
 	-- Window positioning (left/right half, etc.)
 	if windowConfig.enablePositioning then
 		-- Left half
-		hs.hotkey.bind(hyper, "left", function()
+		keymap.bind(hyper, "left", {
+			category = keymap.categories.layout,
+			description = "左半分に配置",
+		}, function()
 			local win = hs.window.focusedWindow()
 			if win then
 				win:moveToUnit(hs.layout.left50)
@@ -313,7 +355,10 @@ function windows.init(config, helpers)
 		end)
 
 		-- Right half
-		hs.hotkey.bind(hyper, "right", function()
+		keymap.bind(hyper, "right", {
+			category = keymap.categories.layout,
+			description = "右半分に配置",
+		}, function()
 			local win = hs.window.focusedWindow()
 			if win then
 				win:moveToUnit(hs.layout.right50)
@@ -321,7 +366,10 @@ function windows.init(config, helpers)
 		end)
 
 		-- Top half
-		hs.hotkey.bind(hyper, "up", function()
+		keymap.bind(hyper, "up", {
+			category = keymap.categories.layout,
+			description = "上半分に配置",
+		}, function()
 			local win = hs.window.focusedWindow()
 			if win then
 				win:moveToUnit({ x = 0, y = 0, w = 1, h = 0.5 })
@@ -329,17 +377,43 @@ function windows.init(config, helpers)
 		end)
 
 		-- Bottom half
-		hs.hotkey.bind(hyper, "down", function()
+		keymap.bind(hyper, "down", {
+			category = keymap.categories.layout,
+			description = "下半分に配置",
+		}, function()
 			local win = hs.window.focusedWindow()
 			if win then
 				win:moveToUnit({ x = 0, y = 0.5, w = 1, h = 0.5 })
 			end
 		end)
+	else
+		-- Rectangle handles the arrows: shown in the cheatsheet only
+		for _, arrow in ipairs({
+			{ "left", "左半分に配置（Rectangle）" },
+			{ "right", "右半分に配置（Rectangle）" },
+			{ "up", "上半分に配置（Rectangle）" },
+			{ "down", "下半分に配置（Rectangle）" },
+		}) do
+			keymap.add({
+				category = keymap.categories.layout,
+				label = keymap.formatLabel(hyper, arrow[1]),
+				description = arrow[2],
+			})
+		end
 	end
 
 	-- Ultrawide layouts (e.g. 70/30)
-	for key, unit in pairs(windowConfig.layouts or {}) do
-		hs.hotkey.bind(hyper, key, function()
+	local layoutKeys = {}
+	for key in pairs(windowConfig.layouts or {}) do
+		layoutKeys[#layoutKeys + 1] = key
+	end
+	table.sort(layoutKeys)
+	for _, key in ipairs(layoutKeys) do
+		local unit = windowConfig.layouts[key]
+		keymap.bind(hyper, key, {
+			category = keymap.categories.layout,
+			description = layoutDescription(unit),
+		}, function()
 			local win = hs.window.focusedWindow()
 			if win then
 				win:moveToUnit(unit, 0)
@@ -352,14 +426,21 @@ function windows.init(config, helpers)
 		historyFilter = hs.window.filter.new():setDefaultFilter({ allowRoles = "AXStandardWindow" })
 		historyFilter:subscribe(hs.window.filter.windowFocused, recordFocus)
 		recordFocus(hs.window.focusedWindow())
-		hs.hotkey.bind(hyper, windowConfig.lastWindowKey or "-", focusLast)
+		keymap.bind(hyper, windowConfig.lastWindowKey or "-", {
+			category = keymap.categories.move,
+			description = "直前のウィンドウへ戻る",
+		}, focusLast)
 	end
 
 	-- Directional focus (like yabai/hyprland mod+hjkl)
 	local keys = windowConfig.directionalFocusKeys or { h = "west", j = "south", k = "north", l = "east" }
 	if windowConfig.enableDirectionalFocus ~= false then
-		for key, direction in pairs(keys) do
-			hs.hotkey.bind(hyper, key, function()
+		for _, key in ipairs(sortedKeys(keys)) do
+			local direction = keys[key]
+			keymap.bind(hyper, key, {
+				category = keymap.categories.move,
+				description = DIRECTION_FOCUS_TEXT[direction],
+			}, function()
 				focusDirection(direction)
 			end)
 		end
@@ -377,10 +458,14 @@ function windows.init(config, helpers)
 		end
 		table.sort(letters)
 		local modal = keymodal.new(hyper, swapKey, "Swap: " .. table.concat(letters))
-		for key, direction in pairs(keys) do
+		for _, key in ipairs(sortedKeys(keys)) do
+			local direction = keys[key]
 			modal:bindAction(key, function()
 				swapDirection(direction)
-			end)
+			end, {
+				category = keymap.categories.layout,
+				description = DIRECTION_SWAP_TEXT[direction],
+			})
 		end
 	end
 end

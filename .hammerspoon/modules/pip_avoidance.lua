@@ -3,6 +3,8 @@
 -- Tracks a browser playback popup and moves it to the least-overlapping
 -- corner when the focused window changes or is resized.
 
+local keymap = require("modules.keymap")
+
 local pipAvoidance = {}
 
 local settings = {}
@@ -706,8 +708,14 @@ function pipAvoidance.init(config, helperModule)
 		[hs.window.filter.windowNotVisible] = handleWindowEvent,
 	})
 
-	hs.hotkey.bind(config.hyper, settings.registerKey or "o", toggleTargetRegistration)
-	hs.hotkey.bind(config.hyper, settings.toggleKey or "i", toggleEnabled)
+	keymap.bind(config.hyper, settings.registerKey or "o", {
+		category = keymap.categories.other,
+		description = "dアニメの再生ウィンドウを登録・解除する",
+	}, toggleTargetRegistration)
+	keymap.bind(config.hyper, settings.toggleKey or "i", {
+		category = keymap.categories.other,
+		description = "dアニメの自動退避を有効・無効にする",
+	}, toggleEnabled)
 end
 
 return pipAvoidance

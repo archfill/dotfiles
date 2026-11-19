@@ -1,6 +1,8 @@
 -- Application Launcher Module
 -- Registers hotkeys for launching/toggling applications
 
+local keymap = require("modules.keymap")
+
 local apps = {}
 
 -- Window switcher instance
@@ -12,10 +14,20 @@ local switcher = nil
 function apps.init(config, helpers)
 	-- App launchers (Hyper + key to toggle specific app)
 	for _, launcher in ipairs(config.appLaunchers) do
-		hs.hotkey.bind(config.hyper, launcher.key, function()
+		keymap.bind(config.hyper, launcher.key, {
+			category = keymap.categories.apps,
+			description = launcher.app .. " を開く・隠す",
+		}, function()
 			helpers.toggleApp(launcher.app, launcher.position)
 		end)
 	end
+
+	-- Alfred's clipboard history: handled outside Hammerspoon, shown only
+	keymap.add({
+		category = keymap.categories.other,
+		label = keymap.formatLabel(config.hyper, "v"),
+		description = "クリップボードの履歴（Alfred）",
+	})
 
 	-- Window switcher with UI (sorted by last focused)
 	if config.appCycleKey then
@@ -69,7 +81,13 @@ function apps.setupSwitcher(config, attempt)
 	end
 
 	-- Bind hotkeys
-	hs.hotkey.bind(config.hyper, config.appCycleKey, function()
+	-- Display only: hs.window.switcher decides when the modifiers are released,
+	-- so it cannot be called from the cheatsheet
+	keymap.bind(config.hyper, config.appCycleKey, {
+		category = keymap.categories.move,
+		description = "ウィンドウを切り替える",
+		runnable = false,
+	}, function()
 		-- The switcher focuses the window when Hyper is released
 		require("modules.windows").moveMouseOnNextFocus()
 		switcher:next()
@@ -77,7 +95,11 @@ function apps.setupSwitcher(config, attempt)
 
 	-- Optional: reverse cycle
 	if config.appCycleKeyReverse then
-		hs.hotkey.bind(config.hyper, config.appCycleKeyReverse, function()
+		keymap.bind(config.hyper, config.appCycleKeyReverse, {
+			category = keymap.categories.move,
+			description = "ウィンドウを逆順に切り替える",
+			runnable = false,
+		}, function()
 			require("modules.windows").moveMouseOnNextFocus()
 			switcher:previous()
 		end)

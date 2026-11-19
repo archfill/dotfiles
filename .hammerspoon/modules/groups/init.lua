@@ -17,6 +17,7 @@ local state = require("modules.groups.state")
 local store = require("modules.groups.store")
 local tabbar = require("modules.groups.tabbar")
 local keymodal = require("modules.keymodal")
+local keymap = require("modules.keymap")
 local windows = require("modules.windows")
 
 local groups = {}
@@ -418,10 +419,16 @@ function groups.init(config, helpers)
 	})
 
 	-- Next / previous
-	hs.hotkey.bind(hyper, nextKey, function()
+	keymap.bind(hyper, nextKey, {
+		category = keymap.categories.groups,
+		description = "グループ内の次のウィンドウへ",
+	}, function()
 		cycle(1)
 	end)
-	hs.hotkey.bind(hyper, prevKey, function()
+	keymap.bind(hyper, prevKey, {
+		category = keymap.categories.groups,
+		description = "グループ内の前のウィンドウへ",
+	}, function()
 		cycle(-1)
 	end)
 
@@ -434,16 +441,29 @@ function groups.init(config, helpers)
 	local helpText = ("Group: %s / %s / %s"):format(toggleKey:upper(), table.concat(dirLetters), outKey:upper())
 
 	local modal = keymodal.new(hyper, toggleKey, helpText)
-	local function bindModal(key, fn)
-		modal:bindAction(key, fn)
+	local function bindModal(key, fn, description)
+		modal:bindAction(key, fn, { category = keymap.categories.groups, description = description })
 	end
 
-	bindModal(toggleKey, toggleGroup)
-	bindModal(outKey, moveOut)
-	for key, direction in pairs(directionKeys) do
+	local DIRECTION_TEXT = {
+		west = "左のグループに入れる",
+		south = "下のグループに入れる",
+		north = "上のグループに入れる",
+		east = "右のグループに入れる",
+	}
+
+	bindModal(toggleKey, toggleGroup, "グループにする・グループごと解散する")
+	bindModal(outKey, moveOut, "グループから出す")
+	local sortedDirKeys = {}
+	for key in pairs(directionKeys) do
+		sortedDirKeys[#sortedDirKeys + 1] = key
+	end
+	table.sort(sortedDirKeys)
+	for _, key in ipairs(sortedDirKeys) do
+		local direction = directionKeys[key]
 		bindModal(key, function()
 			addToDirection(direction)
-		end)
+		end, DIRECTION_TEXT[direction])
 	end
 
 	-- Window events (standard windows only, all spaces)

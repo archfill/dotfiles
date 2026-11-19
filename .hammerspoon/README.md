@@ -267,6 +267,9 @@ local wifi = hs.wifi.currentNetwork()
 │   ├── pip_avoidance.lua # dアニメ再生ポップアップの自動退避
 │   ├── groups/           # ウィンドウグループ (state / store / tabbar / init)
 │   ├── fzf.lua           # FZFウィンドウスイッチャー
+│   ├── keymap.lua        # キー登録と一覧用の記録
+│   ├── cheatsheet.lua    # キー一覧（Hyper + U）
+│   ├── keymodal.lua      # Hyper + キー → 続けて押す操作待ち
 │   └── reload.lua        # 設定リロード
 ├── utils/
 │   └── helpers.lua       # ヘルパー関数
@@ -304,6 +307,9 @@ local wifi = hs.wifi.currentNetwork()
 Hyper + G / Hyper + M のあとは Esc または 1 秒何も押さないと抜ける。グループは `~/.local/state/hammerspoon/groups.json` に保存され、Hyper + R の読み込み直しで残る。
 | **システム** |||
 | Hyper + R | 設定リロード | reload |
+| Hyper + U | キー一覧（選んで実行。Hammerspoon の外のキーは表示のみ） | cheatsheet |
+
+キーを足すときは `hs.hotkey.bind` ではなく `keymap.bind(mods, key, { category, description }, fn)` を使い、説明（日本語）を付ける。Hyper + U の一覧はここから作られる。Hammerspoon の外のキーや操作待ちの2段目は `keymap.add` で記録だけする（`fn` を省くと表示のみ）。
 
 ### dアニメ再生ポップアップの自動退避
 

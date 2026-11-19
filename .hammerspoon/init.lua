@@ -45,3 +45,7 @@ groups.init(config, helpers)
 -- dアニメ playback popup avoidance
 local pipAvoidance = require("modules.pip_avoidance")
 pipAvoidance.init(config, helpers)
+
+-- Key cheatsheet (Hyper + /). Must come last: it lists the keys registered above
+local cheatsheet = require("modules.cheatsheet")
+cheatsheet.init(config, helpers)

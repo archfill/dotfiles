@@ -1,6 +1,8 @@
 -- Configuration Reload Module
 -- Handles manual and automatic config reloading
 
+local keymap = require("modules.keymap")
+
 local reload = {}
 
 local pathwatcher = nil
@@ -14,7 +16,10 @@ function reload.init(config, helpers)
 
 	-- Manual reload hotkey (Hyper + R)
 	if settings.reloadKey then
-		hs.hotkey.bind(hyper, settings.reloadKey, function()
+		keymap.bind(hyper, settings.reloadKey, {
+			category = keymap.categories.other,
+			description = "設定を読み込み直す",
+		}, function()
 			hs.reload()
 		end)
 	end
