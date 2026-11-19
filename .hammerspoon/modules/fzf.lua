@@ -64,6 +64,8 @@ function fzf.init(config, helpers)
 	if fzfConfig.quickSwitchEnabled ~= nil then
 		spoon.FzfWindowSwitcher.quickSwitchEnabled = fzfConfig.quickSwitchEnabled
 	end
+	-- Move the cursor into the chosen window (config.windows.mouseFollowsFocus)
+	spoon.FzfWindowSwitcher.onWindowFocused = require("modules.windows").moveMouseInto
 	if fzfConfig.maxTitleLength then
 		spoon.FzfWindowSwitcher.maxTitleLength = fzfConfig.maxTitleLength
 	end

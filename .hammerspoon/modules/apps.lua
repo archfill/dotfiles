@@ -70,12 +70,15 @@ function apps.setupSwitcher(config, attempt)
 
 	-- Bind hotkeys
 	hs.hotkey.bind(config.hyper, config.appCycleKey, function()
+		-- The switcher focuses the window when Hyper is released
+		require("modules.windows").moveMouseOnNextFocus()
 		switcher:next()
 	end)
 
 	-- Optional: reverse cycle
 	if config.appCycleKeyReverse then
 		hs.hotkey.bind(config.hyper, config.appCycleKeyReverse, function()
+			require("modules.windows").moveMouseOnNextFocus()
 			switcher:previous()
 		end)
 	end

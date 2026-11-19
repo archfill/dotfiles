@@ -46,6 +46,12 @@ config.windows = {
 	-- Customize keys: { key = "direction" }
 	-- directionalFocusKeys = { h = "west", j = "south", k = "north", l = "east" },
 
+	-- Move the cursor into the window focused by keyboard (Hyper + H/J/K/L,
+	-- N/P, W, C), like Hyprland. The cursor stays if it is already inside.
+	-- Scrolling then goes to the focused window (macOS scrolls the window
+	-- under the cursor).
+	mouseFollowsFocus = true,
+
 	-- Ultrawide 70/30 layouts (Hyper + key, unit rect of the screen).
 	-- Top row = main window on the left, bottom row = main window on the right.
 	-- Halves / thirds are handled by Rectangle.

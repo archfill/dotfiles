@@ -43,6 +43,54 @@ local windowFilter = nil
 -- Pending focus check after a directional focus (see focusDirection)
 local focusCheckTimer = nil
 
+--------------------------------------------------------------------------------
+-- Mouse follows keyboard focus (like Hyprland's default cursor warp)
+--------------------------------------------------------------------------------
+
+-- Set from config.windows.mouseFollowsFocus in windows.init
+local mouseFollowsFocus = false
+
+-- Focus changes by keyboard can scroll the wrong window on macOS: scrolling
+-- goes to the window under the cursor, not the focused one.
+
+--- Move the cursor to the center of a window, unless it is already inside it
+--- (so a window focused by clicking never moves the cursor).
+--- @param win hs.window|nil
+function windows.moveMouseInto(win)
+	if not mouseFollowsFocus or not win then
+		return
+	end
+	local frame = win:frame()
+	local pos = hs.mouse.absolutePosition()
+	if pos.x >= frame.x and pos.x < frame.x + frame.w and pos.y >= frame.y and pos.y < frame.y + frame.h then
+		return
+	end
+	hs.mouse.absolutePosition({ x = frame.x + frame.w / 2, y = frame.y + frame.h / 2 })
+end
+
+-- For focus changes made by code we cannot hook into (hs.window.switcher
+-- focuses the window when the modifiers are released): move the cursor on the
+-- next focus change within a short time.
+local WARP_WINDOW = 3 -- seconds
+local warpUntil = nil
+local warpFilter = nil
+
+function windows.moveMouseOnNextFocus()
+	if not mouseFollowsFocus then
+		return
+	end
+	warpUntil = hs.timer.secondsSinceEpoch() + WARP_WINDOW
+	if not warpFilter then
+		warpFilter = hs.window.filter.new():setDefaultFilter({ allowRoles = "AXStandardWindow" })
+		warpFilter:subscribe(hs.window.filter.windowFocused, function(win)
+			if warpUntil and hs.timer.secondsSinceEpoch() <= warpUntil then
+				warpUntil = nil
+				windows.moveMouseInto(win)
+			end
+		end)
+	end
+end
+
 --- Get or create window filter for current space
 --- @return hs.window.filter
 local function getWindowFilter()
@@ -100,6 +148,7 @@ function windows.focusWindow(target)
 	end
 	target:raise()
 	target:focus()
+	windows.moveMouseInto(target)
 	focusCheckTimer = hs.timer.doAfter(0.1, function()
 		focusCheckTimer = nil
 		local focused = hs.window.focusedWindow()
@@ -141,6 +190,7 @@ end
 function windows.init(config, helpers)
 	local hyper = config.hyper
 	local windowConfig = config.windows or {}
+	mouseFollowsFocus = windowConfig.mouseFollowsFocus == true
 
 	-- Temporary maximize toggle
 	if windowConfig.enableMaximizeToggle ~= false then

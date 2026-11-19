@@ -27,6 +27,7 @@ obj.searchWindowTitles = true -- Whether to search window titles in addition to 
 obj.maxTitleLength = 40 -- Maximum length for window titles in UI
 obj.truncateTitles = true -- Whether to truncate long window titles in UI
 obj.quickSwitchEnabled = true -- Whether to immediately switch to a window if there's only one match
+obj.onWindowFocused = nil -- Optional function(win) called after a window is focused
 obj.hotkey = { { "alt" }, "space" } -- Default hotkey to activate window switcher
 
 -- Module variables
@@ -64,6 +65,9 @@ function obj:init()
 			-- Focus the selected window
 			self.logger.d("Focusing window: " .. selection.text .. " - " .. (selection.fullTitle or selection.subText))
 			win:focus()
+			if self.onWindowFocused then
+				self.onWindowFocused(win)
+			end
 		else
 			self.logger.w("Window not found: " .. tostring(selection.windowId))
 		end
@@ -140,6 +144,9 @@ function obj:init()
 						self.windowChooser:hide()
 
 						win:focus()
+						if self.onWindowFocused then
+							self.onWindowFocused(win)
+						end
 						return
 					end
 				end
