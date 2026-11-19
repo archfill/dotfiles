@@ -264,7 +264,7 @@ local wifi = hs.wifi.currentNetwork()
 │   ├── apps.lua          # アプリ起動 + ウィンドウスイッチャー
 │   ├── windows.lua       # ウィンドウ管理
 │   ├── pip_avoidance.lua # dアニメ再生ポップアップの自動退避
-│   ├── groups.lua        # ウィンドウグループ
+│   ├── groups/           # ウィンドウグループ (state / store / tabbar / init)
 │   ├── fzf.lua           # FZFウィンドウスイッチャー
 │   └── reload.lua        # 設定リロード
 ├── utils/
@@ -293,9 +293,13 @@ local wifi = hs.wifi.currentNetwork()
 | Hyper + O | 再生ウィンドウの登録/解除をトグル | pip_avoidance |
 | Hyper + I | dアニメ自動退避の有効/無効 | pip_avoidance |
 | **ウィンドウグループ** |||
-| Hyper + G | グループに追加/削除 | groups |
-| Hyper + N | 次のウィンドウ | groups |
-| Hyper + P | 前のウィンドウ | groups |
+| Hyper + G → G | 前面のウィンドウをグループにする / グループごと解散 | groups |
+| Hyper + G → H/J/K/L | 前面のウィンドウを、その方向のグループに入れる | groups |
+| Hyper + G → O | 前面のウィンドウをグループから出す | groups |
+| Hyper + N | グループ内の次のウィンドウ | groups |
+| Hyper + P | グループ内の前のウィンドウ | groups |
+
+Hyper + G のあとは Esc または 1 秒何も押さないと抜ける。グループは `~/.local/state/hammerspoon/groups.json` に保存され、Hyper + R の読み込み直しで残る。
 | **システム** |||
 | Hyper + R | 設定リロード | reload |
 
@@ -333,8 +337,10 @@ config.appLaunchers = {
 config.groups = {
     keys = {
         toggle = "g",
+        out = "o",
         next = "n",
         prev = "p",
     },
+    autoJoinNewWindows = false,
 }
 ```

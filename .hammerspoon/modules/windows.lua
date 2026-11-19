@@ -40,25 +40,79 @@ end
 -- Window filter for directional focus (created once, reused)
 local windowFilter = nil
 
+-- Pending focus check after a directional focus (see focusDirection)
+local focusCheckTimer = nil
+
 --- Get or create window filter for current space
 --- @return hs.window.filter
 local function getWindowFilter()
 	if not windowFilter then
-		-- Create filter: current space only, exclude problematic windows
+		-- Create filter: current space only, exclude problematic windows.
+		-- Only AXStandardWindow: menu bar panels and notification widgets are excluded.
 		windowFilter = hs.window.filter.new()
 			:setCurrentSpace(true)
-			:setDefaultFilter({})
+			:setDefaultFilter({ allowRoles = "AXStandardWindow" })
 			:rejectApp("Finder") -- Exclude Finder (often has invisible desktop window)
 	end
 	return windowFilter
 end
 
---- Focus window in direction (like yabai/hyprland)
---- Uses hs.window.filter for better performance and filtering
+--- Pick the first candidate window in a direction.
+--- Uses hs.window.filter for better performance and filtering.
+--- Also used by modules.groups to choose the group in a direction.
+--- @param win hs.window Origin window
 --- @param direction string Direction: "west", "east", "north", "south"
-local function focusDirection(direction)
+--- @return hs.window|nil
+function windows.windowInDirection(win, direction)
 	local wf = getWindowFilter()
 
+	-- frontmost = true: only windows that are not fully hidden behind others.
+	-- macOS windows overlap (unlike a tiling WM such as Hyprland), so without
+	-- this the nearest window can be one hidden behind the focused window.
+	-- strict = true: only windows within ±45° of the direction. Without it, a
+	-- window just below the focused one whose center is a few pixels to the
+	-- right counts as "east" and gets focus before the window that is
+	-- actually to the right.
+	local frontmost, strict = true, true
+	local method = ({
+		west = "windowsToWest",
+		east = "windowsToEast",
+		north = "windowsToNorth",
+		south = "windowsToSouth",
+	})[direction]
+	if not method then
+		return nil
+	end
+	local candidates = wf[method](wf, win, frontmost, strict)
+	return candidates[1]
+end
+
+--- Focus a window reliably.
+--- Used instead of wf:focusWindow<Dir>(): when the app has several windows
+--- (e.g. Chrome on two screens), activating the app can bring its other window
+--- to the front. Raise the target first, then check shortly after and focus it
+--- again if another window took focus. Cancel the check from a previous call,
+--- so that a quick second press is not pulled back to the first target.
+--- @param target hs.window
+function windows.focusWindow(target)
+	if focusCheckTimer then
+		focusCheckTimer:stop()
+	end
+	target:raise()
+	target:focus()
+	focusCheckTimer = hs.timer.doAfter(0.1, function()
+		focusCheckTimer = nil
+		local focused = hs.window.focusedWindow()
+		if not focused or focused:id() ~= target:id() then
+			target:raise()
+			target:focus()
+		end
+	end)
+end
+
+--- Focus window in direction (like yabai/hyprland)
+--- @param direction string Direction: "west", "east", "north", "south"
+local function focusDirection(direction)
 	-- Get current window
 	local win = hs.window.focusedWindow()
 	if not win then
@@ -72,19 +126,13 @@ local function focusDirection(direction)
 		end
 	end
 
-	-- Use window filter's focus methods
-	local success = false
-	if direction == "west" then
-		success = wf:focusWindowWest(win, false, false)
-	elseif direction == "east" then
-		success = wf:focusWindowEast(win, false, false)
-	elseif direction == "north" then
-		success = wf:focusWindowNorth(win, false, false)
-	elseif direction == "south" then
-		success = wf:focusWindowSouth(win, false, false)
+	local target = windows.windowInDirection(win, direction)
+	if not target then
+		return false
 	end
 
-	return success
+	windows.focusWindow(target)
+	return true
 end
 
 --- Initialize window management hotkeys

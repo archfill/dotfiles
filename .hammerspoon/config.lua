@@ -95,12 +95,21 @@ config.fzf = {
 config.groups = {
 	-- Enable window grouping
 	enabled = true,
-	-- Keybindings
+	-- Keybindings (all with Hyper)
 	keys = {
-		toggle = "g", -- Create group / exit add mode / dissolve group
-		next = "n",   -- Next window in group
-		prev = "p",   -- Previous window in group
+		-- Enter the group mode. Then: toggle again = create / dissolve group,
+		-- H/J/K/L = put the window into the group in that direction,
+		-- out = take the window out of its group. Esc or 1s idle cancels.
+		toggle = "g",
+		out = "o",
+		next = "n", -- Next window in group
+		prev = "p", -- Previous window in group
 	},
+	-- Automatically add newly opened windows to the frontmost group
+	-- (Hyprland default; off here because dialogs and popups also open windows)
+	autoJoinNewWindows = false,
+	-- State file (default: ~/.local/state/hammerspoon/groups.json)
+	-- stateFile = os.getenv("HOME") .. "/.local/state/hammerspoon/groups.json",
 }
 
 --------------------------------------------------------------------------------
