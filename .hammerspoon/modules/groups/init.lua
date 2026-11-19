@@ -110,16 +110,39 @@ local function sameFrame(a, b)
 		and math.abs(a.h - b.h) <= FRAME_TOLERANCE
 end
 
+-- The group frame is the outer frame: the tab bar strip at the top plus the
+-- area the members fill below it (like Hyprland's group bar, which takes
+-- space instead of covering the window).
+
+--- Frame for the members of a group with this outer frame
+local function contentFrame(outer)
+	return { x = outer.x, y = outer.y + tabbar.HEIGHT, w = outer.w, h = outer.h - tabbar.HEIGHT }
+end
+
+--- Outer frame for a member at this frame
+local function outerFrame(content)
+	return { x = content.x, y = content.y - tabbar.HEIGHT, w = content.w, h = content.h + tabbar.HEIGHT }
+end
+
 --- Apply the group frame to every member whose frame differs
 local function applyFrame(groupId, exceptId)
 	local group = st.groups[groupId]
+	local target = contentFrame(group.frame)
 	for _, id in ipairs(group.windowIds) do
 		if id ~= exceptId then
 			local win = getWindow(id)
-			if win and not sameFrame(win:frame(), group.frame) then
-				win:setFrame(group.frame, 0)
+			if win and not sameFrame(win:frame(), target) then
+				win:setFrame(target, 0)
 			end
 		end
+	end
+end
+
+--- Give a window that leaves a group the tab bar strip back
+local function restoreFrame(id, outer)
+	local win = getWindow(id)
+	if win then
+		win:setFrame(outer, 0)
 	end
 end
 
@@ -138,10 +161,18 @@ local function toggleGroup()
 	local id = win:id()
 	local groupId = state.groupOf(st, id)
 	if groupId then
+		local group = st.groups[groupId]
+		local outer = group.frame
+		local members = { table.unpack(group.windowIds) }
 		state.dissolve(st, groupId)
+		for _, memberId in ipairs(members) do
+			restoreFrame(memberId, outer)
+		end
 		hs.alert.show("Group dissolved", 0.5)
 	else
-		state.createGroup(st, id, win:frame())
+		local outer = win:frame()
+		state.createGroup(st, id, outer)
+		win:setFrame(contentFrame(outer), 0)
 		hs.alert.show("New group: " .. getAppName(win), 0.5)
 	end
 	save()
@@ -170,7 +201,7 @@ local function addToDirection(direction)
 
 	-- addWindow also takes the window out of its previous group
 	state.addWindow(st, groupId, id)
-	win:setFrame(st.groups[groupId].frame, 0)
+	win:setFrame(contentFrame(st.groups[groupId].frame), 0)
 	save()
 	refresh(id)
 	hs.alert.show("Added: " .. getAppName(win) .. " (#" .. #st.groups[groupId].windowIds .. ")", 0.5)
@@ -184,9 +215,13 @@ local function moveOut()
 	end
 
 	local id = win:id()
-	if not state.removeWindow(st, id) then
+	local groupId = state.groupOf(st, id)
+	if not groupId then
 		return
 	end
+	local outer = st.groups[groupId].frame
+	state.removeWindow(st, id)
+	restoreFrame(id, outer)
 	save()
 	refresh(id)
 	hs.alert.show("Removed: " .. getAppName(win), 0.5)
@@ -271,11 +306,11 @@ local function followActive(id)
 		return
 	end
 	local frame = win:frame()
-	if sameFrame(frame, group.frame) then
+	if sameFrame(frame, contentFrame(group.frame)) then
 		return
 	end
 
-	state.setFrame(st, groupId, frame)
+	state.setFrame(st, groupId, outerFrame(frame))
 	applyFrame(groupId, id)
 	saveSoon()
 	refresh(id)
@@ -314,7 +349,7 @@ local function onCreated(win)
 		return
 	end
 	state.addWindow(st, groupId, id)
-	win:setFrame(st.groups[groupId].frame, 0)
+	win:setFrame(contentFrame(st.groups[groupId].frame), 0)
 	save()
 	refresh(id)
 end
@@ -331,6 +366,11 @@ local function loadState()
 		return getWindow(id) ~= nil
 	end) then
 		save()
+	end
+	-- Place the members below the tab bar strip (also fixes groups saved
+	-- before the strip existed, whose frame was the window frame itself)
+	for groupId in pairs(st.groups) do
+		applyFrame(groupId)
 	end
 end
 

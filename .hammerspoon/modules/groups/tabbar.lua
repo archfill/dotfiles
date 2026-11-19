@@ -5,6 +5,8 @@
 local M = {}
 
 local TAB_HEIGHT = 24
+-- Group members are placed below this height, so the bar covers no window
+M.HEIGHT = TAB_HEIGHT
 local TAB_PADDING = 8
 local TAB_BG = { red = 0.15, green = 0.15, blue = 0.15, alpha = 0.95 }
 local TAB_ACTIVE = { red = 0.3, green = 0.5, blue = 0.8, alpha = 1 }
