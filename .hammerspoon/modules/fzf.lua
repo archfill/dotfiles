@@ -76,6 +76,20 @@ function fzf.init(config, helpers)
 	spoon.FzfWindowSwitcher:init()
 	spoon.FzfWindowSwitcher:start()
 
+	-- Chooser appearance (hs.chooser only exposes these; font size,
+	-- padding and corner radius are fixed)
+	local ui = fzfConfig.ui or {}
+	local chooser = spoon.FzfWindowSwitcher.windowChooser
+	if ui.rows then
+		chooser:rows(ui.rows)
+	end
+	if ui.bgDark ~= nil then
+		chooser:bgDark(ui.bgDark)
+	end
+	if ui.placeholderText then
+		chooser:placeholderText(ui.placeholderText)
+	end
+
 	-- Replace the Spoon's show-only hotkey with a toggle (press again to close)
 	local switcher = spoon.FzfWindowSwitcher
 	if switcher.hotkeyBind then
@@ -85,6 +99,14 @@ function fzf.init(config, helpers)
 		if switcher.windowChooser and switcher.windowChooser:isVisible() then
 			switcher.windowChooser:hide()
 		else
+			-- hs.chooser:width() takes a percentage of the screen width, so a
+			-- fixed percentage is too wide on ultrawide and too narrow on a
+			-- portrait screen. Recompute it for the screen it opens on.
+			if ui.widthPixels then
+				local screenWidth = hs.screen.mainScreen():frame().w
+				local percent = math.min(ui.widthPixels / screenWidth * 100, ui.maxWidthPercent or 90)
+				switcher.windowChooser:width(percent)
+			end
 			switcher:showWindowSwitcher()
 		end
 	end)

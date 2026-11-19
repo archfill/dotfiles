@@ -74,6 +74,18 @@ config.fzf = {
 	quickSwitchEnabled = true,
 	-- Maximum length for window titles in UI
 	maxTitleLength = 50,
+	-- Chooser appearance. The window title is shown large and the app name
+	-- small (set in the Spoon).
+	ui = {
+		-- Width in pixels, converted to a percentage of the screen it opens on
+		-- (works for both the ultrawide and a portrait screen)
+		widthPixels = 700,
+		-- Upper limit as a percentage of the screen width (narrow screens)
+		maxWidthPercent = 90,
+		-- Dark background regardless of the system appearance
+		bgDark = true,
+		placeholderText = "ウィンドウを検索",
+	},
 }
 
 --------------------------------------------------------------------------------

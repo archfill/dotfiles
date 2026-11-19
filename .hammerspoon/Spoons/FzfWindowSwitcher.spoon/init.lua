@@ -103,10 +103,10 @@ function obj:init()
 		-- Prepare input list for fzfFilter
 		local inputList = {}
 		for i, choice in ipairs(self.fullWindowList) do
-			local searchText = choice.text
+			local searchText = choice.appName
 			if self.searchWindowTitles then
 				-- Use the full title for searching, even if the displayed title is truncated
-				searchText = searchText .. " " .. (choice.fullTitle or choice.subText)
+				searchText = searchText .. " " .. choice.fullTitle
 			end
 
 			table.insert(inputList, {
@@ -206,8 +206,10 @@ function obj:getAllWindowsForChooserChoices()
 		local title = win:title()
 		local winId = win:id()
 
-		-- Skip windows without titles
-		if title and title ~= "" then
+		-- Skip windows without titles, and non-standard windows such as
+		-- notification banners and widgets (com.apple.notificationcenterui)
+		-- and menu bar panels
+		if win:isStandard() and title and title ~= "" then
 			local appIcon = nil
 			if app and app:bundleID() then
 				appIcon = hs.image.imageFromAppBundle(app:bundleID())
@@ -216,9 +218,12 @@ function obj:getAllWindowsForChooserChoices()
 			-- Truncate the window title for display purposes only
 			local truncatedTitle = self:truncateString(title, self.maxTitleLength)
 
+			-- Window title is the main text: it tells windows of the same app
+			-- apart (e.g. several Chrome windows). App name goes below it.
 			table.insert(windowList, {
-				text = appName, -- Application name (main text)
-				subText = truncatedTitle, -- Truncated window title for display
+				text = truncatedTitle, -- Truncated window title (main text)
+				subText = appName, -- Application name
+				appName = appName, -- Application name for searching
 				fullTitle = title, -- Full window title for searching
 				image = appIcon, -- Application icon
 				windowId = winId,

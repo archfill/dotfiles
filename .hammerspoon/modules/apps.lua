@@ -33,10 +33,12 @@ local SWITCHER_MAX_ATTEMPTS = 6
 function apps.setupSwitcher(config, attempt)
 	attempt = attempt or 1
 	local ok, err = pcall(function()
-		-- Create window filter for standard windows in current space
+		-- Create window filter for standard windows in current space.
+		-- Only AXStandardWindow: notification banners and widgets
+		-- (com.apple.notificationcenterui) and menu bar panels are excluded.
 		local filter = hs.window.filter.new()
 			:setCurrentSpace(true)
-			:setDefaultFilter({})
+			:setDefaultFilter({ allowRoles = "AXStandardWindow" })
 
 		local s = hs.window.switcher.new(filter)
 
