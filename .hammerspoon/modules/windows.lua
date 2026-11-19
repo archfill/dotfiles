@@ -159,6 +159,46 @@ function windows.focusWindow(target)
 	end)
 end
 
+--------------------------------------------------------------------------------
+-- Last window (like Hyprland's focuscurrentorlast)
+--------------------------------------------------------------------------------
+
+-- Ids of recently focused windows, most recent first. Unlike ⌘Tab (per app),
+-- this also goes back to another window of the same app.
+local HISTORY_SIZE = 10
+local focusHistory = {}
+local historyFilter = nil
+
+local function recordFocus(win)
+	local id = win and win:id()
+	if not id then
+		return
+	end
+	for i = #focusHistory, 1, -1 do
+		if focusHistory[i] == id then
+			table.remove(focusHistory, i)
+		end
+	end
+	table.insert(focusHistory, 1, id)
+	focusHistory[HISTORY_SIZE + 1] = nil
+end
+
+--- Focus the most recently focused window other than the current one
+local function focusLast()
+	local current = hs.window.focusedWindow()
+	local currentId = current and current:id()
+	for i = 1, #focusHistory do
+		local id = focusHistory[i]
+		if id ~= currentId then
+			local win = hs.window.get(id)
+			if win then
+				windows.focusWindow(win)
+				return
+			end
+		end
+	end
+end
+
 --- Focus window in direction (like yabai/hyprland)
 --- @param direction string Direction: "west", "east", "north", "south"
 local function focusDirection(direction)
@@ -241,6 +281,14 @@ function windows.init(config, helpers)
 				win:moveToUnit(unit, 0)
 			end
 		end)
+	end
+
+	-- Last window (Hyper + - by default: right of L on the MONA2 home row)
+	if windowConfig.lastWindowKey ~= false then
+		historyFilter = hs.window.filter.new():setDefaultFilter({ allowRoles = "AXStandardWindow" })
+		historyFilter:subscribe(hs.window.filter.windowFocused, recordFocus)
+		recordFocus(hs.window.focusedWindow())
+		hs.hotkey.bind(hyper, windowConfig.lastWindowKey or "-", focusLast)
 	end
 
 	-- Directional focus (like yabai/hyprland mod+hjkl)

@@ -52,6 +52,12 @@ config.windows = {
 	-- under the cursor).
 	mouseFollowsFocus = true,
 
+	-- Go back to the previously focused window (Hyper + key), like Hyprland's
+	-- focuscurrentorlast. Works between windows of the same app, unlike ⌘Tab.
+	-- Set to false to disable.
+	-- "-" is right of L on the MONA2 home row (Tab is only on the number layer).
+	lastWindowKey = "-",
+
 	-- Ultrawide 70/30 layouts (Hyper + key, unit rect of the screen).
 	-- Top row = main window on the left, bottom row = main window on the right.
 	-- Halves / thirds are handled by Rectangle.
