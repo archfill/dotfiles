@@ -25,6 +25,7 @@ Hammerspoonは、Luaスクリプトを使用してmacOSを自動化するツー�
 │   ├── reload.lua        # 設定リロード
 │   ├── hotkeys.lua       # ホットキー定義
 │   ├── windows.lua       # ウィンドウ管理
+│   ├── keymodal.lua      # Hyper + キー → 続けて押す操作待ちの共通部品
 │   └── apps.lua          # アプリ起動
 └── utils/                # ユーティリティ
     ├── import.lua        # カスタムrequire
@@ -289,6 +290,7 @@ local wifi = hs.wifi.currentNetwork()
 | Hyper + J | 下のウィンドウにフォーカス | windows |
 | Hyper + K | 上のウィンドウにフォーカス | windows |
 | Hyper + L | 右のウィンドウにフォーカス | windows |
+| Hyper + M → H/J/K/L | 前面のウィンドウを、その方向のウィンドウと入れ替え（グループはまとめて） | windows |
 | **dアニメ自動退避** |||
 | Hyper + O | 再生ウィンドウの登録/解除をトグル | pip_avoidance |
 | Hyper + I | dアニメ自動退避の有効/無効 | pip_avoidance |
@@ -299,7 +301,7 @@ local wifi = hs.wifi.currentNetwork()
 | Hyper + N | グループ内の次のウィンドウ | groups |
 | Hyper + P | グループ内の前のウィンドウ | groups |
 
-Hyper + G のあとは Esc または 1 秒何も押さないと抜ける。グループは `~/.local/state/hammerspoon/groups.json` に保存され、Hyper + R の読み込み直しで残る。
+Hyper + G / Hyper + M のあとは Esc または 1 秒何も押さないと抜ける。グループは `~/.local/state/hammerspoon/groups.json` に保存され、Hyper + R の読み込み直しで残る。
 | **システム** |||
 | Hyper + R | 設定リロード | reload |
 

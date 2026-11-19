@@ -58,6 +58,11 @@ config.windows = {
 	-- "-" is right of L on the MONA2 home row (Tab is only on the number layer).
 	lastWindowKey = "-",
 
+	-- Swap the focused window (or its group) with the window in a direction
+	-- (Hyper + key, then H/J/K/L), like Hyprland's swapwindow.
+	-- Set to false to disable.
+	swapKey = "m",
+
 	-- Ultrawide 70/30 layouts (Hyper + key, unit rect of the screen).
 	-- Top row = main window on the left, bottom row = main window on the right.
 	-- Halves / thirds are handled by Rectangle.

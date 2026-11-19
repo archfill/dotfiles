@@ -4,6 +4,8 @@
 -- Modifier + drag move/resize is done by BetterTouchTool: Control + click does
 -- not reach Hammerspoon's eventtap (it is handled earlier as a secondary click).
 
+local keymodal = require("modules.keymodal")
+
 local windows = {}
 
 -- Store previous window frames for restore
@@ -224,6 +226,68 @@ local function focusDirection(direction)
 	return true
 end
 
+--------------------------------------------------------------------------------
+-- Swap with the window in a direction (like Hyprland's swapwindow)
+--------------------------------------------------------------------------------
+
+-- Set by modules.groups: lets a group be swapped as one unit. Without it
+-- (groups disabled) only single windows are swapped.
+-- { groupOf(windowId) -> groupId|nil, outerFrame(groupId) -> frame,
+--   moveGroup(groupId, outer) }
+local groupAdapter = nil
+
+function windows.setGroupAdapter(adapter)
+	groupAdapter = adapter
+end
+
+--- The unit that moves together with a window: a group or the window itself
+--- @return table unit { groupId = ..., win = ..., frame = outer frame }
+local function swapUnit(win)
+	local groupId = groupAdapter and groupAdapter.groupOf(win:id())
+	if groupId then
+		return { groupId = groupId, win = win, frame = groupAdapter.outerFrame(groupId) }
+	end
+	return { win = win, frame = win:frame() }
+end
+
+local function moveUnit(unit, outer)
+	if unit.groupId then
+		groupAdapter.moveGroup(unit.groupId, outer)
+	else
+		unit.win:setFrame(outer, 0)
+	end
+end
+
+--- Swap the focused window (or its group) with the one in a direction
+--- @param direction string Direction: "west", "east", "north", "south"
+local function swapDirection(direction)
+	local win = hs.window.focusedWindow()
+	if not win then
+		hs.alert.show("No window", 0.5)
+		return
+	end
+
+	local other = windows.windowInDirection(win, direction)
+	if not other then
+		hs.alert.show("No window", 0.5)
+		return
+	end
+
+	-- Read both outer frames before anything moves
+	local a = swapUnit(win)
+	local b = swapUnit(other)
+	if a.groupId and a.groupId == b.groupId then
+		return
+	end
+	local frameA, frameB = a.frame, b.frame
+
+	moveUnit(a, frameB)
+	moveUnit(b, frameA)
+
+	-- Moving does not change focus; the cursor follows the focused window
+	windows.moveMouseInto(win)
+end
+
 --- Initialize window management hotkeys
 --- @param config table Configuration table with hyper key and window settings
 --- @param helpers table Helper functions
@@ -292,11 +356,30 @@ function windows.init(config, helpers)
 	end
 
 	-- Directional focus (like yabai/hyprland mod+hjkl)
+	local keys = windowConfig.directionalFocusKeys or { h = "west", j = "south", k = "north", l = "east" }
 	if windowConfig.enableDirectionalFocus ~= false then
-		local keys = windowConfig.directionalFocusKeys or { h = "west", j = "south", k = "north", l = "east" }
 		for key, direction in pairs(keys) do
 			hs.hotkey.bind(hyper, key, function()
 				focusDirection(direction)
+			end)
+		end
+	end
+
+	-- Swap: Hyper + swapKey, then a direction key
+	local swapKey = windowConfig.swapKey
+	if swapKey == nil then
+		swapKey = "m"
+	end
+	if swapKey then
+		local letters = {}
+		for key in pairs(keys) do
+			letters[#letters + 1] = key:upper()
+		end
+		table.sort(letters)
+		local modal = keymodal.new(hyper, swapKey, "Swap: " .. table.concat(letters))
+		for key, direction in pairs(keys) do
+			modal:bindAction(key, function()
+				swapDirection(direction)
 			end)
 		end
 	end

@@ -16,11 +16,11 @@
 local state = require("modules.groups.state")
 local store = require("modules.groups.store")
 local tabbar = require("modules.groups.tabbar")
+local keymodal = require("modules.keymodal")
 local windows = require("modules.windows")
 
 local groups = {}
 
-local MODAL_TIMEOUT = 1 -- seconds before the modal exits by itself
 local FRAME_TOLERANCE = 2 -- px; smaller frame differences are ignored
 local FOLLOW_INTERVAL = 0.03 -- seconds; at most one follow-up move per interval while dragging
 local SAVE_DELAY = 0.5 -- seconds; save once after moves have stopped
@@ -395,6 +395,28 @@ function groups.init(config, helpers)
 
 	loadState()
 
+	-- Let the window swap (modules.windows) treat a group as one unit
+	windows.setGroupAdapter({
+		groupOf = function(windowId)
+			return state.groupOf(st, windowId)
+		end,
+		outerFrame = function(groupId)
+			local group = st.groups[groupId]
+			return group and group.frame
+		end,
+		moveGroup = function(groupId, outer)
+			if not st.groups[groupId] then
+				return
+			end
+			-- State first: the member move watchers then see a frame that
+			-- already matches the group and do nothing
+			state.setFrame(st, groupId, outer)
+			applyFrame(groupId)
+			save()
+			refresh()
+		end,
+	})
+
 	-- Next / previous
 	hs.hotkey.bind(hyper, nextKey, function()
 		cycle(1)
@@ -411,54 +433,11 @@ function groups.init(config, helpers)
 	table.sort(dirLetters)
 	local helpText = ("Group: %s / %s / %s"):format(toggleKey:upper(), table.concat(dirLetters), outKey:upper())
 
-	local modal = hs.hotkey.modal.new(hyper, toggleKey)
-	local modalTimer = nil
-	local modalAlert = nil
-	local modalTap = nil
-
-	function modal:entered()
-		modalAlert = hs.alert.show(helpText, MODAL_TIMEOUT + 1)
-		modalTimer = hs.timer.doAfter(MODAL_TIMEOUT, function()
-			modal:exit()
-		end)
-		-- Another Hyper key press leaves the modal and still reaches its own binding
-		modalTap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
-			local flags = event:getFlags()
-			if flags.ctrl and flags.cmd and flags.alt and flags.shift then
-				hs.timer.doAfter(0, function()
-					modal:exit()
-				end)
-			end
-			return false
-		end)
-		modalTap:start()
-	end
-
-	function modal:exited()
-		if modalTimer then
-			modalTimer:stop()
-			modalTimer = nil
-		end
-		if modalTap then
-			modalTap:stop()
-			modalTap = nil
-		end
-		if modalAlert then
-			hs.alert.closeSpecific(modalAlert, 0)
-			modalAlert = nil
-		end
-	end
-
+	local modal = keymodal.new(hyper, toggleKey, helpText)
 	local function bindModal(key, fn)
-		modal:bind({}, key, function()
-			modal:exit()
-			fn()
-		end)
+		modal:bindAction(key, fn)
 	end
 
-	modal:bind({}, "escape", function()
-		modal:exit()
-	end)
 	bindModal(toggleKey, toggleGroup)
 	bindModal(outKey, moveOut)
 	for key, direction in pairs(directionKeys) do
