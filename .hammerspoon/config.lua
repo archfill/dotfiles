@@ -70,8 +70,9 @@ config.fzf = {
 	-- fzfPath = "/opt/homebrew/bin/fzf", -- auto-detected from Nix profiles if unset
 	-- Search window titles in addition to app names
 	searchWindowTitles = true,
-	-- Immediately switch if there's only one match
-	quickSwitchEnabled = true,
+	-- Immediately switch if there's only one match. Off: a match while typing
+	-- switched at once, and the rest of the typed keys went into that app
+	quickSwitchEnabled = false,
 	-- Maximum length for window titles in UI
 	maxTitleLength = 50,
 	-- Chooser appearance. The window title is shown large and the app name
