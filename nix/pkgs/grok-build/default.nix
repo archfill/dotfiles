@@ -25,8 +25,8 @@ let
       hash = "sha256-GXxmpj5axG4HRQsMoh0UHOZlBQpBIYDxhdrfrhx6Wyo=";
     };
     "x86_64-linux" = {
-      version = "1.0.77";
-      hash = "sha256-twKVCqWCfYVeSTJ4q2IVpOD1vOtbumxiQ6n1XN0UOwo=";
+      version = "1.0.89";
+      hash = "sha256-o9+s5R2b3HH9Eh4Egd0C2bRqch96a4kvdWSA6WZuuh8=";
     };
     "aarch64-linux" = {
       version = "1.0.62";
