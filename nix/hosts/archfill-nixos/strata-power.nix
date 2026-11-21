@@ -44,7 +44,7 @@ let
         ;;
       poweroff)
         log "poweroff from ''${src:-unknown}"
-        exec sudo -n ${systemctl} --no-block poweroff
+        exec /run/wrappers/bin/sudo -n ${systemctl} --no-block poweroff
         ;;
       *)
         log "rejected command from ''${src:-unknown}"
