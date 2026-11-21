@@ -134,6 +134,47 @@ in
     ACTION=="add|change", SUBSYSTEM=="input", ATTRS{idVendor}=="1395", ATTRS{idProduct}=="00a0", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEY}="0", ENV{LIBINPUT_IGNORE_DEVICE}="1"
   '';
 
+  # MSI B450 TOMAHAWK MAX (MS-7C02) のオンボード LED を SuperIO 経由で操作する。
+  services.hardware.openrgb = {
+    enable = true;
+    motherboard = "amd";
+  };
+
+  # 起動時に LED を青にそろえる。サーバーと SMBus を取り合わないよう、サーバーより先に一度だけ流す。
+  # 対象はマザーボード・メモリ・GPU だけ（Kraken などほかの機器は触らない）。ケース前面の ARGB は前面ボタンで設定する。
+  systemd.services.openrgb-color = {
+    description = "Set motherboard, DRAM and GPU LEDs to blue";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "openrgb.service" ];
+    after = [ "systemd-modules-load.service" ];
+    path = [
+      config.services.hardware.openrgb.package
+      pkgs.gnugrep
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      StateDirectory = "openrgb-color";
+    };
+    script = ''
+      color=0000FF
+      conf=/var/lib/openrgb-color
+      args=()
+      while IFS= read -r line; do
+        idx=''${line%%:*}
+        name=''${line#*: }
+        case "$name" in
+          "ENE DRAM") mode=static ;;
+          "MSI B450 TOMAHAWK MAX"* | "MSI GeForce"*) mode=direct ;;
+          *) continue ;;
+        esac
+        args+=(--device "$idx" --mode "$mode" --color "$color")
+      done < <(openrgb --noautoconnect --config "$conf" --list-devices | grep -E '^[0-9]+: ')
+      if [ ''${#args[@]} -gt 0 ]; then
+        openrgb --noautoconnect --config "$conf" "''${args[@]}"
+      fi
+    '';
+  };
+
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
