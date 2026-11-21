@@ -68,11 +68,6 @@ in
     ];
   };
 
-  # Strata Power の CT から、サービスの応答の確認 (8080) を受ける
-  networking.firewall.extraCommands = ''
-    iptables -A nixos-fw -p tcp -s 192.168.0.110 --dport 8080 -j nixos-fw-accept
-  '';
-
   security.sudo.extraRules = [
     {
       users = [ "strata-power" ];
