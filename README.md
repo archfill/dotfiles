@@ -68,14 +68,14 @@ After `make init` has applied the Nix/Home Manager configuration, `nh` is provid
 ```bash
 make nix-rebuild      # Apply the Nix flake through nh
 make nix-diff         # Preview the next Nix switch
-make nix-update       # Update Claude Code / Codex / Cursor Agent / Origin / Pi / Devin / Grok Build / Grok Bot / ChatGPT, flake.lock, and switch
+make nix-update       # Update Claude Code / Codex / Cursor Agent / Origin / Pi / Devin / Grok Build / ChatGPT, flake.lock, and switch
 make nix-clean        # Keep the latest 5 generations
 make config           # Configure Git user settings
 make status           # Check status
 make help             # Show all commands
 ```
 
-The X Subscription CLIs (Grok Build `grok`, Cursor CLI `cursor-agent`, Origin CLI `origin`) and Grok Bot (Linux) are pinned prebuilt packages updated via `make grok-build-update` / `make cursor-agent-update` / `make origin-update` / `make grok-bot-update` (all wired into `make nix-update`). On macOS, Grok Bot and Cursor are installed as Homebrew casks declared in `nix/modules/darwin-system.nix`.
+The X Subscription CLIs (Grok Build `grok`, Cursor CLI `cursor-agent`, Origin CLI `origin`) are pinned prebuilt packages updated via `make grok-build-update` / `make cursor-agent-update` / `make origin-update` (all wired into `make nix-update`). On macOS, Cursor is installed as a Homebrew cask declared in `nix/modules/darwin-system.nix`.
 
 ## 📁 Key Configurations
 

@@ -95,7 +95,6 @@
       # codex / pi は公式の prebuilt native binary を固定する。
       # origin は公式 installer と同じ bundle を固定する (nixpkgs 未収録)。
       # grok-build / cursor-agent は nixpkgs 収録だが stable 最新追従を優先して自前固定する。
-      # grok-bot は公式 Linux .deb を展開した GUI アプリとして固定する。
       # claude-desktop は公式 apt リポジトリの Linux .deb を展開した GUI アプリとして固定する。
       # gh は Nix store の絶対パスを Git credential helper に残さない wrapper を使う。
       # nsc は Namespace 公式 CLI の release を固定する (nixpkgs の nsc は NATS の別ツール)。
@@ -111,7 +110,6 @@
                 || nixpkgs.lib.getName pkg == "claude-desktop"
                 || nixpkgs.lib.getName pkg == "devin"
                 || nixpkgs.lib.getName pkg == "origin"
-                || nixpkgs.lib.getName pkg == "grok-bot"
                 || nixpkgs.lib.getName pkg == "grok-build"
                 || nixpkgs.lib.getName pkg == "cursor-agent";
             };
@@ -134,9 +132,6 @@
             // nixpkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               chatgpt = pkgs.callPackage ./pkgs/chatgpt { };
               claude-desktop = pkgs.callPackage ./pkgs/claude-desktop { };
-            }
-            // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
-              grok-bot = pkgs.callPackage ./pkgs/grok-bot { };
             });
 
       checks = nixpkgs.lib.genAttrs
