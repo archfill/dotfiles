@@ -71,6 +71,7 @@ in
     # 上書きするため、非公式 tap は必ず trusted = true で宣言する。
     taps = [
       { name = "macpaw/taps"; trusted = true; }
+      { name = "saffsanity/sill"; trusted = true; }
     ];
 
     # CLI は Nix (home-manager) で管理するため brew の formula は使わない
@@ -123,6 +124,11 @@ in
       # リモート / オーディオ
       "chrome-remote-desktop-host"  # 他端末からこの Mac を操作する (初回設定は手動)
       "loopback"
+      # Mac のウィンドウを iPhone / iPad に映して操作する (iOS 側は App Store)。
+      # 初回起動時に画面収録・アクセシビリティ・ローカルネットワークの許可が必要。
+      # auto_updates true のため brew では更新されない。Sill の
+      # Settings › General › Automatically update Sill をオンにする (既定オフ)
+      "saffsanity/sill/sill"
       # その他
       "macpaw/taps/cleanmymac-cli"
       # 除外したもの:
