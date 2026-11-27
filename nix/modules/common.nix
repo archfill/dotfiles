@@ -420,21 +420,11 @@ in
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.ideavimrc";
 
-  # Codex environment helper. Secret values are not stored in Nix. codex-env
-  # prefers the mounted 1Password Environment and falls back to env.refs.
-  xdg.configFile."codex/env.refs".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.config/codex/env.refs";
-
   # Devin CLI 設定。Nix がバージョンを所有するため、バックグラウンドの
   # 自己更新 (auto_update) を無効化しておく。更新は `make devin-update`。
   xdg.configFile."devin/config.json".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.config/devin/config.json";
-
-  home.file.".local/bin/codex-env".source =
-    config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/dotfiles/.local/bin/codex-env";
 
   home.file.".mmcp.json".source =
     config.lib.file.mkOutOfStoreSymlink

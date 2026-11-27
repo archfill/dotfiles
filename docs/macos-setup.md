@@ -148,7 +148,6 @@ make init     # doctor → nix-darwin 初回 switch → Git 個人設定
   鍵は 1Password の SSH agent から使い、ホストごとに鍵を指定する場合は `IdentityFile` に**公開鍵** (`~/.ssh/<name>.pub`) を書く。秘密鍵のファイルはディスクに置かない
 - **Chrome リモート デスクトップ**: `remotedesktop.google.com/access` でこの Mac のリモートアクセスを有効化 (PIN 設定)
 - **署名の無いアプリの初回起動**: zmk-battery-center (Mac Studio) は初回起動時にブロックされるので、システム設定 → プライバシーとセキュリティ で「このまま開く」を押す
-- **1Password Environments**: `codex-env` が使う `.env` のマウントを設定 (デバイスごと)
 - **外付け SSD とローカル LLM (Mac Studio)**: 外付け `Storage` (常時接続) に作業領域を置く。`~/git` は `/Volumes/Storage/archfill/git` への symlink、モデルは `Models/` (`HF_HOME` は `home.nix` で宣言)
   - Time Machine: `sudo tmutil removeexclusion -v /Volumes/Storage` で外付けを対象に含め、`tmutil addexclusion` で `Parallels/` と `Models/` を除外 (ビルド成果物は asimov が自動で除外)
   - mlx-lm: `uv tool install mlx-lm` (nixpkgs の mlx は Metal なしで CPU 専用になるため Nix では入れない)

@@ -45,7 +45,6 @@ Antigravity 等それ以外のツールは従来どおり。基本作業ツー�
 `nix/pkgs/agent-runtime/default.nix` に置く。
 
 CLI ハーネス用の認証供給は [Keychain + Service Account の起動手順](agent-auth.md)を使用する。
-既存の Codex Desktop 用 1Password Environment / SSH agent / `codex-env` の運用は継続する。
 1Password の保管・供給と token の権限は別なので、エージェントに必要な情報と権限だけを渡す。
 秘密情報は repo や Nix derivation に埋め込まない。CLI 設定・hooks・Pi extensions も同じユーザー権限で
 コードを実行できるため、信頼できないコードの隔離が必要なら VM / コンテナを別途使う。
@@ -152,7 +151,6 @@ PATH を明示し、CLI executable は `/opt/agent-runtime/profile/bin/claude` �
 そのタスクの全プロセスを同じ世代で起動する。
 
 同じ HOME を使うため、既存の CLI 設定・ログイン情報・1Password 連携はそのまま利用する。
-`codex-env` の参照と mounted Environment は [macOS setup](macos-setup.md) の既存運用を継続する。
 Devin の `auto_update: false` 設定も既存の Home Manager 配置を使う。
 認証、Git checkout、ビルド・テスト、必要な CLI hooks を代表的な repo で検証する。
 `--version` の smoke test は認証や実際のエージェント動作まで保証しない。

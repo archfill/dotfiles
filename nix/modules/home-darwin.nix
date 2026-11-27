@@ -69,24 +69,4 @@
   home.file.".local/bin/agent-auth".source =
     config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/dotfiles/.local/bin/agent-auth";
-
-  # Codex Desktop を Dock / Finder から起動しても MCP token が見えるよう、
-  # 1Password Environment の mounted .env を login session の launchctl
-  # environment へ定期投入する。
-  # plist はホームディレクトリの絶対パスを含むため、ホスト非依存にするよう
-  # 静的ファイルの symlink ではなく launchd.agents で生成する。
-  launchd.agents."codex-env" = {
-    enable = true;
-    config = {
-      Label = "com.archfill.codex-env";
-      ProgramArguments = [
-        "${config.home.homeDirectory}/dotfiles/.local/bin/codex-env"
-        "set"
-      ];
-      RunAtLoad = true;
-      StartInterval = 300;
-      StandardOutPath = "/tmp/codex-env.out.log";
-      StandardErrorPath = "/tmp/codex-env.err.log";
-    };
-  };
 }

@@ -25,7 +25,6 @@ Pi は起動時の注入ではなく、key を必要なときに `agent-auth rea
 Service Account にはこの vault の read 権限だけを付ける。不要な write / share / vault 作成権限は付けない。
 
 **Service Account には built-in Personal / Private / Employee / default Shared vault のアクセスを許可できない。**
-既存の `.config/codex/env.refs` は `op://Personal/...` なので、そのままこの方式には流用しない。
 必要な項目だけを専用 vault に用意する。Service Account のアクセス・権限は後から変更できないため、
 変更が必要なら新しい account / token を用意して切り替える。
 
@@ -169,8 +168,6 @@ GUI ログイン中の launchd ジョブ (エージェント) は解除操作な
 launchd 等でハーネスを起動する際も、この wrapper を使い、Python / CLI が見える PATH を指定する。
 現在の実装では自動起動ジョブは追加しない。
 
-既存の Codex Desktop 用 `codex-env` とその launchd job、mounted Environment、SSH agent は変更しない。
-Desktop 用の環境投入と、この CLI ハーネス用の供給は別経路。
 Service Account token がハーネスに渡らないため、子プロセスで通常の `op` を実行しても Service Account 認証は
 引き継がれない。追加の secrets は必要な参照ファイルを選んで、新しい wrapper セッションで供給する。
 

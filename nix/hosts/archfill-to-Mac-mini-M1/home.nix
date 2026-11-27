@@ -15,7 +15,6 @@
   home.sessionPath = [ "/opt/agent-runtime/profile/bin" ];
 
   # token は login Keychain に保管し、ハーネス起動時の op にだけ渡す。
-  # 既存の Desktop 用 codex-env / launchctl 環境は変更しない。
   # ~/.local/bin/agent-auth は全 darwin host 共通で modules/home-darwin.nix が置く。
   xdg.configFile."agent-auth/env.refs.example".source =
     config.lib.file.mkOutOfStoreSymlink
